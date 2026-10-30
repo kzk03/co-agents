@@ -1,0 +1,41 @@
+{
+ "text": "1. **lib/chrono_model/patches/relation.rb — `chrono_join_history`**: The new `.name` fallback is only correct for a plain `Arel::Table`. For `Arel::Nodes::TableAlias` (used whenever the same table is joined twice — self-referential associations, `has_many through:` chains hitting the same table, repeated `includes`), `.name` returns the *alias*, not the real table name, so `ChronoModel.history_models[table_name]` won't find the history model and the join silently stays non-temporal — i.e. the exact bug class this PR claims to fix, just moved to an unexercised path. Fix by resolving the underlying table via the alias's `relation.table_name` before falling back to `.name`, and add a test with an aliased/self-joined eager load.\n\n2. **lib/chrono_model/patches/relation.rb — `chrono_join_history`**: When neither `table_name` nor `name` can be resolved, the method now does `return unless table_name`, silently skipping the as-of swap and letting the query fall back to non-temporal (current) rows with no warning. For a gem whose entire purpose is correctness of historical data, a silent fallthrough to wrong data is worse than a loud failure. Raise or log here so a future unsupported join-node shape is caught in CI rather than quietly returning incorrect historical results in production.\n\n3. **lib/chrono_model/patches/relation.rb — `chrono_join_history`**: Behavior change not called out in the PR: previously, objects without `table_name` fell through to `ChronoModel.history_models[join.left]`, which worked if `join.left` was itself a String table name (a plain Ruby `String` doesn't respond to `.name`, so it matched the hash key directly). Now such a case returns `nil`/skips instead. If any supported Rails/Arel version can hand a bare String as `join.left`, this is a silent regression with no test covering it — please confirm this case can't occur, or preserve the old fallback.\n\n4. **spec/chrono_model/time_machine/as_of_eager_loading_spec.rb**: The only new test (`Bar`/`SubBar`, plain non-aliased join) doesn't actually exercise the `TableAlias`/multi-join scenario the fix's dual-branch logic is ostensibly built to handle. As written, the PR claims issue #379 is \"fixed\" but the test gives no evidence the fallback logic is correct beyond the simplest case — add a case that forces Arel to alias the joined table.\n\n5. **lib/chrono_model/patches/join_node.rb and relation.rb — comments**: \"Handle both Arel::Table (which has `.name`) and other objects (which might have `.table_name`)\" is misleading: the code checks `table_name` *first*, and plain `Arel::Table` actually has `.name`, not `.table_name` — so the common path always falls into the \"other objects\" branch described second. Clarify which concrete classes hit each branch (and document the known `TableAlias` gap from item 1) so a future contributor doesn't \"simplify\" this back into the original bug.",
+ "cost": 0.25675800000000004,
+ "sec": 106.6,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 41581,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 9043,
+  "output_tokens_details": {
+   "thinking_tokens": 8030
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 41581,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 9043,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 41581,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 41581
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G053",
+ "cond": "B"
+}

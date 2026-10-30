@@ -1,0 +1,32 @@
+== 有効件数と repo 数
+ aidev: n=86 repo=81 1repoあたり最大 2 件、上位 {'dotnet/maui': 2, 'ifad/chronomodel': 2, 'dotnet/sdk': 2, 'primer/react': 2, 'cybersemics/em': 2}
+   母集団: CR 4681 repo 1067 最大 repo ('DaveSkender/Stock.Indicators', 190) (0.041)
+ ghhuman: n=89 repo=32 1repoあたり最大 4 件、上位 {'home-assistant/core': 4, 'getsentry/sentry': 4, 'apache/airflow': 4, 'backstage/backstage': 4, 'SigNoz/signoz': 4}
+   母集団: CR 4321 repo 35 最大 repo ('home-assistant/core', 3041) (0.704)
+
+== 重み付き H 系比率(区間は repo クラスタ・ブートストラップ 2000 回)
+ (0) 結末層: aidev 0.174 (0.091-0.270)  ghhuman 0.283 (0.182-0.401)  差 0.109 (-0.029-0.252)
+ (2) repo 等重み: aidev 0.210 (0.140-0.277)  ghhuman 0.362 (0.273-0.452)  差 0.152 (0.040-0.260)
+ (3) 母集団 repo 重み: aidev 0.108 (0.041-0.183)  ghhuman 0.213 (0.176-0.304)  差 0.106 (0.017-0.214)
+ (3b) 結末層×HA: aidev 0.176 (0.092-0.277)  ghhuman 0.227 (0.195-0.372)  差 0.051 (-0.047-0.223)
+
+== (1) repo 上限 k(無作為に k 件残す×500 回、結末層の重み)。値は 500 回の平均と 2.5/97.5 パーセンタイル
+ k=1: n aidev 81 ghhuman 32 | aidev 0.180 [0.178, 0.182] ghhuman 0.267 [0.170, 0.366] 差 0.087 [-0.012, 0.186]
+ k=2: n aidev 86 ghhuman 60 | aidev 0.174 [0.174, 0.174] ghhuman 0.288 [0.243, 0.332] 差 0.115 [0.069, 0.158]
+
+== (4) ロジスティック回帰 H ~ human(ghhuman=1) + closed(重みなし、n=175、repo 112)
+ (a) 通常: OR(human) 3.23 (95%CI 1.58-6.59) p=0.001  OR(closed) 4.77 p=0.000
+ (b) repo クラスタ頑健 SE: OR(human) 3.23 (95%CI 1.48-7.01) p=0.003
+ (c) GEE 交換可能: OR(human) 3.21 (95%CI 1.48-6.97) p=0.003  repo 内相関 0.068
+ (d) repo 変量効果(VB): OR(human) 3.17 (±1.96SD 1.99-5.07)  repo 効果 SD(事後平均) 0.752
+ (e) 交互作用モデル(repo クラスタ頑健 SE) OR(human) 1.33 (95%CI 0.37-4.75) p=0.657
+ (e) 交互作用モデル(repo クラスタ頑健 SE) OR(human:closed) 3.87 (95%CI 0.78-19.21) p=0.098
+ ※ (e) の OR(human) は not_closed 層での人間/エージェント比
+
+== 参考: 群×結末層の生の H 率
+ aidev closed: 12/45 = 0.267
+ aidev not_closed: 6/41 = 0.146
+ ghhuman closed: 30/46 = 0.652
+ ghhuman not_closed: 8/43 = 0.186
+ ghhuman の home-assistant/core 有効 4 件: H 3(層 {'closed': 3, 'not_closed': 1})
+ ※ (0) は有効件数で層のサンプル数を数えるため、compare.txt(全件で数える)と小数第3位がずれる

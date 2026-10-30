@@ -1,0 +1,45 @@
+{
+ "text": "{\"main\":\"Instead of matching candidate symbols by name, check that the symbol's declaration's binding parent is the global `Function`/`CallableFunction` interface declaration.\",\"R1\":\"yes\",\"R1_item\":2,\"R2\":\"yes\",\"R2_item\":1,\"R3\":\"yes\",\"R3_item\":1}",
+ "cost": 0.0432768,
+ "sec": 5.2,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 8768,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 290,
+  "output_tokens_details": {
+   "thinking_tokens": 186
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 8768,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 290,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 8768,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 8768
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G067",
+ "order": [
+  "B",
+  "A",
+  "C"
+ ]
+}

@@ -1,0 +1,41 @@
+{
+ "text": "1. `msbuild/Xamarin.Shared/Xamarin.Shared.props` — precedence is broken. The new code sets `MonoMacResourcePrefix`/`XamMacResourcePrefix`/`IPhoneResourcePrefix` to their \"Resources\" defaults *before* checking `AppBundleResourcePrefix`, then derives `AppBundleResourcePrefix` from those already-defaulted platform properties. So if a user sets only `AppBundleResourcePrefix=Foo`, the platform-specific property has already been defaulted to \"Resources\" (since it was empty), and `AppBundleResourcePrefix` condition `'$(AppBundleResourcePrefix)' == ''` is false so it keeps \"Foo\" — that part is fine — but `_ResourcePrefix` is now set unconditionally to `$(AppBundleResourcePrefix)`, bypassing a user's explicit platform-specific property setting like `IPhoneResourcePrefix=Custom` without `AppBundleResourcePrefix` set: `AppBundleResourcePrefix` picks up `IPhoneResourcePrefix` correctly in that case. But the reverse fails: if `AppBundleResourcePrefix` is left unset and `IPhoneResourcePrefix` is also unset, `IPhoneResourcePrefix` defaults to \"Resources\" first, so `AppBundleResourcePrefix` becomes \"Resources\" via inheriting from `IPhoneResourcePrefix`, not from its own stated default of \"Resources\" — functionally same output, but the real bug is order-of-operations makes the legacy props always get force-defaulted to \"Resources\" even when `AppBundleResourcePrefix` was explicitly set to something else, so `IPhoneResourcePrefix`/`MonoMacResourcePrefix`/`XamMacResourcePrefix` no longer reflect \"unset\" state for any other code/targets/tasks that read those properties directly (e.g. diagnostics, custom targets, other imports) — they'll see \"Resources\" instead of empty even when the user intended `AppBundleResourcePrefix` to be authoritative. Fix: compute `AppBundleResourcePrefix` fallback from the *raw* user-supplied platform properties before defaulting those properties, e.g. capture `_UserIPhoneResourcePrefix := $(IPhoneResourcePrefix)` prior to any defaulting, or reorder so `AppBundleResourcePrefix` is resolved first and the legacy properties default *from* `AppBundleResourcePrefix` (as the PR description itself claims: \"legacy properties default to the new property if not explicitly set\" — the diff does the opposite, deriving the new property from already-defaulted legacy ones).\n\n2. `msbuild/Xamarin.Shared/Xamarin.Shared.props` — trailing whitespace added on blank lines (visible as `+\\t\\t` with trailing spaces in the diff after the \"ResourcePrefix\" comment and after the `AppBundleResourcePrefix` block). Repo conventions (per `.github/copilot-instructions.md`) emphasize minimal, clean diffs; stray whitespace-only additions should be removed.\n\n3. `tests/dotnet/UnitTests/ResourcePrefixTest.cs` — doesn't compile: `GetTestProjectContent` interpolates `{GetProperty}` instead of a parameter (no such symbol in scope), and the `Target`'s `Message Text=\"$({GetProperty})\"` should reference the literal property name `_ResourcePrefix` being queried, not an undefined identifier. This test file as written will fail to build/run. Fix: remove the erroneous `{GetProperty}` interpolation and hardcode (or pass through) `_ResourcePrefix`.\n\n4. `tests/dotnet/UnitTests/ResourcePrefixTest.cs` — missing trailing newline at EOF, and no file-level `nullable`/namespace brace style consistent with repo convention noted in `copilot-instructions.md` (tabs vs spaces: file uses spaces for indentation inside methods, e.g. `propertyGroup += ...` lines use spaces; repo mandates tabs). Should reformat to tabs per `.editorconfig`/Mono style, and add trailing newline.\n\n5. `tests/dotnet/UnitTests/ResourcePrefixTest.cs` — test invokes `dotnet build` per-platform per-case (12+ full MSBuild/dotnet invocations), spinning up a temp project and running the SDK resolution/build pipeline for a property-only query. This is likely extremely slow and a departure from how other MSBuild property tests in this repo are structured (which typically evaluate projects in-process via the existing test infra rather than shelling out to `dotnet build`). Should use the same in-process project evaluation helpers the rest of `tests/dotnet/UnitTests` uses instead of spawning `dotnet build` per assertion, and should target `net9.0` per copilot-instructions (\"targeting .NET 9\"), not `net8.0`.\n\n6. `docs/building-apps/build-properties.md` — the new `AppBundleResourcePrefix` entry is inserted alphabetically correct (`AppBundleResourcePrefix` before `AppBundleDir`? Actually \"AppBundleDir\" < \"AppBundleExtraOptions\" < \"AppBundleResourcePrefix\" alphabetically) — the diff places `AppBundleResourcePrefix` immediately after `AltoolPath` and before `AppBundleDir`, breaking the file's alphabetical ordering convention. Should be moved to its correct alphabetical position (after `AppBundleExtraOptions`, before `AppIcon`).\n\n7. `msbuild/Xamarin.Shared/Xamarin.Shared.props` — the macOS fallback chain now does `AppBundleResourcePrefix ← XamMacResourcePrefix ← MonoMacResourcePrefix ← \"Resources\"`, three levels deep, but only for macOS; iOS/tvOS/MacCatalyst get `AppBundleResourcePrefix ← IPhoneResourcePrefix`. Given `MacCatalyst` is lumped under the non-macOS branch here but has historically sometimes needed separate treatment from pure iOS, confirm this is intentional and matches existing `_PlatformName` conditions elsewhere in this file — worth a reviewer sanity check/comment, since the PR touches a precedence chain that other targets (packaging, codesign) rely on via `_ResourcePrefix`.\n\n8. No CHANGELOG/breaking-change note or release-notes entry included for a new public MSBuild property with cross-cutting default-value semantics — given this repo's convention of flagging such additions (see how `BundleOriginalResources` documents opt-in/opt-out behavior change across versions in the shown doc excerpt), consider whether this PR needs a similar note about interaction with existing projects that already set the legacy properties.",
+ "cost": 0.1260188,
+ "sec": 27.5,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 24301,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 2351,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 24301,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 2351,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 24301,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 24301
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G023",
+ "cond": "B"
+}

@@ -1,0 +1,41 @@
+{
+ "text": "1. **services/Directory/.../Migrations/20250729032737_UpdateGameIndustryHostsToEuDomain.cs & FilterListViewUrl.json** — The PR's own description says the fix is to split the three template variants into three separate `FilterList` entries (IDs 1706, 2740, 2741), each with a single `ViewUrl`, specifically to avoid the \"incorrect\" pattern of multiple `FilterListViewUrl` rows on one `FilterList`. The actual migration/data diff does the opposite: it keeps a single `FilterList` (1706) and adds two more `FilterListViewUrl` rows (3072, 3073, with Primariness 2/3) to it. No new `FilterList` rows for 2740/2741 exist anywhere in the diff. This reproduces the exact anti-pattern the PR claims to fix and does not close #3310 as described — must be redone as three distinct `FilterList` entities with their own IDs, names, descriptions, and one `ViewUrl` each.\n\n2. **services/Directory/data/FilterListViewUrl.json (rows 3072/3073, Primariness 2/3)** — `Primariness` is meant to rank mirrors/parts of *identical* content, not distinguish genuinely different template variants (Main vs Gaming-Full vs Android-Mini have different scope/content). Tagging these as Primariness 2/3 under the same list misrepresents them as interchangeable fallbacks of the same content, which is misleading to any consumer/validator and contradicts the PR's own stated Mirror-vs-Variant distinction.\n\n3. **services/Directory/data/FilterList.json / migration `UpdateData` on `FilterList` 1706 (Description column)** — Only `HomeUrl`, `IssuesUrl`, `Name` are updated; `Description` is left as \"Hosts file for blocking spyware, ads, analytics and tracking on German websites and domains.\" That description is now stale/incorrect for an entry renamed to \"GameIndustry.eu Hosts\" with non-German-specific, multi-template content — needs to be updated to match the new entry's actual scope.\n\n4. **PR description vs diff: `copilot-instructions.md`** — The description states this file was updated to document the mirror-vs-variant design pattern, but no such file appears anywhere in the 8-file diff. Either restore the claimed documentation change or correct the PR description — as written it misrepresents what the PR does.\n\n5. **services/Directory/data/FilterListTag.json (tagId 19, 20)** — Description claims tags `ads, privacy, malware, anti-corp, admin` (5 categories) apply to this list, but only two new tag links (19, 20) are added on top of the pre-existing tag 6. Without visibility into Tag.json it can't be confirmed these two new tags actually cover the remaining claimed categories — please confirm tag IDs map correctly to all five stated categories before merging.",
+ "cost": 0.09837699999999999,
+ "sec": 57.1,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 8910,
+  "cache_read_input_tokens": 64265,
+  "output_tokens": 4988,
+  "output_tokens_details": {
+   "thinking_tokens": 4014
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 8910,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 4988,
+    "cache_read_input_tokens": 64265,
+    "cache_creation_input_tokens": 8910,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 8910
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G024",
+ "cond": "A"
+}

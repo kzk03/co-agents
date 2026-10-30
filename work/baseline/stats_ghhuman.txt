@@ -1,0 +1,12 @@
+n 100 (sonnet 100 haiku 100 )
+cat opus-sonnet 0.74/0.69 opus-haiku 0.60/0.53 sonnet-haiku 0.70/0.64 fleiss 0.62
+group opus-sonnet 0.83/0.69 opus-haiku 0.82/0.66 sonnet-haiku 0.87/0.75 fleiss 0.70
+inferable opus-sonnet 0.68/0.54 opus-haiku 0.55/0.33 sonnet-haiku 0.58/0.39 fleiss 0.42
+opus: valid=92 H=38(41%) no=11(12%)
+sonnet: valid=96 H=46(48%) no=28(29%)
+haiku: valid=98 H=39(40%) no=20(20%)
+majority dist {'C1': 25, 'C2': 18, 'C3': 7, 'H1': 10, 'H2': 15, 'H3': 7, 'H4': 6, 'M': 1, 'NOAGREE': 6, 'UNK': 5}
+majority inferable {'yes': 37, 'partial': 28, 'no': 18, 'NOAGREE': 6}
+weighted H share 0.288 (95% CI 0.190-0.398)
+ stratum closed n 46 H 65%
+ stratum not_closed n 43 H 19%

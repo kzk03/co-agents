@@ -1,0 +1,41 @@
+{
+ "text": "1. **PreMailer.Net/PreMailer.Net/Html/EmailHtmlMarkupFormatter.cs — `CloseTag` override**: it unconditionally returns `\"</\" + tag + \">\"` and completely ignores the `selfClosing` parameter. That parameter exists to distinguish genuinely-empty non-void elements from HTML void elements (`<br>`, `<img>`, `<hr>`, `<input>`, `<meta>`, `<link>`, etc.). If the serializer still emits a self-closing open tag for void elements (as the base `OpenTag` does), this change will make them render as `<br/></br>`, `<img ...></img>`, etc. — invalid HTML that some browsers/email clients historically render as an *extra* line break for stray `</br>`. That would be a worse regression than #171. Fix: only force the closing tag for empty, non-void elements; preserve the original (no-close) behavior for void/self-closing elements, e.g. by checking the HTML void-element list before overriding.\n\n2. **PreMailer.Net.Tests/Html/EmailHtmlMarkupFormatterTests.cs**: no test exercises void elements (`<br>`, `<img>`, `<hr>`) through the new formatter, which is exactly the case that would expose issue #1. This needs to be added before merge, not just the empty-`<u>` and `&copy;` cases.\n\n3. **PreMailer.Net/PreMailer.Net/Html/EmailHtmlMarkupFormatter.cs — `EntityReplacements`**: the PR description says this \"combines functionality from the existing `PreserveEntitiesHtmlMarkupFormatter`\" but the dictionary is re-declared/copy-pasted here rather than reused. This creates two independent sources of truth for entity handling that will silently drift. Fix: have `EmailHtmlMarkupFormatter` derive from or delegate to `PreserveEntitiesHtmlMarkupFormatter` for the `Text()` logic instead of duplicating the map.\n\n4. **PreMailer.Net/PreMailer.Net/PreMailer.cs:518 — `GetMarkupFormatterForDocType`**: swapping the global default formatter changes serialization behavior (entity encoding) for *every* HTML document processed by the library, not just the empty-tag case being fixed. This is a broader, silently-breaking behavior change for existing consumers who may depend on Unicode output, and it isn't called out as a breaking change or made opt-in anywhere in the PR.\n\n5. **PreMailer.Net/PreMailer.Net/Html/EmailHtmlMarkupFormatter.cs**: only `Text()` is overridden for entity preservation; there's no `Attribute()` override. If the original `PreserveEntitiesHtmlMarkupFormatter` also preserved entities inside attribute values (e.g. `alt=\"&copy;\"`, `title=\"&reg;\"`), this is an unverified/untested regression versus prior behavior.",
+ "cost": 0.131793,
+ "sec": 109.5,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 5127,
+  "cache_read_input_tokens": 26305,
+  "output_tokens": 10602,
+  "output_tokens_details": {
+   "thinking_tokens": 9603
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 5127,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 10602,
+    "cache_read_input_tokens": 26305,
+    "cache_creation_input_tokens": 5127,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 5127
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G062",
+ "cond": "A"
+}

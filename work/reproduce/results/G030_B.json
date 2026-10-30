@@ -1,0 +1,41 @@
+{
+ "text": "1. **Core functionality (whole PR / `vite.config.ts`)** — The example doesn't actually solve the issue it claims to close. The PR's own description says the RSC environment \"tries to import `node:async_hooks` which doesn't exist in browsers\" and this is unresolved, yet nothing in the submitted `vite.config.ts` configures the `rsc` environment for a browser-compatible platform (no `resolve.conditions`, no polyfill/alias for `node:async_hooks`/`process`, no `define` for `process.env.NODE_ENV`). Since `load-rsc-dev.tsx` runs the `ModuleRunner` in the browser and evaluates the fetched RSC module source there, this will crash on `node:async_hooks` import. Fix: either make the environment genuinely browser-compatible (alias/polyfill Node built-ins, set env conditions) and verify `pnpm dev` actually renders the page, or don't merge an example that's known not to work.\n\n2. **`README.md`** — Claims \"HMR Support: Hot module replacement for both client and RSC code\" and \"Server Actions: Full support ... executed in the browser context,\" but `load-rsc-dev.tsx` passes `hmr: false` to the `ModuleRunner`, and no code in `vite.config.ts` forwards rsc-environment file-change events to the `rsc:update` custom event that `entry.browser.tsx` listens for. RSC-side HMR is not actually wired up. Fix: implement the HMR forwarding (e.g. `server.environments.rsc.hot.on(...)` → `server.environments.client.hot.send('rsc:update')`) or stop claiming HMR support in the README.\n\n3. **`vite.config.ts` (`/@vite/invoke-rsc` middleware)** — `JSON.parse(url.searchParams.get('data')!)` uses a non-null assertion with no validation and no try/catch. A malformed or missing `data` param throws inside the middleware, leaving the request unhandled instead of calling `next()` or returning an error response. Fix: validate the param and wrap the parse/invoke in try/catch with a proper error response.\n\n4. **`vite.config.ts` (build-mode branch of the virtual module)** — Returns a hardcoded `import(\"/dist/rsc/index.js\")` with no accompanying multi-environment `builder` configuration shown to guarantee the rsc environment actually emits there, nor confirmation that `vite preview` serves that path. There's no evidence (e2e test, CI, or description) that `pnpm build && pnpm preview` was ever exercised. Fix: wire up the environment build config and verify build+preview actually works before merging, or add a test.\n\n5. **`package.json`** — `@vitejs/plugin-react` and `@vitejs/plugin-rsc` are pinned to `\"latest\"` instead of following this repo's convention for referencing sibling workspace packages (e.g. `workspace:*` or relative `../../dist` links used elsewhere, as reflected in the lockfile's `link:` resolution). This is misleading for anyone copying the example outside the monorepo and inconsistent with how other examples/playgrounds in this repo declare internal deps. Fix: match the convention used by `examples/no-ssr`/`browser-mode`.\n\n6. **PR description** — Left in place as Copilot's raw \"incomplete work\" checklist with an unchecked \"Fix node:async_hooks import resolution issue\" and an open \"Need to resolve\" section describing a fundamentally unsolved problem. This should not be the final PR description for something being merged; either resolve the issue and rewrite the description to reflect reality, or keep the PR in draft until it's actually done.\n\n7. **Test coverage** — No test was added under `packages/plugin-rsc/examples/e2e` (or equivalent) to assert the new example actually renders/hydrates/handles a server action, despite CONTRIBUTING.md asking for test coverage on new functionality. Given the example is admittedly non-functional, an e2e smoke test would have caught that immediately. Fix: add a minimal e2e test exercising the browser-mode2 example analogous to existing `no-ssr`/`browser-mode` tests.",
+ "cost": 0.1883348,
+ "sec": 102.7,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 24880,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 8351,
+  "output_tokens_details": {
+   "thinking_tokens": 6956
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 24880,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 8351,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 24880,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 24880
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G030",
+ "cond": "B"
+}

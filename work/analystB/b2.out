@@ -1,0 +1,129 @@
+母集団層 {'aidev': {'not_closed': 3621, 'closed': 1060}, 'ghhuman': {'closed': 898, 'not_closed': 3423}} 重み {'aidev': {'closed': 21.2, 'not_closed': 72.4}, 'ghhuman': {'not_closed': 68.5, 'closed': 18.0}}
+取得元 Counter({('ghhuman', 'gh'): 100, ('aidev', 'gh'): 95, ('aidev', 'snapshot'): 5})
+スナップショット結末 → 現在の状態 Counter({('ghhuman', 'closed', 'closed'): 50, ('aidev', 'closed', 'closed'): 47, ('aidev', 'merged', 'merged'): 41, ('ghhuman', 'merged', 'merged'): 38, ('ghhuman', 'open', 'open'): 10, ('aidev', 'open', 'closed'): 5, ('aidev', 'open', 'open'): 4, ('aidev', 'closed', 'merged'): 3, ('ghhuman', 'open', 'merged'): 1, ('ghhuman', 'open', 'closed'): 1})
+CR後コミット gh 現在 vs 既存キャッシュ/pilot 一致 187 / 195
+
+== aidev v0(多数決) H/C(各行: n / 標本比率 a,b,c,d / 重み付き a,b,c,d / サブ分類)
+ H       n= 18 標本 a=0.44 b=0.17 c=0.33 d=0.06 | 重み付き a=0.69 b=0.09 c=0.18 d=0.03 | {'a1': 5, 'a0': 3, 'c_comment': 6, 'b_byauthor': 1, 'b': 2, 'd_botclose': 1}
+ C       n= 68 標本 a=0.43 b=0.13 c=0.38 d=0.06 | 重み付き a=0.65 b=0.06 c=0.23 d=0.06 | {'c_comment': 25, 'a1': 28, 'a0': 1, 'b': 9, 'c_comment_byauthor': 1, 'd_botclose': 3, 'd_open': 1}
+ other   n= 14 標本 a=0.50 b=0.14 c=0.14 d=0.21 | 重み付き a=0.60 b=0.06 c=0.06 d=0.29 | {'a1': 5, 'b': 1, 'd_open': 3, 'a0': 2, 'c_comment': 2, 'b_byauthor': 1}
+
+== aidev v1 群(C は v1 の C + v0 多数決 C)(各行: n / 標本比率 a,b,c,d / 重み付き a,b,c,d / サブ分類)
+ C       n= 75 標本 a=0.43 b=0.12 c=0.39 d=0.07 | 重み付き a=0.64 b=0.05 c=0.23 d=0.07 | {'c_comment': 28, 'a1': 30, 'a0': 2, 'b': 9, 'd_open': 2, 'c_comment_byauthor': 1, 'd_botclose': 3}
+ K       n=  4 標本 a=0.00 b=0.75 c=0.25 d=0.00 | 重み付き a=0.00 b=0.75 c=0.25 d=0.00 | {'b': 1, 'b_byauthor': 2, 'c_comment': 1}
+ R       n=  6 標本 a=0.50 b=0.17 c=0.17 d=0.17 | 重み付き a=0.77 b=0.08 c=0.08 d=0.08 | {'a1': 2, 'a0': 1, 'b': 1, 'd_botclose': 1, 'c_comment': 1}
+ D       n=  8 標本 a=0.62 b=0.12 c=0.25 d=0.00 | 重み付き a=0.83 b=0.06 c=0.11 d=0.00 | {'a1': 4, 'c_comment': 2, 'b': 1, 'a0': 1}
+ X       n=  1 標本 a=1.00 b=0.00 c=0.00 d=0.00 | 重み付き a=1.00 b=0.00 c=0.00 d=0.00 | {'a0': 1}
+
+== aidev v1 細分類(各行: n / 標本比率 a,b,c,d / 重み付き a,b,c,d / サブ分類)
+ K-pub   n=  2 標本 a=0.00 b=0.50 c=0.50 d=0.00 | 重み付き a=0.00 b=0.50 c=0.50 d=0.00 | {'b_byauthor': 1, 'c_comment': 1}
+ K-priv  n=  2 標本 a=0.00 b=1.00 c=0.00 d=0.00 | 重み付き a=0.00 b=1.00 c=0.00 d=0.00 | {'b': 1, 'b_byauthor': 1}
+ R-tech  n=  6 標本 a=0.50 b=0.17 c=0.17 d=0.17 | 重み付き a=0.77 b=0.08 c=0.08 d=0.08 | {'a1': 2, 'a0': 1, 'b': 1, 'd_botclose': 1, 'c_comment': 1}
+ D-dir   n=  8 標本 a=0.62 b=0.12 c=0.25 d=0.00 | 重み付き a=0.83 b=0.06 c=0.11 d=0.00 | {'a1': 4, 'c_comment': 2, 'b': 1, 'a0': 1}
+
+== ghhuman v0(多数決) H/C(各行: n / 標本比率 a,b,c,d / 重み付き a,b,c,d / サブ分類)
+ H       n= 38 標本 a=0.13 b=0.26 c=0.37 d=0.24 | 重み付き a=0.32 b=0.17 c=0.28 d=0.24 | {'d_botclose': 7, 'b': 2, 'a1': 5, 'c_comment': 10, 'c_comment_byauthor': 4, 'd_open': 2, 'b_byauthor': 8}
+ C       n= 51 標本 a=0.53 b=0.02 c=0.22 d=0.24 | 重み付き a=0.69 b=0.01 c=0.07 d=0.23 | {'a1': 27, 'c_comment_byauthor': 9, 'd_open': 8, 'c_comment': 2, 'd_botclose': 4, 'b_byauthor': 1}
+ other   n= 11 標本 a=0.64 b=0.09 c=0.09 d=0.18 | 重み付き a=0.87 b=0.03 c=0.03 d=0.07 | {'a1': 7, 'c_comment': 1, 'd_botclose': 2, 'b_byauthor': 1}
+
+== ghhuman v1 群(C は v1 の C + v0 多数決 C)(各行: n / 標本比率 a,b,c,d / 重み付き a,b,c,d / サブ分類)
+ C       n= 61 標本 a=0.48 b=0.05 c=0.21 d=0.26 | 重み付き a=0.67 b=0.02 c=0.08 d=0.23 | {'a1': 29, 'd_botclose': 8, 'c_comment_byauthor': 10, 'd_open': 8, 'c_comment': 3, 'b_byauthor': 3}
+ K       n= 10 標本 a=0.10 b=0.20 c=0.40 d=0.30 | 重み付き a=0.24 b=0.13 c=0.26 d=0.37 | {'d_botclose': 2, 'c_comment': 4, 'a1': 1, 'd_open': 1, 'b_byauthor': 2}
+ R       n=  9 標本 a=0.22 b=0.56 c=0.22 d=0.00 | 重み付き a=0.52 b=0.34 c=0.14 d=0.00 | {'b': 1, 'a1': 2, 'c_comment': 1, 'c_comment_byauthor': 1, 'b_byauthor': 4}
+ D       n= 14 標本 a=0.14 b=0.14 c=0.43 d=0.29 | 重み付き a=0.30 b=0.08 c=0.35 d=0.27 | {'a1': 2, 'c_comment_byauthor': 2, 'd_open': 1, 'd_botclose': 3, 'c_comment': 4, 'b': 1, 'b_byauthor': 1}
+ X       n=  1 標本 a=0.00 b=0.00 c=1.00 d=0.00 | 重み付き a=0.00 b=0.00 c=1.00 d=0.00 | {'c_comment': 1}
+
+== ghhuman v1 細分類(各行: n / 標本比率 a,b,c,d / 重み付き a,b,c,d / サブ分類)
+ K-pub   n=  6 標本 a=0.00 b=0.33 c=0.33 d=0.33 | 重み付き a=0.00 b=0.23 c=0.23 d=0.55 | {'d_botclose': 1, 'd_open': 1, 'b_byauthor': 2, 'c_comment': 2}
+ K-priv  n=  4 標本 a=0.25 b=0.00 c=0.50 d=0.25 | 重み付き a=0.56 b=0.00 c=0.29 d=0.15 | {'c_comment': 2, 'a1': 1, 'd_botclose': 1}
+ R-tech  n=  7 標本 a=0.14 b=0.57 c=0.29 d=0.00 | 重み付き a=0.39 b=0.41 c=0.20 d=0.00 | {'a1': 1, 'c_comment': 1, 'c_comment_byauthor': 1, 'b_byauthor': 4}
+ R-gov   n=  2 標本 a=0.50 b=0.50 c=0.00 d=0.00 | 重み付き a=0.79 b=0.21 c=0.00 d=0.00 | {'b': 1, 'a1': 1}
+ D-dir   n= 10 標本 a=0.20 b=0.00 c=0.40 d=0.40 | 重み付き a=0.41 b=0.00 c=0.22 d=0.37 | {'a1': 2, 'c_comment_byauthor': 2, 'd_open': 1, 'd_botclose': 3, 'c_comment': 2}
+ D-risk  n=  4 標本 a=0.00 b=0.50 c=0.50 d=0.00 | 重み付き a=0.00 b=0.29 c=0.71 d=0.00 | {'c_comment': 2, 'b': 1, 'b_byauthor': 1}
+
+== H−C の差(重み付き、95%CI: 層内 bootstrap / repo クラスタ bootstrap)
+ aidev   H−C (n=18,68) a(merged)      +0.043 CI[-0.077,+0.177] repoCI[-0.262,+0.262]
+ aidev   H−C (n=18,68) b              +0.033 CI[-0.059,+0.139] repoCI[-0.063,+0.174]
+ aidev   H−C (n=18,68) c              -0.049 CI[-0.199,+0.091] repoCI[-0.236,+0.195]
+ aidev   H−C (n=18,68) d              -0.027 CI[-0.109,+0.063] repoCI[-0.115,+0.065]
+ aidev   H−C (n=18,68) b+c(人間close)   -0.016 CI[-0.145,+0.098] repoCI[-0.222,+0.277]
+ aidev   H−C (n=18,68) CR後コミット        -0.144 CI[-0.379,+0.047] repoCI[-0.419,+0.051]
+ aidev   D−C (n=8,75) a(merged)      +0.189 CI[+0.066,+0.329] repoCI[-0.149,+0.396]
+ aidev   D−C (n=8,75) b              +0.003 CI[-0.078,+0.116] repoCI[-0.083,+0.187]
+ aidev   D−C (n=8,75) c              -0.119 CI[-0.264,+0.020] repoCI[-0.291,+0.151]
+ aidev   D−C (n=8,75) d              -0.073 CI[-0.149,-0.012] repoCI[-0.150,-0.013]
+ aidev   D−C (n=8,75) b+c(人間close)   -0.116 CI[-0.250,-0.004] repoCI[-0.313,+0.212]
+ aidev   D−C (n=8,75) CR後コミット        -0.030 CI[-0.158,+0.105] repoCI[-0.255,+0.113]
+ aidev   R−C (n=6,75) a(merged)      +0.133 CI[+0.045,+0.241] repoCI[-0.312,+0.367]
+ aidev   R−C (n=6,75) b              +0.022 CI[-0.078,+0.166] repoCI[-0.083,+0.294]
+ aidev   R−C (n=6,75) c              -0.156 CI[-0.291,-0.005] repoCI[-0.322,+0.120]
+ aidev   R−C (n=6,75) d              +0.002 CI[-0.129,+0.147] repoCI[-0.130,+0.266]
+ aidev   R−C (n=6,75) b+c(人間close)   -0.135 CI[-0.284,-0.006] repoCI[-0.326,+0.260]
+ aidev   R−C (n=6,75) CR後コミット        -0.250 CI[-0.693,+0.103] repoCI[-0.713,+0.107]
+ aidev   K−C (n=4,75) a(merged)      -0.641 CI[-0.729,-0.538] repoCI[-0.754,-0.501]
+ aidev   K−C (n=4,75) b              +0.696 CI[+0.196,+0.970] repoCI[+0.199,+0.970]
+ aidev   K−C (n=4,75) c              +0.018 CI[-0.293,+0.530] repoCI[-0.314,+0.521]
+ aidev   K−C (n=4,75) d              -0.073 CI[-0.149,-0.012] repoCI[-0.152,-0.012]
+ aidev   K−C (n=4,75) b+c(人間close)   +0.714 CI[+0.632,+0.788] repoCI[+0.593,+0.813]
+ aidev   K−C (n=4,75) CR後コミット        -0.417 CI[-0.932,+0.085] repoCI[-0.933,+0.082]
+ ghhuman H−C (n=38,51) a(merged)      -0.374 CI[-0.576,-0.183] repoCI[-0.609,-0.143]
+ ghhuman H−C (n=38,51) b              +0.159 CI[+0.076,+0.248] repoCI[+0.056,+0.317]
+ ghhuman H−C (n=38,51) c              +0.204 CI[+0.075,+0.370] repoCI[+0.037,+0.380]
+ ghhuman H−C (n=38,51) d              +0.011 CI[-0.187,+0.228] repoCI[-0.195,+0.203]
+ ghhuman H−C (n=38,51) b+c(人間close)   +0.363 CI[+0.244,+0.516] repoCI[+0.181,+0.573]
+ ghhuman H−C (n=38,51) CR後コミット        -0.441 CI[-0.617,-0.280] repoCI[-0.659,-0.244]
+ ghhuman D−C (n=14,61) a(merged)      -0.368 CI[-0.693,-0.055] repoCI[-0.721,-0.003]
+ ghhuman D−C (n=14,61) b              +0.061 CI[-0.024,+0.174] repoCI[-0.026,+0.194]
+ ghhuman D−C (n=14,61) c              +0.270 CI[+0.028,+0.596] repoCI[-0.013,+0.618]
+ ghhuman D−C (n=14,61) d              +0.037 CI[-0.233,+0.372] repoCI[-0.216,+0.343]
+ ghhuman D−C (n=14,61) b+c(人間close)   +0.331 CI[+0.095,+0.639] repoCI[+0.057,+0.657]
+ ghhuman D−C (n=14,61) CR後コミット        -0.447 CI[-0.755,-0.133] repoCI[-0.786,-0.057]
+ ghhuman R−C (n=9,61) a(merged)      -0.148 CI[-0.264,-0.033] repoCI[-0.714,+0.244]
+ ghhuman R−C (n=9,61) b              +0.324 CI[+0.169,+0.467] repoCI[+0.081,+0.736]
+ ghhuman R−C (n=9,61) c              +0.058 CI[-0.091,+0.219] repoCI[-0.094,+0.249]
+ ghhuman R−C (n=9,61) d              -0.233 CI[-0.355,-0.123] repoCI[-0.366,-0.114]
+ ghhuman R−C (n=9,61) b+c(人間close)   +0.382 CI[+0.357,+0.412] repoCI[+0.019,+0.914]
+ ghhuman R−C (n=9,61) CR後コミット        -0.357 CI[-0.461,-0.208] repoCI[-0.842,-0.041]
+ ghhuman K−C (n=10,61) a(merged)      -0.426 CI[-0.739,-0.113] repoCI[-0.758,-0.016]
+ ghhuman K−C (n=10,61) b              +0.110 CI[-0.024,+0.296] repoCI[-0.028,+0.390]
+ ghhuman K−C (n=10,61) c              +0.177 CI[-0.021,+0.357] repoCI[-0.068,+0.565]
+ ghhuman K−C (n=10,61) d              +0.139 CI[-0.234,+0.504] repoCI[-0.245,+0.534]
+ ghhuman K−C (n=10,61) b+c(人間close)   +0.287 CI[+0.113,+0.421] repoCI[+0.016,+0.765]
+ ghhuman K−C (n=10,61) CR後コミット        -0.331 CI[-0.476,-0.157] repoCI[-0.812,-0.084]
+
+== a12 との突合(ghhuman、v0 H/C、標本比率・重みなし、スナップショット結末)
+ H n=38 snapshot closed 0.79 現在 b+c 0.63 CR後コミット(pilot) 0.37
+ C n=51 snapshot closed 0.31 現在 b+c 0.24 CR後コミット(pilot) 0.88
+== 同じことを aidev で
+ H n=18 snapshot closed 0.67 現在 b+c 0.50 CR後コミット 0.72
+ C n=68 snapshot closed 0.49 現在 b+c 0.51 CR後コミット 0.88
+
+== 層内(スナップショット結末の層ごと)で H/C を比較(層化抽出の影響を除く)
+ aidev   closed     H n=12 {'a0': 2, 'b': 2, 'b_byauthor': 1, 'c_comment': 6, 'd_botclose': 1}
+ aidev   closed     C n=33 {'b': 9, 'c_comment': 21, 'c_comment_byauthor': 1, 'd_botclose': 2}
+ aidev   not_closed H n= 6 {'a0': 1, 'a1': 5}
+ aidev   not_closed C n=35 {'a0': 1, 'a1': 28, 'c_comment': 4, 'd_botclose': 1, 'd_open': 1}
+ ghhuman closed     H n=30 {'b': 2, 'b_byauthor': 8, 'c_comment': 9, 'c_comment_byauthor': 4, 'd_botclose': 7}
+ ghhuman closed     C n=16 {'b_byauthor': 1, 'c_comment': 2, 'c_comment_byauthor': 9, 'd_botclose': 4}
+ ghhuman not_closed H n= 8 {'a1': 5, 'c_comment': 1, 'd_open': 2}
+ ghhuman not_closed C n=35 {'a1': 27, 'd_open': 8}
+
+== 交絡: PR サイズ(追加+削除行、全体の三分位)で層別した b+c 率(重み付き)、Mantel-Haenszel 型の重み付き差
+ aidev 三分位境界 [141.0, 426.0]
+   小 H n=7 b+c 0.42 | C n=22 b+c 0.27
+   中 H n=6 b+c 0.23 | C n=20 b+c 0.20
+   大 H n=3 b+c 0.18 | C n=25 b+c 0.41
+   サイズ層別の重み付き差 H−C +0.023
+   サイズ中央値 H 162 C 222
+ ghhuman 三分位境界 [101.0, 476.0]
+   小 H n=12 b+c 0.61 | C n=18 b+c 0.03
+   中 H n=15 b+c 0.34 | C n=14 b+c 0.14
+   大 H n=11 b+c 0.45 | C n=19 b+c 0.10
+   サイズ層別の重み付き差 H−C +0.378
+   サイズ中央値 H 164 C 239
+
+== 交絡: repo(H と C の両方を含む repo に限定 / repo ごとに1件に間引き 200 回平均)
+ aidev 両方ある repo なし
+ aidev repo 1件間引き(repo 数 81)H−C b+c 差 平均 -0.032(200 回の 2.5–97.5% -0.043..-0.019)
+ ghhuman 両方ある repo 18 件、H n=29 b+c 0.47 / C n=32 b+c 0.09
+ ghhuman repo 1件間引き(repo 数 32)H−C b+c 差 平均 +0.276(200 回の 2.5–97.5% +0.093..+0.465)

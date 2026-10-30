@@ -1,0 +1,10 @@
+{"sid": "G061", "up": "U4", "dec": "NA", "req_quote": "", "rev_quote": "Address comments."}
+{"sid": "G062", "up": "U3", "dec": "NA", "req_quote": "", "rev_quote": "PreserveEntitiesHtmlMarkupFormatter should be removed, new formatter should be opt-in via options"}
+{"sid": "G063", "up": "U3", "dec": "Y", "req_quote": "", "rev_quote": "I don't think you need to add --no-wallet here"}
+{"sid": "G064", "up": "U1", "dec": "Y", "req_quote": "feels more natural to use when a user uses arrow keys for navigation and backspacing for deletions", "rev_quote": "Still having issue of the cursor being trapped within the element when hitting the left arrow."}
+{"sid": "G065", "up": "U4", "dec": "NA", "req_quote": "", "rev_quote": "."}
+{"sid": "G066", "up": "U1", "dec": "NA", "req_quote": "the experimental API currently duplicates command definitions from index.ts, creating a maintenance burden", "rev_quote": "This is a lot of duplication. Can you think of a way to expose this without any duplication?"}
+{"sid": "G067", "up": "U1", "dec": "Y", "req_quote": "look at the logic that prioritizes static class members over prototypal Function members in classes", "rev_quote": "check that its binding parent is an interface declaration in the global scope named Function or CallableFunction"}
+{"sid": "G068", "up": "U3", "dec": "NA", "req_quote": "", "rev_quote": "When I run dev server or deploy to Cloudflare, the landing page is empty"}
+{"sid": "G069", "up": "U3", "dec": "N", "req_quote": "", "rev_quote": "This is not a reliable way to build cleanedText; instead use the forAnsiStringParts function"}
+{"sid": "G070", "up": "U3", "dec": "N", "req_quote": "", "rev_quote": "the tests are failing now, likely the globalWindow approach doesn't work in preload with contextIsolation:false"}

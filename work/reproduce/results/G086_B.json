@@ -1,0 +1,41 @@
+{
+ "text": "1. `test_all.ts` — reading `process.argv.slice(2)` as the filter breaks `test_all.js` when invoked with other CLI args (e.g. existing CI/launch scripts that pass flags to `test_all.js` directly), and silently treats any stray argument as a test filter with no opt-in flag. Fix: use a dedicated flag (e.g. `--filter=<name>` or `--grep`) parsed explicitly, not \"every positional arg is a filter,\" so unrelated args aren't misinterpreted.\n\n2. `package.json` `test` / `test-only` scripts — switching to `sh -c '... \"$@\" ...' --` to forward args breaks on Windows where `sh` isn't guaranteed to be present/behave the same (this project supports Windows dev per CI config), and bakes a nontrivial amount of shell logic into a JSON script string that's hard to read/maintain and impossible to lint. Fix: move the arg-passing and grammar-skip logic into a small Node/TS script (or into `test_all.ts`/`test_runner.ts` directly) invoked from a plain `npm run` chain, so it's cross-platform and testable.\n\n3. `test_runner.ts` glob pattern `**/*${testFilter}*.test.js` — `testFilter` is interpolated directly into a glob pattern without escaping glob metacharacters (`*`, `?`, `[`, `(`, etc.), so a filter containing those characters produces confusing or broken matches instead of a literal substring match. Fix: either escape glob-special characters before interpolating, or switch to filtering the full file list by plain substring match (`files.filter(f => f.includes(testFilter))`) rather than building a dynamic glob.\n\n4. `test_runner.ts` filter semantics vs. AGENTS.md/PR description — the described feature is \"run individual test files,\" but the implementation filters by substring over the whole relative path (including directory names), so e.g. `npm test debug` would match every test file under a `debug/` folder, not just a specific file; this is undocumented and may surprise users expecting Mocha-style `--grep` (by test title) vs. filename filtering. Fix: document the exact matching semantics in README/AGENTS.md and consider filename-only matching (basename) instead of full relative path to reduce accidental matches.\n\n5. `test_runner.ts` \"no matches found\" path — it resolves successfully and the script exits 0 for a typo'd filter, which can mask a mistake (CI or a dev silently thinks tests passed when nothing ran). Fix: either return a non-zero/distinct result or at least log a clearly visible warning distinguishing \"0 tests run, filter typo?\" from \"all tests passed,\" especially since this touches `test_all.js`'s overall exit-code logic across multiple bot runs.\n\n6. Scope/interaction with `BOT` env var and the multi-suite `runAllTests` loop in `test_all.ts` — the filter is applied globally via one `DART_CODE_TEST_FILTER` env var across every `runTests(...)` call in `runAllTests`, including suites unrelated to the filter (flutter, debug, misc, etc.), each of which will redundantly download/launch VS Code and report \"no matches\" per suite. Fix: either short-circuit `runAllTests` to skip suites where the filter can't match, or document that users must also set `BOT=dart` (as shown in the examples) and clarify this is required, not just a convenience.\n\n7. `package.json` `test-only` script — grammar-test skipping is decided by `[ $# -eq 0 ]` inside the `sh -c` for `test-only`, but `test` wraps `test-only` through another `sh -c \"$@\"` layer; args forwarding through two nested `npm run` + `sh -c \"$@\" --` hops is fragile (quoting of filters with spaces, e.g. \"go to\" two-word filters mentioned in the PR, is not verified) and not covered by any test. Fix: add verification (or at least a one-line note) that multi-word/space-containing filters survive both layers of `\"$@\"` forwarding intact.",
+ "cost": 0.1008668,
+ "sec": 17.9,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 20518,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 1349,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 20518,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1349,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 20518,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 20518
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G086",
+ "cond": "B"
+}

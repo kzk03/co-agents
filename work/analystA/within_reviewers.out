@@ -1,0 +1,53 @@
+== (1) within 標本 158 Counter({'AG': 50, 'HU': 50, 'AO': 37, 'HO': 21})
+ レビュアー数 94  両方に CR がある人 19  その CR 件数 56
+   naspirato {'A': 4, 'H': 1} [('W007', 'AO', 'ydb-platform/ydb', 'H2'), ('W033', 'HO', 'ydb-platform/ydb', 'C2'), ('W056', 'AO', 'ydb-platform/ydb', 'C2'), ('W110', 'AO', 'ydb-platform/ydb', 'H2'), ('W139', 'AO', 'ydb-platform/ydb', 'H2')]
+   maximyurchuk {'A': 2, 'H': 2} [('W048', 'AO', 'ydb-platform/ydb', 'UNK'), ('W057', 'HO', 'ydb-platform/ydb', 'UNK'), ('W085', 'AO', 'ydb-platform/ydb', 'H2'), ('W131', 'HO', 'ydb-platform/ydb', 'NOAGREE')]
+   adegeo {'A': 2, 'H': 2} [('W081', 'AO', 'dotnet/docs', 'C3'), ('W089', 'HO', 'dotnet/docs', 'NOAGREE'), ('W136', 'HO', 'dotnet/docs', 'C2'), ('W158', 'AO', 'dotnet/docs', 'NOAGREE')]
+   mdegat01 {'A': 2, 'H': 1} [('W002', 'AG', 'home-assistant/core', 'H1'), ('W038', 'HU', 'home-assistant/core', 'H2'), ('W130', 'AG', 'home-assistant/core', 'H2')]
+   awanlin {'H': 1, 'A': 2} [('W003', 'HU', 'backstage/backstage', 'C3'), ('W069', 'AG', 'backstage/backstage', 'C2'), ('W150', 'AG', 'backstage/backstage', 'C3')]
+   abmantis {'A': 1, 'H': 2} [('W011', 'AG', 'home-assistant/core', 'H1'), ('W054', 'HU', 'home-assistant/core', 'H4'), ('W088', 'HU', 'home-assistant/core', 'H1')]
+   jkotas {'H': 2, 'A': 1} [('W021', 'HO', 'dotnet/runtime', 'H1'), ('W137', 'HO', 'dotnet/runtime', 'C2'), ('W157', 'AO', 'dotnet/runtime', 'UNK')]
+   freben {'H': 2, 'A': 1} [('W032', 'HU', 'backstage/backstage', 'C2'), ('W091', 'AG', 'backstage/backstage', 'C1'), ('W149', 'HU', 'backstage/backstage', 'M')]
+   MartinHjelmare {'A': 1, 'H': 2} [('W044', 'AG', 'home-assistant/core', 'C2'), ('W078', 'HU', 'home-assistant/core', 'C2'), ('W146', 'HU', 'home-assistant/core', 'C2')]
+   arturpragacz {'A': 2, 'H': 1} [('W058', 'AG', 'home-assistant/core', 'C2'), ('W135', 'AG', 'home-assistant/core', 'H1'), ('W145', 'HU', 'home-assistant/core', 'C1')]
+   Rugvip {'A': 1, 'H': 2} [('W060', 'AG', 'backstage/backstage', 'H2'), ('W096', 'HU', 'backstage/backstage', 'C1'), ('W147', 'HU', 'backstage/backstage', 'H2')]
+   justanotherariel {'H': 2, 'A': 1} [('W066', 'HU', 'home-assistant/core', 'C1'), ('W084', 'HU', 'home-assistant/core', 'H2'), ('W155', 'AG', 'home-assistant/core', 'C1')]
+   allenporter {'A': 1, 'H': 2} [('W092', 'AG', 'home-assistant/core', 'H2'), ('W106', 'HU', 'home-assistant/core', 'H1'), ('W125', 'HU', 'home-assistant/core', 'H1')]
+   pseudo-rnd-thoughts {'H': 2, 'A': 1} [('W098', 'HU', 'ray-project/ray', 'NOAGREE'), ('W108', 'HU', 'ray-project/ray', 'C2'), ('W153', 'AG', 'ray-project/ray', 'C3')]
+   agocke {'H': 1, 'A': 1} [('W017', 'HO', 'dotnet/runtime', 'H3'), ('W083', 'AO', 'dotnet/docs', 'C2')]
+   elliot-barn {'H': 1, 'A': 1} [('W019', 'HU', 'ray-project/ray', 'H2'), ('W035', 'AG', 'ray-project/ray', 'C1')]
+   BillWagner {'H': 1, 'A': 1} [('W031', 'HO', 'dotnet/docs', 'C2'), ('W103', 'AO', 'dotnet/docs', 'C1')]
+   goutamvenkat-anyscale {'A': 1, 'H': 1} [('W093', 'AG', 'ray-project/ray', 'C2'), ('W132', 'HU', 'ray-project/ray', 'UNK')]
+   sidsingh-nvidia {'H': 1, 'A': 1} [('W097', 'HU', 'NVIDIA/Megatron-LM', 'C1'), ('W119', 'AG', 'NVIDIA/Megatron-LM', 'C2')]
+ 有効ラベルが両側にある人 16
+   mdegat01: エージェント側 H 2/2 人間側 H 1/1
+   awanlin: エージェント側 H 0/2 人間側 H 0/1
+   naspirato: エージェント側 H 3/4 人間側 H 0/1
+   abmantis: エージェント側 H 1/1 人間側 H 2/2
+   agocke: エージェント側 H 0/1 人間側 H 1/1
+   elliot-barn: エージェント側 H 0/1 人間側 H 1/1
+   BillWagner: エージェント側 H 0/1 人間側 H 0/1
+   freben: エージェント側 H 0/1 人間側 H 0/2
+   MartinHjelmare: エージェント側 H 0/1 人間側 H 0/2
+   arturpragacz: エージェント側 H 1/2 人間側 H 0/1
+   Rugvip: エージェント側 H 1/1 人間側 H 1/2
+   justanotherariel: エージェント側 H 0/1 人間側 H 1/2
+   adegeo: エージェント側 H 0/1 人間側 H 0/1
+   allenporter: エージェント側 H 1/1 人間側 H 2/2
+   sidsingh-nvidia: エージェント側 H 0/1 人間側 H 0/1
+   pseudo-rnd-thoughts: エージェント側 H 0/1 人間側 H 0/1
+
+== (2) pilot 全体
+ 生データの CHANGES_REQUESTED 総数(ボット含む) 6720
+ 人間 CR ブロック 5918 Counter({'none': 4321, 'weak': 1134, 'strong': 463})
+ [strong のみ / 全 repo 通算] 両方ある単位 72(全 476)  その CR: エージェント 431/463 件, 人間 3371 件 | 両側2件以上 32
+ [strong のみ / 同一 repo 内] 両方ある単位 72(全 476)  その CR: エージェント 431/463 件, 人間 3371 件 | 両側2件以上 32
+   repo 別(単位数): [('home-assistant/core', 29), ('getsentry/sentry', 11), ('ray-project/ray', 9), ('NVIDIA/Megatron-LM', 5), ('backstage/backstage', 5), ('grafana/grafana', 4), ('espressif/arduino-esp32', 2), ('pytorch/pytorch', 2), ('PaddlePaddle/Paddle', 1), ('apache/airflow', 1)]
+   上位(エージェント件数順): [('joostlek', 'home-assistant/core', 144, 1225), ('erwindouna', 'home-assistant/core', 59, 395), ('MartinHjelmare', 'home-assistant/core', 25, 158), ('frenck', 'home-assistant/core', 21, 125), ('epenet', 'home-assistant/core', 12, 75), ('balloob', 'home-assistant/core', 10, 32), ('awanlin', 'backstage/backstage', 9, 108), ('abmantis', 'home-assistant/core', 9, 160), ('edenhaus', 'home-assistant/core', 8, 50), ('Rugvip', 'backstage/backstage', 7, 75)]
+ [strong+weak / 全 repo 通算] 両方ある単位 130(全 516)  その CR: エージェント 1519/1597 件, 人間 3693 件 | 両側2件以上 68
+ [strong+weak / 同一 repo 内] 両方ある単位 129(全 517)  その CR: エージェント 1518/1597 件, 人間 3692 件 | 両側2件以上 68
+   repo 別(単位数): [('home-assistant/core', 45), ('ray-project/ray', 15), ('getsentry/sentry', 12), ('backstage/backstage', 9), ('NVIDIA/Megatron-LM', 6), ('pytorch/pytorch', 6), ('apache/airflow', 5), ('grafana/grafana', 5), ('SigNoz/signoz', 3), ('ceph/ceph', 3)]
+   上位(エージェント件数順): [('joostlek', 'home-assistant/core', 545, 1225), ('erwindouna', 'home-assistant/core', 164, 395), ('MartinHjelmare', 'home-assistant/core', 83, 158), ('abmantis', 'home-assistant/core', 55, 160), ('epenet', 'home-assistant/core', 39, 75), ('zweckj', 'home-assistant/core', 38, 164), ('frenck', 'home-assistant/core', 37, 125), ('Rugvip', 'backstage/backstage', 35, 75), ('allenporter', 'home-assistant/core', 34, 60), ('emontnemery', 'home-assistant/core', 32, 74)]
+
+== strong / 同一 repo 内の重なりのうち home-assistant/core の比重
+ エージェント側 CR 431 件のうち HA 360 (0.835); 非 HA の単位 43、非 HA エージェント CR 71、非 HA で両側2件以上 11

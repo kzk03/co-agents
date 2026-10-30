@@ -1,0 +1,120 @@
+取得: Counter({(True, 'cache'): 56, (True, 'graphql baseRefOid'): 11, (False, None): 3})  既存キャッシュ(base.sha)と文書有無の不一致 []
+
+== (1)(2) カテゴリ別: base 時点の文書あり / 書かれていた(written-repo)/ 外部に書かれていた / sonnet yes|partial
+cat       n   取得      AGENTS系あり   CONTRIBUTINGあり         いずれかあり  written-repo elsewhere sonnet yes/partial
+C        17   16    8/16 (0.50)     12/16 (0.75)   15/16 (0.94)   0/17 (0.00)         0        0/7
+K-pub     8    8     7/8 (0.88)       7/8 (0.88)     8/8 (1.00)    0/8 (0.00)         0        0/8
+K-priv    6    6     2/6 (0.33)       4/6 (0.67)     4/6 (0.67)    1/6 (0.17)         0        1/6
+R-tech   13   12    7/12 (0.58)     10/12 (0.83)   11/12 (0.92)   2/13 (0.15)         1        2/12
+R-gov     2    2     2/2 (1.00)       2/2 (1.00)     2/2 (1.00)    1/2 (0.50)         1        1/2
+D-dir    18   17    7/17 (0.41)     12/17 (0.71)   13/17 (0.76)   0/18 (0.00)         0        2/17
+D-risk    4    4     3/4 (0.75)       4/4 (1.00)     4/4 (1.00)    0/4 (0.00)         0        0/4
+X         2    2     1/2 (0.50)       0/2 (0.00)     1/2 (0.50)    0/2 (0.00)         0        0/0
+K計       14   14    9/14 (0.64)     11/14 (0.79)   12/14 (0.86)   1/14 (0.07)         0        1/14
+R計       15   14    9/14 (0.64)     12/14 (0.86)   13/14 (0.93)   3/15 (0.20)         2        3/14
+D計       22   21   10/21 (0.48)     16/21 (0.76)   17/21 (0.81)   0/22 (0.00)         0        2/21
+KRD計     51   49   28/49 (0.57)     39/49 (0.80)   42/49 (0.86)   4/51 (0.08)         2        6/49
+全体       70   67   37/67 (0.55)     51/67 (0.76)   58/67 (0.87)   4/70 (0.06)         2        6/56
+aidev    26   23   11/23 (0.48)     12/23 (0.52)   18/23 (0.78)   2/26 (0.08)         1        2/17
+ghhuman  44   44   26/44 (0.59)     39/44 (0.89)   40/44 (0.91)   2/44 (0.05)         1        4/39
+repo 単位 C: いずれかあり 14/15  AGENTS系あり 8/15
+repo 単位 K: いずれかあり 11/13  AGENTS系あり 8/13
+repo 単位 R: いずれかあり 10/11  AGENTS系あり 7/11
+repo 単位 D: いずれかあり 14/18  AGENTS系あり 7/18
+
+== 書かれていたのに無視された件(doc_status=written-repo、または sonnet=yes)
+ G027 rsyslog/rsyslog v1=K-priv doc_status=written-repo sonnet=yes 現在の結末=closed 経過=b AGENTS系=True CONTRIB=True
+ G094 Azure/azure-sdk-for-rust v1=R-tech doc_status=written-repo sonnet=yes 現在の結末=closed 経過=c AGENTS系=True CONTRIB=True
+ H024 pytorch/pytorch v1=R-tech doc_status=written-repo sonnet=yes 現在の結末=closed 経過=c AGENTS系=False CONTRIB=True
+ H052 ghostty-org/ghostty v1=R-gov doc_status=written-repo sonnet=partial 現在の結末=merged 経過=a AGENTS系=True CONTRIB=True
+
+== (3) CR から 180 日以内の更新(窓が完了した件 / 全件)
+cat       窓完了n     AGENTS系更新      うち新規作成    CONTRIB更新       いずれか更新       関連内容追加(kw≥2)     厳格(並べ替え95%超)
+C           14   7/14 (0.50)           4  4/14 (0.29) 10/14 (0.71)        4/14 (0.29)      2/14 (0.14)   | 全件(窓途中含む) n=16 更新 11 関連 4
+K-pub        6    5/6 (0.83)           1   2/6 (0.33)   5/6 (0.83)         4/6 (0.67)       0/6 (0.00)   | 全件(窓途中含む) n=8 更新 7 関連 4
+K-priv       5    3/5 (0.60)           2   1/5 (0.20)   3/5 (0.60)         2/5 (0.40)       1/5 (0.20)   | 全件(窓途中含む) n=6 更新 3 関連 2
+R-tech       9    8/9 (0.89)           5   6/9 (0.67)   8/9 (0.89)         6/9 (0.67)       2/9 (0.22)   | 全件(窓途中含む) n=12 更新 11 関連 7
+R-gov        1    1/1 (1.00)           1   1/1 (1.00)   1/1 (1.00)         0/1 (0.00)       0/1 (0.00)   | 全件(窓途中含む) n=2 更新 2 関連 0
+D-dir       14   6/14 (0.43)           5  5/14 (0.36)  7/14 (0.50)        4/14 (0.29)      1/14 (0.07)   | 全件(窓途中含む) n=17 更新 10 関連 4
+D-risk       3    2/3 (0.67)           2   2/3 (0.67)   2/3 (0.67)         0/3 (0.00)       0/3 (0.00)   | 全件(窓途中含む) n=4 更新 3 関連 0
+X            2    1/2 (0.50)           0   0/2 (0.00)   1/2 (0.50)         0/2 (0.00)       0/2 (0.00)   | 全件(窓途中含む) n=2 更新 1 関連 0
+K計          11   8/11 (0.73)           3  3/11 (0.27)  8/11 (0.73)        6/11 (0.55)      1/11 (0.09)   | 全件(窓途中含む) n=14 更新 10 関連 6
+R計          10   9/10 (0.90)           6  7/10 (0.70)  9/10 (0.90)        6/10 (0.60)      2/10 (0.20)   | 全件(窓途中含む) n=14 更新 13 関連 7
+D計          17   8/17 (0.47)           7  7/17 (0.41)  9/17 (0.53)        4/17 (0.24)      1/17 (0.06)   | 全件(窓途中含む) n=21 更新 13 関連 4
+全体          54  33/54 (0.61)          20 21/54 (0.39) 37/54 (0.69)       20/54 (0.37)      6/54 (0.11)   | 全件(窓途中含む) n=67 更新 48 関連 21
+
+並べ替え基準(更新のあった 48 件の差分に他 repo の件のキーワードを当てた陽性率): 0.231(n=3263)
+実際の陽性率(更新のあった件): 0.438(n=48)
+
+== 関連内容追加と判定された件(キーワード)
+ 厳格 G002 dotnet/msbuild D-dir 窓完了=True kw=check keep microsoft msbuild names task tasks usage
+      G011 joshuadavidthomas/django-language-server R-tech 窓完了=True kw=anyhow crate else needed result returning server
+ 厳格 G024 collinbarrett/FilterLists R-tech 窓完了=True kw=broken different filterlistviewurl filterlistviewurls flavors intended mirrors multiple parts single
+      G027 rsyslog/rsyslog K-priv 窓完了=True kw=keep modules
+      G071 bugsink/bugsink C2 窓完了=True kw=around gives overly verbose
+ 厳格 G075 codeceptjs/CodeceptJS R-tech 窓完了=True kw=implementation inside output runs
+      G079 deepmodeling/deepmd-kit K-pub 窓完了=True kw=backend environment tensorflow training
+      G083 dotnet/sdk K-pub 窓完了=True kw=built framework
+      G087 microsoft/azure-pipelines-tasks D-dir 窓完了=True kw=extend microsoft optional version
+      G093 OrchardCMS/OrchardCore R-tech 窓完了=True kw=manager needed
+      G094 Azure/azure-sdk-for-rust R-tech 窓完了=True kw=generated typespec
+ 厳格 G098 Dart-Code/Dart-Code C1 窓完了=True kw=running windows
+ 厳格 H003 apache/airflow C2 窓完了=True kw=appropriate entire generate note refactor rename required support usage
+      H007 backstage/backstage K-pub 窓完了=True kw=backstage last original
+ 厳格 H022 apache/airflow K-priv 窓完了=True kw=action design direct duplicate field information logic message move section
+      H036 istio/istio C1 窓完了=True kw=istio service
+      H064 getsentry/sentry K-pub 窓完了=True kw=data requests response
+      H065 backstage/backstage D-dir 窓完了=True kw=creating specific
+      H075 dotnet/runtime R-tech 窓完了=True kw=compiler input inputs
+      H086 pytorch/pytorch R-tech 窓完了=False kw=assessment views
+      H090 apache/airflow D-dir 窓完了=True kw=chart delete helm newsfragment versions
+
+== 更新があった件の一覧(cat, 更新コミット数, ヒット語)
+ C       G046 dotnet/sdk                                    commits=  9 新規AGENTS系=False hits=0 []
+ C       G055 microsoft/vscode-pull-request-github          commits=  1 新規AGENTS系=False hits=0 []
+ C       G071 bugsink/bugsink                               commits=  9 新規AGENTS系=True hits=4 [around gives overly verbose]
+ C       G098 Dart-Code/Dart-Code                           commits=  9 新規AGENTS系=True hits=2 [running windows]
+ C       H003 apache/airflow                                commits= 42 新規AGENTS系=False hits=9 [appropriate entire generate note refactor rename required support usage]
+ C       H036 istio/istio                                   commits=  1 新規AGENTS系=True hits=2 [istio service]
+ C       H069 ceph/ceph                                     commits=  3 新規AGENTS系=False hits=1 [merge]
+ C       H073 gradle/gradle                                 commits=  6 新規AGENTS系=False hits=0 []
+ C       H074 python/cpython                                commits=  1 新規AGENTS系=True hits=1 [tools]
+ C       H096 tgstation/tgstation                           commits=  2 新規AGENTS系=False hits=0 []
+ C       H097 dotnet/runtime                                commits=  3 新規AGENTS系=False hits=0 []
+ D-dir   G002 dotnet/msbuild                                commits=  6 新規AGENTS系=True hits=8 [check keep microsoft msbuild names task tasks usage]
+ D-dir   G029 firecrawl/firecrawl                           commits= 12 新規AGENTS系=True hits=0 []
+ D-dir   G087 microsoft/azure-pipelines-tasks               commits=  1 新規AGENTS系=True hits=4 [extend microsoft optional version]
+ D-dir   H028 open-telemetry/opentelemetry-collector-contrib commits=  8 新規AGENTS系=False hits=0 []
+ D-dir   H034 ydb-platform/ydb                              commits=  7 新規AGENTS系=False hits=0 []
+ D-dir   H047 tgstation/tgstation                           commits=  3 新規AGENTS系=False hits=0 []
+ D-dir   H065 backstage/backstage                           commits= 18 新規AGENTS系=True hits=2 [creating specific]
+ D-dir   H085 backstage/backstage                           commits= 12 新規AGENTS系=False hits=1 [backstage]
+ D-dir   H088 grafana/grafana                               commits= 19 新規AGENTS系=False hits=0 []
+ D-dir   H090 apache/airflow                                commits= 49 新規AGENTS系=True hits=5 [chart delete helm newsfragment versions]
+ D-risk  H051 ghostty-org/ghostty                           commits=  7 新規AGENTS系=True hits=0 []
+ D-risk  H076 ghostty-org/ghostty                           commits=  7 新規AGENTS系=True hits=0 []
+ D-risk  H080 ydb-platform/ydb                              commits=  8 新規AGENTS系=False hits=0 []
+ K-priv  G027 rsyslog/rsyslog                               commits= 20 新規AGENTS系=True hits=2 [keep modules]
+ K-priv  H022 apache/airflow                                commits= 42 新規AGENTS系=False hits=10 [action design direct duplicate field information logic message move section]
+ K-priv  H095 python/cpython                                commits=  1 新規AGENTS系=True hits=0 []
+ K-pub   G079 deepmodeling/deepmd-kit                       commits=  7 新規AGENTS系=True hits=4 [backend environment tensorflow training]
+ K-pub   G083 dotnet/sdk                                    commits=  9 新規AGENTS系=False hits=2 [built framework]
+ K-pub   H007 backstage/backstage                           commits= 10 新規AGENTS系=False hits=3 [backstage last original]
+ K-pub   H059 istio/istio                                   commits=  1 新規AGENTS系=False hits=0 []
+ K-pub   H064 getsentry/sentry                              commits= 19 新規AGENTS系=False hits=3 [data requests response]
+ K-pub   H070 apache/airflow                                commits= 44 新規AGENTS系=False hits=0 []
+ K-pub   H094 open-telemetry/opentelemetry-collector-contrib commits=  7 新規AGENTS系=False hits=1 [minimal]
+ R-gov   H004 home-assistant/core                           commits=  8 新規AGENTS系=False hits=0 []
+ R-gov   H052 ghostty-org/ghostty                           commits= 28 新規AGENTS系=True hits=0 []
+ R-tech  G011 joshuadavidthomas/django-language-server      commits= 21 新規AGENTS系=True hits=7 [anyhow crate else needed result returning server]
+ R-tech  G024 collinbarrett/FilterLists                     commits=  4 新規AGENTS系=False hits=10 [broken different filterlistviewurl filterlistviewurls flavors intended mirrors m]
+ R-tech  G075 codeceptjs/CodeceptJS                         commits=  2 新規AGENTS系=True hits=4 [implementation inside output runs]
+ R-tech  G093 OrchardCMS/OrchardCore                        commits=  1 新規AGENTS系=True hits=2 [manager needed]
+ R-tech  G094 Azure/azure-sdk-for-rust                      commits= 10 新規AGENTS系=True hits=2 [generated typespec]
+ R-tech  H024 pytorch/pytorch                               commits= 18 新規AGENTS系=True hits=1 [python]
+ R-tech  H062 home-assistant/core                           commits= 36 新規AGENTS系=False hits=1 [existing]
+ R-tech  H068 grafana/grafana                               commits=  7 新規AGENTS系=False hits=0 []
+ R-tech  H075 dotnet/runtime                                commits= 15 新規AGENTS系=False hits=3 [compiler input inputs]
+ R-tech  H083 home-assistant/core                           commits= 53 新規AGENTS系=False hits=0 []
+ R-tech  H086 pytorch/pytorch                               commits= 49 新規AGENTS系=False hits=2 [assessment views]
+ X       G045 microsoft/vscode-azurefunctions               commits=  2 新規AGENTS系=False hits=0 []

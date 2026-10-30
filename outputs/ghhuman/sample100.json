@@ -1,0 +1,2927 @@
+[
+ {
+  "sid": "H001",
+  "title": "Add quality scale to Tesla Fleet integration",
+  "html_url": "https://github.com/home-assistant/core/pull/160475",
+  "rid": "home-assistant/core#160475#2026-03-12T14:22:32Z#0",
+  "repo": "home-assistant/core",
+  "number": 160475,
+  "pr_author": "Bre77",
+  "reviewer": "joostlek",
+  "submittedAt": "2026-03-12T14:22:32Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 5,
+  "body": "Let's put the things we agree on fixing in the comments inside of the YAML file and get it merged, and we can fix the things in follow up PRs!",
+  "comments": [
+   {
+    "path": "homeassistant/components/tesla_fleet/quality_scale.yaml",
+    "line": null,
+    "originalLine": 7,
+    "body": "please use the shorthand notation when it's done :)"
+   },
+   {
+    "path": "homeassistant/components/tesla_fleet/quality_scale.yaml",
+    "line": 1,
+    "originalLine": 1,
+    "body": "We don't need `CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)` right?"
+   },
+   {
+    "path": "homeassistant/components/tesla_fleet/quality_scale.yaml",
+    "line": null,
+    "originalLine": 5,
+    "body": "I'd remove the last part as I now got confused that you do use custom entity actions, which you don't"
+   },
+   {
+    "path": "homeassistant/components/tesla_fleet/quality_scale.yaml",
+    "line": null,
+    "originalLine": 62,
+    "body": "It would be nice if we can patch the objects where we use them\n```py\n    with patch(\n        f\"tesla_fleet_api.tesla.VehicleFleet.{func}\",\n        return_value=COMMAND_OK,\n    ) as command:\n```"
+   },
+   {
+    "path": "homeassistant/components/tesla_fleet/quality_scale.yaml",
+    "line": null,
+    "originalLine": 62,
+    "body": "nit: `test_climate_offline` can use a hard assert instead of snapshot test"
+   },
+   {
+    "path": "homeassistant/components/tesla_fleet/quality_scale.yaml",
+    "line": 1,
+    "originalLine": 1,
+    "body": "`# Put the vehicle alseep` typo"
+   },
+   {
+    "path": "homeassistant/components/tesla_fleet/quality_scale.yaml",
+    "line": null,
+    "originalLine": 62,
+    "body": "`await async_setup_component(hass, \"homeassistant\", {})` why do we need this?"
+   },
+   {
+    "path": "homeassistant/components/tesla_fleet/quality_scale.yaml",
+    "line": null,
+    "originalLine": 13,
+    "body": "`test_domain_registration_errors`, let's make sure it tests until the CREATE_ENTRY"
+   },
+   {
+    "path": "homeassistant/components/tesla_fleet/quality_scale.yaml",
+    "line": null,
+    "originalLine": 13,
+    "body": "```py\n        with patch(\n            \"homeassistant.helpers.translation.async_get_translations\", return_value={}\n        ):\n```\nI don't think we need this one right"
+   },
+   {
+    "path": "homeassistant/components/tesla_fleet/quality_scale.yaml",
+    "line": null,
+    "originalLine": 13,
+    "body": "Why do we create our own `OAuth2FlowHandler`?"
+   },
+   {
+    "path": "homeassistant/components/tesla_fleet/quality_scale.yaml",
+    "line": null,
+    "originalLine": 13,
+    "body": "```py\n    result = await old_entry.start_reauth_flow(hass)\n\n    flows = hass.config_entries.flow.async_progress()\n    assert len(flows) == 1\n\n    result = await hass.config_entries.flow.async_configure(flows[0][\"flow_id\"], {})\n```\nnit: you can just use the first result to get the flow id :)"
+   },
+   {
+    "path": "homeassistant/components/tesla_fleet/quality_scale.yaml",
+    "line": null,
+    "originalLine": 62,
+    "body": "Can we avoid touching entry.runtime_data in `test_load_unload`?"
+   },
+   {
+    "path": "homeassistant/components/tesla_fleet/quality_scale.yaml",
+    "line": 52,
+    "originalLine": 73,
+    "body": "Can we detect a tesla on a network? Would it make sense to autodetect the integration then"
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H002",
+  "title": "feat(symbolicator): Make renewal interval of debug files, artifact bundles & release files configurable",
+  "html_url": "https://github.com/getsentry/sentry/pull/97157",
+  "rid": "getsentry/sentry#97157#2025-08-05T11:56:08Z#0",
+  "repo": "getsentry/sentry",
+  "number": 97157,
+  "pr_author": "tobias-wilfert",
+  "reviewer": "Dav1dde",
+  "submittedAt": "2025-08-05T11:56:08Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 8,
+  "body": "",
+  "comments": [
+   {
+    "path": "src/sentry/debug_files/artifact_bundles.py",
+    "line": null,
+    "originalLine": 36,
+    "body": "I don't think that works and you can grab it from the options at a global scope."
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H003",
+  "title": "New google dataflow operator to fetch job metrics",
+  "html_url": "https://github.com/apache/airflow/pull/64900",
+  "rid": "apache/airflow#64900#2026-04-20T03:26:33Z#0",
+  "repo": "apache/airflow",
+  "number": 64900,
+  "pr_author": "pushpendu1991",
+  "reviewer": "shahar1",
+  "submittedAt": "2026-04-20T03:26:33Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 20,
+  "body": "I do support having such an operator, which will be an equivalent for existing sensor & trigger.\nHowever, the current implementation gives it too much responsibilities. Please refactor so it would have only one (fetching from Dataflow, without PubSub or BQ).\n\nAlso, please note that there are signals of using AI, which you did not declare in the PR. If you used AI to generate parts or the entire PR, please declare so in the PR with the required details according to the AI policy usage.",
+  "comments": [
+   {
+    "path": "providers/google/src/airflow/providers/google/cloud/operators/dataflow.py",
+    "line": null,
+    "originalLine": 1188,
+    "body": "I'm a bit concerned of mixing up fetching metrics **and** inserting them to PubSub or BQ altogether - it's a lot of actions for a single operator, that could be utilized by other existing operators.\nPlease refactor so after fetching metrics - it just returns them into an XCom (and later they could be routed to PubSub/BQ using the appropriate operators)."
+   },
+   {
+    "path": "providers/google/src/airflow/providers/google/cloud/operators/dataflow.py",
+    "line": null,
+    "originalLine": 1185,
+    "body": "```suggestion\nclass DataflowJobMetricsOperator(GoogleCloudBaseOperator):\n```\n\nRename to be consistent with existing sensor & trigger"
+   }
+  ],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H004",
+  "title": "Refresh the calendar entity when the current event ends",
+  "html_url": "https://github.com/home-assistant/core/pull/178189",
+  "rid": "home-assistant/core#178189#2026-08-05T11:54:03Z#0",
+  "repo": "home-assistant/core",
+  "number": 178189,
+  "pr_author": "soldier2008",
+  "reviewer": "joostlek",
+  "submittedAt": "2026-08-05T11:54:03Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "Thanks for the PR! This change touches our entity model, which needs approval in a discussion on the architecture repository before we can review it. Since that discussion typically takes time, we're closing this PR for now. Please reopen it once the proposal has been accepted.\n\n- [Architecture discussions](https://github.com/home-assistant/architecture/discussions)\n- [Changing the entity model](https://developers.home-assistant.io/docs/core/entity#changing-the-entity-model)",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H005",
+  "title": "pkg/maps: migrate to slog",
+  "html_url": "https://github.com/cilium/cilium/pull/38373",
+  "rid": "cilium/cilium#38373#2025-03-26T11:15:50Z#0",
+  "repo": "cilium/cilium",
+  "number": 38373,
+  "pr_author": "aanm",
+  "reviewer": "ti-mo",
+  "submittedAt": "2025-03-26T11:15:50Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "Oof, I'm not a fan of adding a `Logger` to bpf.Map and ebpf.Map. As far as I can see, they're only used to log the map removal warnings in OpenOrCreate, which is behaviour we want/need to get rid of anyway.\r\n\r\nCan we keep using the default logger for those? Passing a logger to all functions returning a map really causes a ton of churn.",
+  "comments": [],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H006",
+  "title": "[RLlib] Merge tuned examples into examples",
+  "html_url": "https://github.com/ray-project/ray/pull/58893",
+  "rid": "ray-project/ray#58893#2025-11-25T22:13:30Z#0",
+  "repo": "ray-project/ray",
+  "number": 58893,
+  "pr_author": "pseudo-rnd-thoughts",
+  "reviewer": "kamil-kaczmarek",
+  "submittedAt": "2025-11-25T22:13:30Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 12,
+  "body": "Great!\n\nI left few minor requests for edits.",
+  "comments": [],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H007",
+  "title": "fix(auth): improve SignInResolverFactory Zod schema usage",
+  "html_url": "https://github.com/backstage/backstage/pull/33516",
+  "rid": "backstage/backstage#33516#2026-04-11T07:39:36Z#2",
+  "repo": "backstage/backstage",
+  "number": 33516,
+  "pr_author": "Teo-ShaoWei",
+  "reviewer": "Rugvip",
+  "submittedAt": "2026-04-11T07:39:36Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "@Teo-ShaoWei I've ended up exploring this area myself the last few days, and the direction we want to head in is likely to move towards https://standardschema.dev/. Initial move towards that and example for the frontend system in https://github.com/backstage/backstage/pull/33836.\n\nIs this something you'd want to explore for this case as well? That means moving to standard schema rather than zod v4, which should achieve the original goal.",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H008",
+  "title": "chore: enrich clickhouse log_comment",
+  "html_url": "https://github.com/SigNoz/signoz/pull/10446",
+  "rid": "SigNoz/signoz#10446#2026-03-06T11:37:27Z#2",
+  "repo": "SigNoz/signoz",
+  "number": 10446,
+  "pr_author": "nityanandagohain",
+  "reviewer": "vikrantgupta25",
+  "submittedAt": "2026-03-06T11:37:27Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 19,
+  "body": "",
+  "comments": [
+   {
+    "path": "pkg/types/ctxtypes/comment.go",
+    "line": null,
+    "originalLine": 107,
+    "body": "need to update the code comment as well "
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H009",
+  "title": "[docs][serve] Fix Serve LLM examples sidebar doc links 404",
+  "html_url": "https://github.com/ray-project/ray/pull/64209",
+  "rid": "ray-project/ray#64209#2026-06-22T14:37:19Z#0",
+  "repo": "ray-project/ray",
+  "number": 64209,
+  "pr_author": "ryankert01",
+  "reviewer": "dstrodtman",
+  "submittedAt": "2026-06-22T14:37:19Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 2,
+  "body": "This looks like a monkey patch rather than a fix.\n\nCan we please root cause this instead of shipping a bandaid?",
+  "comments": [],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H010",
+  "title": "fix(logging): Add wrapper when using wifi without esp_diagnostics",
+  "html_url": "https://github.com/espressif/arduino-esp32/pull/12188",
+  "rid": "espressif/arduino-esp32#12188#2025-12-31T17:47:40Z#0",
+  "repo": "espressif/arduino-esp32",
+  "number": 12188,
+  "pr_author": "lucasssvaz",
+  "reviewer": "SuGlider",
+  "submittedAt": "2025-12-31T17:47:40Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 2,
+  "body": "@lucasssvaz - I think that it would be good to add `DIAG_USE_EXTERNAL_LOG_WRAP` to the KConfig file (https://github.com/espressif/arduino-esp32/blob/master/Kconfig.projbuild).\r\n\r\nNot sure which would be the best default value for it.\r\nPlease evalutate it.\r\n\r\nIn case its default value is `y`, you may just remove it from `sdkconfig.defaults` file",
+  "comments": [],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H011",
+  "title": "Document that @InputFiles is order-insensitive",
+  "html_url": "https://github.com/gradle/gradle/pull/36385",
+  "rid": "gradle/gradle#36385#2026-01-22T13:11:32Z#0",
+  "repo": "gradle/gradle",
+  "number": 36385,
+  "pr_author": "R0h1tAnand",
+  "reviewer": "ljacomet",
+  "submittedAt": "2026-01-22T13:11:32Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 2,
+  "body": "Thank you for your proposed contribution!\n\nThis PR has a valid DCO and is documentation only.\n\n***\n\nBefore it can be merged, please address the review comments below.",
+  "comments": [
+   {
+    "path": "subprojects/core-api/src/main/java/org/gradle/api/tasks/InputFiles.java",
+    "line": null,
+    "originalLine": 27,
+    "body": "❌ The reference to `Classpath` should be moved to a `@see` instead, as it indeed provides order dependence but does more. And `InputDirectory` can also be moved to `@see`\n\n💅 Please put each sentence on a newline as shown in [our guide](https://github.com/gradle/gradle/blob/master/contributing/JavadocStyleGuide.md)."
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H012",
+  "title": "feat(update): add optional SHA512 checksum and sidecar URLs",
+  "html_url": "https://github.com/espressif/arduino-esp32/pull/12865",
+  "rid": "espressif/arduino-esp32#12865#2026-09-11T16:08:49Z#0",
+  "repo": "espressif/arduino-esp32",
+  "number": 12865,
+  "pr_author": "EyJunge1",
+  "reviewer": "lucasssvaz",
+  "submittedAt": "2026-09-11T16:08:49Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 6,
+  "body": "SHA-512 API, precedence, sidecar parsing, and tests look good and correctly mirror the SHA-256 path.\r\n\r\nPlease address the FLASH always-link before merge like SHA-256.",
+  "comments": [
+   {
+    "path": "libraries/Update/src/Updater.cpp",
+    "line": 742,
+    "originalLine": 892,
+    "body": "This path (and `_sha512FreeContext()` from `_reset`/`begin`) lives in `Updater.cpp`, so `--gc-sections` cannot drop SHA-512.\r\n\r\nThat pulls `mbedtls_sha512_*` / `psa_hash_*` into every sketch that uses `Update`, including ones that never call `setSHA512()`. CI matches this: `SD_Update` (no TLS) grows about +5K FLASH on ESP32/C3/C6, +7K on C5/P4, and +11K on H2.\r\n\r\nThis also fights the SHA-256 comment at the top of this file: mbedtls SHA-256 was chosen specifically to avoid linking the SHA-512 software implementation into every Update sketch.\r\n\r\nPlease lazy-link SHA-512 the same way `HTTPUpdateChecksum.cpp` does (separate TU + function pointer assigned only from `setSHA512()`)."
+   },
+   {
+    "path": "libraries/Update/README.md",
+    "line": null,
+    "originalLine": 280,
+    "body": "The heap context is on-demand, but FLASH is not. `_writeBuffer` / `_reset` always reference the SHA-512 helpers, so mbedtls/PSA SHA-512 is linked into every `Update` binary.\r\n\r\nPlease lazy-link SHA-512."
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H013",
+  "title": "fix(taskbroker): Override Topic and Namespace in Task Sender Locally",
+  "html_url": "https://github.com/getsentry/sentry/pull/117466",
+  "rid": "getsentry/sentry#117466#2026-06-11T20:49:09Z#0",
+  "repo": "getsentry/sentry",
+  "number": 117466,
+  "pr_author": "george-sentry",
+  "reviewer": "untitaker",
+  "submittedAt": "2026-06-11T20:49:09Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 3,
+  "body": "this can't work -- we need to have route overrides in options for inc response, just not set them globally from this one command.",
+  "comments": [],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H014",
+  "title": "fix(scaffolder): explicitly define github:repo:create inputs",
+  "html_url": "https://github.com/backstage/backstage/pull/35571",
+  "rid": "backstage/backstage#35571#2026-09-08T13:35:33Z#0",
+  "repo": "backstage/backstage",
+  "number": 35571,
+  "pr_author": "victoriacheng15",
+  "reviewer": "fearphage",
+  "submittedAt": "2026-09-08T13:35:33Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 3,
+  "body": "",
+  "comments": [
+   {
+    "path": "plugins/scaffolder-backend-module-github/report.api.md",
+    "line": null,
+    "originalLine": 244,
+    "body": "These were largely in alphabetical order. What's the goal with this new order?"
+   },
+   {
+    "path": "plugins/scaffolder-backend-module-github/src/actions/githubRepoCreate.ts",
+    "line": null,
+    "originalLine": 52,
+    "body": "This increases the maintenance burden on developers to call out each property manually. Then they have to change the number in the test above. As it stands, when you add an input property, it is always passed in. With this change, when you add a property, you have to locate where it is used and add it to the map (read: error prone).\n\nI left a short blurb about why I made this change originally:\n\n> Cleaned up repo creation tests to remove noise\n> ...\n> Benefit: No longer requires devs to update N number of old tests for each new property. Makes remaining test values more clear and meaningful.\n\nSource: [PR where this changed](https://github.com/backstage/backstage/pull/32237)\n\nI'm fixing a similar issue in [another PR](https://github.com/backstage/backstage/pull/34732). Using the entire object creates an explicit dependency that enforces people to fix related things. This change allows things to be released broken and it's up to the humans to detect the dependency instead of the code... which has already failed at least once."
+   },
+   {
+    "path": "plugins/scaffolder-backend-module-github/src/actions/githubRepoCreate.test.ts",
+    "line": null,
+    "originalLine": 903,
+    "body": "Why don't you know this exactly? Why isn't this just `toDeepEqual(....)`?"
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H015",
+  "title": "Dashboards: Fix datasource replacement during v2 dashboard import",
+  "html_url": "https://github.com/grafana/grafana/pull/116617",
+  "rid": "grafana/grafana#116617#2026-01-22T09:11:15Z#0",
+  "repo": "grafana/grafana",
+  "number": 116617,
+  "pr_author": "kristinademeshchik",
+  "reviewer": "dprokop",
+  "submittedAt": "2026-01-22T09:11:15Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 6,
+  "body": "Good work! I've left a few comments to address before merging. The core issue is fixed, but let's make this less code added to the codebase, please.",
+  "comments": [
+   {
+    "path": "public/app/features/dashboard-scene/v2schema/importDatasourceReplacer.ts",
+    "line": null,
+    "originalLine": 3,
+    "body": "This is a core interface we use, please use the one exported from `@grafana/schema`"
+   },
+   {
+    "path": "public/app/features/dashboard-scene/v2schema/importDatasourceReplacer.ts",
+    "line": null,
+    "originalLine": 19,
+    "body": "Function name is self documenting here, no need for comment."
+   },
+   {
+    "path": "public/app/features/dashboard-scene/v2schema/importDatasourceReplacer.ts",
+    "line": null,
+    "originalLine": 12,
+    "body": "Nit - name this funtion to be self-documenting and not require comment."
+   },
+   {
+    "path": "public/app/features/dashboard-scene/v2schema/importDatasourceReplacer.test.ts",
+    "line": null,
+    "originalLine": 1,
+    "body": "Why this annotation? We are working with v2 schema which is well typed, so there should be no need for a global nocheck. Let's get rid of it before merging."
+   },
+   {
+    "path": "public/app/features/dashboard-scene/v2schema/importDatasourceReplacer.test.ts",
+    "line": 4,
+    "originalLine": 5,
+    "body": "Great that we have this test file, however it's add massive amount of code to maintain, also makes it quite hard to navigate and read. \n\nSome things to refactor:\n1. Each test has full dashboard spec defined and a lot of copy-pasted code - extract repeated code to some builder functions you can repear.\n2. Replace this \"guard\" with a common util, it's repeated across multiple tests:\n```ts\n      const panel = result.elements['panel-1'];\n      if (panel.kind === 'Panel' && panel.spec.data?.kind === 'QueryGroup') {\n        expect(panel.spec.data.spec.queries[0].spec.query?.datasource?.name).toBe('es-uid');\n      }\n```\n\nwith sth like `getPanelDatasourceName`. Then you can have a simple assertion and avoid conditional `expect` which is an anti-pattern in unit tests.\n\n3. Try consolidating tests with `it.each`\n"
+   },
+   {
+    "path": "public/app/features/dashboard-scene/v2schema/importDatasourceReplacer.ts",
+    "line": null,
+    "originalLine": 9,
+    "body": "This would actually use some comment with explanation :)"
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H016",
+  "title": "[processor/transform/internal/logparsingfuncs] Add ParseELF function for W3C Extended Log Format",
+  "html_url": "https://github.com/open-telemetry/opentelemetry-collector-contrib/pull/48391",
+  "rid": "open-telemetry/opentelemetry-collector-contrib#48391#2026-06-12T09:12:48Z#2",
+  "repo": "open-telemetry/opentelemetry-collector-contrib",
+  "number": 48391,
+  "pr_author": "dhananjay6561",
+  "reviewer": "Dylan-M",
+  "submittedAt": "2026-06-12T09:12:48Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 9,
+  "body": "",
+  "comments": [
+   {
+    "path": "processor/transformprocessor/internal/logparsingfuncs/func_parse_elf.go",
+    "line": null,
+    "originalLine": 101,
+    "body": "The directive switch below is case-insensitive (`strings.ToLower(key)`), but this guard isn't, so a malformed lowercase `#fields` (no colon) slips past the hard error and falls through to `continue`. The next data lines then parse against the stale field set, the silent corruption this guard seems intended to stop. I'd lowercase the comparison to match: `strings.HasPrefix(strings.ToLower(strings.TrimSpace(line[1:])), \"fields\")`."
+   }
+  ],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H017",
+  "title": "mgr/dashboard : Cephfs Mirroring Listing",
+  "html_url": "https://github.com/ceph/ceph/pull/68933",
+  "rid": "ceph/ceph#68933#2026-06-03T08:57:20Z#0",
+  "repo": "ceph/ceph",
+  "number": 68933,
+  "pr_author": "dnyanee1997",
+  "reviewer": "Pegonzal",
+  "submittedAt": "2026-06-03T08:57:20Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "",
+  "comments": [
+   {
+    "path": "src/pybind/mgr/dashboard/frontend/src/app/ceph/cephfs/cephfs-mirroring-list/cephfs-mirroring-list.component.scss",
+    "line": 4,
+    "originalLine": 28,
+    "body": "Please do not mark things as resolved if they were not actually addressed. \r\n\r\nAlso this is not looking right currently, things are missaligned.\r\n\r\n<img width=\"1914\" height=\"978\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/5aeb662c-460a-492a-a57c-3e4a35dae710\" />\r\n\r\nQuick example I put up to show it is possible. Please be careful copy pasting this as may contain other issues.\r\n```\r\n-<div>\r\n-  <div cdsStack=\"vertical\"\r\n-       gap=\"5\"\r\n-       class=\"cds-mt-6\">\r\n-    <h4 class=\"cds--type-heading-03\"\r\n-        i18n>Jump in</h4>\r\n-    <div class=\"jump-in-cards\">\r\n-      <div class=\"jump-in-card\">\r\n+<div cdsStack=\"vertical\"\r\n+     gap=\"5\"\r\n+     class=\"cds-mt-6\">\r\n+  <h4 class=\"cds--type-heading-03\"\r\n+      i18n>Jump in</h4>\r\n+  <div cdsGrid\r\n+       [narrow]=\"true\">\r\n+    <div cdsRow>\r\n+      <div cdsCol\r\n+           [columnNumbers]=\"{lg: 4, md: 4, sm: 4}\">\r\n         <cds-clickable-tile>\r\n-          <div class=\"tile-content\">\r\n-            <p class=\"cds--type-heading-compact-01 cds-mb-3\"\r\n+          <div cdsStack=\"vertical\"\r\n+               gap=\"5\">\r\n+            <p class=\"cds--type-heading-compact-01\"\r\n                i18n>Set up mirroring</p>\r\n-            <p class=\"cds--type-body-compact-01 cds-mb-5\"\r\n+            <p class=\"cds--type-body-compact-01\"\r\n                i18n>\r\n               Configure mirroring for a filesystem by importing a token from a peer cluster and adding paths to replicate.\r\n             </p>\r\n-            <div class=\"tile-footer\">\r\n-              <cd-icon type=\"replicate\"\r\n-                       size=\"24\"></cd-icon>\r\n-              <span>&rarr;</span>\r\n+            <div cdsRow>\r\n+              <div cdsCol>\r\n+                <cd-icon type=\"replicate\"\r\n+                         size=\"24\"></cd-icon>\r\n+              </div>\r\n+              <div cdsCol\r\n```\r\n\r\nAnd let's remove this scss.\r\n\r\n\r\n@Pegonzal , i was also trying to try cds things. Will give a try again.\r\nAnd UI was looking like \r\n<img width=\"1672\" height=\"874\" alt=\"Screenshot From 2026-06-03 14-39-04\" \r\nsrc=\"https://github.com/user-attachments/assets/66489bc9-b592-4deb-a794-81f7aa63337f\" />\r\n\r\nUpdated :-\r\n<img width=\"1677\" height=\"943\" alt=\"Screenshot From 2026-06-03 20-47-37\" src=\"https://github.com/user-attachments/assets/aae35e66-756c-4a3e-8a7e-5341c94697f1\" />\r\n\r\n\r\n"
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H018",
+  "title": "drain: add new onDrain support to connection callbacks",
+  "html_url": "https://github.com/envoyproxy/envoy/pull/45254",
+  "rid": "envoyproxy/envoy#45254#2026-06-01T20:11:57Z#0",
+  "repo": "envoyproxy/envoy",
+  "number": 45254,
+  "pr_author": "wbpcode",
+  "reviewer": "ggreenway",
+  "submittedAt": "2026-06-01T20:11:57Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 6,
+  "body": "This LGTM overall, but I'd like to adjust the names of all the functions to be clear that they don't cause draining to happen, they just pass notifications around\r\n\r\n/wait",
+  "comments": [
+   {
+    "path": "envoy/network/connection.h",
+    "line": null,
+    "originalLine": 186,
+    "body": "I think this should be named so that it's clear that it doesn't actually cause draining. Maybe it should also be `onDrain()`."
+   },
+   {
+    "path": "envoy/network/connection_handler.h",
+    "line": null,
+    "originalLine": 109,
+    "body": "similar naming comment"
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H019",
+  "title": "[pytree] make `torch.utils.pytree` as public API",
+  "html_url": "https://github.com/pytorch/pytorch/pull/175082",
+  "rid": "pytorch/pytorch#175082#2026-03-20T21:23:06Z#1",
+  "repo": "pytorch/pytorch",
+  "number": 175082,
+  "pr_author": "XuehaiPan",
+  "reviewer": "Lucaskabela",
+  "submittedAt": "2026-03-20T21:23:06Z",
+  "outcome": "open",
+  "agent_coauthor": false,
+  "n_commits": 20,
+  "body": "Thanks for the change! Seems there is some CI failure now, but outside of that it looks good to me.  \n\ncc @anijain2305  as well to have a look as this is a new public API we probably need a second set of eyes",
+  "comments": [],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H020",
+  "title": "mgr/dashboard: Tiering form -  Placement Target in Advanced Section",
+  "html_url": "https://github.com/ceph/ceph/pull/64992",
+  "rid": "ceph/ceph#64992#2025-08-21T07:41:45Z#2",
+  "repo": "ceph/ceph",
+  "number": 64992,
+  "pr_author": "dnyanee1997",
+  "reviewer": "afreen23",
+  "submittedAt": "2025-08-21T07:41:45Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "",
+  "comments": [
+   {
+    "path": "src/pybind/mgr/dashboard/frontend/src/app/ceph/rgw/rgw-storage-class-form/rgw-storage-class-form.component.html",
+    "line": 546,
+    "originalLine": 546,
+    "body": "Also @dnyanee1997 can we always have default placement only selected. Lets not provide an option to de-select if only one, then choose one only.\r\n\r\nCurrently it makes no sense because anyways backend will add default placement even if we pass no placement group.\r\n(you can cross verify that and let know if thats not the case.)"
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H021",
+  "title": "fix: removing duplicate creation of user if user does not exist already",
+  "html_url": "https://github.com/SigNoz/signoz/pull/9455",
+  "rid": "SigNoz/signoz#9455#2025-11-03T06:57:35Z#2",
+  "repo": "SigNoz/signoz",
+  "number": 9455,
+  "pr_author": "swapnil-signoz",
+  "reviewer": "vikrantgupta25",
+  "submittedAt": "2025-11-03T06:57:35Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 8,
+  "body": "",
+  "comments": [
+   {
+    "path": "tests/integration/src/cloudintegrations/a_get_connection_params.py",
+    "line": 140,
+    "originalLine": 131,
+    "body": "better to assert the values of fields here than just the presence of fields ? As they would be present in an empty go struct as well if `omitEmpty` is omitted. "
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H022",
+  "title": "Add option to override Celery worker images",
+  "html_url": "https://github.com/apache/airflow/pull/63514",
+  "rid": "apache/airflow#63514#2026-03-21T08:31:39Z#0",
+  "repo": "apache/airflow",
+  "number": 63514,
+  "pr_author": "sg-c0de",
+  "reviewer": "Miretpl",
+  "submittedAt": "2026-03-21T08:31:39Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 4,
+  "body": "Overall, this is a nice change that aligns with the Workers Sets feature. Let's wait a bit and revisit it in the next round after some discussions on the Helm Chart releases (the images section and design of it are one of the action items) are finished.",
+  "comments": [
+   {
+    "path": "chart/templates/_helpers.yaml",
+    "line": 403,
+    "originalLine": 394,
+    "body": "Most of this function copies logic from `airflow_image`. Maybe there is some nice way to not duplicate code here?"
+   },
+   {
+    "path": "chart/values.yaml",
+    "line": null,
+    "originalLine": 1153,
+    "body": "```suggestion\n```\nNot sure if needed. Every section can be overwritten by sets and direct message for one field could lead to `this has this information and other field do not, so I can overwrite this one but this one not?` understanding."
+   },
+   {
+    "path": "helm-tests/tests/helm_tests/airflow_core/test_worker_image.py",
+    "line": null,
+    "originalLine": 49,
+    "body": "This added test complexity, which can lead to not-so-straightforward debugging in case of failure. Maybe we could simplify the test cases a little?"
+   },
+   {
+    "path": "helm-tests/tests/helm_tests/airflow_core/test_worker_image.py",
+    "line": null,
+    "originalLine": 52,
+    "body": "Not sure where the `images` section tests are stored, but I think we should move them there to have all `images` test in one place."
+   },
+   {
+    "path": "helm-tests/tests/helm_tests/airflow_core/test_worker_image.py",
+    "line": null,
+    "originalLine": 86,
+    "body": "All of the tests regarding `celery` overwrite `workers` are in the general worker test file. Could we move those tests there?"
+   },
+   {
+    "path": "helm-tests/tests/helm_tests/airflow_core/test_worker_image.py",
+    "line": null,
+    "originalLine": 196,
+    "body": "All of the tests for `sets` overwrite of `celery`, and the `workers` section is in the workers sets dedicated test file. Could we move these tests there?"
+   }
+  ],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H023",
+  "title": "feat(native): TVF implementation",
+  "html_url": "https://github.com/prestodb/presto/pull/26722",
+  "rid": "prestodb/presto#26722#2026-08-13T14:33:05Z#2",
+  "repo": "prestodb/presto",
+  "number": 26722,
+  "pr_author": "aditi-pandit",
+  "reviewer": "steveburnett",
+  "submittedAt": "2026-08-13T14:33:05Z",
+  "outcome": "open",
+  "agent_coauthor": false,
+  "n_commits": 7,
+  "body": "",
+  "comments": [
+   {
+    "path": "presto-docs/src/main/sphinx/presto_cpp/table-functions.rst",
+    "line": null,
+    "originalLine": 122,
+    "body": "Please fix the formatting of this table. It is not being compiled. See screenshot of a local doc build. \r\n\r\n<img width=\"691\" height=\"345\" alt=\"Screenshot 2026-08-13 at 10 34 16 AM\" src=\"https://github.com/user-attachments/assets/32184e5f-737b-4e7a-b03e-5e612424ea54\" />\r\n"
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H024",
+  "title": "[torchgen] Refactor and simplify `gen_pyi.py` to use Generic TypeAlias (PEP 585) and Union Type (PEP 604)",
+  "html_url": "https://github.com/pytorch/pytorch/pull/150727",
+  "rid": "pytorch/pytorch#150727#2025-05-14T15:15:19Z#0",
+  "repo": "pytorch/pytorch",
+  "number": 150727,
+  "pr_author": "XuehaiPan",
+  "reviewer": "aorenste",
+  "submittedAt": "2025-05-14T15:15:19Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 20,
+  "body": "Unfortunately PEP604 is python 3.10+ and we have to support python 3.9 - so we can't convert to it yet.",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H025",
+  "title": "feat(plugin-iceberg): Add support for iceberg.target-max-file-size",
+  "html_url": "https://github.com/prestodb/presto/pull/27916",
+  "rid": "prestodb/presto#27916#2026-06-05T08:08:55Z#1",
+  "repo": "prestodb/presto",
+  "number": 27916,
+  "pr_author": "mohsaka",
+  "reviewer": "agrawalreetika",
+  "submittedAt": "2026-06-05T08:08:55Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 3,
+  "body": "Thanks for adding the changes.\n\nLet's add it as a session property as well, along with respective documentation",
+  "comments": [
+   {
+    "path": "presto-iceberg/src/main/java/com/facebook/presto/iceberg/IcebergConfig.java",
+    "line": null,
+    "originalLine": 84,
+    "body": "use static import"
+   },
+   {
+    "path": "presto-iceberg/src/main/java/com/facebook/presto/iceberg/IcebergConfig.java",
+    "line": 565,
+    "originalLine": 564,
+    "body": "Lets add some `@Min` validation for this?"
+   },
+   {
+    "path": "presto-iceberg/src/test/java/com/facebook/presto/iceberg/TestIcebergTargetMaxFileSize.java",
+    "line": 400,
+    "originalLine": 147,
+    "body": "We can also add tests for default behavior - Verify that with default 1GB target size and TASK_WRITER_COUNT=1, then we can check the absolute count of files created for unpartitioned and partitioned table"
+   },
+   {
+    "path": "presto-iceberg/src/test/java/com/facebook/presto/iceberg/TestIcebergTargetMaxFileSize.java",
+    "line": null,
+    "originalLine": 46,
+    "body": "Nit: We can use `randomTableSuffix()` like existing tests for table unique names"
+   },
+   {
+    "path": "presto-iceberg/src/test/java/com/facebook/presto/iceberg/TestIcebergTargetMaxFileSize.java",
+    "line": 400,
+    "originalLine": 147,
+    "body": "Could we also spin up a query runner with just 1 worker as well for writing tests with some absolutely predictable file count assertions?"
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H026",
+  "title": "[Clang][Sema] Clarify structured binding diagnostic when initializer is missing",
+  "html_url": "https://github.com/llvm/llvm-project/pull/181803",
+  "rid": "llvm/llvm-project#181803#2026-02-23T02:25:37Z#0",
+  "repo": "llvm/llvm-project",
+  "number": 181803,
+  "pr_author": "Z3rox-dev",
+  "reviewer": "ojhunt",
+  "submittedAt": "2026-02-23T02:25:37Z",
+  "outcome": "open",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "",
+  "comments": [
+   {
+    "path": "clang/include/clang/Basic/DiagnosticSemaKinds.td",
+    "line": 610,
+    "originalLine": 610,
+    "body": "The text in the error message isn't the issue - we don't need a change to this."
+   },
+   {
+    "path": "clang/test/Parser/decomp-decl-init-diagnostic.cpp",
+    "line": 12,
+    "originalLine": 12,
+    "body": "Given the point of the original report this should have a diagnostic pointer test. I know you can do these with FileCheck but do we have something better at this point? (@AaronBallman )"
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H027",
+  "title": "Fix file collections and file trees with relative files under CC",
+  "html_url": "https://github.com/gradle/gradle/pull/32359",
+  "rid": "gradle/gradle#32359#2025-02-25T17:44:12Z#0",
+  "repo": "gradle/gradle",
+  "number": 32359,
+  "pr_author": "alllex",
+  "reviewer": "bamboo",
+  "submittedAt": "2025-02-25T17:44:12Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 13,
+  "body": "",
+  "comments": [
+   {
+    "path": "platforms/core-configuration/file-collections/src/main/java/org/gradle/api/internal/file/DefaultFilePropertyFactory.java",
+    "line": null,
+    "originalLine": 449,
+    "body": "❌ This looks incorrect. Wouldn't the base dir actually be `createResolver().getBaseDir()`?\r\n\r\nIn any case I wonder if it wouldn't be better to have the codec operate in terms of concrete types rather than on the (augmented) abstract interface..."
+   },
+   {
+    "path": "platforms/core-configuration/core-serialization-codecs/src/main/kotlin/org/gradle/internal/serialize/codecs/core/PathToFileResolverCodec.kt",
+    "line": null,
+    "originalLine": 33,
+    "body": "💭 Rather than augmenting the `PathToFileResolver` protocol to expose the `baseDir` information, have you considered type casing the concrete implementations like we for file collections, for example?"
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H028",
+  "title": "[processor/schema] Add cache_ttl configuration option for in-memory schema cache",
+  "html_url": "https://github.com/open-telemetry/opentelemetry-collector-contrib/pull/48379",
+  "rid": "open-telemetry/opentelemetry-collector-contrib#48379#2026-05-15T01:57:07Z#0",
+  "repo": "open-telemetry/opentelemetry-collector-contrib",
+  "number": 48379,
+  "pr_author": "dhananjay6561",
+  "reviewer": "MovieStoreGuy",
+  "submittedAt": "2026-05-15T01:57:07Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 6,
+  "body": "I am going to say that having a ttl cache is overkill here considering that schemas are immutable, and invalidating the cache here is going to cause either another disk read, or http request would can be costly when multiplied by several thousand deployed instances.",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H029",
+  "title": "Enable context parallelism for RL training",
+  "html_url": "https://github.com/NVIDIA/Megatron-LM/pull/5882",
+  "rid": "NVIDIA/Megatron-LM#5882#2026-08-13T14:28:39Z#0",
+  "repo": "NVIDIA/Megatron-LM",
+  "number": 5882,
+  "pr_author": "tdene",
+  "reviewer": "yobibyte",
+  "submittedAt": "2026-08-13T14:28:39Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 13,
+  "body": "Hey! Thanks for the PR, I left some comments mostly re code layout/readability.",
+  "comments": [
+   {
+    "path": "megatron/rl/rl_utils.py",
+    "line": null,
+    "originalLine": 27,
+    "body": "I would use HAVE_TEX to be consistent with import of FA3/FA4."
+   },
+   {
+    "path": "megatron/rl/rl_utils.py",
+    "line": 815,
+    "originalLine": 778,
+    "body": "Can we use raw torch get_rank() or we need to use the core's parallel_state for that?"
+   },
+   {
+    "path": "megatron/rl/rl_utils.py",
+    "line": 821,
+    "originalLine": 782,
+    "body": "Would be useful to explain why this is the case."
+   },
+   {
+    "path": "megatron/rl/rl_utils.py",
+    "line": null,
+    "originalLine": 787,
+    "body": "Why are you doing this?"
+   },
+   {
+    "path": "train_rl.py",
+    "line": null,
+    "originalLine": 276,
+    "body": "PackedSeqParams does not have seq_idx field."
+   },
+   {
+    "path": "megatron/rl/rl_utils.py",
+    "line": 805,
+    "originalLine": 768,
+    "body": "This needs the docstring."
+   },
+   {
+    "path": "megatron/rl/rl_utils.py",
+    "line": null,
+    "originalLine": 848,
+    "body": "There is no field in the dataclass for this. I do not like this hidden interface. We should make this a part of the dataclass for people to know we are using it like that."
+   },
+   {
+    "path": "megatron/rl/rl_utils.py",
+    "line": null,
+    "originalLine": 844,
+    "body": "How is this condition possible? "
+   },
+   {
+    "path": "megatron/rl/rl_utils.py",
+    "line": null,
+    "originalLine": 866,
+    "body": "We are using this function only once and it is three lines, do we really need a helper for it?"
+   },
+   {
+    "path": "megatron/rl/rl_utils.py",
+    "line": null,
+    "originalLine": 906,
+    "body": "These are not logprobs of input sequences, those are logprobs of outputs for those input sequences."
+   },
+   {
+    "path": "megatron/rl/rl_utils.py",
+    "line": null,
+    "originalLine": 933,
+    "body": "There is no such a field in PackedSeqParams"
+   },
+   {
+    "path": "megatron/rl/rl_utils.py",
+    "line": null,
+    "originalLine": 983,
+    "body": "Please remove this useless comment."
+   },
+   {
+    "path": "megatron/rl/sequence_packing_utils.py",
+    "line": null,
+    "originalLine": 671,
+    "body": "\"reserved footprint\" is unclear"
+   },
+   {
+    "path": "megatron/rl/sequence_packing_utils.py",
+    "line": null,
+    "originalLine": 696,
+    "body": "Do we really need a function for one call we use only inside of a single method?"
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H030",
+  "title": "Support selective MXFP8 inference precision",
+  "html_url": "https://github.com/NVIDIA/Megatron-LM/pull/7300",
+  "rid": "NVIDIA/Megatron-LM#7300#2026-09-17T13:51:20Z#0",
+  "repo": "NVIDIA/Megatron-LM",
+  "number": 7300,
+  "pr_author": "wdykas",
+  "reviewer": "ko3n1g",
+  "submittedAt": "2026-09-17T13:51:20Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 20,
+  "body": "",
+  "comments": [
+   {
+    "path": "tests/test_utils/recipes/gb200/unit-tests.yaml",
+    "line": null,
+    "originalLine": 57,
+    "body": "can we move this into unit test fixtures that set/unset around the tests?"
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H031",
+  "title": "Provisioning: Always show branch workflow selector and disable configured branch when unavailable",
+  "html_url": "https://github.com/grafana/grafana/pull/116717",
+  "rid": "grafana/grafana#116717#2026-02-03T10:28:00Z#0",
+  "repo": "grafana/grafana",
+  "number": 116717,
+  "pr_author": "ywzheng1",
+  "reviewer": "MissingRoberto",
+  "submittedAt": "2026-02-03T10:28:00Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 20,
+  "body": "minor comments see above ☝️",
+  "comments": [],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H032",
+  "title": "Add CI check for error_tags",
+  "html_url": "https://github.com/ydb-platform/ydb/pull/43894",
+  "rid": "ydb-platform/ydb#43894#2026-06-19T11:24:00Z#0",
+  "repo": "ydb-platform/ydb",
+  "number": 43894,
+  "pr_author": "mregrock",
+  "reviewer": "naspirato",
+  "submittedAt": "2026-06-19T11:24:00Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 2,
+  "body": "",
+  "comments": [
+   {
+    "path": ".github/workflows/error_tags_check.yml",
+    "line": 4,
+    "originalLine": 4,
+    "body": "`error_tags_check.yml` не перезапускается при добавлении `ok-to-test`, в отличие от `pr_check.yml`.\n\nВ `pr_check` явно указано:\n\n```yaml\ntypes:\n  - opened\n  - synchronize\n  - reopened\n  - labeled\n```\n\nВ `error_tags_check` — только дефолтные события (`opened`, `synchronize`, `reopened`), без `labeled`.\n\n**Что ломается:** для внешнего контрибьютора workflow стартует на `opened`, ownership check возвращает `false`, валидация skip'ается. Maintainer ставит `ok-to-test` → `pr_check` сразу перезапускается, а `error_tags_check` — нет, пока автор не сделает новый push.\n\n**Предложение:** добавить `labeled` в `on.pull_request_target.types` (и по аналогии с `pr_check` — concurrency/условие, чтобы irrelevant labels не отменяли running checks).\n"
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H033",
+  "title": "ci: draft renovate PRs until ciliumbot auto-approval",
+  "html_url": "https://github.com/cilium/cilium/pull/47364",
+  "rid": "cilium/cilium#47364#2026-07-21T09:48:16Z#0",
+  "repo": "cilium/cilium",
+  "number": 47364,
+  "pr_author": "mhofstetter",
+  "reviewer": "aanm",
+  "submittedAt": "2026-07-21T09:48:16Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 2,
+  "body": "",
+  "comments": [
+   {
+    "path": ".github/workflows/auto-approve.yaml",
+    "line": 73,
+    "originalLine": 73,
+    "body": "We still need this because when the base images are changed there are reviews requested to people and we need to remove them as reviewers because ciliumbot approved it."
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H034",
+  "title": "Remove obsolete roadmap",
+  "html_url": "https://github.com/ydb-platform/ydb/pull/48876",
+  "rid": "ydb-platform/ydb#48876#2026-08-05T01:44:58Z#0",
+  "repo": "ydb-platform/ydb",
+  "number": 48876,
+  "pr_author": "maximyurchuk",
+  "reviewer": "fomichev3000",
+  "submittedAt": "2026-08-05T01:44:58Z",
+  "outcome": "open",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "Я предлагаю не удалять Roadmap. Скорее поправить. Видимо, я поправлю",
+  "comments": [],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H035",
+  "title": "[clang-tidy] Teach `modernize-type-traits` about more type traits",
+  "html_url": "https://github.com/llvm/llvm-project/pull/147074",
+  "rid": "llvm/llvm-project#147074#2025-07-04T16:10:55Z#0",
+  "repo": "llvm/llvm-project",
+  "number": 147074,
+  "pr_author": "localspook",
+  "reviewer": "vbvictor",
+  "submittedAt": "2025-07-04T16:10:55Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 6,
+  "body": "Thank you for the patch!\r\nCould you please add tests with new traits from C++20, 23, 26 standards to make sure we get warning for newer standards than C++17. You will need to change `-std=c++17` to `-std=c++17-or-later` in tests.",
+  "comments": [
+   {
+    "path": "clang-tools-extra/clang-tidy/modernize/TypeTraitsCheck.cpp",
+    "line": null,
+    "originalLine": 152,
+    "body": "There are no tests that will handle recursive traits (AFAIK there weren't any recursive trait in the list before your changes).\n\nCould you add tests for `tuple_element` to check if it will work correctly."
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H036",
+  "title": "feat: represent revision tags using services",
+  "html_url": "https://github.com/istio/istio/pull/56141",
+  "rid": "istio/istio#56141#2025-06-03T15:05:33Z#0",
+  "repo": "istio/istio",
+  "number": 56141,
+  "pr_author": "german1608",
+  "reviewer": "howardjohn",
+  "submittedAt": "2025-06-03T15:05:33Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 20,
+  "body": "What is the backwards compatibility story here? If we have new code depending on the new service, and a user creates a tag, the old Istio's will not understand it, no?",
+  "comments": [],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H037",
+  "title": "adaptive concurrency: add min concurrency limit knob",
+  "html_url": "https://github.com/envoyproxy/envoy/pull/46602",
+  "rid": "envoyproxy/envoy#46602#2026-08-11T19:40:42Z#0",
+  "repo": "envoyproxy/envoy",
+  "number": 46602,
+  "pr_author": "anton-oai",
+  "reviewer": "tonya11en",
+  "submittedAt": "2026-08-11T19:40:42Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 5,
+  "body": "Please update the adaptive concurrency documentation:\nhttps://github.com/tonya11en/envoy/blob/master/docs/root/configuration/http/http_filters/adaptive_concurrency_filter.rst\n\nOtherwise, LGTM",
+  "comments": [],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H038",
+  "title": "[KMTESTS:CM] ZwNotifyChangeKey tests",
+  "html_url": "https://github.com/reactos/reactos/pull/9188",
+  "rid": "reactos/reactos#9188#2026-08-05T14:52:21Z#0",
+  "repo": "reactos/reactos",
+  "number": 9188,
+  "pr_author": "xmine64",
+  "reviewer": "learn-more",
+  "submittedAt": "2026-08-05T14:52:21Z",
+  "outcome": "open",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "Same comments as your other PR, threading / corrupting the stack (but bringing down the system here)",
+  "comments": [],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H039",
+  "title": "Fix infinite layout loop caused by `desired_size` circular dependency",
+  "html_url": "https://github.com/godotengine/godot/pull/123000",
+  "rid": "godotengine/godot#123000#2026-08-31T19:46:35Z#0",
+  "repo": "godotengine/godot",
+  "number": 123000,
+  "pr_author": "shiva-kar",
+  "reviewer": "StarryWorm",
+  "submittedAt": "2026-08-31T19:46:35Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "The changes to `get_bound_desired_size()` and most of `Label` are mostly okay; however, the removal of the checks for `!is_expanded_by_desired_size()` causes `Label` outside of a `Container` to no longer expand up to its maximum size. \nI don't think removing these checks is necessary based on your PR description, so why did you remove them? \n\ndev4:\n\nhttps://github.com/user-attachments/assets/12f28272-41e9-4173-905f-eeaaa41094fb\n\nPR:\n\nhttps://github.com/user-attachments/assets/7f789c1c-7cbc-4fad-a2af-aa58e08d428f\n\nAlso, \"Desired size is an intrinsic property and shouldn't be capped by dynamic parent layout caches.\" is an incorrect statement, as it includes the desired height, which is computed by the `Control` based on the width it is given; hence, it is dynamic and not intrinsic. Only the desired width is an intrinsic property.\n\nIn the current state, all callers of `get_bound_desired_size` rely on their own clamping of children's sizes based on their maximum sizes, so the change is acceptable.\n\nIn the future, when the desired size is separated into its basic components and exposed to users, the height component will need to be reverted to clamping based on the combined maximum size. This is a discussion beyond the scope of this PR though, so I will leave it at that.",
+  "comments": [
+   {
+    "path": "scene/gui/label.cpp",
+    "line": null,
+    "originalLine": 1097,
+    "body": "Also, this should just replace the `combined_max` declaration above. "
+   },
+   {
+    "path": "scene/gui/label.cpp",
+    "line": null,
+    "originalLine": 408,
+    "body": "This is incorrect; please revert. The `maximum_width` variable also accounts for the stylebox's size, which reduces the effective maximum area for the text of the `Label`."
+   }
+  ],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H040",
+  "title": "Revise AI section",
+  "html_url": "https://github.com/dotnet/docs/pull/49905",
+  "rid": "dotnet/docs#49905#2025-11-14T19:20:11Z#0",
+  "repo": "dotnet/docs",
+  "number": 49905,
+  "pr_author": "anandmeg",
+  "reviewer": "gewarren",
+  "submittedAt": "2025-11-14T19:20:11Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 8,
+  "body": "",
+  "comments": [
+   {
+    "path": "docs/standard/serialization/system-text-json/how-to.md",
+    "line": null,
+    "originalLine": 114,
+    "body": "```suggestion\r\nYou can use AI tools, such as GitHub Copilot, to generate code that serializes objects to JSON using `System.Text.Json`.\r\nFor example, you can prompt Copilot to generate code that handles nested and polymorphic types, which is useful for creating examples or test data for hierarchical object structures.\r\n```"
+   },
+   {
+    "path": "docs/standard/serialization/system-text-json/how-to.md",
+    "line": null,
+    "originalLine": 120,
+    "body": "These should all end in periods."
+   },
+   {
+    "path": "docs/standard/serialization/system-text-json/how-to.md",
+    "line": null,
+    "originalLine": 24,
+    "body": "Now that the focus of the example has changed, seems like this belongs more in https://github.com/dotnet/docs/blob/main/docs/standard/serialization/system-text-json/polymorphism.md."
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H041",
+  "title": "[WIP] [CI] test Windows inference with CUDA 13.3",
+  "html_url": "https://github.com/PaddlePaddle/Paddle/pull/79381",
+  "rid": "PaddlePaddle/Paddle#79381#2026-07-05T09:36:37Z#14",
+  "repo": "PaddlePaddle/Paddle",
+  "number": 79381,
+  "pr_author": "gouzil",
+  "reviewer": "risemeup1111",
+  "submittedAt": "2026-07-05T09:36:37Z",
+  "outcome": "open",
+  "agent_coauthor": false,
+  "n_commits": 20,
+  "body": "已复查最新提交。此前 CUDA 13.3 skip 过滤逻辑的问题仍由原行级线程覆盖；本轮新增的诊断逻辑还会改变 Step4 的 `errexit` 状态，可能破坏 Windows UT 的失败收集和重试流程，细节已放在新的行级评论中。\n\n<div align=\"right\">\n   <sup>Powered by Nyanpasu with gpt-5.5 xhigh, please check the suggestions carefully.</sup>\n</div>",
+  "comments": [
+   {
+    "path": "tools/windows/run_unittests.sh",
+    "line": null,
+    "originalLine": 800,
+    "body": "![P1](https://img.shields.io/badge/P1-high-orange) **优先级：P1**\n\n这个诊断函数是在 Step4 已经 `set +e` 之后由 `run_unittest_gpu` 调用的；Step4 依赖关闭 `errexit`，让每个 `ctest | tee` 失败后继续执行，最后再通过 `collect_failed_tests`/retry 汇总失败。这里返回前改成 `set -e` 后，后续第一个失败的 `wait` 就会直接终止脚本，导致剩余分组、失败收集和重试逻辑都不再运行。请保持 Step4 的失败收集模式，或保存/恢复调用方原来的 `errexit` 状态。\n\n```suggestion\n    set +e\n```\n"
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H042",
+  "title": "ci(cypress): verify mandate id to be `null` if payment id not `succeeded`",
+  "html_url": "https://github.com/juspay/hyperswitch/pull/7749",
+  "rid": "juspay/hyperswitch#7749#2025-04-16T09:24:47Z#0",
+  "repo": "juspay/hyperswitch",
+  "number": 7749,
+  "pr_author": "pixincreate",
+  "reviewer": "Gnanasundari24",
+  "submittedAt": "2025-04-16T09:24:47Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 8,
+  "body": "",
+  "comments": [
+   {
+    "path": "cypress-tests/cypress/e2e/configs/Payment/Facilitapay.js",
+    "line": null,
+    "originalLine": 69,
+    "body": "Why this connector added in this PR?"
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H043",
+  "title": "[PHI][Build] isolate oneDNN headers from CUDA translation units",
+  "html_url": "https://github.com/PaddlePaddle/Paddle/pull/79659",
+  "rid": "PaddlePaddle/Paddle#79659#2026-08-17T22:05:37Z#1",
+  "repo": "PaddlePaddle/Paddle",
+  "number": 79659,
+  "pr_author": "gouzil",
+  "reviewer": "ShigureNyako",
+  "submittedAt": "2026-08-17T22:05:37Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 13,
+  "body": "本轮锁定并完整复审了 head `78988643872a08c365b3b8f991053897d48efe39`。目前需要修改：新增测试导致两个 required Windows 构建在链接 `data_layout_transform_test.exe` 时失败，属于本 PR 引入的阻塞问题。\n\n最新提交正确导出了 oneDNN 的 `TypeInfoTraits` 实例，但测试还会在 phi DLL 外构造未导出的 `NPUStorageProperties` 实例，因此 Windows-GPU 与 Windows-Inference 均报同一个 `LNK2019`。请修复该测试/导出边界并确认两个 Windows 构建能够通过。\n\n除该 Windows 链接问题外，完整累计 diff 中未发现其他新增阻塞问题；此前 descriptor 生命周期相关意见仍已正确修复。",
+  "comments": [
+   {
+    "path": "test/cpp/fluid/framework/data_layout_transform_test.cc",
+    "line": null,
+    "originalLine": 83,
+    "body": "![P1](https://img.shields.io/badge/P1-high-orange)\n\n这里在独立测试可执行文件中构造了 `NPUStorageProperties`，但其 `TypeInfoTraits<StorageProperties, NPUStorageProperties>` 显式实例化没有 `PADDLE_API` 导出。当前 head 只为 oneDNN specialization 增加了导出，因此 [Windows-GPU](https://github.com/PaddlePaddle/Paddle/actions/runs/32010932993/job/95419293493) 和 [Windows-Inference](https://github.com/PaddlePaddle/Paddle/actions/runs/32010932993/job/95419294262) 都仍在链接此测试时以该构造函数 `LNK2019` 失败。\n\n请避免在此测试中构造未导出的 NPU 类型（例如用基础 `StorageProperties` 覆盖“非 oneDNN properties”分支），或在确有 ABI 需要时同时导出 NPU specialization；随后确认两个 Windows 构建均能完成链接。"
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H044",
+  "title": "feat(business-profile): add payment_method_blocking configuration",
+  "html_url": "https://github.com/juspay/hyperswitch/pull/11526",
+  "rid": "juspay/hyperswitch#11526#2026-03-18T14:49:05Z#0",
+  "repo": "juspay/hyperswitch",
+  "number": 11526,
+  "pr_author": "ayush22667",
+  "reviewer": "su-shivanshmathur",
+  "submittedAt": "2026-03-18T14:49:05Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 20,
+  "body": "",
+  "comments": [
+   {
+    "path": "api-reference/v2/openapi_spec_v2.json",
+    "line": null,
+    "originalLine": 9596,
+    "body": "Is it required for V2s ?"
+   },
+   {
+    "path": "crates/api_models/src/admin.rs",
+    "line": 281,
+    "originalLine": 281,
+    "body": "is this required for v2 ?"
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H045",
+  "title": "[luxon]: Add changes from v 3.6.0",
+  "html_url": "https://github.com/DefinitelyTyped/DefinitelyTyped/pull/72322",
+  "rid": "DefinitelyTyped/DefinitelyTyped#72322#2025-03-31T19:37:39Z#0",
+  "repo": "DefinitelyTyped/DefinitelyTyped",
+  "number": 72322,
+  "pr_author": "mattbishop",
+  "reviewer": "CarsonF",
+  "submittedAt": "2025-03-31T19:37:39Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "",
+  "comments": [
+   {
+    "path": "types/luxon/src/datetime.d.ts",
+    "line": null,
+    "originalLine": 1639,
+    "body": "Currently TS is happy with:\r\n```ts\r\nfromFormat(\"\", \"\")\r\n```\r\nwhich is invalid.\r\n\r\nLet's define an opaque type for the `TokenParser`:\r\n```ts\r\ndeclare const tokenParserBrand: unique symbol;\r\nexport interface TokenParser {\r\n  [tokenParserBrand]: void;\r\n}\r\n```\r\nThat will make the connection between this parameter and the return type of the builder type-safe, without exposing the shape of this token parser.\r\n"
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H046",
+  "title": "fix pulling full vectors from the primary key when column families are in use",
+  "html_url": "https://github.com/cockroachdb/cockroach/pull/147307",
+  "rid": "cockroachdb/cockroach#147307#2025-06-20T17:11:31Z#0",
+  "repo": "cockroachdb/cockroach",
+  "number": 147307,
+  "pr_author": "mw5h",
+  "reviewer": "fqazi",
+  "submittedAt": "2025-06-20T17:11:31Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 4,
+  "body": "> Reviewed 2 of 18 files at r13, 1 of 32 files at r19, 6 of 6 files at r20, 23 of 26 files at r21, 17 of 17 files at r22, all commit messages.\n> *[Reviewable](https://reviewable.io/reviews/cockroachdb/cockroach/147307)* status: <span>:shipit:</span> complete! 0 of 0 LGTMs obtained (and 1 stale) (waiting on @andy-kimball, @DrewKimball, and @mw5h)\n\n___\n*[`pkg/sql/logictest/testdata/logic_test/vector_index` line 1069 at r22](https://reviewable.io/reviews/cockroachdb/cockroach/147307#-OTDJN1U2SddN1r5yGP3:-OTDJN1U2SddN1r5yGP4:b-4xt7t) ([raw file](https://github.com/cockroachdb/cockroach/blob/f479f90f44836d97a342d9be6ef4723c400f4679/pkg/sql/logictest/testdata/logic_test/vector_index#L1069)):*\n> ```\n> DROP TABLE composite_pk\n> \n> subtest end\n> ```\n\nCan we get a test with ALTER PRIMARY KEY that confirms the recreated index is usable\n___\n*[`pkg/sql/schemachanger/scbuild/internal/scbuildstmt/alter_table_alter_primary_key.go` line 683 at r22](https://reviewable.io/reviews/cockroachdb/cockroach/147307#-OTDIXok5ZHAEvqrZ8w-:-OTDIXok5ZHAEvqrZ8w0:bf9rea7) ([raw file](https://github.com/cockroachdb/cockroach/blob/f479f90f44836d97a342d9be6ef4723c400f4679/pkg/sql/schemachanger/scbuild/internal/scbuildstmt/alter_table_alter_primary_key.go#L683)):*\n> ```Go\n> \t\t\t\t} else if idx.Type == idxtype.VECTOR {\n> \t\t\t\t\tfor i, col := range inColumns {\n> \t\t\t\t\t\tif col.columnID == ics.columnID {\n> ```\n\nWould this condition ever be true? The previous if statement confirmed ics was not already there in idxColIDs? inColumns and idxColIDs are kept in sync above.\n\n\n<!-- Sent from Reviewable.io -->",
+  "comments": [],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H047",
+  "title": "The Torment Nexus: The future of Security brigging and prisoner rehabilitation! FEAT. Baton Skin Crates",
+  "html_url": "https://github.com/tgstation/tgstation/pull/86106",
+  "rid": "tgstation/tgstation#86106#2024-10-02T16:50:58Z#5",
+  "repo": "tgstation/tgstation",
+  "number": 86106,
+  "pr_author": "Iamgoofball",
+  "reviewer": "MrMelbert",
+  "submittedAt": "2024-10-02T16:50:58Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 20,
+  "body": "",
+  "comments": [
+   {
+    "path": "code/modules/bitrunning/objects/loot_crate.dm",
+    "line": null,
+    "originalLine": 127,
+    "body": "Let me get this straight:\r\n\r\n1. Security now has a way to infinity farm frag grenades and laser guns for themselves, at no cost or interaction with cargo, in their down time\r\n\r\nand\r\n\r\n2. Initially this started as an alternative to brigging with no incentive, meaning it was ultimately up to the security officer (and the prisoner, to a lesser degree) whether they wanted to be subjected to this - but now security is incentivized to _never_ use the normal brig, because they are not receiving (incredibly lucrative!) passive rewards \r\n\r\n\r\nNooooooo, no. No gun or tool rewards in this. You can make it money that gets deposited in the security budget or resources or something."
+   }
+  ],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H048",
+  "title": "Make sure to remove operand of TernaryLogic node",
+  "html_url": "https://github.com/dotnet/runtime/pull/116876",
+  "rid": "dotnet/runtime#116876#2025-06-20T19:52:36Z#0",
+  "repo": "dotnet/runtime",
+  "number": 116876,
+  "pr_author": "kunalspathak",
+  "reviewer": "tannergooding",
+  "submittedAt": "2025-06-20T19:52:36Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 4,
+  "body": "Believe a tweak is required after thinking it through some more.",
+  "comments": [],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H049",
+  "title": "website/docs: add password lockout 2026.11 release notes",
+  "html_url": "https://github.com/goauthentik/authentik/pull/24801",
+  "rid": "goauthentik/authentik#24801#2026-08-06T10:36:27Z#0",
+  "repo": "goauthentik/authentik",
+  "number": 24801,
+  "pr_author": "dominic-r",
+  "reviewer": "dewi-tik",
+  "submittedAt": "2026-08-06T10:36:27Z",
+  "outcome": "open",
+  "agent_coauthor": false,
+  "n_commits": 3,
+  "body": "",
+  "comments": [
+   {
+    "path": "website/docs/releases/2026/v2026.11.md",
+    "line": null,
+    "originalLine": 10,
+    "body": "```suggestion\n- **User status**: The user list in the Admin interface shows a single consolidated status for each user, indicating whether the account is active, deactivated, or password locked.\n```"
+   },
+   {
+    "path": "website/docs/releases/2026/v2026.11.md",
+    "line": null,
+    "originalLine": 18,
+    "body": "```suggestion\nThe [Password stage](../../add-secure-apps/flows-stages/stages/password/index.md#password-lockout) can now lock a user's password after a set number of consecutive failed attempts, using the new **Failed attempts before lockout** option. This is disabled by default.\n```"
+   },
+   {
+    "path": "website/docs/releases/2026/v2026.11.md",
+    "line": null,
+    "originalLine": 20,
+    "body": "```suggestion\nWhen a user account is password locked, authentication is denied even if the correct password is entered. This prevents further guessing attempts and blocks use of a compromised password until an administrator unlocks it. The attempt count is tracked per user, retained across sessions and authentication flows, and cleared after a successful login.\n```"
+   },
+   {
+    "path": "website/docs/releases/2026/v2026.11.md",
+    "line": null,
+    "originalLine": 22,
+    "body": "```suggestion\nThe login prompt returns the same error as it does for an incorrect password, preventing it from disclosing whether an account exists or is password locked. Password lock and unlock actions are logged as `password_locked` and `password_unlocked` events.\n```"
+   },
+   {
+    "path": "website/docs/releases/2026/v2026.11.md",
+    "line": null,
+    "originalLine": 24,
+    "body": "```suggestion\nAdministrators can unlock a user's account from that user's page in the Admin interface. Changing the password also clears the lock, so a password reset is always a way to regain access.\n```"
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H050",
+  "title": "gh-149816: Fix race between `setattr` and `object.__dict__` update",
+  "html_url": "https://github.com/python/cpython/pull/152296",
+  "rid": "python/cpython#152296#2026-08-03T20:58:47Z#0",
+  "repo": "python/cpython",
+  "number": 152296,
+  "pr_author": "LindaSummer",
+  "reviewer": "mpage",
+  "submittedAt": "2026-08-03T20:58:47Z",
+  "outcome": "open",
+  "agent_coauthor": false,
+  "n_commits": 12,
+  "body": "Sorry for the late response here (I was on vacation) and thanks for taking the time to dig into this! After reading through the [original report](https://gist.github.com/mpage/2ed6b002a76edd0ede6ca43c97c33079), I think we can probably come up with a simpler fix by ensuring that we always use a strong reference to the managed dict after releasing the per-object lock.",
+  "comments": [],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H051",
+  "title": "fix(tmux): viewer correctness for end-to-end control mode",
+  "html_url": "https://github.com/ghostty-org/ghostty/pull/11219",
+  "rid": "ghostty-org/ghostty#11219#2026-03-08T20:19:31Z#0",
+  "repo": "ghostty-org/ghostty",
+  "number": 11219,
+  "pr_author": "daiimus",
+  "reviewer": "mitchellh",
+  "submittedAt": "2026-03-08T20:19:31Z",
+  "outcome": "open",
+  "agent_coauthor": false,
+  "n_commits": 4,
+  "body": "Need to review dependent first, so just putting a block merge on it.",
+  "comments": [],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H052",
+  "title": "fix: use flush instead of end on stdout in code generators for Windows compatibility",
+  "html_url": "https://github.com/ghostty-org/ghostty/pull/10150",
+  "rid": "ghostty-org/ghostty#10150#2026-01-03T03:23:35Z#0",
+  "repo": "ghostty-org/ghostty",
+  "number": 10150,
+  "pr_author": "remorses",
+  "reviewer": "pluiedev",
+  "submittedAt": "2026-01-03T03:23:35Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 2,
+  "body": "AI disclosure, please. The issue makes sense and the fix is *okay* but we do require human-written interactions incl. proper disclosure and handwritten PR metadata (title/description)",
+  "comments": [],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H053",
+  "title": "feat(sharing): allow email-based labels for lookup results",
+  "html_url": "https://github.com/nextcloud/server/pull/60375",
+  "rid": "nextcloud/server#60375#2026-05-19T09:07:10Z#0",
+  "repo": "nextcloud/server",
+  "number": 60375,
+  "pr_author": "n-iv",
+  "reviewer": "provokateurin",
+  "submittedAt": "2026-05-19T09:07:10Z",
+  "outcome": "open",
+  "agent_coauthor": false,
+  "n_commits": 2,
+  "body": "",
+  "comments": [
+   {
+    "path": "lib/private/Collaboration/Collaborators/LookupPlugin.php",
+    "line": null,
+    "originalLine": 92,
+    "body": "```suggestion\n\t\t\t\tif ($showEmailInLabel && $email !== '') {\n\t\t\t\t\t$id = $email;\n\t\t\t\t} else {\n\t\t\t\t\t$id = $lookup['federationId'];\n\t\t\t\t}\n\t\t\t\t$label = $name === '' ? $id : $name . ' (' . $id . ')';\n```"
+   },
+   {
+    "path": "tests/lib/Collaboration/Collaborators/LookupPluginTest.php",
+    "line": null,
+    "originalLine": 186,
+    "body": "Please collapse the tests into a single one and use a data provider to change the flag value and the expected outcome."
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H054",
+  "title": "toastify-js, add the ESM module",
+  "html_url": "https://github.com/DefinitelyTyped/DefinitelyTyped/pull/71480",
+  "rid": "DefinitelyTyped/DefinitelyTyped#71480#2025-01-03T18:42:05Z#0",
+  "repo": "DefinitelyTyped/DefinitelyTyped",
+  "number": 71480,
+  "pr_author": "PartyWumpus",
+  "reviewer": "gabritto",
+  "submittedAt": "2025-01-03T18:42:05Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 5,
+  "body": "Please also include the new file in the `files` option in `tsconfig.json`.",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H055",
+  "title": "[Wasm RyuJit] fix issue in RewriteLocalStackStore",
+  "html_url": "https://github.com/dotnet/runtime/pull/124673",
+  "rid": "dotnet/runtime#124673#2026-02-21T01:03:30Z#0",
+  "repo": "dotnet/runtime",
+  "number": 124673,
+  "pr_author": "AndyAyersMS",
+  "reviewer": "adamperlin",
+  "submittedAt": "2026-02-21T01:03:30Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 3,
+  "body": "One question about the `TypeIs` check immediately after `ChangeType`",
+  "comments": [],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H056",
+  "title": "fix pulling full vectors from the primary key when column families are in use",
+  "html_url": "https://github.com/cockroachdb/cockroach/pull/147307",
+  "rid": "cockroachdb/cockroach#147307#2025-06-20T17:12:47Z#1",
+  "repo": "cockroachdb/cockroach",
+  "number": 147307,
+  "pr_author": "mw5h",
+  "reviewer": "fqazi",
+  "submittedAt": "2025-06-20T17:12:47Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 4,
+  "body": "> *[Reviewable](https://reviewable.io/reviews/cockroachdb/cockroach/147307)* status: <span>:shipit:</span> complete! 0 of 0 LGTMs obtained (and 1 stale) (waiting on @andy-kimball, @DrewKimball, and @mw5h)\n\n___\n*[`pkg/sql/schemachanger/scbuild/internal/scbuildstmt/alter_table_alter_primary_key.go` line 683 at r22](https://reviewable.io/reviews/cockroachdb/cockroach/147307#-OTDIXok5ZHAEvqrZ8w-:-OTDJt3n1AS2qmya0_Va:bin04ri) ([raw file](https://github.com/cockroachdb/cockroach/blob/f479f90f44836d97a342d9be6ef4723c400f4679/pkg/sql/schemachanger/scbuild/internal/scbuildstmt/alter_table_alter_primary_key.go#L683)):*\n<details><summary><i>Previously, fqazi (Faizan Qazi) wrote…</i></summary><blockquote>\n\nWould this condition ever be true? The previous if statement confirmed ics was not already there in idxColIDs? inColumns and idxColIDs are kept in sync above.\n</blockquote></details>\n\nI think we just want to adjust the direction adding these columns in above?\n\n\n<!-- Sent from Reviewable.io -->",
+  "comments": [],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H057",
+  "title": "website/docs: document password lockout",
+  "html_url": "https://github.com/goauthentik/authentik/pull/24799",
+  "rid": "goauthentik/authentik#24799#2026-08-06T10:21:43Z#0",
+  "repo": "goauthentik/authentik",
+  "number": 24799,
+  "pr_author": "dominic-r",
+  "reviewer": "dewi-tik",
+  "submittedAt": "2026-08-06T10:21:43Z",
+  "outcome": "open",
+  "agent_coauthor": false,
+  "n_commits": 2,
+  "body": "",
+  "comments": [
+   {
+    "path": "website/docs/add-secure-apps/flows-stages/stages/password/index.md",
+    "line": null,
+    "originalLine": 37,
+    "body": "```suggestion\nA password locked user is restored in one of two ways:\n```"
+   },
+   {
+    "path": "website/docs/add-secure-apps/flows-stages/stages/password/index.md",
+    "line": null,
+    "originalLine": 39,
+    "body": "```suggestion\n- An administrator unlocks the user in **Directory** > **Users** and selects **Unlock password**.\n```"
+   },
+   {
+    "path": "website/docs/add-secure-apps/flows-stages/stages/password/index.md",
+    "line": null,
+    "originalLine": 42,
+    "body": "```suggestion\nBoth clear the failure count, and unlocking created a `password_unlocked` event in the event log.\n```"
+   },
+   {
+    "path": "website/docs/add-secure-apps/flows-stages/stages/password/index.md",
+    "line": null,
+    "originalLine": 20,
+    "body": "```suggestion\n- **Failed attempts before cancel**: how many failed password submissions are allowed before the flow is canceled. This only ends the flow; the user can restart the flow immediately.\n```"
+   },
+   {
+    "path": "website/docs/add-secure-apps/flows-stages/stages/password/index.md",
+    "line": null,
+    "originalLine": 21,
+    "body": "```suggestion\n- **Failed attempts before lockout**: how many consecutive failed submissions password lock the user's account. Set to `0` to never password lock. Requires an enterprise license. See [Password lockout](#password-lockout).\n```\n\nWe need to be careful to always say \"password lock\" rather than just \"lock\" because a user can still login via non password based flows."
+   },
+   {
+    "path": "website/docs/add-secure-apps/flows-stages/stages/password/index.md",
+    "line": null,
+    "originalLine": 31,
+    "body": "```suggestion\nPassword locking is deliberately invisible to the person at the login prompt: the flow reports the same \"Invalid password\" error it reports for a wrong password, so the response cannot be used to discover whether an account exists or has been locked. The lock itself is recorded as a `password_locked` event in the [event log](../../../../sys-mgmt/events/index.md).\n```"
+   },
+   {
+    "path": "website/docs/add-secure-apps/flows-stages/stages/password/index.md",
+    "line": 37,
+    "originalLine": 34,
+    "body": "There should be a mention that this password locking doesn't affect passwordless flows."
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H058",
+  "title": "gh-135953: Add Gecko reporter to sampling profiler",
+  "html_url": "https://github.com/python/cpython/pull/139364",
+  "rid": "python/cpython#139364#2025-09-26T15:44:56Z#0",
+  "repo": "python/cpython",
+  "number": 139364,
+  "pr_author": "ivonastojanovic",
+  "reviewer": "pablogsal",
+  "submittedAt": "2025-09-26T15:44:56Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 2,
+  "body": "",
+  "comments": [
+   {
+    "path": "Lib/profiling/sampling/stack_collector.py",
+    "line": null,
+    "originalLine": 327,
+    "body": "Check out https://github.com/python/cpython/pull/138875 \r\n\r\nWe need to aggregate somehow as we go our this will run out of memory super quickly"
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H059",
+  "title": "pilot agent: unify the timeout and make it configurable",
+  "html_url": "https://github.com/istio/istio/pull/60591",
+  "rid": "istio/istio#60591#2026-06-15T18:27:14Z#0",
+  "repo": "istio/istio",
+  "number": 60591,
+  "pr_author": "wbpcode",
+  "reviewer": "Stevenjin8",
+  "submittedAt": "2026-06-15T18:27:14Z",
+  "outcome": "open",
+  "agent_coauthor": false,
+  "n_commits": 3,
+  "body": "We used to have this configuration and removed it. let me investigate",
+  "comments": [],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H060",
+  "title": "Revise AI section",
+  "html_url": "https://github.com/dotnet/docs/pull/49905",
+  "rid": "dotnet/docs#49905#2025-11-15T02:43:35Z#1",
+  "repo": "dotnet/docs",
+  "number": 49905,
+  "pr_author": "anandmeg",
+  "reviewer": "adegeo",
+  "submittedAt": "2025-11-15T02:43:35Z",
+  "outcome": "merged",
+  "agent_coauthor": false,
+  "n_commits": 8,
+  "body": "This is looking much better. Here are some suggestions to push this through to the finish line. Thanks!",
+  "comments": [
+   {
+    "path": "docs/standard/serialization/system-text-json/how-to.md",
+    "line": 125,
+    "originalLine": 125,
+    "body": "We really only need a small disclaimer at the end of these Copilot suggestions.\n\n```suggestion\n*Copilot is powered by AI, so surprises and mistakes are possible. For more information, see [Copilot general use FAQs](https://aka.ms/copilot-general-use-faqs).*\n```"
+   },
+   {
+    "path": "docs/standard/serialization/system-text-json/how-to.md",
+    "line": null,
+    "originalLine": 115,
+    "body": "Considering this isn't specific to VSCode, it should be generic:\n```suggestion\nHere's an example prompt you can use in Copilot to generate serialization code:\n```"
+   },
+   {
+    "path": "docs/standard/serialization/system-text-json/how-to.md",
+    "line": 120,
+    "originalLine": 120,
+    "body": "This looks great! Here's a small wording change to alter what it's doing.\n\nThe file stream isn't named output.json, the backing file of a stream would be named that. The stream is like a road to a house, where the house is the destination and the road is the pathway. The stream would be a path to get to the file output. I wouldn't focus on a specific pathway, but the destination. AI will know how to figure out the correct pathway and technology.\n\n```suggestion\nI have a variable named weatherForecast of type WeatherForecast.\nSerialize the variable using System.Text.Json and write the result directly to a file named \"output.json\" with the JSON indented for pretty formatting.\nEnsure the code includes all necessary using directives and compiles without errors.\n```"
+   },
+   {
+    "path": "docs/standard/serialization/system-text-json/how-to.md",
+    "line": 130,
+    "originalLine": 130,
+    "body": "These don't make sense for the article. It should point to how to deserialize and maybe more complex serialization:\n\n```suggestion\n- [How to read JSON as .NET objects (deserialize)](deserialization.md)\n- [How to customize property names and values with System.Text.Json](customize-properties.md)\n```"
+   }
+  ],
+  "stratum": "not_closed"
+ },
+ {
+  "sid": "H061",
+  "title": "Refactors render_target/source (ft. sins against humanity)",
+  "html_url": "https://github.com/tgstation/tgstation/pull/90769",
+  "rid": "tgstation/tgstation#90769#2025-05-17T18:44:12Z#0",
+  "repo": "tgstation/tgstation",
+  "number": 90769,
+  "pr_author": "TiviPlus",
+  "reviewer": "SmArtKar",
+  "submittedAt": "2025-05-17T18:44:12Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 20,
+  "body": "",
+  "comments": [
+   {
+    "path": "code/__HELPERS/filters.dm",
+    "line": null,
+    "originalLine": 144,
+    "body": "Shouldn't be changed, ``/image`` is also valid but ``/datum`` is not so we don't have a shared parent to type this off, and you use it yourself with mutables later in cracked.dm"
+   },
+   {
+    "path": "code/__HELPERS/filters.dm",
+    "line": null,
+    "originalLine": 172,
+    "body": "same here"
+   },
+   {
+    "path": "code/__HELPERS/filters.dm",
+    "line": null,
+    "originalLine": 203,
+    "body": "same here"
+   },
+   {
+    "path": "code/datums/components/cracked.dm",
+    "line": null,
+    "originalLine": 69,
+    "body": "No need for the uuid logic anymore, just do ``var/current_cracks = length(applied_cracks)`` before the loop and ``current_cracks + i`` for the filter name"
+   },
+   {
+    "path": "code/datums/datum.dm",
+    "line": null,
+    "originalLine": 328,
+    "body": "```suggestion\r\n/datum/filter_data/Destroy(force)\r\n```"
+   }
+  ],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H062",
+  "title": "Fix Homevolt exception translation placeholders",
+  "html_url": "https://github.com/home-assistant/core/pull/171613",
+  "rid": "home-assistant/core#171613#2026-05-20T17:58:47Z#0",
+  "repo": "home-assistant/core",
+  "number": 171613,
+  "pr_author": "liudger",
+  "reviewer": "jbouwh",
+  "submittedAt": "2026-05-20T17:58:47Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "",
+  "comments": [
+   {
+    "path": "homeassistant/components/homevolt/strings.json",
+    "line": 176,
+    "originalLine": 176,
+    "body": "Adding a translation placeholder to an existing string will cause issues for existing translations. May be it is better to use a new translation key?"
+   },
+   {
+    "path": "homeassistant/components/homevolt/strings.json",
+    "line": 178,
+    "originalLine": 178,
+    "body": "Same here"
+   }
+  ],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H063",
+  "title": "[tune] Expose progress reporter heartbeat cadence via RunConfig",
+  "html_url": "https://github.com/ray-project/ray/pull/63030",
+  "rid": "ray-project/ray#63030#2026-05-14T16:19:52Z#0",
+  "repo": "ray-project/ray",
+  "number": 63030,
+  "pr_author": "tson1111",
+  "reviewer": "pseudo-rnd-thoughts",
+  "submittedAt": "2026-05-14T16:19:52Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 3,
+  "body": "Thanks for the PR, please make the following changes",
+  "comments": [
+   {
+    "path": "python/ray/tune/experimental/output.py",
+    "line": null,
+    "originalLine": 615,
+    "body": "Remove this"
+   },
+   {
+    "path": "python/ray/tune/experimental/output.py",
+    "line": null,
+    "originalLine": 599,
+    "body": "Default this to 30"
+   },
+   {
+    "path": "python/ray/tune/experimental/output.py",
+    "line": null,
+    "originalLine": 588,
+    "body": "Remove as a class attribute and move to a standard attribute"
+   },
+   {
+    "path": "python/ray/tune/experimental/output.py",
+    "line": 605,
+    "originalLine": 607,
+    "body": "            heartbeat_freq: Minimum interval in seconds between status-table\n                heartbeats. Defaults to 30 seconds."
+   },
+   {
+    "path": "python/ray/tune/experimental/output.py",
+    "line": null,
+    "originalLine": 618,
+    "body": "self._heartbeat_freq = heartbeat_freq"
+   },
+   {
+    "path": "python/ray/tune/tests/test_progress_reporter.py",
+    "line": null,
+    "originalLine": 811,
+    "body": "Fix"
+   },
+   {
+    "path": "python/ray/tune/tests/test_progress_reporter.py",
+    "line": null,
+    "originalLine": 815,
+    "body": "Fix"
+   }
+  ],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H064",
+  "title": "feat(spans-buffer): add Redis slowlog logger for debugging",
+  "html_url": "https://github.com/getsentry/sentry/pull/108073",
+  "rid": "getsentry/sentry#108073#2026-02-13T00:03:19Z#0",
+  "repo": "getsentry/sentry",
+  "number": 108073,
+  "pr_author": "lvthanh03",
+  "reviewer": "fpacifici",
+  "submittedAt": "2026-02-13T00:03:19Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 4,
+  "body": "I am not sure I understand what you would use the SLOWLOG response for. \nSLOWLOG tells you the  list of commands that took the longest in the previous period of time. \nIf you want to use this to validate that the flusher is the cause of the CPU spikes, why not record the cumulative time  spent and amount of data extracted by each queue like we do for the cumulative time spent per trace ?",
+  "comments": [
+   {
+    "path": "src/sentry/spans/buffer.py",
+    "line": 388,
+    "originalLine": 388,
+    "body": "They would not. SLOWLOG is per Redis host (which means per shard). Actually I don't think calling it from the client will serve any purpose as the host you hit from the client may not be the one that serves the request. redis node can forward requests to other nodes if they do not own the shard that executes the command. \n\nSo you would have to connect specifically to the shard that you are interested into and run the SLOWLOG command on there, otherwise you would be running it on the wrong node."
+   },
+   {
+    "path": "src/sentry/spans/buffer_logger.py",
+    "line": 106,
+    "originalLine": 106,
+    "body": "I don't think this will do what you want. SLOWLOG is per node on the cluster, not per cluster. It would give different results depending which node you run it onto. "
+   }
+  ],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H065",
+  "title": "fix(ui): Hide browser-specific password field controls in PasswordField",
+  "html_url": "https://github.com/backstage/backstage/pull/32249",
+  "rid": "backstage/backstage#32249#2026-02-05T11:52:38Z#0",
+  "repo": "backstage/backstage",
+  "number": 32249,
+  "pr_author": "deepthi-28",
+  "reviewer": "Naycon",
+  "submittedAt": "2026-02-05T11:52:38Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 6,
+  "body": "Keeping browser specific password manager controls intact seems like a useful feature, to allow users to use these tools for creating and managing the passwords.",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H066",
+  "title": "[Dynamo] Add types to LazyVariableTracker logging",
+  "html_url": "https://github.com/pytorch/pytorch/pull/164613",
+  "rid": "pytorch/pytorch#164613#2025-10-14T00:14:40Z#1",
+  "repo": "pytorch/pytorch",
+  "number": 164613,
+  "pr_author": "fxdawnn",
+  "reviewer": "williamwen42",
+  "submittedAt": "2025-10-14T00:14:40Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 20,
+  "body": "",
+  "comments": [
+   {
+    "path": "test/dynamo/test_error_messages.py",
+    "line": null,
+    "originalLine": 116,
+    "body": "This doesn't look correct `realized:<class 'method'>`. Can we change the output according to https://github.com/pytorch/pytorch/issues/162860#issuecomment-3367705429 ?"
+   },
+   {
+    "path": "test/dynamo/test_error_messages.py",
+    "line": null,
+    "originalLine": 912,
+    "body": "Can we explicitly check for logging output of at least one unrealized lazy VT and a realized one? This check shouldn't be python-version specific.\r\n\r\ne.g. look for a log `LazyVariableTracker(realized: UserFunctionVariable)` and a log `LazyVariableTracker(unrealized: <class 'function'>)` present somewhere in the logs"
+   }
+  ],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H067",
+  "title": "[processor/transform/internal/logparsingfuncs] Add ParseELF function for W3C Extended Log Format",
+  "html_url": "https://github.com/open-telemetry/opentelemetry-collector-contrib/pull/48391",
+  "rid": "open-telemetry/opentelemetry-collector-contrib#48391#2026-05-28T19:02:00Z#1",
+  "repo": "open-telemetry/opentelemetry-collector-contrib",
+  "number": 48391,
+  "pr_author": "dhananjay6561",
+  "reviewer": "Caleb-Hurshman",
+  "submittedAt": "2026-05-28T19:02:00Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 9,
+  "body": "",
+  "comments": [
+   {
+    "path": ".chloggen/feat-parse-elf-log-function.yaml",
+    "line": null,
+    "originalLine": 5,
+    "body": "```suggestion\nnote: Add `ParseELF` function to parse W3C Extended Log Format (ELF) log blocks into structured maps.\n```"
+   },
+   {
+    "path": ".chloggen/feat-parse-elf-log-function.yaml",
+    "line": null,
+    "originalLine": 10,
+    "body": "```suggestion\n  `ParseELF(target)` parses a complete ELF text block and returns a `pcommon.Map` with\n```"
+   },
+   {
+    "path": "processor/transformprocessor/internal/logparsingfuncs/func_parse_elf_test.go",
+    "line": 304,
+    "originalLine": 229,
+    "body": "This is a no-op if the type isn't `string` or `[]any`. Can you add a default case that errors when receiving an unexpected type?"
+   },
+   {
+    "path": "processor/transformprocessor/internal/logparsingfuncs/func_parse_elf_test.go",
+    "line": 1,
+    "originalLine": 1,
+    "body": "Add test cases for:\n- unterminated quote\n- malformed #Fields directive errors\n- tab-separated data lines\n- multiple #Version directives - take the last value\n- dropped data when num values > num fields"
+   },
+   {
+    "path": "processor/transformprocessor/internal/logparsingfuncs/func_parse_elf.go",
+    "line": null,
+    "originalLine": 232,
+    "body": "This inserts \"-\" for missing values, which matches the convention, but could be misleading.  If the source isn't sending proper ELF logs, that's different than the source knowingly omitting a value for a field.\nWe should at least log a warning in this case."
+   }
+  ],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H068",
+  "title": "Plugins: Load externalized Canvas plugin via config (backend)",
+  "html_url": "https://github.com/grafana/grafana/pull/129141",
+  "rid": "grafana/grafana#129141#2026-08-03T09:58:40Z#0",
+  "repo": "grafana/grafana",
+  "number": 129141,
+  "pr_author": "jesdavpet",
+  "reviewer": "andresmgot",
+  "submittedAt": "2026-08-03T09:58:40Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 14,
+  "body": "Sorry but at the moment we don't accept new plugin aliases since it's not fully supported yet (see more context about this in this [thread](https://raintank-corp.slack.com/archives/C01C4K8DETW/p1784204910460199?thread_ts=1784202386.725059&cid=C01C4K8DETW)). You will need to keep using `canvas` as the plugin ID.",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H069",
+  "title": "Add pre-upgrade validation for health/OSDs/PGs",
+  "html_url": "https://github.com/ceph/ceph/pull/67313",
+  "rid": "ceph/ceph#67313#2026-04-06T15:08:58Z#0",
+  "repo": "ceph/ceph",
+  "number": 67313,
+  "pr_author": "ujjawal-ibm",
+  "reviewer": "gregsfortytwo",
+  "submittedAt": "2026-04-06T15:08:58Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "We cannot merge upgrade-breaking regressions, even temporarily.",
+  "comments": [
+   {
+    "path": "src/pybind/mgr/cephadm/upgrade.py",
+    "line": 245,
+    "originalLine": 245,
+    "body": "I appreciate the capabilities this PR adds, but as @JoshuaGabriel noted, requiring all OSDs be up+in is a mega-regression. (For one thing, if an osd is down due to a bug, you can’t upgrade to fix it!) I don’t believe we can merge this PR as it stands."
+   }
+  ],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H070",
+  "title": "Google: Fix false success in Cloud Composer DAG run sensor",
+  "html_url": "https://github.com/apache/airflow/pull/64990",
+  "rid": "apache/airflow#64990#2026-04-10T07:38:27Z#0",
+  "repo": "apache/airflow",
+  "number": 64990,
+  "pr_author": "Vamsi-klu",
+  "reviewer": "MaksYermak",
+  "submittedAt": "2026-04-10T07:38:27Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 2,
+  "body": "This PR looks similar to this one https://github.com/apache/airflow/pull/61046 which was reverted because this code broke `CloudComposerDAGRunSensor`. Could you run the existing System Test for this operator and shared the screenshot for the latest run?",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H071",
+  "title": "[libc][math] Implement sqrti",
+  "html_url": "https://github.com/llvm/llvm-project/pull/177960",
+  "rid": "llvm/llvm-project#177960#2026-02-13T15:00:05Z#2",
+  "repo": "llvm/llvm-project",
+  "number": 177960,
+  "pr_author": "0bVdnt",
+  "reviewer": "lntue",
+  "submittedAt": "2026-02-13T15:00:05Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "Question: This is not a refactoring PR, this introduces a new internal function and exported to shared folder.  And this internal function is not used anywhere internally or to implement any entrypoint.  There is also question about its accuracy + performance.  But  first, why are we adding this new internal function?",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H072",
+  "title": "feat: handle conflicting attributes with data type and context-based resolution",
+  "html_url": "https://github.com/SigNoz/signoz/pull/9792",
+  "rid": "SigNoz/signoz#9792#2025-12-22T12:18:17Z#0",
+  "repo": "SigNoz/signoz",
+  "number": 9792,
+  "pr_author": "ahmadshaheer",
+  "reviewer": "aks07",
+  "submittedAt": "2025-12-22T12:18:17Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 15,
+  "body": "Logic introduced to differentiate options based on keys has complications which could have been avoided. Since this has a huge blast radius we should not go ahead with this solution.",
+  "comments": [
+   {
+    "path": "frontend/src/container/OptionsMenu/utils.tsx",
+    "line": 291,
+    "originalLine": 291,
+    "body": "This is getting calculated for every columnName which is expensive and can be avoided."
+   }
+  ],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H073",
+  "title": "Add new deprecation API using the problems API",
+  "html_url": "https://github.com/gradle/gradle/pull/31412",
+  "rid": "gradle/gradle#31412#2025-03-25T10:50:18Z#1",
+  "repo": "gradle/gradle",
+  "number": 31412,
+  "pr_author": "hegyibalint",
+  "reviewer": "alllex",
+  "submittedAt": "2025-03-25T10:50:18Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 20,
+  "body": "The general shape of the API makes sense, though I have a lot of targeted questions",
+  "comments": [
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/deprecation/source/GradleReportSource.java",
+    "line": null,
+    "originalLine": 22,
+    "body": "❌"
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/Problems.java",
+    "line": null,
+    "originalLine": 48,
+    "body": "💅 \"Returns\""
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/Problems.java",
+    "line": null,
+    "originalLine": 40,
+    "body": "💅 \"Returns\""
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/PluginDeprecationSpec.java",
+    "line": null,
+    "originalLine": 17,
+    "body": "❓ Should it be together with other specs in the `deprecation` package?"
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/deprecation/source/GradleReportSource.java",
+    "line": null,
+    "originalLine": 27,
+    "body": "❓ What is the need for this type to be public?"
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/deprecation/BaseDeprecationSpec.java",
+    "line": null,
+    "originalLine": 29,
+    "body": "❓ Why an extra layer of abstraction on top of `DeprecationSpec` ?"
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/deprecation/DeprecatePluginSpec.java",
+    "line": null,
+    "originalLine": 27,
+    "body": "🤔 What is it not generic over itself?\n\nThe base interface uses a common builder pattern, allowing the return type of each method to be the subtype.\n\n```java\n        getProblems().getDeprecationReporter().deprecatePlugin(\n            ReportSource.plugin(\"org.gradle.sample.plugin\"),\n            \"org.gradle.sample.plugin\",\n            spec -> spec\n                .removedInVersion(\"2.0.0\")  // <----- return type is DeprecateSpec, not DeprecatePluginSpec\n                .replacedBy(\"org.gradle.sample.newer-plugin\")\n```\n\nI presume the reason we introduce explicit deprecation specs for plugins and methods is to be able to add methods to these specs later. However, consider how you would do it.\n\nIf I have the code from above, how can I call a method that would be specific to the DeprecatePluginSpec, once it's added sometime in the future?\n\n"
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/deprecation/DeprecationData.java",
+    "line": null,
+    "originalLine": 29,
+    "body": "❓ Does it mean, users should use this interface to consume deprecation data via the tooling API?"
+   },
+   {
+    "path": "platforms/ide/tooling-api/src/crossVersionTest/groovy/org/gradle/integtests/tooling/r813/ProblemProgressEventCrossVersionTest.groovy",
+    "line": null,
+    "originalLine": 2,
+    "body": "🤔 I don't think we should change the year in existing file. There are a couple changes like this in the PR changeset"
+   },
+   {
+    "path": "platforms/ide/tooling-api-builders/src/main/java/org/gradle/tooling/internal/provider/runner/ProblemsProgressEventUtils.java",
+    "line": null,
+    "originalLine": 227,
+    "body": "💅 Extract into a method"
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/internal/DefaultDeprecationProblemGroup.java",
+    "line": null,
+    "originalLine": 19,
+    "body": "🤔 Unused class?"
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/deprecation/BaseDeprecationSpec.java",
+    "line": null,
+    "originalLine": 65,
+    "body": "❓ How would users create a DocLink to pass here?"
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/deprecation/BaseDeprecationSpec.java",
+    "line": null,
+    "originalLine": 56,
+    "body": "🤔 It's clear what the method name is implying, but it feel out of place compared to other methods.\n\nFor replacedBy and documentedAt it works as expected -- those things have already been definitively provided to the user -- a replacement is introduced and the documentation wriiten.\n\nHowever, the deprecated API has not been removed yet. It's only a promise/intention that it will be removed. I guess, that's why our internal API has slightly different wording `willBeRemovedInGradle9()`.\n\nWhich alternatives have you considered?"
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/deprecation/DeprecationReporter.java",
+    "line": null,
+    "originalLine": 59,
+    "body": "🤔 The users would have to repeat the plugin id twice, when calling this method -- once to select the resource, and then as an argument.\n\nWould it be more ergonomic to have `deprecatePlugin(PluginReportSource source, Action spce)` instead?"
+   },
+   {
+    "path": "platforms/software/dependency-management/src/main/java/org/gradle/api/internal/artifacts/configurations/DefaultConfigurationContainer.java",
+    "line": null,
+    "originalLine": 30,
+    "body": "💅 I get it's re-formatting, but seems very very unrelated to the PR"
+   },
+   {
+    "path": "platforms/documentation/docs/src/snippets/deprecationApi/deprecationExamples/kotlin/samplePlugin/src/main/java/org/gradle/sample/SamplePlugin.java",
+    "line": null,
+    "originalLine": 37,
+    "body": "🤔 This reads strange, because the plugin will change its identity. At the moment this reads as \"the version is the primary thing that keep increasing, but we change the plugin id\". Not sure how this can be better, so it's more of an observation"
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/deprecation/DeprecationData.java",
+    "line": null,
+    "originalLine": 51,
+    "body": "🤔 Should \"version\" be part of the method name and not only javadoc?"
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/internal/deprecation/DefaultDeprecationReporter.java",
+    "line": null,
+    "originalLine": 53,
+    "body": "🤔 The deprecation should probably be extensive and report the full class name"
+   }
+  ],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H074",
+  "title": "gh-146475: Block Apple LLVM 21 from passing JIT tool version check",
+  "html_url": "https://github.com/python/cpython/pull/146478",
+  "rid": "python/cpython#146478#2026-04-15T20:14:33Z#1",
+  "repo": "python/cpython",
+  "number": 146478,
+  "pr_author": "ashutoshk314",
+  "reviewer": "savannahostrowski",
+  "submittedAt": "2026-04-15T20:14:33Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 2,
+  "body": "Based on earlier convos, I think this is mergeable with the amendment to the blurb and the regex. \n\n@ashutoshk314 Friendly reminder to sign the CLA when you get a chance as we can't merge without it.",
+  "comments": [
+   {
+    "path": "Misc/NEWS.d/next/Build/2026-03-26-23-40-21.gh-issue-146475.F9KMLP.rst",
+    "line": 2,
+    "originalLine": 2,
+    "body": "```suggestion\nBlock Apple Clang from being used to build the JIT as it ships without \nrequired LLVM tools.\n```\nWhile the CFI directives are an issue, let's make this fix more about the underlying toolchain incompatibility (i.e. users have to install llvm-readobj still)"
+   }
+  ],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H075",
+  "title": "Handle BadImageFormatException in OpenAssociatedSymbolFile",
+  "html_url": "https://github.com/dotnet/runtime/pull/124188",
+  "rid": "dotnet/runtime#124188#2026-02-09T20:10:29Z#0",
+  "repo": "dotnet/runtime",
+  "number": 124188,
+  "pr_author": "steveisok",
+  "reviewer": "jkotas",
+  "submittedAt": "2026-02-09T20:10:29Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "Why do we want to mask this error? It does not look right to me. Our general strategy in AOT compilers is to fail the compilation when the input is malformed. It is expected that the malformed input can and will cause the compiler to crash or fail\r\n\r\nThe error in the issue is either a race condition in the build where the build is overwriting the compiler inputs, or it is a memory corruption (e.g. GC hole) leading to intermittent crash.\r\n\r\nWe need to get a crash dump of the failure to tell. It is a long outstanding problem that the builds are not producing crash dumps that made investigation of many issues difficult/impossible.",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H076",
+  "title": "fix(vt): forward UTF-8 bytes through DCS passthrough",
+  "html_url": "https://github.com/ghostty-org/ghostty/pull/11216",
+  "rid": "ghostty-org/ghostty#11216#2026-03-08T20:15:34Z#0",
+  "repo": "ghostty-org/ghostty",
+  "number": 11216,
+  "pr_author": "daiimus",
+  "reviewer": "mitchellh",
+  "submittedAt": "2026-03-08T20:15:34Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "I still approve this but going to put a block on merge until 1.3 is out the door, I don't want to risk something in the core parse table for 1.3.",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H077",
+  "title": "The Torment Nexus: The future of Security brigging and prisoner rehabilitation! FEAT. Baton Skin Crates",
+  "html_url": "https://github.com/tgstation/tgstation/pull/86106",
+  "rid": "tgstation/tgstation#86106#2024-09-30T02:37:10Z#4",
+  "repo": "tgstation/tgstation",
+  "number": 86106,
+  "pr_author": "Iamgoofball",
+  "reviewer": "MrMelbert",
+  "submittedAt": "2024-09-30T02:37:10Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 20,
+  "body": "Caution decals over walls\r\nOverlighting\r\nNeeds a maint door (I can see those disposal networks go straight through the wall)\r\nYou also completely deleted the MULEbot delivery - that needs to be moved somewhere\r\n\r\n![image](https://github.com/user-attachments/assets/ba7e0667-9eba-4778-bd13-c75f44f766a0)",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H078",
+  "title": "stages/password: lock password login after failed attempts",
+  "html_url": "https://github.com/goauthentik/authentik/pull/24302",
+  "rid": "goauthentik/authentik#24302#2026-07-23T15:18:45Z#0",
+  "repo": "goauthentik/authentik",
+  "number": 24302,
+  "pr_author": "dominic-r",
+  "reviewer": "GirlBossRush",
+  "submittedAt": "2026-07-23T15:18:45Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "Looks good. Needs E2Etests.",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H079",
+  "title": "ipsec,route: Ignore ESRCH errors on delete operations",
+  "html_url": "https://github.com/cilium/cilium/pull/43617",
+  "rid": "cilium/cilium#43617#2026-02-17T12:22:47Z#1",
+  "repo": "cilium/cilium",
+  "number": 43617,
+  "pr_author": "elskow",
+  "reviewer": "rgo3",
+  "submittedAt": "2026-02-17T12:22:47Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "Overall LGTM but should we add a forbidigo rule to golangci.yaml that makes sure people don't keep using the functions that we now wrap with safenetlink?",
+  "comments": [
+   {
+    "path": "contrib/scripts/check-xfrmstate.sh",
+    "line": 24,
+    "originalLine": 24,
+    "body": "I think the purpose of this script, IIUC, is to discourage direct calls to certain `netlink.Xfrm*` functions in pkg/datapath that would circumvent the cache. The added wrappers in safenetlink violate this, so need exclusion."
+   }
+  ],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H080",
+  "title": "Enhance S3 sync process in CI: add error handling",
+  "html_url": "https://github.com/ydb-platform/ydb/pull/41581",
+  "rid": "ydb-platform/ydb#41581#2026-05-27T15:06:32Z#0",
+  "repo": "ydb-platform/ydb",
+  "number": 41581,
+  "pr_author": "naspirato",
+  "reviewer": "maximyurchuk",
+  "submittedAt": "2026-05-27T15:06:32Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 3,
+  "body": "Я кажется не готов к зеленым чекам без логов. Без рабочего s3 с моей точки мы не можем корректно выполнять проверки",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H081",
+  "title": "toastify-js, add the ESM module",
+  "html_url": "https://github.com/DefinitelyTyped/DefinitelyTyped/pull/71480",
+  "rid": "DefinitelyTyped/DefinitelyTyped#71480#2025-04-07T17:46:12Z#1",
+  "repo": "DefinitelyTyped/DefinitelyTyped",
+  "number": 71480,
+  "pr_author": "PartyWumpus",
+  "reviewer": "sandersn",
+  "submittedAt": "2025-04-07T17:46:12Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 5,
+  "body": "Requesting changes so the bot understands the current state.",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H082",
+  "title": "changefeedccl: warn user when creating changefeed that is a duplicate",
+  "html_url": "https://github.com/cockroachdb/cockroach/pull/147713",
+  "rid": "cockroachdb/cockroach#147713#2025-07-07T19:42:00Z#1",
+  "repo": "cockroachdb/cockroach",
+  "number": 147713,
+  "pr_author": "log-head",
+  "reviewer": "asg0451",
+  "submittedAt": "2025-07-07T19:42:00Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "",
+  "comments": [
+   {
+    "path": "pkg/ccl/changefeedccl/changefeed_stmt.go",
+    "line": 250,
+    "originalLine": 250,
+    "body": "pls update the commit msg to reflect the actual wording of the notice"
+   },
+   {
+    "path": "pkg/ccl/changefeedccl/changefeedbase/settings.go",
+    "line": null,
+    "originalLine": 373,
+    "body": "pls rename the var and the setting name to be like the other ones, eg `changefeed.duplicate_check.enabled`"
+   },
+   {
+    "path": "pkg/ccl/changefeedccl/changefeed_stmt.go",
+    "line": 204,
+    "originalLine": 204,
+    "body": "this comment should be on FindDuplicateChangefeedJob probably"
+   },
+   {
+    "path": "pkg/ccl/changefeedccl/alter_changefeed_stmt.go",
+    "line": null,
+    "originalLine": 252,
+    "body": "i'm not 100% sure of the semantics of p.InternalSQLTxn() -- will this be done transactionally with the above update in all cases?"
+   },
+   {
+    "path": "pkg/ccl/changefeedccl/helpers_test.go",
+    "line": null,
+    "originalLine": 916,
+    "body": "nit: change the name to make it more explicit that this is some super specific helper to do with dupe checking."
+   },
+   {
+    "path": "pkg/jobs/registry.go",
+    "line": null,
+    "originalLine": 710,
+    "body": "nit: \"Get\" implies a field accessor. can you make the name more clearly indicate it's a calculation?"
+   },
+   {
+    "path": "pkg/jobs/registry.go",
+    "line": null,
+    "originalLine": 713,
+    "body": "nit: grammar/meaning"
+   },
+   {
+    "path": "pkg/ccl/changefeedccl/changefeed_test.go",
+    "line": 11821,
+    "originalLine": 11821,
+    "body": "pls use the cdcTest framework if possible"
+   }
+  ],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H083",
+  "title": "MQTT Vacuum: Get Segments from separate MQTT Topic",
+  "html_url": "https://github.com/home-assistant/core/pull/166687",
+  "rid": "home-assistant/core#166687#2026-03-28T10:40:56Z#0",
+  "repo": "home-assistant/core",
+  "number": 166687,
+  "pr_author": "jhbruhn",
+  "reviewer": "jbouwh",
+  "submittedAt": "2026-03-28T10:40:56Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 5,
+  "body": "As discussed available segements are reported via the state topic. As this is a state vacuum, we do not want different state topics.",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H084",
+  "title": "fix(replay): update profiling in replay recording consumer",
+  "html_url": "https://github.com/getsentry/sentry/pull/97864",
+  "rid": "getsentry/sentry#97864#2025-08-15T19:40:07Z#0",
+  "repo": "getsentry/sentry",
+  "number": 97864,
+  "pr_author": "srest2021",
+  "reviewer": "cleptric",
+  "submittedAt": "2025-08-15T19:40:07Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 2,
+  "body": "",
+  "comments": [
+   {
+    "path": "src/sentry/utils/sdk.py",
+    "line": null,
+    "originalLine": null,
+    "body": "These changes do not look correct to me"
+   }
+  ],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H085",
+  "title": "feat(catalog): allow clearing kind filter when allFilterEnabled is trued",
+  "html_url": "https://github.com/backstage/backstage/pull/33072",
+  "rid": "backstage/backstage#33072#2026-03-02T12:28:12Z#0",
+  "repo": "backstage/backstage",
+  "number": 33072,
+  "pr_author": "NETIZEN-11",
+  "reviewer": "awanlin",
+  "submittedAt": "2026-03-02T12:28:12Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "Hi @NETIZEN-11, we are still coming to an agreement on a path forward: https://github.com/backstage/backstage/issues/33052",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H086",
+  "title": "[aten][autograd] Add narrow_scatter operator with autograd and torch.compile support",
+  "html_url": "https://github.com/pytorch/pytorch/pull/177388",
+  "rid": "pytorch/pytorch#177388#2026-06-24T18:50:23Z#0",
+  "repo": "pytorch/pytorch",
+  "number": 177388,
+  "pr_author": "Sanskaaar1",
+  "reviewer": "zou3519",
+  "submittedAt": "2026-06-24T18:50:23Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 2,
+  "body": "narrow is compositeimplicitautograd, we only want view_scatter / view_copy operations for views that are not compositeimplicitautograd. Please let me know if you disagree with my assessment, if not, let's close this PR.",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H087",
+  "title": "[data.llm] Add release test to capture memory leak",
+  "html_url": "https://github.com/ray-project/ray/pull/54194",
+  "rid": "ray-project/ray#54194#2025-06-30T23:58:30Z#0",
+  "repo": "ray-project/ray",
+  "number": 54194,
+  "pr_author": "lk-chen",
+  "reviewer": "kunling-anyscale",
+  "submittedAt": "2025-06-30T23:58:30Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 5,
+  "body": "the customer face memory issues with using 4 nodes with each node has a single gpu, so we should use that in the compute config as the test",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H088",
+  "title": "Frontend Logging: Remove unused trace handling from JS agent receiver",
+  "html_url": "https://github.com/grafana/grafana/pull/126010",
+  "rid": "grafana/grafana#126010#2026-06-12T11:41:11Z#0",
+  "repo": "grafana/grafana",
+  "number": 126010,
+  "pr_author": "ofeliacode",
+  "reviewer": "tskarhed",
+  "submittedAt": "2026-06-12T11:41:11Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "There is some dead code related to traces in this file. Currently, if you send traces to `/log-grafana-javascript-agent` they will not be logged in the server logs. So I suppose we could just remove it instead?\n\nIf you'd want traces you'd be better off sending it to Alloy, rather than having it fill up the server logs.",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H089",
+  "title": "Feat/migrate signup page to signoz UI 10615",
+  "html_url": "https://github.com/SigNoz/signoz/pull/10993",
+  "rid": "SigNoz/signoz#10993#2026-04-20T20:12:36Z#0",
+  "repo": "SigNoz/signoz",
+  "number": 10993,
+  "pr_author": "flos-00",
+  "reviewer": "H4ad",
+  "submittedAt": "2026-04-20T20:12:36Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 6,
+  "body": "Few changes related to styling",
+  "comments": [
+   {
+    "path": "frontend/src/pages/SignUp/SignUp.tsx",
+    "line": 211,
+    "originalLine": 211,
+    "body": "Move to children, the message is being cut due to the title have the config of ellipsis"
+   },
+   {
+    "path": "frontend/src/pages/SignUp/SignUp.tsx",
+    "line": null,
+    "originalLine": 219,
+    "body": "Move to children, the message is being cut due to the title have the config of ellipsis"
+   },
+   {
+    "path": "frontend/src/pages/SignUp/SignUp.tsx",
+    "line": null,
+    "originalLine": 191,
+    "body": "Can be replaced to `Input.Password`."
+   },
+   {
+    "path": "frontend/src/pages/SignUp/SignUp.tsx",
+    "line": null,
+    "originalLine": 161,
+    "body": "You can remove the CSS of the inputs and keep it without any CSS since it will look better."
+   }
+  ],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H090",
+  "title": "Don't provide default values for PDBs in chart.",
+  "html_url": "https://github.com/apache/airflow/pull/52199",
+  "rid": "apache/airflow#52199#2025-12-22T18:33:50Z#0",
+  "repo": "apache/airflow",
+  "number": 52199,
+  "pr_author": "simi",
+  "reviewer": "Miretpl",
+  "submittedAt": "2025-12-22T18:33:50Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "For me it seems more like a bug, so should we make sure that it works for previous versions where it was a bug? I would say, not necessarily, but I would ask for a second opinion - @jscheffl, @jedcunningham WDYT?\r\n\r\n\\+ @simi I think we should add newsfragment for it",
+  "comments": [
+   {
+    "path": "helm-tests/tests/helm_tests/apiserver/test_pdb_apiserver.py",
+    "line": 35,
+    "originalLine": 35,
+    "body": "According to the Helm Chart docs we support k8s >= 1.30, so I guess we can delete that test"
+   }
+  ],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H091",
+  "title": "mgr/dashboard: NVmeof  Add listeners in subsytem step one and subsystem resource page.",
+  "html_url": "https://github.com/ceph/ceph/pull/67426",
+  "rid": "ceph/ceph#67426#2026-02-23T11:44:46Z#0",
+  "repo": "ceph/ceph",
+  "number": 67426,
+  "pr_author": "sagargopale2233",
+  "reviewer": "nmunet",
+  "submittedAt": "2026-02-23T11:44:46Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 2,
+  "body": "Hi @sagargopale2233, I find some inconsistency in the logic because of that i am seeing all the nodes in the listeners dropdown, even when 1 of the node is consumed.\n\nhttps://github.com/user-attachments/assets/2d20e4d2-a98a-4be3-bb6b-f2251cd3b6c4",
+  "comments": [
+   {
+    "path": "src/pybind/mgr/dashboard/frontend/src/app/ceph/block/nvmeof-listeners-list/nvmeof-listeners-list.component.html",
+    "line": 6,
+    "originalLine": 6,
+    "body": "is this needed now? the table already shows no data, so probably it would be better to use [empyMessage]=\"there are no listeners available in the NVMe subsystem\""
+   },
+   {
+    "path": "src/pybind/mgr/dashboard/frontend/src/app/ceph/block/nvmeof-listeners-form/nvmeof-listeners-form.component.ts",
+    "line": null,
+    "originalLine": 49,
+    "body": "why 2 similar subscribe blocks, do we not know from where we would be getting the data?"
+   },
+   {
+    "path": "src/pybind/mgr/dashboard/frontend/src/app/shared/api/nvmeof.service.ts",
+    "line": null,
+    "originalLine": 131,
+    "body": "This requires exact order match for label arrays. If placement has ['nvmeof', 'storage'] but host has ['storage', 'nvmeof'], it won't match. we should sort before comparing or use set logic."
+   },
+   {
+    "path": "src/pybind/mgr/dashboard/frontend/src/app/ceph/block/nvmeof-listeners-form/nvmeof-listeners-form.component.html",
+    "line": 19,
+    "originalLine": 18,
+    "body": "IMO this should just be a model instead of using a tearsheet component! we usually do that and as I see we are using tearsheet component for multiple step wizard, but not necessary here!\n@afreen23 wdyt?"
+   }
+  ],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H092",
+  "title": "Add new deprecation API using the problems API",
+  "html_url": "https://github.com/gradle/gradle/pull/31412",
+  "rid": "gradle/gradle#31412#2025-03-26T10:25:20Z#2",
+  "repo": "gradle/gradle",
+  "number": 31412,
+  "pr_author": "hegyibalint",
+  "reviewer": "donat",
+  "submittedAt": "2025-03-26T10:25:20Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 20,
+  "body": "",
+  "comments": [
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/Problems.java",
+    "line": null,
+    "originalLine": 50,
+    "body": "@return The deprecation reporter."
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/internal/DefaultProblems.java",
+    "line": null,
+    "originalLine": 69,
+    "body": ":question: Can we have single, shared `InternalProblemReporter` field?"
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/internal/DefaultDeprecationProblemGroup.java",
+    "line": null,
+    "originalLine": 19,
+    "body": ":x: Probably dead code as the same thing is declared  in `GradleCoreProblemGroup`."
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/internal/DefaultDeprecationData.java",
+    "line": null,
+    "originalLine": 74,
+    "body": "two unnecessary newlines."
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/internal/deprecation/DefaultDeprecationReporter.java",
+    "line": null,
+    "originalLine": 82,
+    "body": ":x: remove todo. Consider adding an `indirect()` method to  `DeprecateSpec`."
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/deprecation/DeprecationReporter.java",
+    "line": 32,
+    "originalLine": 32,
+    "body": ":x: I think the javadoc should be more elaborate on all methods. What's the expectation for consumers (reports, tapi clients, etc). Also, for `deprecateMethod`, the deprecation producer should know in what format the method should be passed. A concrete example would be very helpful."
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/deprecation/DeprecatePluginSpec.java",
+    "line": null,
+    "originalLine": 27,
+    "body": ":x: What's the point of this empty interface? IIUC we can introduce them later without breaking compatibility. "
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/deprecation/DeprecateMethodSpec.java",
+    "line": null,
+    "originalLine": 27,
+    "body": ":x: Same. What's the point of this empty interface? IIUC we can introduce them later without breaking compatibility. "
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/deprecation/source/ReportSource.java",
+    "line": null,
+    "originalLine": 37,
+    "body": ":x: please resolve todos."
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/deprecation/source/ReportSource.java",
+    "line": null,
+    "originalLine": 57,
+    "body": ":x: This should not be available on the public API."
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/deprecation/source/PluginReportSource.java",
+    "line": null,
+    "originalLine": 22,
+    "body": ":x: Fix todos"
+   },
+   {
+    "path": "platforms/ide/problems-api/src/main/java/org/gradle/api/problems/deprecation/source/GradleReportSource.java",
+    "line": null,
+    "originalLine": 39,
+    "body": ":x: Please resolve todos."
+   },
+   {
+    "path": "testing/internal-integ-testing/src/main/groovy/org/gradle/integtests/fixtures/problems/KnownProblemIds.groovy",
+    "line": 95,
+    "originalLine": 95,
+    "body": ":x: the knowne  ids that come from test coverage are listed at the bottom. See line 165:  // integration test problems"
+   }
+  ],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H093",
+  "title": "[libc][math] Implement sqrti",
+  "html_url": "https://github.com/llvm/llvm-project/pull/177960",
+  "rid": "llvm/llvm-project#177960#2026-02-05T13:36:33Z#1",
+  "repo": "llvm/llvm-project",
+  "number": 177960,
+  "pr_author": "0bVdnt",
+  "reviewer": "bassiounix",
+  "submittedAt": "2026-02-05T13:36:33Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "Hello @0bVdnt \nI need your PR to comply with these new changes https://github.com/llvm/llvm-project/commit/823e3e001724ca2e93ce410a675f3b538f8a74b3\n\nPlease rebase your code onto main and modify your code accordingly, there are breaking (signature) changes which I need you to reflect and replicate in your PR.\n\nThank you!",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H094",
+  "title": "[pkg/stanza] Fix writer error propagation and add helper tests",
+  "html_url": "https://github.com/open-telemetry/opentelemetry-collector-contrib/pull/47106",
+  "rid": "open-telemetry/opentelemetry-collector-contrib#47106#2026-05-20T09:35:35Z#0",
+  "repo": "open-telemetry/opentelemetry-collector-contrib",
+  "number": 47106,
+  "pr_author": "dakshhhhh16",
+  "reviewer": "andrzej-stencel",
+  "submittedAt": "2026-05-20T09:35:35Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 3,
+  "body": "This change looks like AI slop to me.\n\nThe behavior of `ProcessBatch` mirrors the behavior of `Process`. The decision to only return the error from the last operator was made deliberately in https://github.com/open-telemetry/opentelemetry-collector-contrib/pull/34342.\n\nIf you think it's incorrect, please create an issue describing the failure scenario in detail, including a minimal reproduction configuration, expected and actual result.",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H095",
+  "title": "gh-146475: Block Apple LLVM 21 from passing JIT tool version check",
+  "html_url": "https://github.com/python/cpython/pull/146478",
+  "rid": "python/cpython#146478#2026-03-27T13:25:00Z#0",
+  "repo": "python/cpython",
+  "number": 146478,
+  "pr_author": "ashutoshk314",
+  "reviewer": "diegorusso",
+  "submittedAt": "2026-03-27T13:25:00Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 2,
+  "body": "",
+  "comments": [
+   {
+    "path": "Tools/jit/_llvm.py",
+    "line": 62,
+    "originalLine": 62,
+    "body": "On my mac I had to add LLVM and clang to match the string. Can you please check?\n\n```suggestion\n    _llvm_version_pattern = re.compile(rf\"(?<!Apple )(LLVM|clang) version\\s+{llvm_version}\\.\\d+\\.\\d+\\S*\\s+\")\n```"
+   },
+   {
+    "path": "Tools/jit/_llvm.py",
+    "line": 62,
+    "originalLine": 62,
+    "body": "```\n$ /Library/Developer/CommandLineTools/usr/bin/llvm-objdump --version\nApple LLVM version 21.0.0\n  Optimized build.\n...\n\n$ /Library/Developer/CommandLineTools/usr/bin/clang --version\nApple clang version 21.0.0 (clang-2100.0.123.102)\nTarget: arm64-apple-darwin25.4.0\n...\n```"
+   }
+  ],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H096",
+  "title": "The Torment Nexus: The future of Security brigging and prisoner rehabilitation! FEAT. Baton Skin Crates",
+  "html_url": "https://github.com/tgstation/tgstation/pull/86106",
+  "rid": "tgstation/tgstation#86106#2024-11-20T19:10:34Z#8",
+  "repo": "tgstation/tgstation",
+  "number": 86106,
+  "pr_author": "Iamgoofball",
+  "reviewer": "Wallemations",
+  "submittedAt": "2024-11-20T19:10:34Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 20,
+  "body": "lots of programmer art that should probably be ironed away before this is fully merged, the most obvious ones that come to mind being the \"plunger\" and \"scanner\" icons, though I'm sure you were aware of all of that.",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H097",
+  "title": "[wasm] Generate the native-entry-point-to-interpreter thunk table",
+  "html_url": "https://github.com/dotnet/runtime/pull/132926",
+  "rid": "dotnet/runtime#132926#2026-09-01T15:20:59Z#0",
+  "repo": "dotnet/runtime",
+  "number": 132926,
+  "pr_author": "pavelsavara",
+  "reviewer": "jkotas",
+  "submittedAt": "2026-09-01T15:20:59Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 17,
+  "body": "None of this should be needed.\n\nI would like to understand why the system is not working as expected: https://github.com/dotnet/runtime/pull/132965#issuecomment-5495527493",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H098",
+  "title": "ipsec,route: Ignore ESRCH errors on delete operations",
+  "html_url": "https://github.com/cilium/cilium/pull/43617",
+  "rid": "cilium/cilium#43617#2026-01-08T16:27:41Z#0",
+  "repo": "cilium/cilium",
+  "number": 43617,
+  "pr_author": "elskow",
+  "reviewer": "jrife",
+  "submittedAt": "2026-01-08T16:27:41Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "I'd like to see a test case where these code paths returns `ESRCH` just to illustrate the the behavior does indeed happen.\r\n\r\nAlso, I feel that it would be better to add some helpers into the safenetlink package instead of adding a check for `ESRCH` in all these spots. Maybe something like this:\r\n\r\n```golang\r\nsafenetlink.XfrmPolicyDel()\r\nsafenetlink.XfrmStateDel()\r\nsafenetlink.RouteDel()\r\n```\r\n\r\nThese would just call the original netlink function and ignore ESRCH errors. cc @julianwiedmann  as well who was commenting on one of the issues.",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H099",
+  "title": "[hotwired__turbo] Align types with the v8.0.23 implementation",
+  "html_url": "https://github.com/DefinitelyTyped/DefinitelyTyped/pull/75208",
+  "rid": "DefinitelyTyped/DefinitelyTyped#75208#2026-07-05T19:14:50Z#0",
+  "repo": "DefinitelyTyped/DefinitelyTyped",
+  "number": 75208,
+  "pr_author": "myabc",
+  "reviewer": "G-Rath",
+  "submittedAt": "2026-07-05T19:14:50Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 4,
+  "body": "can you break these changes up to make it easier to review? it feels like you've got a few different types of changes in this\n\nfwiw I also purposely have been taking a \"just-in-time\" approach w/ filling out these types to make it easier to maintain and confirm what types should be based on the real world behaviours, and so far that seems to be going ok based on how few PRs and issues we've had - I'm not against attempting to backfill types like this, but I'm not sure how valuable it is to be going through the implementation line by line 🤷",
+  "comments": [],
+  "stratum": "closed"
+ },
+ {
+  "sid": "H100",
+  "title": "changefeedccl: warn user when creating changefeed that is a duplicate",
+  "html_url": "https://github.com/cockroachdb/cockroach/pull/147713",
+  "rid": "cockroachdb/cockroach#147713#2025-06-26T15:08:43Z#0",
+  "repo": "cockroachdb/cockroach",
+  "number": 147713,
+  "pr_author": "log-head",
+  "reviewer": "asg0451",
+  "submittedAt": "2025-06-26T15:08:43Z",
+  "outcome": "closed",
+  "agent_coauthor": false,
+  "n_commits": 1,
+  "body": "",
+  "comments": [
+   {
+    "path": "pkg/jobs/registry.go",
+    "line": null,
+    "originalLine": 707,
+    "body": "can you make this key a constant?"
+   },
+   {
+    "path": "pkg/jobs/registry.go",
+    "line": null,
+    "originalLine": 716,
+    "body": "i think the correct field to use is TableSpecifications, and to include the family info therein in the hash"
+   },
+   {
+    "path": "pkg/jobs/registry.go",
+    "line": null,
+    "originalLine": 728,
+    "body": "ultra nit: move the array decl out of the loop"
+   },
+   {
+    "path": "pkg/jobs/registry.go",
+    "line": null,
+    "originalLine": 714,
+    "body": "i don't think you need a txn here, which means you also don't need to return an error.\r\n"
+   },
+   {
+    "path": "pkg/jobs/registry.go",
+    "line": null,
+    "originalLine": 755,
+    "body": "nit: there are job status constants you can use"
+   },
+   {
+    "path": "pkg/jobs/registry.go",
+    "line": null,
+    "originalLine": 756,
+    "body": "..for this one too"
+   },
+   {
+    "path": "pkg/jobs/registry.go",
+    "line": null,
+    "originalLine": 740,
+    "body": "can you make this an assertionfailed pls"
+   },
+   {
+    "path": "pkg/jobs/registry.go",
+    "line": null,
+    "originalLine": 770,
+    "body": "nit: prefer tree.MustBeDInt()"
+   },
+   {
+    "path": "pkg/jobs/registry.go",
+    "line": null,
+    "originalLine": 768,
+    "body": "optional nit: i feel like it might be clearer to have an additional bool return value indicating none found. but this was is ok too"
+   },
+   {
+    "path": "pkg/ccl/changefeedccl/changefeed_stmt.go",
+    "line": null,
+    "originalLine": 76,
+    "body": "nit: add this to changefeedbase/settings.go. that's whhere all the options are .. except the above and idk why it's here."
+   },
+   {
+    "path": "pkg/ccl/changefeedccl/changefeed_stmt.go",
+    "line": null,
+    "originalLine": 79,
+    "body": "you don't need to say the default in the help text. also make it public pls"
+   },
+   {
+    "path": "pkg/jobs/registry.go",
+    "line": null,
+    "originalLine": 698,
+    "body": "can you add doc comments for all these new methods pls"
+   },
+   {
+    "path": "pkg/ccl/changefeedccl/changefeed_stmt.go",
+    "line": null,
+    "originalLine": 156,
+    "body": "why are you dereferencing the record ptr? just curious"
+   },
+   {
+    "path": "pkg/ccl/changefeedccl/changefeed_stmt.go",
+    "line": null,
+    "originalLine": 1493,
+    "body": "i'm a little less sure about this call -- this is to set the key on startup for feeds that predated setting the option on. however, this could cause contention between creating feeds (scanning all id keys) and feeds starting up. that could be bad.\r\n\r\nif we do want to do this at all, it would be better to put it outside of this retry loop, so it only happens once on job adoption, instead of on every restart.\r\n\r\nwe could also make it best-effort / make the other check low priority, so we don't interrupt feed startup.\r\n\r\nwdyt?"
+   },
+   {
+    "path": "pkg/ccl/changefeedccl/changefeed_test.go",
+    "line": null,
+    "originalLine": 11684,
+    "body": "these comment sections should be `t.Run(\"...\", ...)`\r\n"
+   },
+   {
+    "path": "pkg/ccl/changefeedccl/changefeed_test.go",
+    "line": null,
+    "originalLine": 11694,
+    "body": "use testutils.waitForJobToHaveStatus or similar instead"
+   },
+   {
+    "path": "pkg/ccl/changefeedccl/helpers_test.go",
+    "line": null,
+    "originalLine": 830,
+    "body": "```suggestion\r\nrequire.NoError(t, err)\r\n```"
+   }
+  ],
+  "stratum": "closed"
+ }
+]

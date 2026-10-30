@@ -1,0 +1,129 @@
+### G001 openai/openai-dotnet agent=Copilot | Add ChatModelFactory class to OpenAI namespace for easier mocking
+  BODY: nan
+  [ChatModelFactory.cs] User chat message can be instantiated using public constructor and it seems like all its properties can be initialized with public APIs too. Therefore, there does not seem to be a need for the model factory method. Can you review all the types that you added factory method for and make sure we are not adding factory methods that are not necessary
+### G002 dotnet/msbuild agent=Copilot | Track subclasses of MSBuild tasks for telemetry
+  BODY: nan
+  [ProjectTelemetry.cs] @copilot you need to check the entire inheritance heirarchy, not just the first level
+  [ProjectTelemetry.cs] @copilot rename this event - it's not about 'microsoft tasks' per se - it's about MSBuild tasks specifically. And I want to change the shape of the data we're collecting.  I want to track the usage of non-sealed Microsoft-owned Tasks specifically. So let's keep a dictionary of Microsoft Task Names to counts of their non-sealed usage. We should insp
+### G003 dotnet/fsharp agent=Copilot | [WIP] Support --typecheck-only for fsi run (just typecheck, no execution)
+  BODY: nan
+  [CompilerOptions.fs] This option is now available for help, hence the following 4 tests are failing:
+ 
+ CompilerOptions\fsi\help (-?-40) -- failed
+ CompilerOptions\fsi\help (--help-40) -- failed
+ CompilerOptions\fsi\help (/?-40) -- failed
+ CompilerOptions\fsi\help (-? --nologo-40) -- failed
+ 
+ They are part of the FsharpQa suite.
+ 
+ This can help you, the new lines are
+  [fsi.fs] Because of this change, line numbers after ilxgen for closures have shifted and therefore slightly changed ilverify baseline.
+ 
+ Read this repo docs for `ilverify` (search for it) and follow the guide for updating the baseline. It will require setting an env var and then running a script.
+### G004 GlareDB/glaredb agent=Devin | Add isfinite function for float types
+  BODY: nan
+  [isfinite.slt] ```suggestion
+ # isfinite
+ ```
+ 
+ Just the function name is fine.
+  [isfinite.slt] ```suggestion
+ ```
+  [isfinite.slt] ```suggestion
+ ```
+  [isfinite.slt] ```suggestion
+ ```
+### G005 tjy-gitnub/win12 agent=Copilot | gh-154:Enhance terminal commands and improve whiteboard user interface
+  BODY: nan
+  [desktop.html] ```suggestion
+ 						<div class="update-now disabled"><icon>&#xE794;</icon><div><p>此功能暂未完善</p><p>Windows 更新已被禁用</p></div><div class="alr"><a class="a button disabled" style="font-size: 16px;margin-top: -7.5px; opacity: 0.5; pointer-events: none;">更新</a></div></div>
+ ```
+  [desktop.js] ```suggestion
+                     <p style="margin-bottom: 20px;">我们只假装收集某些错误信息，然后为你重新启动。</p>
+ ```
+ 我们并没有在蓝屏时收集错误信息
+### G006 microsoft/genaiscript agent=Copilot | Add streamlined GenAIScript cheat sheet focusing on core functionality
+  BODY: nan
+  [cheat-sheet.mdx] Not correct, you don't access environment variables through env.vars @copilot
+  [cheat-sheet.mdx] Remove section @copilot
+  [cheat-sheet.mdx] Move this section much earlier, super important @copilot
+### G007 awesome-opencode/awesome-opencode agent=Copilot | [WIP] the starter repo for what will become an awesome-list for opencode
+
+  BODY: you are not completing the correct task. this is an awesome-list for opencode.ai the codeing agent cli
+### G008 dsccommunity/SqlServerDsc agent=Copilot | Add integration tests for Save-SqlDscSqlServerMediaFile command
+  BODY: nan
+  [Save-SqlDscSqlServerMediaFile.Integration.Tests.ps1] @copilot This seems to fail with:  ```console Running tests from 'D:\a\1\s\tests\Integration\Commands\Save-SqlDscSqlServerMediaFile.Integration.Tests.ps1' VERBOSE: Created test download directory: C:\Users\VSSADM~1\AppData\Local\Temp\SqlDscTestDownloads_772591486 Describing Save-SqlDscSqlServerMediaFile  Context When downloading SQL Server media us
+### G009 scikit-hep/mplhep agent=Copilot | Expose kwargs for ylow, yscale_legend, and yscale_anchored_text in mpl_magic
+  BODY: @copilot  There's a bunch of errors in the current tests. Fix them. Also generate visual tests for pytest-mpl where by default we could see overlap with the legend/text with the artists and create baseline images for these tests with  python -m pytest -r sa --mpl -n 4 --mpl-generate-path=tests/baseline <new_tests>  An easy way to make the tests is to fill the axis with uniform scatter of maybe 5 different entries across the axis and then add text and legend.
+### G010 nextcloud/desktop agent=OpenAI_Codex | Add consistent logging to CFAPI callbacks
+  BODY: nan
+  [cfapiwrapper.cpp] should be using `qC*` for log categories here as well
+ 
+ ```suggestion
+     qCDebug(lcCfApiWrapper) << "Fetch data callback called. File size:" << callbackInfo->FileSize.QuadPart;
+ ```
+  [cfapiwrapper.cpp] ```suggestion
+     qCInfo(lcCfApiWrapper) << "Cancel fetch data of" << path;
+ ```
+### G011 joshuadavidthomas/django-language-server agent=Copilot | Setup server logging to file using standard XDG directory
+  BODY: nan
+  [logging.rs] @copilot should have read more files before asking for the const change. All logic for the log dir should be in the conf crate, including checking its existence. So a function is needed again, returning an anyhow result. The only thing in this server crate file should be let log_dir = log_dir()? Everything else in the conf crate.
+### G012 dotnet/maui agent=Copilot | Fix NumberOfTapsRequired > 2 on Windows and Android platforms with simplified unlimited ta
+  BODY: <img width="344" height="128" alt="image" src="https://github.com/user-attachments/assets/57d6c639-27cd-491a-b2ad-603adcc2d812" />
+ There are related tests failing.
+ 
+ QuintupleTapGestureShouldWork
+ 
+ ```
+ Assert.That(counterText, Is.EqualTo("Quintuple taps: 1"))
+ String lengths are both 17. Strings differ at index 16.
+ Expected: "Quintuple taps: 1"
+ But was:  "Quintuple taps: 0"
+ ---------------------------^
+ ```
+ 
+ @copilot Review
+### G013 thorek1/MacroModelling.jl agent=Copilot | Add dynamic equations function to model structure for direct equation evaluation
+  BODY: nan
+### G014 ifad/chronomodel agent=Copilot | Fix includes + joins with as_of not propagating temporal context to eager loaded associati
+  BODY: @copilot without changing the production code and the current specs, what would you need to add to the test data to cover this case?
+### G015 dotnet/maui agent=Copilot | Fix Android location permission CheckStatusAsync to return Restricted instead of Denied fo
+  BODY: nan
+  [Permissions_Tests.cs] To ensure the fix works and avoids regressions, add unit tests that simulate the coarse-only state and verify that `CheckStatusAsync` returns `Restricted`.
+### G016 compas-dev/compas agent=Copilot | Add optional units and uncertainties support with comprehensive geometry integration
+  BODY: @copilot the ironpython tests are still failing. Just ignore them but not with the `skipif`, instead do `if not compas.IPY:` to ignore
+### G017 mcpjungle/MCPJungle agent=Copilot | Add server inclusion and exclusion support to tool groups
+  BODY: @copilot 
+ 1. Please add the changes to the README as well. The user-facing documentation about tool groups should reflect that users can now also use `included_servers` and `excluded_tools` fields in the tool group configuration.
+ 2. Also update the code in cmd/update.go. The runUpdateGroup() should now take into account that updates can also be made in included servers or excluded tools.
+### G018 CherryHQ/cherry-studio agent=Claude_Code | Fix mini-app cache issue when switching navigation modes
+  BODY: nan
+  [PR_TEMPLATE.md] Please delete this unnecessary file.
+### G019 celzero/rethink-app agent=Copilot | Fix UI bug: Icons overlap text in Other DNS cards
+  BODY: @copilot added comments which needs to be addressed
+### G020 doodlum/skyrim-community-shaders agent=Copilot | perf: cache GetRuntimeData usage for improved performance
+  BODY: Please handle other similar examples you identified.  Is this something that should be implemented in our commonlib dependency or is this a client application issue?  Also, is this approach developer friendly?
+### G021 microsoft/PowerToys agent=Copilot | Add "Show Details" context action to ListItems when ShowDetails=false
+  BODY: nan
+  [show-details-feature.md] Thanks for this, but please don't include it in the repository. Make sure we remove it before this PR gets merged.
+  [ListItemViewModel.cs] An override doesn't work here as SlowInitializeProperties isn't an abstract or virtual method. This probably needs to be a virtual method in the parent class.
+  [ListItemViewModel.cs] No subtitle needed
+  [ListItemViewModel.cs] The title and name properties shouldn't be hard coded. We want to support localization efforts so their values should be pulled from Resources.
+  [ListItemViewModel.cs] This message is getting sent but where does the code live that listens for this to actually expand the details?
+### G022 dotnet/android agent=Copilot | Fix NRT annotations in `src\Xamarin.Android.Build.Tasks\Utilities\` directory with proper 
+  BODY: @copilot fix the new set of errors:
+ ```
+  "/Users/builder/azdo/_work/7/s/android/Xamarin.Android.sln" (default target) (1:2) ->
+        "/Users/builder/azdo/_work/7/s/android/src/Xamarin.Android.Build.Tasks/Tests/Xamarin.ProjectTools/Xamarin.ProjectTools.csproj" (default target) (25:8) ->
+        (CoreCompile target) -> 
+          /Users/builder/azdo/_work/7/s/android/src/Xamarin.Android.Build.Tasks/Utilities/MonoAndroidHelper.Basic.cs(180,14): error CS7036: There is no argument given that corr
+### G023 dotnet/macios agent=Copilot | .NET: Add AppBundleResourcePrefix property to unify resource prefix properties
+  BODY: Always use the code formatting as configured in the root directory's .editorconfig file.
+  [ResourcePrefixTest.cs] Use `Xamarin.Tests.Configuration.GetAllPlatforms ()` instead to get a list of all the currently enabled platforms.
+  [ResourcePrefixTest.cs] Use '$(BundledNETCoreAppTargetFrameworkVersion)' instead of hardcoding '8.0'.
+  [ResourcePrefixTest.cs] Add a new method called `GetProperty` in tests/common/DotNet.cs that will run dotnet to get the property.
+  [ResourcePrefixTest.cs] Use `dotnet build -getProperty:...` as explained here: https://learn.microsoft.com/en-us/visualstudio/msbuild/evaluate-items-and-properties?view=vs-2022#use-command-line-options-to-output-values to get the property value. This means a separate target to print the property value is not necesssary.
+### G024 collinbarrett/FilterLists agent=Copilot | Split GameIndustry hosts into separate FilterList entries for each template variant
+  BODY: @copilot , multiple FilterListViewUrls for a single FilterList are intended to be used if there are multiple mirrors of the same list or if the same list is broken into multiple parts per this wiki: https://github.com/collinbarrett/FilterLists/wiki/FilterListViewUrl  In this case, these are different "flavors" of the same list, so let's give each one their own entry in FilterList.json and all the related entities/.json files as well.  Capture this design in copilot-instructions.md as well so you
+### G025 detekt/detekt agent=Copilot | Rename `md` report to `markdown`
+  BODY: @copilot also rename MdOutputReport to MarkfownOutputReport, and mdOutputPath to markdownOutputPath

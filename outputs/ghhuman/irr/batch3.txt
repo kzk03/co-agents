@@ -1,0 +1,99 @@
+### H076 ghostty-org/ghostty author=human | fix(vt): forward UTF-8 bytes through DCS passthrough
+  BODY: I still approve this but going to put a block on merge until 1.3 is out the door, I don't want to risk something in the core parse table for 1.3.
+### H077 tgstation/tgstation author=human | The Torment Nexus: The future of Security brigging and prisoner rehabilitation! FEAT. Bato
+  BODY: Caution decals over walls
+ Overlighting
+ Needs a maint door (I can see those disposal networks go straight through the wall)
+ You also completely deleted the MULEbot delivery - that needs to be moved somewhere
+ 
+ ![image](https://github.com/user-attachments/assets/ba7e0667-9eba-4778-bd13-c75f44f766a0)
+### H078 goauthentik/authentik author=human | stages/password: lock password login after failed attempts
+  BODY: Looks good. Needs E2Etests.
+### H079 cilium/cilium author=human | ipsec,route: Ignore ESRCH errors on delete operations
+  BODY: Overall LGTM but should we add a forbidigo rule to golangci.yaml that makes sure people don't keep using the functions that we now wrap with safenetlink?
+  [check-xfrmstate.sh] I think the purpose of this script, IIUC, is to discourage direct calls to certain `netlink.Xfrm*` functions in pkg/datapath that would circumvent the cache. The added wrappers in safenetlink violate this, so need exclusion.
+### H080 ydb-platform/ydb author=human | Enhance S3 sync process in CI: add error handling
+  BODY: Я кажется не готов к зеленым чекам без логов. Без рабочего s3 с моей точки мы не можем корректно выполнять проверки
+### H081 DefinitelyTyped/DefinitelyTyped author=human | toastify-js, add the ESM module
+  BODY: Requesting changes so the bot understands the current state.
+### H082 cockroachdb/cockroach author=human | changefeedccl: warn user when creating changefeed that is a duplicate
+  BODY: nan
+  [changefeed_stmt.go] pls update the commit msg to reflect the actual wording of the notice
+  [settings.go] pls rename the var and the setting name to be like the other ones, eg `changefeed.duplicate_check.enabled`
+  [changefeed_stmt.go] this comment should be on FindDuplicateChangefeedJob probably
+  [alter_changefeed_stmt.go] i'm not 100% sure of the semantics of p.InternalSQLTxn() -- will this be done transactionally with the above update in all cases?
+  [helpers_test.go] nit: change the name to make it more explicit that this is some super specific helper to do with dupe checking.
+  [registry.go] nit: "Get" implies a field accessor. can you make the name more clearly indicate it's a calculation?
+### H083 home-assistant/core author=human | MQTT Vacuum: Get Segments from separate MQTT Topic
+  BODY: As discussed available segements are reported via the state topic. As this is a state vacuum, we do not want different state topics.
+### H084 getsentry/sentry author=human | fix(replay): update profiling in replay recording consumer
+  BODY: nan
+  [sdk.py] These changes do not look correct to me
+### H085 backstage/backstage author=human | feat(catalog): allow clearing kind filter when allFilterEnabled is trued
+  BODY: Hi @NETIZEN-11, we are still coming to an agreement on a path forward: https://github.com/backstage/backstage/issues/33052
+### H086 pytorch/pytorch author=human | [aten][autograd] Add narrow_scatter operator with autograd and torch.compile support
+  BODY: narrow is compositeimplicitautograd, we only want view_scatter / view_copy operations for views that are not compositeimplicitautograd. Please let me know if you disagree with my assessment, if not, let's close this PR.
+### H087 ray-project/ray author=human | [data.llm] Add release test to capture memory leak
+  BODY: the customer face memory issues with using 4 nodes with each node has a single gpu, so we should use that in the compute config as the test
+### H088 grafana/grafana author=human | Frontend Logging: Remove unused trace handling from JS agent receiver
+  BODY: There is some dead code related to traces in this file. Currently, if you send traces to `/log-grafana-javascript-agent` they will not be logged in the server logs. So I suppose we could just remove it instead?  If you'd want traces you'd be better off sending it to Alloy, rather than having it fill up the server logs.
+### H089 SigNoz/signoz author=human | Feat/migrate signup page to signoz UI 10615
+  BODY: Few changes related to styling
+  [SignUp.tsx] Move to children, the message is being cut due to the title have the config of ellipsis
+  [SignUp.tsx] Move to children, the message is being cut due to the title have the config of ellipsis
+  [SignUp.tsx] Can be replaced to `Input.Password`.
+  [SignUp.tsx] You can remove the CSS of the inputs and keep it without any CSS since it will look better.
+### H090 apache/airflow author=human | Don't provide default values for PDBs in chart.
+  BODY: For me it seems more like a bug, so should we make sure that it works for previous versions where it was a bug? I would say, not necessarily, but I would ask for a second opinion - @jscheffl, @jedcunningham WDYT?
+ 
+ \+ @simi I think we should add newsfragment for it
+  [test_pdb_apiserver.py] According to the Helm Chart docs we support k8s >= 1.30, so I guess we can delete that test
+### H091 ceph/ceph author=human | mgr/dashboard: NVmeof  Add listeners in subsytem step one and subsystem resource page.
+  BODY: Hi @sagargopale2233, I find some inconsistency in the logic because of that i am seeing all the nodes in the listeners dropdown, even when 1 of the node is consumed.  https://github.com/user-attachments/assets/2d20e4d2-a98a-4be3-bb6b-f2251cd3b6c4
+  [nvmeof-listeners-list.component.html] is this needed now? the table already shows no data, so probably it would be better to use [empyMessage]="there are no listeners available in the NVMe subsystem"
+  [nvmeof-listeners-form.component.ts] why 2 similar subscribe blocks, do we not know from where we would be getting the data?
+  [nvmeof.service.ts] This requires exact order match for label arrays. If placement has ['nvmeof', 'storage'] but host has ['storage', 'nvmeof'], it won't match. we should sort before comparing or use set logic.
+  [nvmeof-listeners-form.component.html] IMO this should just be a model instead of using a tearsheet component! we usually do that and as I see we are using tearsheet component for multiple step wizard, but not necessary here! @afreen23 wdyt?
+### H092 gradle/gradle author=human | Add new deprecation API using the problems API
+  BODY: nan
+  [Problems.java] @return The deprecation reporter.
+  [DefaultProblems.java] :question: Can we have single, shared `InternalProblemReporter` field?
+  [DefaultDeprecationProblemGroup.java] :x: Probably dead code as the same thing is declared  in `GradleCoreProblemGroup`.
+  [DefaultDeprecationData.java] two unnecessary newlines.
+  [DefaultDeprecationReporter.java] :x: remove todo. Consider adding an `indirect()` method to  `DeprecateSpec`.
+  [DeprecationReporter.java] :x: I think the javadoc should be more elaborate on all methods. What's the expectation for consumers (reports, tapi clients, etc). Also, for `deprecateMethod`, the deprecation producer should know in what format the method should be passed. A concrete example would be very helpful.
+### H093 llvm/llvm-project author=human | [libc][math] Implement sqrti
+  BODY: Hello @0bVdnt  I need your PR to comply with these new changes https://github.com/llvm/llvm-project/commit/823e3e001724ca2e93ce410a675f3b538f8a74b3  Please rebase your code onto main and modify your code accordingly, there are breaking (signature) changes which I need you to reflect and replicate in your PR.  Thank you!
+### H094 open-telemetry/opentelemetry-collector-contrib author=human | [pkg/stanza] Fix writer error propagation and add helper tests
+  BODY: This change looks like AI slop to me.  The behavior of `ProcessBatch` mirrors the behavior of `Process`. The decision to only return the error from the last operator was made deliberately in https://github.com/open-telemetry/opentelemetry-collector-contrib/pull/34342.  If you think it's incorrect, please create an issue describing the failure scenario in detail, including a minimal reproduction configuration, expected and actual result.
+### H095 python/cpython author=human | gh-146475: Block Apple LLVM 21 from passing JIT tool version check
+  BODY: nan
+  [_llvm.py] On my mac I had to add LLVM and clang to match the string. Can you please check?  ```suggestion     _llvm_version_pattern = re.compile(rf"(?<!Apple )(LLVM|clang) version\s+{llvm_version}\.\d+\.\d+\S*\s+") ```
+  [_llvm.py] ``` $ /Library/Developer/CommandLineTools/usr/bin/llvm-objdump --version Apple LLVM version 21.0.0   Optimized build. ...  $ /Library/Developer/CommandLineTools/usr/bin/clang --version Apple clang version 21.0.0 (clang-2100.0.123.102) Target: arm64-apple-darwin25.4.0 ... ```
+### H096 tgstation/tgstation author=human | The Torment Nexus: The future of Security brigging and prisoner rehabilitation! FEAT. Bato
+  BODY: lots of programmer art that should probably be ironed away before this is fully merged, the most obvious ones that come to mind being the "plunger" and "scanner" icons, though I'm sure you were aware of all of that.
+### H097 dotnet/runtime author=human | [wasm] Generate the native-entry-point-to-interpreter thunk table
+  BODY: None of this should be needed.  I would like to understand why the system is not working as expected: https://github.com/dotnet/runtime/pull/132965#issuecomment-5495527493
+### H098 cilium/cilium author=human | ipsec,route: Ignore ESRCH errors on delete operations
+  BODY: I'd like to see a test case where these code paths returns `ESRCH` just to illustrate the the behavior does indeed happen.
+ 
+ Also, I feel that it would be better to add some helpers into the safenetlink package instead of adding a check for `ESRCH` in all these spots. Maybe something like this:
+ 
+ ```golang
+ safenetlink.XfrmPolicyDel()
+ safenetlink.XfrmStateDel()
+ safenetlink.RouteDel()
+ ```
+ 
+ These would just call the original netlink function and ignore ESRCH errors. cc @julianwiedmann  as w
+### H099 DefinitelyTyped/DefinitelyTyped author=human | [hotwired__turbo] Align types with the v8.0.23 implementation
+  BODY: can you break these changes up to make it easier to review? it feels like you've got a few different types of changes in this  fwiw I also purposely have been taking a "just-in-time" approach w/ filling out these types to make it easier to maintain and confirm what types should be based on the real world behaviours, and so far that seems to be going ok based on how few PRs and issues we've had - I'm not against attempting to backfill types like this, but I'm not sure how valuable it is to be goi
+### H100 cockroachdb/cockroach author=human | changefeedccl: warn user when creating changefeed that is a duplicate
+  BODY: nan
+  [registry.go] can you make this key a constant?
+  [registry.go] i think the correct field to use is TableSpecifications, and to include the family info therein in the hash
+  [registry.go] ultra nit: move the array decl out of the loop
+  [registry.go] i don't think you need a txn here, which means you also don't need to return an error.
+ 
+  [registry.go] nit: there are job status constants you can use
+  [registry.go] ..for this one too

@@ -1,0 +1,35 @@
+# Fix issue #171: Preserve empty HTML tags during serialization
+
+## Problem
+When processing HTML with empty tags like `<u></u>`, PreMailer.Net converts them to self-closing tags `<u/>` during HTML serialization. This causes unintended styling effects, such as making all subsequent text underlined.
+
+## Solution
+Created a comprehensive `EmailHtmlMarkupFormatter` that:
+1. Preserves empty HTML tags by always generating closing tags
+2. Preserves HTML entities (combining functionality from the existing `PreserveEntitiesHtmlMarkupFormatter`)
+
+Modified `GetMarkupFormatterForDocType()` to use this new formatter by default.
+
+## Testing
+Added test cases to verify:
+- Empty tags like `<u></u>` are preserved and not converted to self-closing tags
+- HTML entities like `&copy;` are preserved and not converted to Unicode characters
+
+All tests are passing.
+
+## Example
+Before:
+```html
+<u></u>
+```
+After serialization (incorrect):
+```html
+<u/>
+```
+With fix (correct):
+```html
+<u></u>
+```
+
+Link to Devin run: https://app.devin.ai/sessions/c8d484e6ffd64961adb7ae618a4ec011
+Requested by: m@martinnormark.com

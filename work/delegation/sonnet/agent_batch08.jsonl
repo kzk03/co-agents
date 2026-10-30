@@ -1,0 +1,10 @@
+{"sid": "G081", "up": "U3", "dec": "N", "req_quote": "", "rev_quote": "useSession here to get current userId instead of hitting the useMeQuery which is a redudant api call"}
+{"sid": "G082", "up": "U3", "dec": "NA", "req_quote": "", "rev_quote": "Let's call this experimental... Let's add usage examples and docs here... add a format option... add JSON"}
+{"sid": "G083", "up": "U4", "dec": "NA", "req_quote": "", "rev_quote": "CS8002 must not be automatically suppressed when targeting .NET Standard 2.0 or lower"}
+{"sid": "G084", "up": "U1", "dec": "Y", "req_quote": "Replace the add-hoc code by high performance loggers - ...high-performance-logging", "rev_quote": "Please define log messages following this example: [LoggerMessage...] pattern"}
+{"sid": "G085", "up": "U3", "dec": "NA", "req_quote": "", "rev_quote": "Don't use requirements.txt. Update pyproject.toml for uv."}
+{"sid": "G086", "up": "U3", "dec": "Y", "req_quote": "The changes must work for all platforms, including Windows.", "rev_quote": "We need to support passing multiple files... I don't think joining them here and then putting them in the glob will work"}
+{"sid": "G087", "up": "U3", "dec": "Y", "req_quote": "having the ability to specify the version...will allow you to better manage your app service extensions", "rev_quote": "Let's not add ExtensionVersions and extend ExtensionsList instead by supporting version suffix in brackets"}
+{"sid": "G088", "up": "U3", "dec": "NA", "req_quote": "", "rev_quote": "Please improve the comments here. Be verbose and explain the terminology... Add motivation for why someone may want to use this"}
+{"sid": "G089", "up": "U3", "dec": "NA", "req_quote": "", "rev_quote": "nope. Suspense requires throwing promises."}
+{"sid": "G090", "up": "U2", "dec": "NA", "req_quote": "Source Diff Analysis: Fetches GitHub release notes...Dependency Change Detection: Compares dependencies between versions", "rev_quote": "Also collect a diff of the sources changes between the 2 versions...Detect if the packages contains dependency updates as well"}

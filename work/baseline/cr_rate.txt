@@ -1,0 +1,68 @@
+== pilot 合計(作者種別)
+ agent_strong: repo 27 PR 4448 人間レビュー 10586 人間CR 713 CR付きPR 496 | CR/PR 0.160 CR付きPR率 0.112 CR/人間レビュー 0.067
+ agent_weak: repo 31 PR 3304 人間レビュー 10065 人間CR 897 CR付きPR 570 | CR/PR 0.271 CR付きPR率 0.173 CR/人間レビュー 0.089
+ human: repo 39 PR 32696 人間レビュー 75505 人間CR 4346 CR付きPR 3105 | CR/PR 0.133 CR付きPR率 0.095 CR/人間レビュー 0.058
+
+== pilot 人間作者 PR の repo 別(PR 数順)  PR / 人間CR / CR/PR / CR付きPR率 / CR/人間レビュー
+  home-assistant/core: 13310 / 3045 / 0.229 / 0.161 / 0.130
+  getsentry/sentry: 7089 / 144 / 0.020 / 0.018 / 0.008
+  ray-project/ray: 3016 / 143 / 0.047 / 0.040 / 0.018
+  dotnet/runtime: 2052 / 15 / 0.007 / 0.007 / 0.002
+  grafana/grafana: 1692 / 82 / 0.048 / 0.041 / 0.021
+  backstage/backstage: 1123 / 303 / 0.270 / 0.195 / 0.161
+  dotnet/docs: 727 / 5 / 0.007 / 0.006 / 0.004
+  apache/airflow: 482 / 77 / 0.160 / 0.122 / 0.042
+  ydb-platform/ydb: 459 / 11 / 0.024 / 0.022 / 0.019
+  NVIDIA/Megatron-LM: 446 / 40 / 0.090 / 0.074 / 0.022
+  pytorch/pytorch: 312 / 41 / 0.131 / 0.103 / 0.057
+  SigNoz/signoz: 309 / 92 / 0.298 / 0.149 / 0.081
+  ceph/ceph: 303 / 113 / 0.373 / 0.224 / 0.113
+  espressif/arduino-esp32: 257 / 14 / 0.054 / 0.047 / 0.022
+  open-telemetry/opentelemetry-collector-contrib: 205 / 20 / 0.098 / 0.073 / 0.035
+  prestodb/presto: 107 / 35 / 0.327 / 0.234 / 0.076
+  envoyproxy/envoy: 98 / 16 / 0.163 / 0.122 / 0.057
+  cockroachdb/cockroach: 95 / 20 / 0.211 / 0.116 / 0.077
+  goauthentik/authentik: 94 / 10 / 0.106 / 0.096 / 0.067
+  reactos/reactos: 77 / 4 / 0.052 / 0.052 / 0.012
+  juspay/hyperswitch: 57 / 11 / 0.193 / 0.140 / 0.043
+  python/cpython: 50 / 5 / 0.100 / 0.060 / 0.062
+  gradle/gradle: 49 / 26 / 0.531 / 0.306 / 0.142
+  llvm/llvm-project: 46 / 17 / 0.370 / 0.217 / 0.110
+  nextcloud/server: 41 / 4 / 0.098 / 0.098 / 0.033
+  ghostty-org/ghostty: 29 / 7 / 0.241 / 0.207 / 0.259
+  DefinitelyTyped/DefinitelyTyped: 29 / 5 / 0.172 / 0.138 / 0.079
+  PaddlePaddle/Paddle: 24 / 9 / 0.375 / 0.125 / 0.093
+  cilium/cilium: 23 / 13 / 0.565 / 0.348 / 0.116
+  istio/istio: 22 / 2 / 0.091 / 0.091 / 0.033
+  godotengine/godot: 22 / 2 / 0.091 / 0.091 / 0.133
+  tgstation/tgstation: 20 / 12 / 0.600 / 0.200 / 0.324
+  hashicorp/vault: 11 / 1 / 0.091 / 0.091 / 0.026
+  swiftlang/swift: 6 / 0 / 0.000 / 0.000 / 0.000
+  termux/termux-packages: 5 / 1 / 0.200 / 0.200 / 0.045
+  php/php-src: 4 / 0 / 0.000 / 0.000 / 0.000
+  elastic/elasticsearch: 3 / 0 / 0.000 / 0.000 / 0.000
+  jekyll/jekyll: 1 / 1 / 1.000 / 1.000 / 0.167
+  flipperdevices/flipperzero-firmware: 1 / 0 / 0.000 / 0.000 / 0.000
+ repo 別 CR/PR(PR>=100 の 16 repo): 中央値 0.094 最小 0.007 最大 0.373
+ home-assistant/core を除く合計 CR/PR 0.067
+
+== pilot 同一 repo 内: 人間 PR vs エージェント(strong)PR の CR/PR(strong PR が 20 件以上の repo)
+  getsentry/sentry: human PR 7089 CR/PR 0.020 CR付き 0.018 | agent_strong PR 1547 CR/PR 0.018 CR付き 0.017
+  home-assistant/core: human PR 13310 CR/PR 0.229 CR付き 0.161 | agent_strong PR 1450 CR/PR 0.374 CR付き 0.240
+  grafana/grafana: human PR 1692 CR/PR 0.048 CR付き 0.041 | agent_strong PR 447 CR/PR 0.069 CR付き 0.067
+  ray-project/ray: human PR 3016 CR/PR 0.047 CR付き 0.040 | agent_strong PR 348 CR/PR 0.052 CR付き 0.049
+  backstage/backstage: human PR 1123 CR/PR 0.270 CR付き 0.195 | agent_strong PR 335 CR/PR 0.137 CR付き 0.119
+  NVIDIA/Megatron-LM: human PR 446 CR/PR 0.090 CR付き 0.074 | agent_strong PR 115 CR/PR 0.165 CR付き 0.130
+  ydb-platform/ydb: human PR 459 CR/PR 0.024 CR付き 0.022 | agent_strong PR 91 CR/PR 0.033 CR付き 0.033
+
+== AIDev(エージェント作者 PR)合計: repo 6673 PR 71677 人間レビュー 48626 人間CR 4680 CR付きPR 2847 | CR/PR 0.065 CR付きPR率 0.040 CR/人間レビュー 0.096
+ 人間レビューが1件以上ある PR に限ると: PR 17325 CR/PR 0.270
+ repo 別 CR/PR(PR>=100 の 80 repo): 中央値 0.007 最小 0.000 最大 1.118  CR が1件以上の repo 1067
+ 上位 CR repo: {'DaveSkender/Stock.Indicators': {'pr': 170, 'cr': 190}, 'dotnet/maui': {'pr': 166, 'cr': 140}, 'dsccommunity/SqlServerDsc': {'pr': 54, 'cr': 109}, 'microsoft/vscode': {'pr': 615, 'cr': 64}, 'NVIDIA/cuda-python': {'pr': 25, 'cr': 61}, 'microsoft/TypeScript': {'pr': 45, 'cr': 58}, 'microsoft/vscode-pull-request-github': {'pr': 168, 'cr': 49}, 'deepmodeling/deepmd-kit': {'pr': 38, 'cr': 49}}
+
+== 共通 5 repo: AIDev(エージェント作者 PR) vs pilot 人間作者 PR
+  dotnet/docs: AIDev PR 277.0 CR 11.0 CR/PR 0.040 CR付き 0.040 | pilot human PR 727 CR 5 CR/PR 0.007 CR付き 0.006
+  dotnet/runtime: AIDev PR 190.0 CR 15.0 CR/PR 0.079 CR付き 0.063 | pilot human PR 2052 CR 15 CR/PR 0.007 CR付き 0.007
+  getsentry/sentry: AIDev PR 124.0 CR 1.0 CR/PR 0.008 CR付き 0.008 | pilot human PR 7089 CR 144 CR/PR 0.020 CR付き 0.018
+  home-assistant/core: AIDev PR 12.0 CR 2.0 CR/PR 0.167 CR付き 0.167 | pilot human PR 13310 CR 3045 CR/PR 0.229 CR付き 0.161
+  ydb-platform/ydb: AIDev PR 39.0 CR 8.0 CR/PR 0.205 CR付き 0.154 | pilot human PR 459 CR 11 CR/PR 0.024 CR付き 0.022

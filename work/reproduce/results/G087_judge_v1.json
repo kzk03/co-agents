@@ -1,0 +1,45 @@
+{
+ "text": "{\"main\":\"Don't add a separate ExtensionVersions input; instead extend ExtensionsList to support an optional version suffix in brackets (with old behavior preserved when omitted), add telemetry logging on Kudu errors, and gate all changes behind a feature flag.\",\"R1\":\"no\",\"R1_item\":0,\"R2\":\"no\",\"R2_item\":0,\"R3\":\"no\",\"R3_item\":0}",
+ "cost": 0.0400428,
+ "sec": 3.9,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 8352,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 133,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 8352,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 133,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 8352,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 8352
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G087",
+ "order": [
+  "A",
+  "C",
+  "B"
+ ]
+}

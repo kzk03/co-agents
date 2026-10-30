@@ -1,0 +1,45 @@
+{
+ "text": "{\"main\":\"Directory logic for the log dir (including existence checking/creation) must all live in the conf crate behind a function returning anyhow::Result, so the server crate just does `let log_dir = log_dir()?`, not scattered create_dir_all/const logic across crates.\",\"R1\":\"partial\",\"R1_item\":3,\"R2\":\"partial\",\"R2_item\":2,\"R3\":\"partial\",\"R3_item\":3}",
+ "cost": 0.034214800000000004,
+ "sec": 5.7,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 6890,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 135,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 6890,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 135,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 6890,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 6890
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G011",
+ "order": [
+  "B",
+  "A",
+  "C"
+ ]
+}

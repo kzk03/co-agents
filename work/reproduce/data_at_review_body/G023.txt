@@ -1,0 +1,25 @@
+This PR unifies the various resource prefix properties (`IPhoneResourcePrefix`, `MonoMacResourcePrefix`, and `XamMacResourcePrefix`) into a single property (`AppBundleResourcePrefix`) for use in .NET projects.
+
+The implementation:
+
+1. Adds a new `AppBundleResourcePrefix` property in `Xamarin.Shared.props` with a default value of "Resources"
+2. Updates the property precedence to use `AppBundleResourcePrefix` first, then fall back to the platform-specific properties
+3. Maintains backward compatibility by having legacy properties default to the new property if they're not explicitly set
+4. Updates comments in MSBuild files to reflect the changes
+5. Updates documentation in `build-properties.md` to document the new property and add recommendations for using it instead of the legacy properties
+
+Users can now specify a single resource prefix property that works across all platforms:
+
+```xml
+<PropertyGroup>
+  <AppBundleResourcePrefix>Resources</AppBundleResourcePrefix>
+</PropertyGroup>
+```
+
+Legacy properties will continue to work for backward compatibility, but the new property is recommended for new .NET projects.
+
+Fixes #12808.
+
+---
+
+💡 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.

@@ -1,0 +1,19 @@
+sid,main,A,A_item,B,B_item,note
+G004,テストファイルの冗長なコメントを削り関数名だけにする(suggestion で行削除),no,0,no,0,
+G011,ログディレクトリの判定・作成ロジックは全部 conf crate の関数(anyhow Result)に置き、server 側は log_dir()? だけにする,yes,2,yes,3,LLM は PR 説明との不一致として指摘(移すか説明を直すかの二択)
+G024,別フレーバーは ViewUrl の追加ではなく FilterList を別エントリに分ける(+copilot-instructions に記録),yes,1,yes,1,
+G025,MdOutputReport→MarkdownOutputReport と mdOutputPath→markdownOutputPath も改名する,yes,3,yes,2,
+G026,disabled をタグのカスタムオプションとして扱わず設定側の仕組みで無効化する,yes,5,partial,2,B は組合せ時のエラー化のみで別設定の提案なし
+G033,dev 限定にせず build でも動くようにする,yes,1,yes,1,LLM は「実装するか説明を直すか」の二択として指摘
+G041,~1 構文は動かないので親コミット SHA を実際に求める,partial,5,partial,3,LLM は親のないルートコミットの場合だけを問題視
+G046,スコープを広げすぎ。modern .NET(netX.Y)だけに NoWarn を付ける,yes,1,yes,1,
+G057,UPDATE=1 でテスト(スナップショット)を実行して期待出力を更新する,yes,1,partial,3,A は fixture の出力を実際の実行結果で作り直せと指摘
+G061,Address comments.(別のコメントを指すだけで中身がない),no,0,no,0,人間側テキストに中身なし(判定不能に近い)
+G062,PreserveEntitiesHtmlMarkupFormatter を削除し新フォーマッタはオプションで opt-in にする(フラグ名も変える),partial,4,partial,1,opt-in 化の方向だけ一致。旧フォーマッタ削除は逆方向(再利用せよ)
+G073,実装は怪しいのでテストケースを追加して修正を確認する,yes,2,yes,3,
+G075,新 CLI オプションではなくプラグインで実装する,no,0,no,0,
+G086,複数ファイル指定(npm test f1 f2)に対応する。結合して glob にする方式は動かない,partial,2,partial,2,副次の Windows 対応のみ再現
+G087,ExtensionVersions を追加せず ExtensionsList に括弧付きバージョン接尾辞で対応(+feature flag・telemetry),no,0,partial,4,B は「バージョン無指定時は旧ロジックを保つ」(副次)のみ
+G089,Suspense は promise を throw する必要があるので throw p を戻す,yes,1,yes,1,
+G091,テストの意味を変えずに vitest の fake timers を使って移行する,yes,5,yes,2,
+G094,generated 配下を変更してはならない。TypeSpec 側で直す,yes,1,yes,1,

@@ -1,0 +1,41 @@
+{
+ "text": "1. **lib/result.js `saveFailedTests` / `uid` field** — `test.uid` is read and written, but Mocha's `Runnable` has no `uid` property, so it is always `undefined` in the saved JSON. The matching logic in `lib/codecept.js` (`failedTestUids`, `filterByFailedTests`) relies on `uid` as a primary key alongside `title`/`fullTitle`, giving a false sense of robust identity matching when it's dead code. Either implement a real stable uid (e.g. `file:fullTitle` hash) or remove `uid` from the save/match paths entirely to avoid misleading future maintainers.\n\n2. **lib/codecept.js `run()` — unsafe regex construction from file-sourced strings** — `pattern` is built via string concatenation of user/file-supplied `fullTitle` values into a `RegExp`, and passed to `mocha.grep()`. Although each title is escaped individually, a failed-tests.json with thousands of titles (or pathological content) can produce an oversized/catastrophic regex (ReDoS-adjacent) with no cap on size, and there's no test for titles containing newlines or the `|`/anchors confusing the alternation. Build the filter as a direct title-set comparison (as `_filterMochaTestsByFailedTests` already does) rather than smuggling data through `grep`'s regex engine — and note `_filterMochaTestsByFailedTests` is dead code since `run()` never calls it, which itself needs cleanup.\n\n3. **`--failed-tests` + worker mode drops file-level parallelism for no reason, and `filterByFailedTests` empties `testFiles` entirely when the list is empty** — in `lib/workers.js`, `filterByFailedTests` is applied to `this.codecept` before sharding into worker groups, meaning if the failed-tests file references files across many suites, splitting logic in `splitTestsByGroups` may now operate on a near-empty or single-file set, defeating the purpose of `run-workers`. More seriously, `filterByFailedTests([])` (e.g., a stale/empty JSON) silently sets `testFiles = []`, so the run silently executes nothing with exit code 0 rather than erroring — this should throw/warn instead of silently no-op.\n\n4. **File matching uses absolute-path equality, breaking the stated use case** — `filterByFailedTests` matches on `fsPath.resolve(file) === fsPath.resolve(failedFile)`. The `file` path stored by `saveFailedTests` comes from whatever `test.file` was at save time (potentially from a different `testRoot`, a different machine, or produced by a worker subprocess with its own cwd). There is no normalization relative to `codecept_dir`/`testRoot`, so a failed-tests.json produced by one `run` and consumed by another in a different working directory (a very plausible CI scenario — save on one runner, replay on another) will silently match nothing and run zero tests. Store/compare paths relative to `codecept_dir`.\n\n5. **`lib/command/run.js` silently ignores `--save-failed-tests` combined with `--failed-tests`, and duplicates the save logic from `run-workers.js`** — the save/filename logic (`typeof options.saveFailedTests === 'string' ? ... : 'failed-tests.json'`) is copy-pasted verbatim between `run.js` and `run-workers.js` with no shared helper; this should be factored into `Result.saveFailedTests` caller logic or a shared util, especially since both call sites also duplicate the file-read/validate block (`fs.existsSync` / `JSON.parse` / shape check) that should live in one place (e.g. a `loadFailedTestsFile(path)` helper in `lib/utils.js`).\n\n6. **No input validation / error handling for malformed `failed-tests.json`** — `JSON.parse(fs.readFileSync(...))` in both `run.js` and `run-workers.js` will throw a raw `SyntaxError` with no file context if the JSON is malformed, and there's no schema validation beyond checking `tests` is an array (fields inside each test object are used with only `.filter(Boolean)`, so a file with garbage entries silently drops them rather than reporting that the file is stale/incompatible).\n\n7. **Scope/quality of added test fixtures — three near-duplicate sandbox fixtures with no clear purpose split** — `test/data/sandbox/failed-tests/failed_test.js`, `my_test.js`, and `failing_test.js` are near-identical copy-pasted fixtures (two of them byte-for-byte duplicate scenario sets). This bloats the test directory and makes it unclear which fixture backs which runner test; consolidate to the minimum needed fixtures with clear names tied to their assertions.\n\n8. **docs/plugins.md diff is out of scope and auto-generated noise** — unrelated formatting churn (`-`→`*` bullet list conversion) and addition of entries for `consolidateWorkerJsonResults`, `enhancedRetryFailedStep`, `safeJsonStringify` — plugins/utilities that don't appear anywhere else in this diff. This indicates the docs were regenerated against a different/stale source tree (or `npm run docs` was run against unrelated local changes) and should be reverted to only the actual new CLI option documentation for this feature, not an unrelated doc-gen diff.\n\n9. **`test/unit/helper/json_response_onResponse_test.js` changes are unrelated to the PR's stated feature and alter shared test infrastructure scope** — turning real network-dependent assertions into conditionally-skipped tests (`isNetworkAvailable` guard) is a meaningful behavior change to an existing, unrelated test file bundled into a feature PR. This should be split into its own PR/commit so it can be reviewed and reverted independently if the failed-tests feature needs to be reverted.\n\n10. **No documentation added for the new CLI flags themselves** — `docs/plugins.md` was touched only with unrelated regenerated content; there's no addition to CLI/usage docs (e.g. `docs/commands.md` or README) describing `--save-failed-tests` / `--failed-tests`, their default file location (`output` dir vs cwd — note `run.js` resolves relative to `testRoot` while `run-workers.js` resolves relative to `process.cwd()`, an inconsistency worth fixing alongside documenting it).",
+ "cost": 0.1402208,
+ "sec": 26.9,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 28379,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 2140,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 28379,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 2140,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 28379,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 28379
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G075",
+ "cond": "C"
+}

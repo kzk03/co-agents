@@ -1,0 +1,41 @@
+{
+ "text": "1. **Binary-compatibility API dump files** (e.g. `*/api/*.api` for `detekt-gradle-plugin`, `detekt-api`) — not present anywhere in the diff, yet the PR checklist/summary claims \"Update API dump file for binary compatibility tracking\" was done. The public API actually changed (`DetektReportType.MD`→`MARKDOWN`, `DetektReports.md`/`getMd()`/`md()` removed in favor of `markdown`, new `OutputReport.reportId` member). Without the `.api` dump regenerated, the `apiCheck` Gradle task will fail CI. Fix: run `./gradlew apiDump` and commit the resulting changes, or correct the PR description if this truly wasn't needed.\n\n2. **Breaking removal of `reports.md`/`md()`/`getMd()` (Gradle DSL) and the `md` CLI report id with no deprecation path** (`DetektReports.kt`, `DetektReportType.kt`). Existing downstream build scripts using `reports.md { ... }` and CI invocations using `--report md:path` will now fail to compile/resolve with no migration warning. Fix: keep a `@Deprecated`-forwarding `md` property/function (delegating to `markdown`) and accept `\"md\"` as a deprecated alias in the report-type parser for at least one release, per detekt's usual API-removal policy.\n\n3. **PR description contains claims not reflected in the diff** — checklist/summary says the class was renamed `MdOutputReport`→`MarkdownOutputReport` and the id changed `\"MdOutputReport\"`→`\"MarkdownOutputReport\"`, but `detekt-report-markdown/.../MdOutputReport.kt` still declares `class MdOutputReport` with `override val id: String = \"MdOutputReport\"`. It also claims `default-detekt-config.yml` and a root `build.gradle.kts` unresolved-reference fix were done, but neither file appears in the diff. This mismatch between stated work and actual changes needs to be reconciled (either implement what's claimed or correct the description) before merging on trust of the summary.\n\n4. **No test added for the new `OutputReport.reportId` property** on `MdOutputReport` — existing tests were only edited to pass the string `\"markdown\"` into report maps; nothing asserts `MdOutputReport().reportId == \"markdown\"` directly, so a future refactor could silently break the CLI/Gradle identifier without a failing test.\n\n5. **Incomplete documentation sweep for the CLI `md` report id** — only `website/docs/gettingstarted/gradle.mdx` (Gradle DSL docs) was updated; the CLI-usage docs (e.g. any page documenting `--report md:path`) aren't in the diff, so user-facing CLI examples likely still reference the removed `md` id.",
+ "cost": 0.23639,
+ "sec": 97.8,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 36384,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 9085,
+  "output_tokens_details": {
+   "thinking_tokens": 8134
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 36384,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 9085,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 36384,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 36384
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G025",
+ "cond": "A"
+}

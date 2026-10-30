@@ -1,0 +1,17 @@
+cr_all: 6720
+cr_drop_bot_author: 54
+cr_drop_bot_reviewer: 710
+cr_drop_no_text: 38
+cr_kept: 4321
+cr_kept_agent_co: 1597
+prs_badline: 1
+== main(人間作者・agent co-author なし)
+ CR件数 4321  PR数 3084  repo数 35  レビュアー数 453
+ 結末 {'closed': 898, 'merged': 3010, 'open': 413}  closed率 0.208
+ body空(インラインのみ) 2006
+ repo別上位 [('home-assistant/core', 3041), ('backstage/backstage', 303), ('getsentry/sentry', 142), ('ray-project/ray', 137), ('ceph/ceph', 112), ('SigNoz/signoz', 91), ('grafana/grafana', 81), ('apache/airflow', 75), ('pytorch/pytorch', 41), ('NVIDIA/Megatron-LM', 36)]
+== agent_coauthor あり(別扱い)
+ CR件数 1597  PR数 1058  repo数 24  レビュアー数 193
+ 結末 {'merged': 1046, 'closed': 373, 'open': 178}  closed率 0.234
+ body空(インラインのみ) 780
+ repo別上位 [('home-assistant/core', 1282), ('backstage/backstage', 95), ('ray-project/ray', 37), ('grafana/grafana', 33), ('getsentry/sentry', 28), ('NVIDIA/Megatron-LM', 17), ('apache/airflow', 13), ('dotnet/runtime', 13), ('pytorch/pytorch', 12), ('dotnet/docs', 11)]

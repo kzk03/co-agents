@@ -1,0 +1,8 @@
+closed valid 3 H 1 no 0
+not_closed valid 29 H 6 no 3
+all valid 32 H 7 no 3
+UNK 5 / 37
+ghhuman overlap majority closed valid 8 H 7
+ghhuman overlap majority not_closed valid 8 H 1
+ghhuman overlap me_cat closed valid 8 H 7
+ghhuman overlap me_cat not_closed valid 8 H 1

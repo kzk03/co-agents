@@ -1,0 +1,41 @@
+{
+ "text": "1. **`Tasks/AzureAppServiceManageV0/operations/KuduServiceUtils.ts` — `installSiteExtension(extensionID, version)` calls an undemonstrated API.** The diff adds a second argument to `this._appServiceKuduService.installSiteExtension(...)` in two places, but no file in this diff updates the underlying Kudu service method that actually issues the REST call. Unless that method (in the shared Kudu/azure-arm-rest package, not touched here) already accepts and forwards a version parameter, this either fails to compile (TS arity mismatch) or silently ignores the argument, making the headline feature (\"install a specific version\") a no-op. Fix: include the corresponding change to the Kudu service client so the version is actually sent to the versioned Kudu endpoint, and show/verify its signature in this PR.\n\n2. **`KuduServiceUtils.ts` — silent fallback masks a wrong-version install as success.** When a versioned install throws, the code catches the error and retries `installSiteExtension(extensionID)` with no version, logs a one-line notice, and proceeds to report success / set `anyExtensionInstalled = true`. For a deployment pipeline, this means a user who pinned a version for reproducibility can silently get a different version with a green build. Fix: surface this as a warning (`tl.warning`) at minimum, and consider failing the task (or requiring an explicit opt-in) when the requested version cannot be honored.\n\n3. **Missing resource/localization entries.** `tl.loc('InstallingSiteExtension', extensionID)` is used but no change to `Strings/resources.resjson/en-US/resources.resjson` (or other locale files) is included in the diff. This repo's build validates that every `tl.loc` key exists in the resource files; as submitted this will fail the loc-string check in CI.\n\n4. **No task.json version bump.** `task.json` gains a new input (`ExtensionVersions`) and changed `helpMarkDown` text, but `\"version\"` wasn't incremented (and `task.loc.json` wasn't updated to match). Per this repo's convention, any input/behavior change to a task requires a version bump so consumers and the task changelog tooling pick it up.\n\n5. **Duplicated install/fallback logic.** The \"try with version, catch and retry without version\" block is copy-pasted almost verbatim between the \"already installed, different version\" branch and the \"not installed\" branch in `installSiteExtensions`. Fix: extract a single private helper (e.g., `_installExtensionWithVersionFallback(extensionID, version)`) used by both branches to avoid future divergence.\n\n6. **No tests added.** This PR introduces non-trivial new logic (inline `id@version` parsing, `ExtensionVersions` list parsing, `latest` force-update, fallback-on-failure) with zero new/updated L0 tests under `Tests/`. Reviewers should request coverage for: `@version` parsing, `ExtensionVersions` positional mapping, `latest` keyword, and the fallback path on a simulated Kudu error.\n\n7. **No validation when `ExtensionsList` and `ExtensionVersions` lengths differ.** Extra extensions beyond the versions array silently get `version = \"\"` (default behavior) with no diagnostic, so a user who miscounts commas gets no feedback that their version was dropped. Fix: log a warning when both inputs are non-empty but their lengths don't match.\n\n8. **Inconsistent indentation in the new `else` block of `installSiteExtensions`.** The comment lines and `try/catch` in the \"not installed\" branch are dedented relative to the surrounding block (visible directly in the diff), breaking the file's existing style. Fix: reformat to match surrounding indentation before merge.",
+ "cost": 0.118899,
+ "sec": 83.8,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 7743,
+  "cache_read_input_tokens": 64265,
+  "output_tokens": 7507,
+  "output_tokens_details": {
+   "thinking_tokens": 6261
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 7743,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 7507,
+    "cache_read_input_tokens": 64265,
+    "cache_creation_input_tokens": 7743,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 7743
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G087",
+ "cond": "A"
+}

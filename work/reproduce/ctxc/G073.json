@@ -1,0 +1,11 @@
+{
+ "sid": "G073",
+ "issue": null,
+ "issue_text": null,
+ "review_submitted_at": "2025-07-22T20:15:38Z",
+ "n_disc": 4,
+ "n_disc_same_reviewer": 2,
+ "disc_chars": 1685,
+ "disc_truncated": false,
+ "discussion": "[2025-07-22T19:41:25Z reviewed by srid state=changes_requested]\nYou are solving the wrong problem.\n\nI asked you to solve https://github.com/srid/haskell-flake/discussions/430 - meaning, fix `settings.x.custom` being expected to be unique when it doesn't have to be.\n\n[2025-07-22T19:52:08Z commented by Copilot]\n> You are solving the wrong problem.\n> \n> I asked you to solve https://github.com/srid/haskell-flake/discussions/430 - meaning, fix `settings.x.custom` being expected to be unique when it doesn't have to be...\n\nYou're absolutely right! I've now fixed the actual issue from discussion #430. The problem was that `settings.x.custom` was defined to accept only a single function (`functionTo types.package`), which caused conflicts when multiple modules tried to set custom functions.\n\nI've changed it to accept a list of functions (`listOf (functionTo types.package)`) and apply them in sequence using `lib.pipe`. This allows defaults.settings and user settings to both contribute custom transformations without conflicts.\n\nThe fix is in commit eb4e722.\n\n[2025-07-22T20:02:37Z reviewed by srid state=changes_requested]\nYou are not supposed to the change the existing type of `custom`.\n\n[2025-07-22T20:09:29Z commented by Copilot]\n> You are not supposed to the change the existing type of `custom`.\n\nYou're absolutely right! I've reverted the type change and instead added `default = lib.id` to the custom setting. This keeps the original `types.functionTo types.package` type while allowing multiple modules to define custom functions without conflicts. The identity function serves as a no-op default that enables proper merging at the module level.\n\nFixed in commit 579633f."
+}

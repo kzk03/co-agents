@@ -1,0 +1,21 @@
+# 環境
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+
+# 生データ(大容量。data/README.md 参照)
+data/*
+!data/README.md
+
+# API キャッシュ・中間キャッシュ(再取得可能)
+**/cache/
+**/cache_gh/
+*.pkl
+
+# 大容量の中間出力(1MB超、スクリプトで再生成可能)
+outputs/gerrit/gerrit_neg_votes_all.json
+outputs/gerrit_blind/gerrit_neg_votes_all.json
+work/baseline/ghhuman_blocks.jsonl
+work/baseline/within/blocks_agent.jsonl
+work/analystB/b2_prs.jsonl

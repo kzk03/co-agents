@@ -1,0 +1,41 @@
+{
+ "text": "1. **PreMailer.Net/PreMailer.Net/PreMailer.cs:518 (`GetMarkupFormatterForDocType`)** — Making this method return `EmailHtmlMarkupFormatter.Instance` instead of `HtmlMarkupFormatter.Instance` silently changes the default output of `MoveCssInline` even when `preserveEntities` is left at its documented default of `false`. Since this method is only reached on the `preserveEntities == false` branch in `MoveCssInline`, entities like `&copy;` will now *always* be preserved instead of converted to Unicode characters, contradicting the README's documented behavior of the `preserveEntities` parameter. Fix: keep entity-preservation strictly behind the `preserveEntities` flag — either make `EmailHtmlMarkupFormatter` only own the empty-tag fix and leave `GetMarkupFormatterForDocType()` returning `HtmlMarkupFormatter.Instance`, or have `EmailHtmlMarkupFormatter` take an `encodeEntities`/`preserveEntities` constructor flag so the two behaviors can be composed/toggled independently.\n\n2. **PreMailer.Net/PreMailer.Net/Html/EmailHtmlMarkupFormatter.cs — `CloseTag`** — The override ignores the `selfClosing` parameter entirely and unconditionally emits `</tag>`. Void/self-closing elements (`<br>`, `<img>`, `<hr>`, `<input>`, `<meta>`, `<link>`, etc.) will now be serialized with a closing tag (e.g. `<img src=\"...\"></img>`), which is invalid HTML and can break rendering in the very email clients this library targets — an arguably worse regression than issue #171 itself. Fix: only force a closing tag for elements that are empty-but-not-void (mirror AngleSharp's own void-element check, e.g. via `element.Flags`/`HtmlElement` void-tag list) and preserve the base behavior (no closing tag / self-close) for actual void elements.\n\n3. **PreMailer.Net/PreMailer.Net/Html/EmailHtmlMarkupFormatter.cs — `Text` entity replacement** — Reimplements entity preservation from scratch with a hardcoded 11-entry dictionary, duplicating and diverging from the existing `PreserveEntitiesHtmlMarkupFormatter` (which presumably covers a much larger/complete entity set) that's still kept around and used elsewhere (`preserveEntities` branch in `PreMailer.cs`). This leaves two inconsistent, independently-maintained definitions of \"preserve entities,\" and silently drops support for any entity not in this short list (e.g. `&nbsp;`, `&hellip;`, `&mdash;`, accented letters, quotes). Fix: have `EmailHtmlMarkupFormatter` delegate to/reuse `PreserveEntitiesHtmlMarkupFormatter`'s existing entity table (e.g. compose or inherit) instead of hand-rolling a subset.\n\n4. **PreMailer.Net/PreMailer.Net.Tests/EmailHtmlMarkupFormatterTests.cs and PreMailerTests.cs** — No test exercises void/self-closing elements (`<img>`, `<br>`, `<hr>`, `<input>`) through the new formatter, which is exactly the case broken by issue #2. Fix: add a test asserting `<img src=\"x\">` / `<br>` round-trip without gaining closing tags.\n\n5. **PreMailer.Net/PreMailer.Net/Html/EmailHtmlMarkupFormatter.cs** — New public class has no XML doc comments, inconsistent with the documentation convention used throughout `PreMailer.cs` (every public method has a `<summary>`). Fix: add doc comments describing the class's dual purpose (empty-tag preservation + entity preservation) and why it's now the default formatter.",
+ "cost": 0.1278128,
+ "sec": 50.6,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 18797,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 4732,
+  "output_tokens_details": {
+   "thinking_tokens": 3396
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 18797,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 4732,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 18797,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 18797
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G062",
+ "cond": "B"
+}

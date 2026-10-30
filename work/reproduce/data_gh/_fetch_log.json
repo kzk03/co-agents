@@ -1,0 +1,314 @@
+[
+ {
+  "sid": "H068",
+  "grp": "H",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 12,
+  "diff_chars": 27920,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "CONTRIBUTING.md",
+   "AGENTS.md",
+   "CLAUDE.md",
+   "pkg/services/pluginsintegration/pluginconfig/config_test.go (base version)",
+   "pkg/services/pluginsintegration/pluginconfig/config.go (base version)",
+   "pkg/services/pluginsintegration/pipeline/steps_test.go (base version)"
+  ],
+  "issue": "grafana/grafana#126208"
+ },
+ {
+  "sid": "H075",
+  "grp": "H",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 2,
+  "diff_chars": 1796,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "CONTRIBUTING.md",
+   ".github/copilot-instructions.md",
+   "src/coreclr/tools/Common/Compiler/CompilerTypeSystemContext.cs (base version)",
+   "src/coreclr/tools/dotnet-pgo/TraceTypeSystemContext.cs (base version)"
+  ],
+  "issue": "dotnet/runtime#124181"
+ },
+ {
+  "sid": "H081",
+  "grp": "H",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 3,
+  "diff_chars": 775,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "types/toastify-js/toastify-js-tests.ts (base version)",
+   "types/toastify-js/tsconfig.json (base version)"
+  ],
+  "issue": null
+ },
+ {
+  "sid": "H051",
+  "grp": "H",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 3,
+  "diff_chars": 59002,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "CONTRIBUTING.md",
+   "AGENTS.md",
+   "src/terminal/tmux/viewer.zig (base version)",
+   "src/terminal/tmux/control.zig (base version)",
+   "src/terminal/tmux/output.zig (base version)"
+  ],
+  "issue": null
+ },
+ {
+  "sid": "H028",
+  "grp": "H",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 10,
+  "diff_chars": 12997,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "CONTRIBUTING.md",
+   "AGENTS.md",
+   "CLAUDE.md",
+   "processor/schemaprocessor/internal/translation/cacheable_provider_test.go (base version)",
+   "processor/schemaprocessor/internal/translation/cacheable_provider.go (base version)",
+   "processor/schemaprocessor/config_test.go (base version)"
+  ],
+  "issue": "open-telemetry/opentelemetry-collector-contrib#48342"
+ },
+ {
+  "sid": "H022",
+  "grp": "H",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 4,
+  "diff_chars": 35197,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "AGENTS.md",
+   "CLAUDE.md",
+   "chart/templates/_helpers.yaml (base version)",
+   "chart/templates/workers/worker-deployment.yaml (base version)",
+   "chart/values.yaml (base version)"
+  ],
+  "issue": null
+ },
+ {
+  "sid": "H093",
+  "grp": "H",
+  "status": "OK",
+  "note": "commit=review; diff=pulls/files(final)",
+  "n_files": 7,
+  "diff_chars": 4439,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "CONTRIBUTING.md",
+   "libc/src/__support/math/CMakeLists.txt (base version)",
+   "utils/bazel/llvm-project-overlay/libc/BUILD.bazel (base version)",
+   "libc/test/shared/shared_math_test.cpp (base version)"
+  ],
+  "issue": "llvm/llvm-project#177650"
+ },
+ {
+  "sid": "H036",
+  "grp": "H",
+  "status": "OK",
+  "note": "commit=review; diff=pulls/files(final)",
+  "n_files": 16,
+  "diff_chars": 57932,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "CONTRIBUTING.md",
+   "istioctl/pkg/tag/tag_test.go (base version)",
+   "istioctl/pkg/tag/generate.go (base version)",
+   "istioctl/pkg/tag/tag.go (base version)"
+  ],
+  "issue": null
+ },
+ {
+  "sid": "H044",
+  "grp": "H",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 36,
+  "diff_chars": 48634,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "api-reference/v2/openapi_spec_v2.json (base version)",
+   "crates/api_models/src/admin.rs (base version)"
+  ],
+  "issue": null
+ },
+ {
+  "sid": "H013",
+  "grp": "C",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 2,
+  "diff_chars": 1832,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "AGENTS.md",
+   "CLAUDE.md",
+   "src/sentry/taskworker/adapters.py (base version)",
+   "src/sentry/runner/commands/run.py (base version)"
+  ],
+  "issue": null
+ },
+ {
+  "sid": "H029",
+  "grp": "C",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 6,
+  "diff_chars": 46740,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "CONTRIBUTING.md",
+   "AGENTS.md",
+   "CLAUDE.md",
+   "megatron/rl/rl_utils.py (base version)",
+   "tests/unit_tests/rl/test_sequence_packing_utils.py (base version)",
+   "megatron/rl/sequence_packing_utils.py (base version)"
+  ],
+  "issue": "NVIDIA/Megatron-LM#1234"
+ },
+ {
+  "sid": "H053",
+  "grp": "C",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 2,
+  "diff_chars": 8988,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "tests/lib/Collaboration/Collaborators/LookupPluginTest.php (base version)",
+   "lib/private/Collaboration/Collaborators/LookupPlugin.php (base version)"
+  ],
+  "issue": null
+ },
+ {
+  "sid": "H027",
+  "grp": "C",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 14,
+  "diff_chars": 18851,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "CONTRIBUTING.md",
+   "platforms/core-configuration/configuration-cache/src/main/kotlin/org/gradle/internal/cc/impl/serialize/Codecs.kt (base version)",
+   "platforms/core-configuration/file-collections/src/main/java/org/gradle/api/internal/file/DefaultFilePropertyFactory.java (base version)",
+   "platforms/core-configuration/core-serialization-codecs/src/main/kotlin/org/gradle/internal/serialize/codecs/core/ConfigurableFileTreeCodec.kt (base version)"
+  ],
+  "issue": "gradle/gradle#30052"
+ },
+ {
+  "sid": "H017",
+  "grp": "C",
+  "status": "OK",
+  "note": "commit=review; diff=pulls/files(final)",
+  "n_files": 26,
+  "diff_chars": 46580,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   ".github/copilot-instructions.md",
+   "src/pybind/mgr/dashboard/frontend/src/app/ceph/cephfs/cephfs-mirroring-list/cephfs-mirroring-list.component.ts (base version)",
+   "src/pybind/mgr/dashboard/frontend/src/app/ceph/cephfs/cephfs-mirroring-list/cephfs-mirroring-list.component.html (base version)",
+   "src/pybind/mgr/dashboard/frontend/src/app/ceph/cephfs/cephfs.module.ts (base version)"
+  ],
+  "issue": null
+ },
+ {
+  "sid": "H082",
+  "grp": "C",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 8,
+  "diff_chars": 18771,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "CONTRIBUTING.md",
+   "pkg/jobs/registry.go (base version)",
+   "pkg/ccl/changefeedccl/changefeed_test.go (base version)",
+   "pkg/ccl/changefeedccl/helpers_test.go (base version)"
+  ],
+  "issue": "cockroachdb/cockroach#144262"
+ },
+ {
+  "sid": "H066",
+  "grp": "C",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 3,
+  "diff_chars": 5104,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "CONTRIBUTING.md",
+   "AGENTS.md",
+   "CLAUDE.md",
+   "test/dynamo/test_error_messages.py (base version)",
+   "torch/_dynamo/variables/lazy.py (base version)",
+   "torch/_dynamo/symbolic_convert.py (base version)"
+  ],
+  "issue": "pytorch/pytorch#162860"
+ },
+ {
+  "sid": "H049",
+  "grp": "C",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 41,
+  "diff_chars": 89959,
+  "truncated": true,
+  "ctx": [
+   "README.md",
+   "CONTRIBUTING.md",
+   "AGENTS.md",
+   "CLAUDE.md",
+   "authentik/stages/password/tests.py (base version)",
+   "authentik/core/models.py (base version)",
+   "authentik/core/tests/test_users.py (base version)"
+  ],
+  "issue": null
+ },
+ {
+  "sid": "H026",
+  "grp": "C",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 7,
+  "diff_chars": 4591,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "CONTRIBUTING.md",
+   "clang/lib/Sema/SemaDecl.cpp (base version)",
+   "clang/docs/ReleaseNotes.rst (base version)",
+   "clang/include/clang/Basic/DiagnosticSemaKinds.td (base version)"
+  ],
+  "issue": "llvm/llvm-project#90107"
+ }
+]

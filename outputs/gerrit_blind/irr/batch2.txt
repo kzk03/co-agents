@@ -1,0 +1,70 @@
+### S051 openstack/keystone-tempest-plugin | OAuth 2.0 Mutual-TLS Support
+  [PATCHSET_LEVEL:None] need to resolve merge conflict
+### S052 openstack/ironic-python-agent-builder | Extend the DIB_CHECKSUM variable usage
+  [PATCHSET_LEVEL:None] I don't believe we can/should backport the updated support for DIB_CHECKSUM unless DIB has support backported and released. DIB is branchless and this is only designed to run on the release of DIB associated with stable/2023.1
+### S053 openstack/tap-as-a-service | Adds policy in code to Tap-as-a-Service
+  [base.py:16] These variable are now provided by neutron-lib 1.25 or later. Could you consume variables from neutron-lib?
+  [tap_flow.py:36] ID is missing in the path.
+  [tap_flow.py:41] get_xxx is assumed in the neutron API layer. show_tap_flow means this policy is never referred.
+  [tap_flow.py:47] ID is missing.
+  [tap_flow.py:52] See comment at L.41.
+  [tap_flow.py:69] ID is missing.
+### S054 openstack/bifrost | Allow inserting SSH public key for dynamic-login
+  BODY: Otherwise looks good
+  [ssh_public_key_path.yaml:1] This copyright header should be corrected
+### S055 openstack/zaqar-tempest-plugin | Optimize the tempest job for zaqar-tempest-plugin
+  [.zuul.yaml:7] I think you can use `zaqar-tempest-base` as the parent here directly.
+### S056 openstack/tap-as-a-service | Modifications of the API to support ERSPAN
+  BODY: sorry I left out the vote
+  [COMMIT_MSG:7] If I understand well this is a Cisco proprietary feature, but the thing to mirror traffic to some remote monitoring device can be general. Should it be something more general like remote monitoring device?
+  [taas_init_ops.py:37] This should be in a new expand script
+  [taas_init_ops.py:51] ditto
+### S057 openstack/ironic-specs | Fix a typo of "parameter"
+  BODY: there have other errors should be  fixed at the same time
+### S058 openstack/designate | Replace license classifier
+  [PATCHSET_LEVEL:None] I won't do any further detailed reviews until you address the fundamental issue that the install guide doesn't deploy TLS
+### S059 openstack/watcher-tempest-plugin | Add tests for disable migration in host maintenance
+  [PATCHSET_LEVEL:None] ++ tests looks good, and increase the coverage for all scenarios in the new feature. -1: i think that we should double check the action and see if is really a cold migration instead of a live one, otherwise the test isn't really validating the code, wdyt? Other comments are more nits, thanks for proposing this patch!
+  [test_execute_host_maintenance.py:121] nit: in the end, you could just create one instance in a host, and work with that host as the maintenance_node.
+  [test_execute_host_maintenance.py:145] you can't tell that was a cold migrate instead of a live migrate, just checking that it migrated. Is it possible to check that info in the action details?
+  [test_execute_host_maintenance.py:183] Same thing as previous test.
+  [test_execute_host_maintenance.py:222] this looks fine :)
+  [test_execute_host_maintenance.py:278] it is really nice that you are covering all scenarios, I was just thinking if we can reduce the number of tests here, but not the scenarios, since each test will take some time to finish, increasing the total time to complete the CI job. e.g, if instead of creating one instance per host, you could create 2 instance in a single host, which will be t
+### S060 openstack/networking-bgpvpn | Handle network/router delete
+  [plugin.py:104] Deepthi, what if the database transaction write failed after precommit at the Neutron level?  In this case, we will be sending disassociation to the external entity while the association will come back intact into the neutron db..
+### S061 openstack/blazar-nova | Stop testing with py2
+  BODY: let's remove the py2 requirement also from test-requirements.txt by Depends-On https://review.opendev.org/#/c/693631/  https://github.com/openstack/blazar-nova/blob/4856c7209f5e227828073b2da1fd07c44137b373/test-requirements.txt#L9
+  [.zuul.yaml:15] you need to remove this also
+  [.zuul.yaml:32] ditto
+### S062 openstack/magnum-specs | Improve driver discovery
+  [PATCHSET_LEVEL:None] I like the overall idea here. Thank you for writing this up.  I would however, prefer not to keep using os_distro in this way (although we can keep it for backwards compatibility reasons)
+  [improve-driver-discovery.rst:89] FWIW, I like the idea of this working with just the magnum_driver specified.  It is worth stating that these values for os_distro are invalid, and will trigger warning messages in Nova for badly formatted os_distro values (ubuntu22.04 would be a valid value, but it likely has unexpected side effects that are best avoided) https://specs.openstack.or
+### S063 openstack/glance-tempest-plugin | Bump hacking
+  [PATCHSET_LEVEL:None] One minor issue after all :)
+  [requirements.txt:3] How is this related to the hacking bump?
+### S064 openstack/keystone | Add manager and base interface for fernet key store
+  BODY: Is this something we want to continue? The idea seems interesting, but perhaps we need a new champion? Does this need more discussion?
+### S065 openstack/ovsdbapp | [NB] Add "if_exists" flag to ACL and Port_Group deletion commands
+  [commands.py:213] It seems a little confusing to have acl_del(if_exists=True) mean "Delete this ACL if the underlying port group or logical switch exists" as opposed to "delete this ACL if it exists".  I guess we can assume that if the port group or switch doesn't exist, the ACL also doesn't exist, and the existing behavior with respect to ACLs on these entities alr
+### S066 openstack/ceilometer | Uses oslo.service for ceilometer-polling on Windows
+  BODY: Well why not fixes your issue on Cotyledon instead of reintroducing technical debt in Ceilometer.
+### S067 openstack/os-brick | Add  NVMe-FC support in NVMeOF connector
+  [PATCHSET_LEVEL:None] Forgot to add vote on last comment
+  [PATCHSET_LEVEL:None] I feel that this patch is actually coping out of a real NVMe-FC integration. Most FC based drivers, support the Fibre Channel Zone Manager, but for some reason the Dell PowerStore driver does not and this is what is driving this patch. These changes take no account of FCZM required items like initiator_target_maps which makes it very difficult, if 
+### S068 openstack/cinder-specs | Update 2023.1 placeholder
+  [PATCHSET_LEVEL:None] See comment inline.
+  [index.rst:32] This is causing the docs job to fail (because you're removing the only rst file in the directory).  I guess the best thing here is to replace lines 28-32 with some text, something like "No specs were approved for this cycle."
+### S069 openstack/ovn-bgp-agent | Make the local chassis ID configurable
+  [PATCHSET_LEVEL:None] We usually don't allow backporting new configuration options (although we can also consider exceptions).
+### S070 openstack/magnum-ui | Do not convert label values to lowercase
+  [PATCHSET_LEVEL:None] Please add release notes
+### S071 openstack/manila-ui | add metadata create textbox to Create Snapshot Form
+  [PATCHSET_LEVEL:None] Thanks for implementing the suggested changes. Some jobs are still failing (i.e. unit tests one). Could you please take a look at the tests and fix them?
+### S072 openstack/keystonemiddleware | Catch more keystoneauth exceptions
+  [__init__.py:767] An SSL error is often the result of a misconfiguration of the client (here, the openstack service), so I wouldn't catch it here and imply that this is a problem with the keystone service.
+### S073 openstack/aodh | Migrate CentOS Stream 8 job to CentOS Stream 9
+  [PATCHSET_LEVEL:None] Thank you. IMHO this should be a cherry-pick of the relevant patch from master, see https://github.com/openstack/aodh/commit/0b0c0aff8b8ec61a20615d34b006593ef8010fe5
+### S074 openstack/networking-baremetal | Stop using eventlet for notification listener
+  [PATCHSET_LEVEL:None] This is review feedback from the PTG review jam and reflects feedback from multiple cores.  The code that's written looks good, but there are a few things we'd like done as well before this lands: - Ensure all the requirements.txt entires do not require eventlet where possible (at a minimum, this will require you to raise minimum supported oslo.* l
+### S075 openstack/glance | Remove bandit.yaml in favor of default config
+  BODY: Eric, let's fix the bandit failures first, make this change dependent on the cleanups.

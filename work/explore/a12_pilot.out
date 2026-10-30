@@ -1,0 +1,35 @@
+== 母集団: pilot CR 5918
+ agent_level=none n=4321 merge権限あり 0.898 codeowner 0.757 | CR後コミット 0.778 同レビュアー承認 0.570 merged 0.697 closed 0.208
+ agent_level=weak n=1134 merge権限あり 0.900 codeowner 0.822 | CR後コミット 0.843 同レビュアー承認 0.527 merged 0.675 closed 0.228
+ agent_level=strong n=463 merge権限あり 0.909 codeowner 0.793 | CR後コミット 0.721 同レビュアー承認 0.475 merged 0.605 closed 0.248
+ agent_level=全体 n=5918 merge権限あり 0.900 codeowner 0.772 | CR後コミット 0.786 同レビュアー承認 0.555 merged 0.685 closed 0.215
+ 結末 × merge権限(全体)
+  merge権限あり n=5324 merged 0.694 closed 0.208 CR後コミット 0.785
+  merge権限なし n=594 merged 0.604 closed 0.279 CR後コミット 0.800
+
+== ラベル付きサンプル × 属性・結末
+ 結合できたラベル Counter({'HUMAN100': 89, 'AG': 47, 'HU': 44, 'HO': 16}) (rid 不一致は除外)
+ [ghhuman100] n=89 merge権限あり H 29/68 なし H 9/21 差 -0.002 95%CI -0.251..0.229
+   codeowner H 17/36 非 H 21/53
+   H系 n=38 merged 0.13 closed 0.79 CR後コミット 0.37 同レビュアー承認 0.16 CR→merge 中央値 510.7h (n=5)
+   C系 n=51 merged 0.51 closed 0.31 CR後コミット 0.88 同レビュアー承認 0.67 CR→merge 中央値 97.1h (n=26)
+   closed 率 H−C +0.476 95%CI 0.292..0.659
+   CR後コミット率 H−C -0.514 95%CI -0.691..-0.336
+ [within AG+HU+HO(pilot)] n=107 merge権限あり H 39/88 なし H 4/19 差 +0.233 95%CI 0.011..0.432
+   codeowner H 19/47 非 H 24/60
+   H系 n=43 merged 0.53 closed 0.35 CR後コミット 0.63 同レビュアー承認 0.44 CR→merge 中央値 118.8h (n=23)
+   C系 n=64 merged 0.75 closed 0.14 CR後コミット 0.84 同レビュアー承認 0.62 CR→merge 中央値 74.0h (n=48)
+   closed 率 H−C +0.208 95%CI 0.045..0.379
+   CR後コミット率 H−C -0.216 95%CI -0.387..-0.053
+ [within AG] n=47 merge権限あり H 18/39 なし H 0/8 差 +0.462 95%CI 0.308..0.615
+   codeowner H 11/24 非 H 7/23
+   H系 n=18 merged 0.44 closed 0.39 CR後コミット 0.67 同レビュアー承認 0.39 CR→merge 中央値 70.6h (n=8)
+   C系 n=29 merged 0.76 closed 0.17 CR後コミット 0.83 同レビュアー承認 0.66 CR→merge 中央値 44.0h (n=22)
+   closed 率 H−C +0.216 95%CI -0.040..0.473
+   CR後コミット率 H−C -0.161 95%CI -0.431..0.088
+ [within HU+HO] n=60 merge権限あり H 21/49 なし H 4/11 差 +0.065 95%CI -0.260..0.378
+   codeowner H 8/23 非 H 17/37
+   H系 n=25 merged 0.60 closed 0.32 CR後コミット 0.60 同レビュアー承認 0.48 CR→merge 中央値 244.2h (n=15)
+   C系 n=35 merged 0.74 closed 0.11 CR後コミット 0.86 同レビュアー承認 0.60 CR→merge 中央値 134.0h (n=26)
+   closed 率 H−C +0.206 95%CI 0.000..0.423
+   CR後コミット率 H−C -0.257 95%CI -0.486..-0.034

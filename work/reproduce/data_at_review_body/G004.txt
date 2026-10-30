@@ -1,0 +1,4 @@
+Implements the isfinite function to check if a floating-point value is finite (not infinite and not NaN).
+
+Link to Devin run: https://app.devin.ai/sessions/85afc451fad642e88f3193503ba8a4f0
+Requested by: Sean Smith (sean@glaredb.com)

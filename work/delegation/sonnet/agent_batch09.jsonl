@@ -1,0 +1,10 @@
+{"sid": "G091", "up": "U3", "dec": "N", "req_quote": "", "rev_quote": "These tests were changed in a way that did not preserve the original meaning; should use vitest's timers"}
+{"sid": "G092", "up": "U3", "dec": "NA", "req_quote": "", "rev_quote": "Please address all the comments I posted + cleanup the imports on all classes"}
+{"sid": "G093", "up": "U3", "dec": "Y", "req_quote": "", "rev_quote": "this should not be injected or used by the manager"}
+{"sid": "G094", "up": "U1", "dec": "NA", "req_quote": "this issue must be fixed in the TypeSpec specification...not by modifying the generated files directly", "rev_quote": "you must not change files under the \"generated\" folder. These changes must be made in the TypeSpec"}
+{"sid": "G095", "up": "U3", "dec": "Y", "req_quote": "", "rev_quote": "Run `just dev` steps to ensure that the basic checks are normal"}
+{"sid": "G096", "up": "U2", "dec": "Y", "req_quote": "find and fix the logic bug that causes the intended invariant...never in BOTH", "rev_quote": "All you did was add/change defensive programming to hide the root cause logic bug. I am not asking for this"}
+{"sid": "G097", "up": "U3", "dec": "NA", "req_quote": "", "rev_quote": "This part can be removed (transform.ts); send Accept: text/css header in test"}
+{"sid": "G098", "up": "U2", "dec": "Y", "req_quote": "The changes must work for all platforms, including Windows", "rev_quote": "This doesn't sem to work on Windows. The bot failed with: spawn npm ENOENT"}
+{"sid": "G099", "up": "U3", "dec": "Y", "req_quote": "", "rev_quote": "to properly test this, you must accept a tail and tail_index fields in config like fixed journal"}
+{"sid": "G100", "up": "U4", "dec": "NA", "req_quote": "", "rev_quote": "i think that the interface for it should be a thin wrapper around the Tool interface we now have"}

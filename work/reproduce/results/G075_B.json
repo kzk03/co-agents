@@ -1,0 +1,41 @@
+{
+ "text": "1. **lib/codecept.js — dead code indicates the worker path doesn't actually filter individual tests.** `_filterMochaTestsByFailedTests`, `_filterNestedSuites`, `_hasTests` are added but never called from anywhere; the real filtering in `run()` uses `mocha.grep(...)`. But `lib/command/workers/runTests.js` only calls `codecept.filterByFailedTests(...)` (file-level filtering) and never calls `mocha.grep` or the unused `_filterMochaTestsByFailedTests` helper. This means `--failed-tests` with `run-workers` likely still executes every test in a matched file, not just the previously-failed one — the opposite of what the PR claims (\"Worker Support ✅\"). Fix: either wire the grep call (or the dead helper) into the worker runner, or delete the unused methods and prove worker-mode filtering actually narrows to individual tests with a real assertion (the current worker test only checks a file ran, not that passing tests in the same file were skipped).\n\n2. **PR description makes claims the diff doesn't support.** It states \"Moved failing_test.js to correct location, fixing 17+ failed runner tests\" and \"Fixed Browser Downloads: proper environment variables prevent Puppeteer download failures,\" but the diff only *adds* `failing_test.js` (no move) and contains no Puppeteer/env var changes anywhere. For an AI-authored PR this needs to be reconciled before merge — either the real changes are missing from the diff, or the description is fabricated. Don't merge on unverifiable test-count claims; require the description to match the actual diff.\n\n3. **Inconsistent path resolution for `--failed-tests` between commands.** `lib/command/run.js` resolves a relative path against `testRoot` (`path.join(testRoot, options.failedTests)`), while `lib/command/run-workers.js` resolves it against `process.cwd()` (`path.resolve(options.failedTests)`). Same flag, two different semantics depending on which command is used — pick one convention (testRoot, consistent with how `--save-failed-tests` output is written) and apply it in both places.\n\n4. **Matching relies on `test.uid`, which doesn't appear to be a real Mocha `Runnable` property.** `result.js#saveFailedTests` and the (unused) matching helpers treat `uid` as a stable identifier, but standard Mocha tests don't expose `uid`. If this is always `undefined`, it's dead/misleading data in the saved JSON and in the matching logic. Verify against the actual Mocha version in use; if it's not populated, drop the field and the matching branch rather than shipping a key that silently never matches.\n\n5. **No error handling around the failed-tests JSON load.** In both `run.js` and `run-workers.js`, `JSON.parse(fs.readFileSync(...))` will throw a raw parser stack trace on a malformed or truncated file instead of the clean `Error` messages used elsewhere in the same block (e.g. \"Invalid failed tests file format\"). Wrap the parse in try/catch and surface a consistent CLI error.\n\n6. **Unrelated diff noise bundled into a feature PR.** `docs/plugins.md` adds doc entries for `consolidateWorkerJsonResults`, `enhancedRetryFailedStep`, and `safeJsonStringify` — plugins this PR doesn't touch — plus unrelated bullet-style reformatting (`-` → `*`) in unrelated sections. This looks like a stale/auto-generated doc regeneration that leaked into the PR; revert the unrelated hunks so the diff only reflects this feature.\n\n7. **Redundant/duplicate test fixtures.** `test/data/sandbox/failed-tests/failed_test.js` and `test/data/sandbox/failed-tests/my_test.js` contain identical scenario bodies, and `failing_test.js` overlaps with both in purpose. Consolidate into one fixture set so it's clear which file each new runner test actually exercises.",
+ "cost": 0.16258279999999997,
+ "sec": 60.0,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 25882,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 5375,
+  "output_tokens_details": {
+   "thinking_tokens": 4034
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 25882,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 5375,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 25882,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 25882
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G075",
+ "cond": "B"
+}

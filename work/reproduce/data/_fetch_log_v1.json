@@ -1,0 +1,199 @@
+[
+ {
+  "sid": "G020",
+  "grp": "H",
+  "status": "EXCLUDED: gh: Not Found (HTTP 404)"
+ },
+ {
+  "sid": "G100",
+  "grp": "H",
+  "status": "EXCLUDED: gh: Not Found (HTTP 404)"
+ },
+ {
+  "sid": "G071",
+  "grp": "H",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 4,
+  "diff_chars": 7714,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "CONTRIBUTING.md",
+   "events/tests.py (base version)",
+   "events/models.py (base version)",
+   "ingest/views.py (base version)"
+  ]
+ },
+ {
+  "sid": "G027",
+  "grp": "H",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 26,
+  "diff_chars": 26495,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "CONTRIBUTING.md",
+   "AGENTS.md",
+   "configure.ac (base version)",
+   "tests/omhttp-batch-jsonarray-compress.sh (base version)",
+   "tests/omhttp-batch-lokirest.sh (base version)"
+  ]
+ },
+ {
+  "sid": "G093",
+  "grp": "H",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 11,
+  "diff_chars": 41840,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "CONTRIBUTING.md",
+   "src/OrchardCore/OrchardCore.ContentTypes.Abstractions/Events/IContentDefinitionHandler.cs (base version)",
+   "src/OrchardCore/OrchardCore.ContentManagement/ContentDefinitionManager.cs (base version)",
+   "src/docs/releases/3.0.0.md (base version)"
+  ]
+ },
+ {
+  "sid": "G029",
+  "grp": "H",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 3,
+  "diff_chars": 4133,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "CONTRIBUTING.md",
+   "apps/api/src/__tests__/snips/billing.test.ts (base version)",
+   "apps/api/src/controllers/v1/search.ts (base version)",
+   "apps/api/src/lib/scrape-billing.ts (base version)"
+  ]
+ },
+ {
+  "sid": "G002",
+  "grp": "H",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 3,
+  "diff_chars": 13329,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   ".github/copilot-instructions.md",
+   "src/Build/BackEnd/Components/Logging/ProjectTelemetry.cs (base version)",
+   "src/Build/Instance/TaskFactories/AssemblyTaskFactory.cs (base version)"
+  ]
+ },
+ {
+  "sid": "G083",
+  "grp": "H",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 2,
+  "diff_chars": 5386,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   ".github/copilot-instructions.md",
+   "src/Tasks/Microsoft.NET.Build.Tasks/targets/Microsoft.NET.Sdk.CSharp.targets (base version)"
+  ]
+ },
+ {
+  "sid": "G018",
+  "grp": "C",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 15,
+  "diff_chars": 49708,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "CONTRIBUTING.md",
+   "CLAUDE.md",
+   "src/renderer/src/pages/home/Navbar.tsx (base version)",
+   "src/renderer/src/store/shortcuts.ts (base version)",
+   "src/renderer/src/i18n/translate/el-gr.json (base version)"
+  ]
+ },
+ {
+  "sid": "G081",
+  "grp": "C",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 1,
+  "diff_chars": 1319,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "CONTRIBUTING.md",
+   "packages/features/bookings/components/PeopleFilter.tsx (base version)"
+  ]
+ },
+ {
+  "sid": "G053",
+  "grp": "C",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 3,
+  "diff_chars": 4200,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "CONTRIBUTING.md",
+   ".github/copilot-instructions.md",
+   "lib/chrono_model/patches/join_node.rb (base version)",
+   "lib/chrono_model/patches/relation.rb (base version)"
+  ]
+ },
+ {
+  "sid": "G023",
+  "grp": "C",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 4,
+  "diff_chars": 10833,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   ".github/copilot-instructions.md",
+   "docs/building-apps/build-properties.md (base version)",
+   "msbuild/Xamarin.Shared/Xamarin.Shared.props (base version)",
+   "dotnet/targets/Microsoft.Sdk.DefaultItems.template.props (base version)"
+  ]
+ },
+ {
+  "sid": "G030",
+  "grp": "C",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 17,
+  "diff_chars": 23619,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "CONTRIBUTING.md",
+   "AGENTS.md",
+   "pnpm-lock.yaml (base version)"
+  ]
+ },
+ {
+  "sid": "G067",
+  "grp": "C",
+  "status": "OK",
+  "note": "commit=review; diff=compare@review",
+  "n_files": 4,
+  "diff_chars": 11333,
+  "truncated": false,
+  "ctx": [
+   "README.md",
+   "CONTRIBUTING.md",
+   ".github/copilot-instructions.md",
+   "src/services/completions.ts (base version)"
+  ]
+ }
+]

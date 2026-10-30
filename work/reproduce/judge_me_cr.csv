@@ -1,0 +1,9 @@
+sid,Cr,Cr_item,note
+G002,no,0,階層・データ形状の指摘なし
+G011,partial,2,先行議論から「関数に戻せ」は拾うが、作成ロジックを conf crate に集約する点はなし
+G024,yes,1,同じレビュアーの先行コメント(2回)から再現
+G027,partial,5,「contributed のまま」は一致するが item3 は git mv で plugins へ移せと逆方向
+G033,no,0,build 対応の指摘なし
+G046,yes,3,
+G083,partial,4,「.NETCoreApp に絞るか承認を得よ」の二択。item1 は NETStandard を含める条件を提案
+G094,yes,1,

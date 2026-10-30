@@ -1,0 +1,8 @@
+CR ブロック数 {'none': 4321, 'strong': 463, 'weak': 1134}
+== strong: CR 463 PR 351 repo 14 closed率 0.248
+  repo上位 [('home-assistant/core', 371), ('backstage/backstage', 25), ('getsentry/sentry', 18), ('grafana/grafana', 16), ('ray-project/ray', 13), ('NVIDIA/Megatron-LM', 9), ('espressif/arduino-esp32', 2), ('pytorch/pytorch', 2), ('ydb-platform/ydb', 2), ('PaddlePaddle/Paddle', 1), ('apache/airflow', 1), ('envoyproxy/envoy', 1)]
+== weak: CR 1134 PR 741 repo 23 closed率 0.228
+  repo上位 [('home-assistant/core', 911), ('backstage/backstage', 70), ('ray-project/ray', 24), ('grafana/grafana', 17), ('dotnet/runtime', 13), ('apache/airflow', 12), ('dotnet/docs', 11), ('getsentry/sentry', 10), ('pytorch/pytorch', 10), ('NVIDIA/Megatron-LM', 8), ('PaddlePaddle/Paddle', 7), ('llvm/llvm-project', 6)]
+== none: CR 4321 PR 3084 repo 35 closed率 0.208
+  repo上位 [('home-assistant/core', 3041), ('backstage/backstage', 303), ('getsentry/sentry', 142), ('ray-project/ray', 137), ('ceph/ceph', 112), ('SigNoz/signoz', 91), ('grafana/grafana', 81), ('apache/airflow', 75), ('pytorch/pytorch', 41), ('NVIDIA/Megatron-LM', 36), ('prestodb/presto', 35), ('gradle/gradle', 26)]
+== strong と none が両方ある repo: [('home-assistant/core', 371, 3041), ('backstage/backstage', 25, 303), ('getsentry/sentry', 18, 142), ('grafana/grafana', 16, 81), ('ray-project/ray', 13, 137), ('NVIDIA/Megatron-LM', 9, 36), ('espressif/arduino-esp32', 2, 13), ('pytorch/pytorch', 2, 41), ('ydb-platform/ydb', 2, 11), ('PaddlePaddle/Paddle', 1, 9), ('apache/airflow', 1, 75), ('envoyproxy/envoy', 1, 16), ('juspay/hyperswitch', 1, 11), ('prestodb/presto', 1, 35)]

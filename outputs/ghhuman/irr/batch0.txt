@@ -1,0 +1,117 @@
+### H001 home-assistant/core author=human | Add quality scale to Tesla Fleet integration
+  BODY: Let's put the things we agree on fixing in the comments inside of the YAML file and get it merged, and we can fix the things in follow up PRs!
+  [quality_scale.yaml] please use the shorthand notation when it's done :)
+  [quality_scale.yaml] We don't need `CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)` right?
+  [quality_scale.yaml] I'd remove the last part as I now got confused that you do use custom entity actions, which you don't
+  [quality_scale.yaml] It would be nice if we can patch the objects where we use them ```py     with patch(         f"tesla_fleet_api.tesla.VehicleFleet.{func}",         return_value=COMMAND_OK,     ) as command: ```
+  [quality_scale.yaml] nit: `test_climate_offline` can use a hard assert instead of snapshot test
+  [quality_scale.yaml] `# Put the vehicle alseep` typo
+### H002 getsentry/sentry author=human | feat(symbolicator): Make renewal interval of debug files, artifact bundles & release files
+  BODY: nan
+  [artifact_bundles.py] I don't think that works and you can grab it from the options at a global scope.
+### H003 apache/airflow author=human | New google dataflow operator to fetch job metrics
+  BODY: I do support having such an operator, which will be an equivalent for existing sensor & trigger. However, the current implementation gives it too much responsibilities. Please refactor so it would have only one (fetching from Dataflow, without PubSub or BQ).  Also, please note that there are signals of using AI, which you did not declare in the PR. If you used AI to generate parts or the entire PR, please declare so in the PR with the required details according to the AI policy usage.
+  [dataflow.py] I'm a bit concerned of mixing up fetching metrics **and** inserting them to PubSub or BQ altogether - it's a lot of actions for a single operator, that could be utilized by other existing operators. Please refactor so after fetching metrics - it just returns them into an XCom (and later they could be routed to PubSub/BQ using the appropriate operat
+  [dataflow.py] ```suggestion class DataflowJobMetricsOperator(GoogleCloudBaseOperator): ```  Rename to be consistent with existing sensor & trigger
+### H004 home-assistant/core author=human | Refresh the calendar entity when the current event ends
+  BODY: Thanks for the PR! This change touches our entity model, which needs approval in a discussion on the architecture repository before we can review it. Since that discussion typically takes time, we're closing this PR for now. Please reopen it once the proposal has been accepted.  - [Architecture discussions](https://github.com/home-assistant/architecture/discussions) - [Changing the entity model](https://developers.home-assistant.io/docs/core/entity#changing-the-entity-model)
+### H005 cilium/cilium author=human | pkg/maps: migrate to slog
+  BODY: Oof, I'm not a fan of adding a `Logger` to bpf.Map and ebpf.Map. As far as I can see, they're only used to log the map removal warnings in OpenOrCreate, which is behaviour we want/need to get rid of anyway.
+ 
+ Can we keep using the default logger for those? Passing a logger to all functions returning a map really causes a ton of churn.
+### H006 ray-project/ray author=human | [RLlib] Merge tuned examples into examples
+  BODY: Great!  I left few minor requests for edits.
+### H007 backstage/backstage author=human | fix(auth): improve SignInResolverFactory Zod schema usage
+  BODY: @Teo-ShaoWei I've ended up exploring this area myself the last few days, and the direction we want to head in is likely to move towards https://standardschema.dev/. Initial move towards that and example for the frontend system in https://github.com/backstage/backstage/pull/33836.  Is this something you'd want to explore for this case as well? That means moving to standard schema rather than zod v4, which should achieve the original goal.
+### H008 SigNoz/signoz author=human | chore: enrich clickhouse log_comment
+  BODY: nan
+  [comment.go] need to update the code comment as well 
+### H009 ray-project/ray author=human | [docs][serve] Fix Serve LLM examples sidebar doc links 404
+  BODY: This looks like a monkey patch rather than a fix.  Can we please root cause this instead of shipping a bandaid?
+### H010 espressif/arduino-esp32 author=human | fix(logging): Add wrapper when using wifi without esp_diagnostics
+  BODY: @lucasssvaz - I think that it would be good to add `DIAG_USE_EXTERNAL_LOG_WRAP` to the KConfig file (https://github.com/espressif/arduino-esp32/blob/master/Kconfig.projbuild).
+ 
+ Not sure which would be the best default value for it.
+ Please evalutate it.
+ 
+ In case its default value is `y`, you may just remove it from `sdkconfig.defaults` file
+### H011 gradle/gradle author=human | Document that @InputFiles is order-insensitive
+  BODY: Thank you for your proposed contribution!  This PR has a valid DCO and is documentation only.  ***  Before it can be merged, please address the review comments below.
+  [InputFiles.java] ❌ The reference to `Classpath` should be moved to a `@see` instead, as it indeed provides order dependence but does more. And `InputDirectory` can also be moved to `@see`  💅 Please put each sentence on a newline as shown in [our guide](https://github.com/gradle/gradle/blob/master/contributing/JavadocStyleGuide.md).
+### H012 espressif/arduino-esp32 author=human | feat(update): add optional SHA512 checksum and sidecar URLs
+  BODY: SHA-512 API, precedence, sidecar parsing, and tests look good and correctly mirror the SHA-256 path.
+ 
+ Please address the FLASH always-link before merge like SHA-256.
+  [Updater.cpp] This path (and `_sha512FreeContext()` from `_reset`/`begin`) lives in `Updater.cpp`, so `--gc-sections` cannot drop SHA-512.
+ 
+ That pulls `mbedtls_sha512_*` / `psa_hash_*` into every sketch that uses `Update`, including ones that never call `setSHA512()`. CI matches this: `SD_Update` (no TLS) grows about +5K FLASH on ESP32/C3/C6, +7K on C5/P4, and
+  [README.md] The heap context is on-demand, but FLASH is not. `_writeBuffer` / `_reset` always reference the SHA-512 helpers, so mbedtls/PSA SHA-512 is linked into every `Update` binary.
+ 
+ Please lazy-link SHA-512.
+### H013 getsentry/sentry author=human | fix(taskbroker): Override Topic and Namespace in Task Sender Locally
+  BODY: this can't work -- we need to have route overrides in options for inc response, just not set them globally from this one command.
+### H014 backstage/backstage author=human | fix(scaffolder): explicitly define github:repo:create inputs
+  BODY: nan
+  [report.api.md] These were largely in alphabetical order. What's the goal with this new order?
+  [githubRepoCreate.ts] This increases the maintenance burden on developers to call out each property manually. Then they have to change the number in the test above. As it stands, when you add an input property, it is always passed in. With this change, when you add a property, you have to locate where it is used and add it to the map (read: error prone).  I left a short
+  [githubRepoCreate.test.ts] Why don't you know this exactly? Why isn't this just `toDeepEqual(....)`?
+### H015 grafana/grafana author=human | Dashboards: Fix datasource replacement during v2 dashboard import
+  BODY: Good work! I've left a few comments to address before merging. The core issue is fixed, but let's make this less code added to the codebase, please.
+  [importDatasourceReplacer.ts] This is a core interface we use, please use the one exported from `@grafana/schema`
+  [importDatasourceReplacer.ts] Function name is self documenting here, no need for comment.
+  [importDatasourceReplacer.ts] Nit - name this funtion to be self-documenting and not require comment.
+  [importDatasourceReplacer.test.ts] Why this annotation? We are working with v2 schema which is well typed, so there should be no need for a global nocheck. Let's get rid of it before merging.
+  [importDatasourceReplacer.test.ts] Great that we have this test file, however it's add massive amount of code to maintain, also makes it quite hard to navigate and read.   Some things to refactor: 1. Each test has full dashboard spec defined and a lot of copy-pasted code - extract repeated code to some builder functions you can repear. 2. Replace this "guard" with a common util, it'
+  [importDatasourceReplacer.ts] This would actually use some comment with explanation :)
+### H016 open-telemetry/opentelemetry-collector-contrib author=human | [processor/transform/internal/logparsingfuncs] Add ParseELF function for W3C Extended Log 
+  BODY: nan
+  [func_parse_elf.go] The directive switch below is case-insensitive (`strings.ToLower(key)`), but this guard isn't, so a malformed lowercase `#fields` (no colon) slips past the hard error and falls through to `continue`. The next data lines then parse against the stale field set, the silent corruption this guard seems intended to stop. I'd lowercase the comparison to m
+### H017 ceph/ceph author=human | mgr/dashboard : Cephfs Mirroring Listing
+  BODY: nan
+  [cephfs-mirroring-list.component.scss] Please do not mark things as resolved if they were not actually addressed. 
+ 
+ Also this is not looking right currently, things are missaligned.
+ 
+ <img width="1914" height="978" alt="Image" src="https://github.com/user-attachments/assets/5aeb662c-460a-492a-a57c-3e4a35dae710" />
+ 
+ Quick example I put up to show it is possible. Please be careful co
+### H018 envoyproxy/envoy author=human | drain: add new onDrain support to connection callbacks
+  BODY: This LGTM overall, but I'd like to adjust the names of all the functions to be clear that they don't cause draining to happen, they just pass notifications around
+ 
+ /wait
+  [connection.h] I think this should be named so that it's clear that it doesn't actually cause draining. Maybe it should also be `onDrain()`.
+  [connection_handler.h] similar naming comment
+### H019 pytorch/pytorch author=human | [pytree] make `torch.utils.pytree` as public API
+  BODY: Thanks for the change! Seems there is some CI failure now, but outside of that it looks good to me.    cc @anijain2305  as well to have a look as this is a new public API we probably need a second set of eyes
+### H020 ceph/ceph author=human | mgr/dashboard: Tiering form -  Placement Target in Advanced Section
+  BODY: nan
+  [rgw-storage-class-form.component.html] Also @dnyanee1997 can we always have default placement only selected. Lets not provide an option to de-select if only one, then choose one only.
+ 
+ Currently it makes no sense because anyways backend will add default placement even if we pass no placement group.
+ (you can cross verify that and let know if thats not the case.)
+### H021 SigNoz/signoz author=human | fix: removing duplicate creation of user if user does not exist already
+  BODY: nan
+  [a_get_connection_params.py] better to assert the values of fields here than just the presence of fields ? As they would be present in an empty go struct as well if `omitEmpty` is omitted. 
+### H022 apache/airflow author=human | Add option to override Celery worker images
+  BODY: Overall, this is a nice change that aligns with the Workers Sets feature. Let's wait a bit and revisit it in the next round after some discussions on the Helm Chart releases (the images section and design of it are one of the action items) are finished.
+  [_helpers.yaml] Most of this function copies logic from `airflow_image`. Maybe there is some nice way to not duplicate code here?
+  [values.yaml] ```suggestion ``` Not sure if needed. Every section can be overwritten by sets and direct message for one field could lead to `this has this information and other field do not, so I can overwrite this one but this one not?` understanding.
+  [test_worker_image.py] This added test complexity, which can lead to not-so-straightforward debugging in case of failure. Maybe we could simplify the test cases a little?
+  [test_worker_image.py] Not sure where the `images` section tests are stored, but I think we should move them there to have all `images` test in one place.
+  [test_worker_image.py] All of the tests regarding `celery` overwrite `workers` are in the general worker test file. Could we move those tests there?
+  [test_worker_image.py] All of the tests for `sets` overwrite of `celery`, and the `workers` section is in the workers sets dedicated test file. Could we move these tests there?
+### H023 prestodb/presto author=human | feat(native): TVF implementation
+  BODY: nan
+  [table-functions.rst] Please fix the formatting of this table. It is not being compiled. See screenshot of a local doc build. 
+ 
+ <img width="691" height="345" alt="Screenshot 2026-08-13 at 10 34 16 AM" src="https://github.com/user-attachments/assets/32184e5f-737b-4e7a-b03e-5e612424ea54" />
+ 
+### H024 pytorch/pytorch author=human | [torchgen] Refactor and simplify `gen_pyi.py` to use Generic TypeAlias (PEP 585) and Union
+  BODY: Unfortunately PEP604 is python 3.10+ and we have to support python 3.9 - so we can't convert to it yet.
+### H025 prestodb/presto author=human | feat(plugin-iceberg): Add support for iceberg.target-max-file-size
+  BODY: Thanks for adding the changes.  Let's add it as a session property as well, along with respective documentation
+  [IcebergConfig.java] use static import
+  [IcebergConfig.java] Lets add some `@Min` validation for this?
+  [TestIcebergTargetMaxFileSize.java] We can also add tests for default behavior - Verify that with default 1GB target size and TASK_WRITER_COUNT=1, then we can check the absolute count of files created for unpartitioned and partitioned table
+  [TestIcebergTargetMaxFileSize.java] Nit: We can use `randomTableSuffix()` like existing tests for table unique names
+  [TestIcebergTargetMaxFileSize.java] Could we also spin up a query runner with just 1 worker as well for writing tests with some absolutely predictable file count assertions?

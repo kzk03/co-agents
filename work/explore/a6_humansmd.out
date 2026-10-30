@@ -1,0 +1,18 @@
+種類: Counter({'N': 96, 'M': 29, 'T': 23, 'G': 21, 'A': 17})
+
+== 行単位(長さ>15字の行)。カテゴリごとの該当行数 / 全行数
+ A 責任分担型: files 17 lines 1936 | K 34 (0.02)  R 141 (0.07)  D 135 (0.07)  O 231 (0.12)  (なし) 1466 (0.76)
+ G 協働ガイド型: files 21 lines 1615 | K 104 (0.06)  R 161 (0.10)  D 73 (0.05)  O 21 (0.01)  (なし) 1288 (0.80)
+ M 人間向け説明書型: files 29 lines 3503 | K 100 (0.03)  R 204 (0.06)  D 122 (0.03)  O 121 (0.03)  (なし) 3014 (0.86)
+
+== ファイル単位:そのカテゴリの行を1つ以上含むファイル数
+ A: K 7/17  R 17/17  D 15/17  O 14/17
+ G: K 16/21  R 18/21  D 12/21  O 6/21
+ M: K 17/29  R 21/29  D 19/29  O 18/29
+
+== ファイルごとの K/R/D 最多カテゴリ(同数は併記)
+ A: {'D': 6, 'R': 8, 'R+D': 3}
+ G: {'R': 8, '(該当なし)': 2, 'K': 4, 'D': 6, 'K+R+D': 1}
+ M: {'D': 4, '(該当なし)': 4, 'R': 16, 'K+D': 1, 'K': 3, 'R+D': 1}
+
+辞書: K=\b(context|background|history|historical|domain knowledge|tribal|why we|rationale|customer|stakeholder|who to ask|ask (?:a|the) human|knows?\b|knowledge|intent|business)\b; R=\b(must|never|always|do not|don't|convention|style guide|rule|rules|policy|policies|guideline|guidelines|required|forbidden|not allowed|only (?:a|the) human)\b; D=\b(decide|decides|decision|decisions|approve|approves|approval|sign[- ]off|judg(?:e)?ment|choose|prioriti[sz]e|priority|priorities|trade-?offs?|risk|risky|accountab\w*|responsib\w*|own(?:s|er|ership)?\b|final say|veto)\b; O=\b(credential|credentials|api key|secret|secrets|password|token|deploy|deployment|production|billing|payment|physical|hardware|account|accounts|legal|license|licence)\b

@@ -1,0 +1,109 @@
+### G051 Azure/azure-mcp agent=Copilot | Update TROUBLESHOOTING and Authentication.md (from README) for advanced scenarios
+  BODY: nan
+  [Authentication.md] add a link in this section for more details on Managed Identity and Federated Identity that would be useful for a developer using Azure
+  [Authentication.md] Also add a sentence about how the user can request help by filing a GitHub issue in this repo.  Include a link to the (blank) new issue template
+### G052 cybersemics/em agent=Copilot | Refactor: editing → isKeyboardOpen
+  BODY: nan
+  [Note.tsx] ```ts
+ import { keyboardOpenActionCreator as keyboardOpen } from '../actions/keyboardOpen'
+ ```
+  [useLongPress.ts] ```ts
+ import { keyboardOpenActionCreator as keyboardOpen } from '../actions/keyboardOpen'
+ ```
+  [handleKeyboardVisibility.ts] ```ts
+ import { keyboardOpenActionCreator as keyboardOpen } from '../actions/keyboardOpen'
+ ```
+### G053 ifad/chronomodel agent=Copilot | Respect as_of timestamp in eager loaded joins
+  BODY: @copilot according to the contributing guidelines and copilot instructions, add an empty commit with a good message following the 7 rules for a good commit  Please also explain what did you change, because the comment in the commit is not clear. And, if it is possible, improve the comments in the actual fix, the ones starting with "Handle both..."
+### G054 microsoft/PSRule agent=Copilot | Add hot reload support for PSRule options with VS Code configuration synchronization
+  BODY: nan
+  [client.ts] @copilot If option `PSRule.options.path` is set, watch that file, otherwise default to watching `ps-rule.yaml`.
+ 
+ Don't include the other variations e.g. `ps-rule.yml`, `psrule.yaml` or `ps-rule.yml`.
+  [WorkspaceChangeWatcherHandler.cs] @copilot If option `PSRule.options.path` is set, watch that file, otherwise default to watching `ps-rule.yaml`.
+ 
+ Don't include the other variations e.g. `ps-rule.yml`, `psrule.yaml` or `ps-rule.yml`.
+### G055 microsoft/vscode-pull-request-github agent=Copilot | Fix wrong commit checkout when local branch exists with same name as PR
+  BODY: nan
+  [pullRequestGitHelper.ts] @copilot This is dangerous. We shouldn't just delete the user's local branch. Instead, we should create a local branch with a different, available, name, and point the branch's remote to the correct upstream branch.
+### G056 CravateRouge/bloodyAD agent=Copilot | Refactor bloodyAD to use native async/await instead of threading hacks
+  BODY: Finish the work
+### G057 swc-project/swc agent=Claude_Code | feat(es/minifier): Implement parameter inlining optimization
+  BODY: Run `UPDATE=1 cargo test -p swc --test tsc --test projects` and `UPDATE=1 cargo test -p swc_ecma_minifier`
+### G058 wolfSSL/wolfssl-examples agent=Devin | Add FreeRTOS + wolfIP + wolfSSL HTTPS example
+  BODY: nan
+  [README.md] Please remove the command `make -p build`, since the build directory gets already created at the end of the setup.sh script.
+  [setup.sh] The correct path is `../../../../` for the cmake command to work correctly.
+  [setup.sh] Add the command `sudo make install` after the make.
+  [setup.sh] Please remove the commands `./autogen.sh` and `./configure`.
+### G059 microsoft/mssql-python agent=Copilot | FIX: Contribution process for internal/external contributors & documentation
+  BODY: nan
+  [PULL_REQUEST_TEMPLATE.MD] can link the GH issue using just a hashtag (#)
+  [PULL_REQUEST_TEMPLATE.MD] Can use a better term here. something like `mssql-python` maintainers
+  [PULL_REQUEST_TEMPLATE.MD] Can use a better term here. something like mssql-python maintainers
+### G060 celestiaorg/celestia-app agent=Copilot | docs: Add v4 release notes with message changes
+  BODY: overall this feels very repetitive
+ 
+ be more concise. if a change impacted apis and imports etc, just mention that instead of having separate sections mentioning the same exact thing
+  [release-notes.md] also mention the change from CometBFT v0.34 -> v0.38
+  [release-notes.md] ```suggestion
+ **IBC Protocol Update (v6 → v8)**:
+ ```
+  [release-notes.md] please double check these and only include them if something changed. if something did change, then only mention that
+  [release-notes.md] ```suggestion
+ ```
+ 
+ I think we can delete these
+  [release-notes.md] does this include all api changes? what about to `TxClient` or the user package?
+### G061 microsoft/Spartan2 agent=Copilot | Replace panics with proper Error types throughout the codebase
+  BODY: Address comments.
+### G062 milkshakesoftware/PreMailer.Net agent=Devin | Fix #171: Preserve empty HTML tags during serialization
+  BODY: `PreserveEntitiesHtmlMarkupFormatter` should be removed, and the new EmailHtml markup formatter should be opt-in based on the options given to premailer - the option flag right now is preserveEntities - it should be something to indicate use of the opnionated html email formatter.
+### G063 demergent-labs/azle agent=Copilot | Add property tests for jsonStringify and jsonParse functions
+  BODY: nan
+  [pretest.ts] I don't think you need to add --no-wallet here
+### G064 mvdicarlo/postybirb agent=Copilot | feat: Improve Username Shortcut experience in BlockNote Editor
+  BODY: nan
+  [username-shortcut.tsx] Still having issue of the cursor being trapped within the element when hitting the left arrow.
+### G065 Catfriend1/syncthing-lite agent=Copilot | .
+  BODY: .
+### G066 cloudflare/workers-sdk agent=Devin | feat: add experimental API to expose Wrangler command tree structure
+  BODY: nan
+  [CommandRegistry.ts] This function is unnecessary. It does the same thing as `getDefinitionTreeRoot()`, which can be used instead
+  [experimental-commands-api.ts] This is a _lot_ of duplication. Can you think of a way to expose this without any duplication of command registration?
+### G067 microsoft/TypeScript agent=Copilot | Deprioritize native function methods in IntelliSense completions
+  BODY: nan
+  [completions.ts] The only thing you need here is the symbol. Check that its *binding* parent is an interface declaration in the global scope whose name is `Function` or `CallbableFunction`. That's it.
+### G068 DaveSkender/Stock.Indicators agent=Copilot | docs: Migrate to Angular/markdown doc site
+  BODY: @copilot use playwright MCP server to ensure whole site is visible and navigable
+  [angular.json] When I run dev server or deploy to Cloudflare, the landing page is empty
+### G069 microsoft/vscode agent=Copilot | Fix DEBUG CONSOLE not detecting file paths with ANSI escape sequences
+  BODY: nan
+  [linkDetector.ts] This is not a realiable way to build the cleanedText, because characters within the escaped sequence could match. Instead use the `forAnsiStringParts` function.
+### G070 manusa/electronim agent=Copilot | Revert: Keep window in settings preload for contextIsolation:false
+  BODY: @copilot the tests are failing now, it's likely that since this is done in the preload the globalWindow approach doesn't work here. Is this possible?
+### G071 bugsink/bugsink agent=Copilot | Add remote_addr field to Event model to log client IP addresses
+  BODY: nan
+  [models.py] Overly verbose; drop the whole comment
+  [tests.py] that's a lot of testing for very little functionality, which gives me a "bad feeling" generally and esp. since it was done by a bot.
+ 
+ could we not have a "tighter fit" around what's actually happening?
+### G072 cybersemics/em agent=Copilot | Scroll cursor into view on sort
+  BODY: nan
+  [scrollCursorIntoViewOnSort.test.ts] The test is pointless if `scrollCursorIntoView` is mocked. Please make a puppeteer test for a more realistic test. 
+  [scrollCursorIntoView.ts] Named exports are not allowed in this project. Only default exports.   Instead, check `action.type` in the middleware to see if sort has been toggled. Or run an effect whenever the sort preference changes. 
+### G073 srid/haskell-flake agent=Copilot | Fix `custom` expected to be unique
+  BODY: Your implementation looks suss, but add a test case so we can confirm the fix for sure.
+### G074 justtrackio/gosoline agent=Copilot | Implement Reader interface for blob fixture loading using Object type
+  BODY: nan
+  [writer_blob.go] ```suggestion
+ 		return fmt.Errorf("failed to read blob fixtures: %w", err)
+ ```
+### G075 codeceptjs/CodeceptJS agent=Copilot | Extend CodeceptJS CLI to run failed tests with --save-failed-tests and --failed-tests opti
+  BODY: This implementation is very ugly. Everything should be handled via plugin:
+ 
+ - auto-saving of fialned runs (by listening to failed event) to file inside output folder
+ - re-running the last saved file from output folder using the same plugin
+  [plugins.md] bad naming
+  [codecept.js] bad defaults, this should be enabled for all runs if a plugin is turned on
+  [codecept.js] we need a plugin for that, not a new option

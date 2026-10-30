@@ -1,0 +1,159 @@
+sid,cat,inferable,note
+W001,C3,yes,テストの期待値・追加ケース
+W002,C1,partial,イベント更新の競合状態
+W003,C3,partial,changeset の記述・BREAKING 表記
+W004,C1,yes,置換の境界バグ・3実装の不整合
+W005,H3,partial,外部フォーマッタ Fantomas/スタイルガイドと矛盾
+W006,H1,no,Snuba 側の変更マージ待ち
+W007,H2,partial,フォールバック不要の方針+無関係変更の差し戻し
+W008,C2,yes,既存 provider 拡張・構成
+W009,M,yes,CI 失敗
+W010,H2,partial,API 設計の推奨
+W011,H1,no,前日マージの agent 定義で既に指示済み(重複)
+W012,C2,yes,戻り値・命名・テスト書式
+W013,C1,partial,CI のバージョン指定
+W014,C3,yes,frontmatter 不足
+W015,C3,partial,テストフレームワークへの組み込み
+W016,C2,yes,既存テストクラス再利用・不要な変更
+W017,H3,partial,NativeAOT に entitlement は不要(プラットフォーム知識)
+W018,C2,yes,不要なコメント
+W019,C2,partial,必要性の疑問
+W020,C2,yes,命名一貫性・strings
+W021,H2,partial,命名は現状維持(他レビュアーに同意)
+W022,C1,partial,例外ケースの扱い
+W023,C1,yes,await を跨ぐ競合
+W024,C1,partial,ブロッカーのバグ群
+W025,C2,yes,表記
+W026,C2,yes,既存の正規化を再利用
+W027,C2,yes,無関係な skip list 変更
+W028,C2,yes,テスト記法
+W029,C1,yes,型
+W030,H2,no,オプティマイザ統一方針と逆行
+W031,C2,yes,構成・lint
+W032,C2,yes,テスト・API の細部
+W033,C2,yes,冗長
+W034,C1,partial,挙動の退行
+W035,C1,yes,古い depset の削除漏れ
+W036,H3,partial,outcomes のデータ区分の知識
+W037,C1,yes,NameError で preload が無効化
+W038,H2,partial,どの integration に置くべきか
+W039,UNK,-,前のコメント参照のみ
+W040,C2,yes,テストの書き方
+W041,C3,yes,テストケース
+W042,C1,partial,リリースノートのコード例の欠落
+W043,C1,partial,リセット判定が危険
+W044,C2,yes,vol.Coerce で簡素化
+W045,H2,partial,スコープ拡張の要望
+W046,H2,partial,解決すべき場所
+W047,M,yes,テスト失敗
+W048,UNK,-,指摘を直して のみ
+W049,C2,yes,重複削除
+W050,H3,partial,実機の実用範囲で clamp
+W051,UNK,-,承認取り消しのみ
+W052,H5,partial,権限チェック付き get_projects
+W053,H4,partial,実機 fixture の事前 PR という手順
+W054,H4,partial,未解決コメント対応前に ready にしない(手続き)
+W055,H5,partial,他 org のプロジェクトを読める
+W056,C2,partial,用語・既存処理の流用
+W057,UNK,-,see comments のみ
+W058,C2,yes,テスト配置
+W059,C2,yes,不要な関数
+W060,H2,partial,テスト API の設計
+W061,C2,partial,xmldoc タグの規約
+W062,C1,partial,perfscore の根拠確認
+W063,C3,yes,PR 説明が内容と不一致
+W064,UNK,-,理由なし
+W065,C1,partial,store のエンコードが誤り
+W066,C2,partial,命名・可読性・ライブラリ側実装
+W067,C2,yes,無関係なフォーマット変更
+W068,H1,no,レビュアー自身が別に修正を持っている
+W069,C2,yes,著作権年・既存ウィジェット流用
+W070,H2,partial,全開発者のプロンプトに入れるべきでない
+W071,C3,partial,xmldoc・テストの期待値
+W072,C1,partial,PGO の devirtualize 安全性
+W073,C2,yes,レビュー不能、分割せよ
+W074,M,yes,マージ競合
+W075,H4,partial,バグ修正でなく新機能(対象ブランチ)
+W076,C1,partial,元の問題が直っていない
+W077,C2,yes,別 PR に分離
+W078,C2,yes,型・構造
+W079,H3,partial,再起動テストの CPU 要件
+W080,H2,partial,PR を絞る
+W081,C3,partial,ai-usage メタデータ必須
+W082,UNK,-,revert 指示のみ
+W083,C2,yes,無関係な .gitignore 変更
+W084,H2,partial,優先順位・スコープ、ライブラリ EOL
+W085,H2,partial,後方互換は不要
+W086,C1,yes,変換で値が失われる等
+W087,H3,partial,ハードウェアが対応ファームを動かせない
+W088,H1,no,Discord での議論結果
+W089,C2,partial,ドキュメントの説明改善
+W090,C1,yes,inf の扱い・矛盾する既存記述
+W091,C1,yes,secret 未設定時の扱い
+W092,H2,partial,動的デバイス対応へ移行中の方針
+W093,C2,yes,import・型
+W094,C1,partial,healthcheck 変更の安全性未確認
+W095,H3,partial,Supervisor のバックアップ仕様
+W096,C1,partial,locator 依存で真でない記述
+W097,C1,partial,乗数の要否
+W098,C3,partial,実ユースのテスト・変更削除
+W099,C3,yes,テストの検証
+W100,C2,yes,文言
+W101,H2,partial,厳格化でなく寛容にすべき
+W102,C2,partial,uv.lock の変更を戻す
+W103,C1,partial,f1_keyword の規約違反
+W104,UNK,-,自動レビューの指摘対応のみ
+W105,H2,partial,別の設計案(運用経験)
+W106,H1,no,architecture discussion と既存 PR
+W107,H2,partial,サービスを簡素に保つ
+W108,C2,yes,条件統合・テスト追加
+W109,H2,partial,破壊的変更
+W110,H2,partial,ボタンの用途・表示内容の方針
+W111,UNK,-,see comments のみ
+W112,C2,yes,文書スタイル規約
+W113,C2,yes,1 PR 1変更
+W114,C1,partial,性能劣化
+W115,H1,no,Discord で RestoreEntity を使わないと決定
+W116,H2,partial,アプローチが広すぎる
+W117,H1,no,外部 issue の議論
+W118,C3,yes,テスト
+W119,C2,yes,命名
+W120,C2,yes,簡素化
+W121,C1,partial,ドキュメントの不足
+W122,C2,yes,命名・配置
+W123,C2,partial,無関係ファイル・テストのパラメータ化・設計質問
+W124,C2,partial,プランナが既に処理
+W125,H1,no,議論で合意済み・別 PR
+W126,C3,yes,テスト
+W127,UNK,-,理由なし
+W128,C1,yes,テストのクラスタ起動・競合
+W129,UNK,-,理由なし
+W130,H2,partial,データ配置・命名の方針
+W131,C2,partial,可読性・regex の危険
+W132,UNK,-,理由なし
+W133,H2,partial,フラグ整理・オプティマイザ設計
+W134,H2,partial,目的が不明・既存メトリクスで足りる
+W135,H1,partial,過去のバグによる重複を想定した意図
+W136,C2,partial,説明の明確さ
+W137,C2,partial,より簡素・高速な実装、アンチパターン
+W138,C1,yes,unit はワイルドカードでない
+W139,H2,partial,リンク内容の方針
+W140,C3,yes,テスト
+W141,C2,yes,既存実装との一貫性
+W142,C2,yes,既存の正規化を再利用
+W143,H2,partial,unguarded write を避ける慣行
+W144,UNK,-,本文が途切れ理由不明
+W145,C1,yes,要求未対応
+W146,C2,yes,行の統合
+W147,H2,partial,設定名・API 設計
+W148,C3,yes,docstring・PR 説明
+W149,M,yes,CI が赤
+W150,C3,yes,スクリーンショット
+W151,C3,partial,統合テスト・分割
+W152,H2,partial,ワークフローの範囲縮小
+W153,C3,yes,bazel 登録・pytest
+W154,C1,yes,同じ修正の漏れ
+W155,C1,yes,存在しないキー
+W156,H2,partial,ライブラリ側で扱うべき
+W157,UNK,-,see feedback のみ
+W158,C1,yes,相対リンク

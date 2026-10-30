@@ -1,0 +1,41 @@
+{
+ "text": "1. **`src/Build/Instance/TaskFactories/AssemblyTaskFactory.cs` (`CreateTaskInstance`)** — The core feature is inverted: `AddMicrosoftTaskLoaded` is only invoked `if (IsMicrosoftAuthoredTask())`, so telemetry fires for Microsoft's *own* tasks, not for user-authored subclasses of them. A third-party class extending `Microsoft.Build.Utilities.Task` lives in a non-Microsoft assembly, so `IsMicrosoftAuthoredTask()` returns false and the call is skipped entirely. This defeats the stated purpose (issue #10855: measure external subclassing to justify `sealed`) — as implemented the event can never report third-party subclass usage.\n\n2. **`src/Build/BackEnd/Components/Logging/ProjectTelemetry.cs` (`AddMicrosoftTaskLoaded`)** — Doesn't match the PR description at all. The description claims a dictionary of Microsoft-base-type → subclass-count (e.g. `Microsoft_Build_Tasks_Csc: 1`), but the actual code just increments three flat counters (`LoadedCount`/`SealedCount`/`InheritingFromTaskCount`) describing properties of whatever task type was passed in — properties that are static facts about MSBuild's own shipped code, not about user extension behavior. This needs to be re-implemented to actually walk the hierarchy and record, per Microsoft base type, how many *non-Microsoft* subclasses were instantiated, as described.\n\n3. **`src/Build/Instance/TaskFactories/AssemblyTaskFactory.cs` (`CreateTaskInstance`)** — Telemetry is recorded once per task *instantiation*, not once per task *type* per project. A task used repeatedly (batching, multiple targets/calls) will inflate the counters, making the resulting numbers meaningless for deciding whether to seal a type. Dedupe per task type per project (e.g., track a `HashSet<Type>` already counted) before incrementing.\n\n4. **`src/Build/BackEnd/Components/Logging/ProjectTelemetry.cs`** — The new counters are plain `int` fields incremented with no synchronization. If `CreateTaskInstance` can be reached concurrently (parallel task batching / multiple nodes sharing project state), increments can race and undercount. Either confirm and document a single-threaded-per-project guarantee for this call path, or use `Interlocked.Increment`.\n\n5. **`src/Build/Instance/TaskFactories/AssemblyTaskFactory.cs`** — `_taskLoggingContext?.TargetLoggingContext?.ProjectLoggingContext?.ProjectTelemetry?.AddMicrosoftTaskLoaded(...)` silently no-ops if any link in the chain is null (e.g., task host, design-time build). Since this is the only call site, silent gaps are undetectable. At minimum this should be understood/documented, and ideally covered by a test that exercises a null-context path to confirm it's an intentional no-op and not a bug.\n\n6. **`src/Build.UnitTests/BackEnd/ProjectTelemetry_Tests.cs`** — Five of the six tests reach into the private `GetMicrosoftTaskProperties` method via reflection instead of exercising the public `LogProjectTelemetry` path. This is brittle (breaks on any internal rename/refactor) and, more importantly, none of the tests exercise `AssemblyTaskFactory.IsMicrosoftAuthoredTask()` — the one piece of actually risky new logic (assembly-location/name classification) — so it ships untested.\n\n7. **`src/Build.UnitTests/BackEnd/ProjectTelemetry_Tests.cs` (`MicrosoftTaskTelemetry_IsLoggedDuringBuild`)** — Despite being described as \"an integration test that verifies telemetry collection during actual builds,\" it only asserts `result.ShouldBeTrue()` and never inspects any `TelemetryEventArgs`/logged properties. It provides no regression protection for the feature and should be rewritten to attach a logger/sink and assert the actual telemetry payload.\n\n8. **`src/Build/BackEnd/Components/Logging/ProjectTelemetry.cs`** — The inheritance check hardcodes the single string `\"Microsoft.Build.Utilities.Task\"`, so it can never detect subclassing of other Microsoft task base types (e.g. `Microsoft.Build.Tasks.Csc`, as shown in the PR's own example output). This contradicts both the PR description and the \"extensibility\" claims; the base-type set needs to be generalized (e.g., driven by `IsMicrosoftAuthoredTask`-style assembly classification applied to each level of the hierarchy) rather than one literal string.\n\n9. **`src/Build/Instance/TaskFactories/AssemblyTaskFactory.cs` (`IsMicrosoftAuthoredTask`)** — Repurposes `Framework.FileClassifier` (an assembly-resolution/globbing helper) as a trust oracle for telemetry attribution without evidence these APIs are intended/stable for that purpose, and has no handling for in-memory/dynamically-emitted assemblies (`AssemblyFile` null/empty beyond the existing check) — such tasks silently fall through to \"not Microsoft,\" which may or may not be the desired default; this should be called out explicitly rather than left implicit.\n\n10. **Design/value of the metric** — As implemented, `MicrosoftTasksSealedCount`/`MicrosoftTasksInheritingFromTaskCount` only describe properties of MSBuild's own shipped task types, which are static and already known at build time from the MSBuild source itself — collecting them via runtime telemetry adds no information to justify sealing decisions (that requires external-consumer subclass data, per item 1/2). This should be reviewed against the actual goal in #10855 before merging, since passing CI doesn't indicate the feature does what the issue asked for.",
+ "cost": 0.1079068,
+ "sec": 63.7,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 10833,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 5927,
+  "output_tokens_details": {
+   "thinking_tokens": 3876
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 10833,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 5927,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 10833,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 10833
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G002",
+ "cond": "A"
+}

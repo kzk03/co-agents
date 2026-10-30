@@ -1,0 +1,41 @@
+{
+ "text": "1. **rule/struct_tag.go — `checkTaggedField` loop**: Disabling a checker (`w.disabledCheckers[tagKey]`) only skips the per-key `tagChecker` function; it does **not** skip `checkTagNameIfNeed` or `checkOptionsOnIgnoredField`, which run unconditionally earlier in the loop. For keys handled by `checkTagNameIfNeed` (`bson`, `json`, `xml`, `yaml`, `protobuf`, `spanner`), disabling the checker still leaves duplicate-tag-name failures active, contradicting both the PR's \"✅ ignored\" claim and the general \"disable this checker\" semantics advertised for the feature (the PR tests only `validate`/`toml`, which happen to avoid this code path). Either make `disabled` short-circuit the whole tag before any checks run, or document/scope the feature explicitly to \"disables option/value checking but not duplicate-name checking\" and add a test proving the intended scope.\n\n2. **rule/struct_tag.go — `Configure`**: The magic string `\"disabled\"` is only recognized when `len(parts) == 2`. If a user writes `\"validate,disabled,extra\"` (e.g. a typo or copy-paste mistake while trying to add an option alongside `disabled`), it silently falls through to the normal branch and registers `\"disabled\"` and `\"extra\"` as literal custom options instead of erroring or disabling — a user mistake becomes silent, confusing behavior rather than a config error. Reject (return an error) when `disabled` appears together with other options for the same key, rather than silently reinterpreting it.\n\n3. **rule/struct_tag.go — `checkTaggedField`**: `tagKey := tagKey(tag.Key)` shadows the package-level type name `tagKey` with a local variable of the identical name. This is exactly the kind of shadowing this linter itself would flag elsewhere in the codebase and hurts readability. Rename the local variable (e.g. `key := tagKey(tag.Key)`).\n\n4. **rule/struct_tag.go — `Configure`**: Added blank lines contain trailing whitespace/tabs (after `r.disabledCheckers = make(map[tagKey]bool)` and before `// Check if this is a disabled checker configuration`), which is not `gofmt`-clean. For a linter project this should be caught before merge — run `gofmt -w` (and `golangci-lint run`) over the diff.\n\n5. **test/struct_tag_test.go / testdata**: No test exercises the interaction case from finding #1 (disabling a key like `json`/`bson` that also participates in duplicate-tag-name checking), nor the malformed `\"key,disabled,extra\"` case from finding #2. Add fixtures/tests covering these before relying on the documented behavior.\n\n6. **testdata/struct_tag_disabled_checkers.go**: File is missing a trailing newline (shown by `\\ No newline at end of file` in the diff). Should end with a newline per standard Go formatting.",
+ "cost": 0.17677700000000002,
+ "sec": 85.1,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 21635,
+  "cache_read_input_tokens": 64265,
+  "output_tokens": 7738,
+  "output_tokens_details": {
+   "thinking_tokens": 6729
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 21635,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 7738,
+    "cache_read_input_tokens": 64265,
+    "cache_creation_input_tokens": 21635,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 21635
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G026",
+ "cond": "B"
+}

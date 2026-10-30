@@ -1,0 +1,129 @@
+### W126 dotnet/runtime | Fix Tensor.StdDev vs TensorPrimitives.StdDev differences for Complex input
+  BODY: nan
+  [TensorTests.cs] @copilot As with the repro included in the issue description, have all members not needed for implementing StdDev throw a NotImplementedException so that future tests that might reuse this test class don't get inaccurate results from the methods that aren't truly implemented.
+  [TensorTests.cs] ```suggestion
+             // https://github.com/dotnet/runtime/issues/116133
+             // Tensor.StdDev vs TensorPrimitives.StdDev differences for Complex input
+ ```
+  [TensorTests.cs] @copilot Turn this into a `[Theory]` that has test cases that exercise when the `Abs` is needed as well as when it's not.
+ 
+ Similarly edit the preexisting `TensorStdDevTests` test to also be a `[Theory]` with it also exercising cases when the `Abs` is meaningful and not.
+### W127 dotnet/runtime | Replace CORCOMPILE_FIXUP_BLOB_KIND with ReadyToRunFixupKind
+  BODY: need more human efforts
+### W128 ray-project/ray | [core][dashboard] Return 4xx from node and actor detail APIs
+  BODY: nan
+  [test_node.py] Could you remove `pytest.mark.parametrize` from this test and move those assertions into the test body instead? The `ray_start_with_dashboard` fixture starts a fresh Ray cluster, so using `pytest.mark.parametrize` would launch 6 clusters. I think this test only needs to launch one cluster and query it multiple times.
+  [node_head.py] Make `DataOrganizer.get_node_info` return `None` for an unknown id and branch on its result instead to avoid race condition.
+### W129 pytorch/pytorch | [Intel GPU] Enable mkdnn._linear_pointwise at XPU backend
+  BODY: Please check if the suggested change is reasonable.
+### W130 home-assistant/core | Split hassio data coordinator and add dedicated stats coordinator
+  BODY: This looks good but I'm a bit unsure on the refresh interval set. And I agree with Joost about the typing of the coordinators, since they are new and their data cache is unused it seems like we should set them up properly in that regard.
+  [sensor.py] It seems like we replaced the `SupervisorSensor` with classes prefixed with `Hassio`? This is rather backwards no? `hassio` is a legacy term like addons is now, it just never got a dedicated refactoring effort like we're doing with addons. It only got the first step - replace hassio with supervisor in all user-facing strings. The developer facing c
+  [coordinator.py] Hm I'm not understanding. What you're saying makes sense for `self.hass.data` as it is pre-existing but why not set up these new `DataUpdateCoordinator` instances correctly? After this change all data pulled from Supervisor is going to be stored in two places: 1. `hass.data` under a key with typing issues we intended to resolve later with domain ke
+  [__init__.py] Sure yea I'm good with waiting on this one so we don't store our component's runtime data in a mixture of ways and places. Then we can refactor it from one place to the other at one time.
+  [coordinator.py] `ResponseData` is now exported from `aiohasupervisor.models` in the latest version because of this code. We should change the import at the top to import it from there rather then `aiohasupervisor.models.base`.  (I know not exactly related but was reminded reading through this)
+  [const.py] Isn't this backwards? Other then stats app info changes pretty infrequently right? Does anything really change except `state` outside of an app update? And even that doesn't really change much unless you're developing or setting up a new app and bringing it up and down a lot.  One hour between stat calls also doesn't seem like it would be frequent 
+  [coordinator.py] Yea see like this for example is now going to make its way into `self.data` of this coordinator. Which is brand new and not used anywhere currently so there's no reason to pollute it with deprecated data model. I feel like it would make a lot of sense to set up these coordinators with proper typing and just have them continue to serialize the datac
+### W131 ydb-platform/ydb | OOM-resistant ya make runs
+  BODY: nan
+  [action.yml] Пофигу кмк
+  [action.yml] Какой-то монстр.. Давай заведем переменную с командой именно ya make для читаемости? 
+  [action.yml] Как будто дело говорит? Действительно ранее могли быть другие oom (даже в других wf) 
+  [action.yml] Тут есть проблема в том, что это работает только для PRов   Хотелось бы чтобы и для вне PRов такое работало (явно как-то зажигалось, что заоомилось)
+  [generate-summary.py] Регэкспы вещь опасная, в том плане что если текст будет стометровым, то оно потенциально будет долго работать (если рекэксп написан плохо). Можем ли как-то убедиться, что такой проблемы не будет?
+  [generate-summary.py] Блин, ну вот так писать имхо плохо   Смотришь на функцию, и такой "ему можно None передавать"  Мне кажется правильнее всегда требовать строку и лист   Может я что-то не понял 
+### W132 ray-project/ray | [Data] Add random() and uuid() expression
+  BODY: Thanks @wingkitlee0 for the contribution. Left a few comments
+### W133 NVIDIA/Megatron-LM | feat(optim): support --fp8-param-gather for muon + mxfp8 in LayerWise
+  BODY: nan
+  [arguments.py] @kunlunl to also comment.  My rough understanding is fp8-gather and reuse flags are recommended to be used together even before any muon changes for mxfp8? and at least for mxfp8 there is no reason to use only fp8-gather without reuse Maybe let's take the opportunity to finally clean up these flag that doesn't quite show what they do as name sugges
+  [test_muon_mxfp8_fp8_param_gather.py] I think we should also test the overlapping path since that's more important
+  [layer_wise_optimizer.py] I have a hunch that this is all over-complicated because we originally designed layerwise optimizer to 'replace' dist-opt, so it inherited chainedoptimizer, while distopt inherited mixprecision optimizer since now we already made up our mind to get layerwise/distopt work alongside each other, maybe we change that? so something like a chained optimi
+### W134 getsentry/sentry | chore(api) Add metric to apigw to track which routes are getting requests
+  BODY: @markstory I don't get the purpose of this. You can already get that number by filtering the existing metrics, eg: https://app.datadoghq.com/metric/explorer?fromUser=false&graph_layout=stacked&start=1784725679469&end=1784729279469&paused=false#N4Ig7glgJg5gpgFxALlAGwIYE8D2BXJVEADxQEYAaELcqyKBAC1pEbghkcLIF8qo4AMwgA7CAgg4RKUAiwAHOChASAtnADOcAE4RNIKtrgBHPJoQaUAbVBGN8qVoD6gnNtUZCKiOq279VKY6epbINiAiGOrKQdpYZAYgUJ4YThr42gDGSsgg6gi6mZaBZnHKGniqyBjyHGAAdHCq+QhORkEarZn4Igj13Xi9wNr4CHDI8iPEWPWTONNO2WhoTmhw
+### W135 home-assistant/core | Resolve colliding orphans through the orphan indexes
+  BODY: nan
+  [device_registry.py] This change is incorrect, we can still have overlap in deleted devices due to prior bugs, so the code was written that way on purpose to handle that. There was an underlying assumption that the size of the registry remains reasonable.
+### W136 dotnet/docs | Everyday C#: Null safety tutorials
+  BODY: nan
+  [nullable-reference-types.md] This could be slightly clearer for the new coder   ```suggestion The compiler combines these signals to produce diagnostics. Warnings on a non-nullable variable mean the variable might receive `null`. Warnings on a nullable variable mean the code might *dereference* it without a null check. *Dereference* means to use the value the variable refers t
+  [nullable-reference-types.md] I wouldn't say this. .NET ships with a lot of templates and there is no guarantee that the code a user is looking at has this in the project. Further, projects migrated from .NET Framework won't have this enabled.  I would just say that if they're working with a newly created project, it's more than likely that nullable context is enabled in the pr
+  [nullable-reference-types.md] Nit:  ```suggestion When the feature is enabled, every reference type variable is *non-nullable* by default. Append `?` to declare a *nullable* reference type: ```
+  [nullable-reference-types.md] Nit:  This code could be improved to show a second person without a middle name. Further, the output of the ToString should be printed as a comment at the end. That will really drive home the concept of how the null check changed the code path. Although that might not really be the focus of the code... So, total nit 😁 
+  [nullable-reference-types.md] For a "simple" rule, I find this entire paragraph very complex and verbose. I iterated with copilot to simplify the wording. How's this?  ```suggestion A local variable's null-state is updated as the compiler analyzes your code. Two things change it: **assignments** and **null checks**. After an assignment, the variable's null-state matches the exp
+  [nullable-reference-types.md] I have a hard time following the explanation of the code here, as well as the comments in the code. I have no idea why `_ = originalMessage` is in there.
+### W137 dotnet/runtime | Implement CONV_OVF_xxx in the Interpreter
+  BODY: nan
+  [interpexec.cpp] Calling the managed helper like this looks both complicated and slow. 
+ 
+ Given that you are promoting the value to double first anyway, I think it would be faster and simpler to do something like this:
+ 
+ ```
+ // Generic version that works for 32-bit and smaller TResult
+ template <typename TResult, typename TSource> static void ConvOvfFpHelper(int
+  [interpexec.cpp] I meant specifically the floating-point ones. It should be very similar to the checked ones introduced in this PR (just return 0/min/max instead of throwing an exception).
+ 
+ HCCALL1 macro is anti-pattern. I would like to delete it. The only two places that use it after recent HMF removal are intepreter and two methods in jithelpers.cpp that are bu
+### W138 dotnet/docs | Add wildcard pattern usage examples to F# documentation
+  BODY: nan
+  [pattern-matching.md] @copilot : unit does not fit here, it is not a wildcard, not an underscore. Eliminate.
+  [snippet4818.fs] @copilot : unit does not fit here, it is not a wildcard, not an underscore. Eliminate.
+  [snippet4818.fs] @copilot : unit does not fit here, it is not a wildcard, not an underscore. Eliminate.
+### W139 ydb-platform/ydb | HTML report: Create issue button
+  BODY: nan
+  [summary.html] @copilot report link я хочу чтобы у нас был всегда
+ а error и остальное обрезать только если мы превышаем суммарный лимит на длинну ссылки( посмотри какой лимит на url для github) 
+### W140 home-assistant/core | Add DHCP discovery to nobo_hub
+  BODY: I like this :D
+  [test_config_flow.py] Can we patch this where we use this? `homeassistant.components.nobo_hub.config_flow...`?
+  [test_config_flow.py] I'd recommend to keep reusing `result`
+  [test_config_flow.py] ```suggestion ``` It's not a blocking operation
+  [test_config_flow.py] Can we also test - title - unique id  and use cosntants for the data keys?
+  [test_config_flow.py] So why do we need a broadcast? We already know more about the device right?
+### W141 dotnet/runtime | Fix Tensor.StdDev vs TensorPrimitives.StdDev differences for Complex input
+  BODY: nan
+  [TensorOperation.cs] These new blank lines can be removed.
+  [Tensor.cs] @copilot This approach deviates from the rest of the implementations in this class far more than the previous approach that introduced a new `TensorOperation.SumOfSquaredMagnitudeDifferences`, and it has allocations that are less desirable than the previous `.Abs()` calls. Please return to introducing `SumOfSquaredMagnitudeDifferences`.
+### W142 home-assistant/core | Add network MAC connection to AnthemAV main zone device
+  BODY: Thanks for adding the MAC connection here!  One change request: the `format_mac()` call isn't needed. The device registry already normalizes `CONNECTION_NETWORK_MAC` connections through `format_mac()` itself in `_normalize_connections()` (`homeassistant/helpers/device_registry.py`), which `async_get_or_create()` runs on whatever connections an entity passes in:  ```python def _normalize_connections(connections):     """Normalize connections to ensure we can match mac addresses."""     return {  
+### W143 getsentry/sentry | fix(integrations): Fix data race when a pending deletion integration is re-installed
+  BODY: I think it's worth avoiding unguarded writes wherever possible. We've historically tried to keep its usage very low, and should be avoidable using calls to `outboxes_for_update()`
+### W144 backstage/backstage | GitLab Discovery Provider: Add glob support for entityFilename (including .yaml/.yml)
+  BODY: Hi @totoroot ,  thank you for this PR!  Glob support for `entityFilename` fills a real gap, especially for monorepo users on CE/free GitLab who cannot rely on `useSearch`. And finally being able to match both `.yaml` and `.yml` catalog files with a single pattern like `**/catalog-info.y?(a)ml` is such a nice touch. Both of these have been long-standing pain points for the community. (I also feel the pain of having to explain that the extension is y**a**ml , especially when you have .gitlab-ci.ym
+### W145 home-assistant/core | Add Matter service actions for vacuum area
+  BODY: >When starting cleaning using vacuum.start action we should reset the selection first.
+ 
+ I don't see this being addressed anywhere.
+  [const.py] ```suggestion
+ ```
+  [icons.json] ```suggestion
+ ```
+  [services.yaml] ```suggestion
+       integration: matter
+       domain: vacuum
+ ```
+  [strings.json] ```suggestion
+ ```
+  [vacuum.py] ```suggestion
+ 
+             return None
+ ```
+  [vacuum.py] What happens if the vacuum is already running as a result of the selection?
+### W146 home-assistant/core | Home Connect refactor OAuth exceptions
+  BODY: nan
+  [__init__.py] Combine line 77 and 79.
+### W147 backstage/backstage | feat: Instrument MCP tool calls with semantically appropriate span
+  BODY: Nice! 👍   Few more bits, but feels safer to mirror otel, even if doesn't align quite as well with our other API design style
+  [mcp-actions.md] Ah, should've mentioned this in the first round: this doesn't seem like a great pattern at scale? 🤔 Feeling that it's lacking context and would either need to be a lot more verbose at this level, or be rebased. i.e. either `backend.tracing.capture.mcpActionsToolPayloads` or `mcpActions.tracing.capture.toolPayloads` / `mcpActions.tracing.captureTool
+  [TracingService.ts] I think it's alright to use our own variant for opaque types here: `$$type: '@backstage/TracingServiceContext'`. It's more resilient and I'm a bit worried we'll run into package duplication issues or other fun errors if we end up using a symbol here.
+  [TracingService.ts] Do you feel we need `getEntry`? I'm kinda leaning towards only implementing `getAllEntries` for now to nudge towards this only being used for bridging and no other silly custom context shenanigans 😁 
+### W148 ray-project/ray | [dashboard] Configurable defaults + UI dialogs for py-spy/memray profiling params
+  BODY: Please also update your stale PR descriptions. Thanks.
+  [ray_constants.py] ```suggestion     env_integer("RAY_DASHBOARD_PROFILING_MAX_DURATION_S", 60), ```  to match the original default cap in `reporter_head.py`.
+  [reporter_head.py] Please fix all stale docstrings. For example, this won't raise `ValueError` anymore. It'll raise `aiohttp.web.HTTPBadRequest` after your PR. I think there are more stale docstrings other than this one.
+  [ray_constants.py] Can you also log a warning here when the duration is clamped?
+  [ray_constants.py] Make `profile_manager.py` to read this constant.  https://github.com/ray-project/ray/blob/1a39d47792c3db8ee703e9c955596a1f40f44359/python/ray/dashboard/modules/reporter/profile_manager.py#L156
+### W149 backstage/backstage | fix(core-components): fix Table layout when filters and title are used together
+  BODY: It's red still. You may want to ensure you are on latest master again and run the api reports. All of them - not just for the individual package - so `yarn build:api-reports` from the root
+### W150 backstage/backstage | fix(ui): make Dialog panel opaque in dark mode
+  BODY: Hi @eleonoratennyson, can you include a before and after screenshot in the Pr description, please 🙏

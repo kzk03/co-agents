@@ -1,0 +1,72 @@
+Fixes the issue where `mkShellArgs.packages` was being ignored in development shells.
+
+## Problem
+
+Users expect to be able to add packages to their development shell using:
+
+```nix
+{
+  haskellProjects.default = {
+    devShell = {
+      mkShellArgs = {
+        packages = with pkgs; [ sqlite-interactive curl ];
+      };
+    };
+  };
+}
+```
+
+However, these packages were not available in the shell because `shellFor` was overriding the `packages` attribute with its own function for Haskell packages.
+
+## Root Cause
+
+In `nix/modules/project/devshell.nix`, the code was doing:
+
+```nix
+devShell = finalPackages.shellFor (mkShellArgs // {
+  packages = p: /* Haskell packages function */;
+  # ... other overrides
+});
+```
+
+This caused any `packages` specified in `mkShellArgs` to be completely ignored.
+
+## Solution
+
+- Extract `packages` from `mkShellArgs` before passing to `shellFor`
+- Add these packages to `nativeBuildInputs` where they belong for shell tools
+- Remove `packages` from `mkShellArgs` to avoid conflicts
+
+```nix
+# Extract packages from mkShellArgs to add to nativeBuildInputs
+mkShellArgsPackages = config.devShell.mkShellArgs.packages or [ ];
+mkShellArgsWithoutPackages = builtins.removeAttrs config.devShell.mkShellArgs [ "packages" ];
+mkShellArgs = mkShellArgsWithoutPackages // {
+  nativeBuildInputs = (config.devShell.mkShellArgs.nativeBuildInputs or [ ]) ++ nativeBuildInputs ++ mkShellArgsPackages;
+};
+```
+
+## Changes
+
+- **Fixed**: `nix/modules/project/devshell.nix` - Properly handle packages from mkShellArgs
+- **Added**: Test case in `test/simple/flake.nix` to verify packages work
+- **Updated**: Documentation in `doc/devshell.md` with packages example
+
+## Testing
+
+Added a test that verifies `curl` is available in the devShell when added via `mkShellArgs.packages`:
+
+```bash
+# mkShellArgs.packages should work (curl added via packages)
+which curl || \
+  (echo "curl should be in devshell via mkShellArgs.packages"; exit 2)
+```
+
+This fix maintains 100% backward compatibility while enabling the functionality users expect.
+
+Resolves discussion #430 and issue #436.
+
+<!-- START COPILOT CODING AGENT TIPS -->
+---
+
+💡 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.

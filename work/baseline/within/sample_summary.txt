@@ -1,0 +1,5 @@
+miss(層が合わず repo だけでマッチ) HU 1 HO 18
+AG: n=50 repo {'home-assistant/core': 20, 'ray-project/ray': 8, 'backstage/backstage': 6, 'getsentry/sentry': 4, 'grafana/grafana': 3, 'NVIDIA/Megatron-LM': 3, 'pytorch/pytorch': 2, 'espressif/arduino-esp32': 1, 'PaddlePaddle/Paddle': 1, 'apache/airflow': 1, 'ydb-platform/ydb': 1} 結末 {'not_closed': 38, 'closed': 12}
+HU: n=50 repo {'home-assistant/core': 20, 'ray-project/ray': 8, 'backstage/backstage': 6, 'getsentry/sentry': 4, 'grafana/grafana': 3, 'NVIDIA/Megatron-LM': 3, 'pytorch/pytorch': 2, 'PaddlePaddle/Paddle': 1, 'apache/airflow': 1, 'espressif/arduino-esp32': 1, 'ydb-platform/ydb': 1} 結末 {'not_closed': 39, 'closed': 11}
+AO: n=37 repo {'dotnet/runtime': 15, 'dotnet/docs': 11, 'ydb-platform/ydb': 8, 'home-assistant/core': 2, 'getsentry/sentry': 1} 結末 {'not_closed': 32, 'closed': 5}
+HO: n=21 repo {'dotnet/runtime': 9, 'ydb-platform/ydb': 6, 'dotnet/docs': 3, 'home-assistant/core': 2, 'getsentry/sentry': 1} 結末 {'not_closed': 19, 'closed': 2}

@@ -1,0 +1,91 @@
+### S001 openstack/tacker CR-1 ABANDONED 2023-01-12 | Fix tox4 error
+  [PATCHSET_LEVEL:None] Other projects seems to pin "tox<4" for stable branch.  https://review.opendev.org/q/topic:tox4+pin https://lists.openstack.org/pipermail/openstack-discuss/2023-January/031678.html  Doesn't Tacker need to do the same?
+### S002 openstack/neutron CR-1 ABANDONED 2022-01-20 | [test]Unit test file ovn_l3.test_plugin can run alone
+  [PATCHSET_LEVEL:None] As commented by Oleg in [1], unit tests are executed using tox. This test can be executed fine with this command: # tox -epy36 neutron.tests.unit.services.ovn_l3.test_plugin.TestOVNL3RouterPlugin.test_schedule_unhosted_gateways   [1]https://bugs.launchpad.net/neutron/+bug/1958513/comments/2
+### S003 openstack/nova CR-1 MERGED 2021-10-29 | [nova-manage]support extended resource request
+  [PATCHSET_LEVEL:None] I'm definitely not an expert in the minimum bandwidth resource requests but this looks overall reasonable and comes with a lot of test coverage. I noticed a couple of minor things.
+  [nova-manage.rst:1227] This needs to be 25.0.0 (Yoga) now?
+  [manage.py:1505] Is this supposed to be present if it's empty? I'm assuming so but I haven't seen this before.
+  [manage.py:1676] This could be a misleading exception if the failure is for any reason other than failure to communicate with the placement API ... but maybe there is some precedent for this that I don't know about.  Also, looking at the code for get_allocation_candidates, if there is a problem retrieving the allocation candidates, it will return (None, None, None)
+  [manage.py:2249] Ah, I guess this is why.
+  [test_nova_manage.py:1601] I think this must be wrong based on the code (None, None, None).
+### S004 openstack/octavia CR-1 ABANDONED 2021-03-01 | Delete useless row
+  BODY: Please see the comment a few lines below. I can now be used as the amphora delete api is available.
+### S005 openstack/cinder CR-1 NEW 2020-05-29 | Mark RSD driver as unsupported
+  BODY: Please use the driver capability of setting SUPPORTED = False
+  [rsd.py:531] SUPPORTED = False  https://github.com/openstack/cinder/blob/master/cinder/volume/driver.py#L394-L398
+### S006 openstack/watcher-tempest-plugin CR-1 MERGED 2025-07-30 | Add a scenario test with continuous audit
+  BODY: Build failed (check pipeline).  For information on how to proceed, see http://docs.openstack.org/infra/manual/developers.html#automated-testing  https://softwarefactory-project.io/zuul/t/rdoproject.org/buildset/62e18503453c484b8f1aef1cf09b1995  - openstack-meta-content-provider-master https://softwarefactory-project.io/zuul/t/rdoproject.org/build/f2b7fe000bfb4dc99e7861929a53916b : FAILURE in 13m 00s - watcher-operator-validation-master https://softwarefactory-project.io/zuul/t/rdoproject.org/bui
+### S007 openstack/blazar CR-1 MERGED 2021-01-05 | Remove six
+  [types.py:100] Duplicated check here
+### S008 openstack/cinder CR-1 MERGED 2019-08-09 | Hedvig: Migration to py37
+  BODY: Looks good other than the minor comments inline. No unit tests were affected by this?
+  [COMMIT_MSG:7] This needs a blank line after the summary line and the detailed description so they don't get run together. It also would be good to prepend it with "Hedvig:" or similar so when someone searches through "git log --one-line" it's easy to see what changes have gone in.
+### S009 openstack/neutron CR-1 ABANDONED 2019-07-15 | Delete dhcp ports totally during scale down of dhcp agents
+  BODY: Maybe You can add e.g. fullstack test which will ensure that if You remove network from dhcp-agent, port is really deleted instead of updated to reserved_dhcp_port?
+  [agentschedulers_db.py:422] I don't understand this, if should_remove_dhcp_port will be True, You will just update ports to be reserved dhcp ports? So when You will really remove them?  And why should_remove_dhcp_port is set to True if there is less dhcp_ports currently than dhcp_agents_per_network (see L453)?
+  [agentschedulers_db.py:440] What this method is doing actually? Here You say that it count number of ports but later in L453 it returns bool value so it's not counting anything IMHO.
+  [agentschedulers_db.py:453] why not:      return dhcp_ports_num <= cfg.CONF.dhcp_agents_per_network  ?
+  [test_agentschedulers_db.py:649] nit: why You just not move this to L652?
+  [test_agentschedulers_db.py:669] same here
+  [test_agentschedulers_db.py:682] please align indentation of this line to the line above
+### S010 openstack/blazar CR-1 ABANDONED 2019-02-26 | Prevent failed lease update from setting lease status to ERROR
+  BODY: I also agree we should let the update-lease to have transactional feature. For the current problem, I'm okay for Blazar to have quick fix.  IMO, it's hard to track a place each exceptions, having restore_lease_status = True, are called in the future changes.  My suggestion is lease_statues decorator has additionally one parameter that represents type of exceptions the lease status shouldn't go to ERROR.  Like following:  lease_status(..snip.., not_error=[InvalidInput, MissingParameter])  How do 
+  [exceptions.py:97] If we take this approach it's better to set the value to False because it's a base exception class.
+### S011 openstack/swift CR-1 ABANDONED 2024-12-02 | cors: use same host for swift/s3api
+  [main.py:38] Keystone. `S3_ENDPOINT` should always match your `OS_STORAGE_URL` (if provided), though.
+  [main.py:322] Maybe we could default `S3_ENDPOINT` to `None` then update here once we know the storage url?
+### S012 openstack/glance-specs CR-1 ABANDONED 2022-06-02 | Spec for SRBAC system-admin persona support in glance
+  [s-rbac-system-scope-support.rst:48] Even if you keep image create/update APIs project specific you can not restrict user to call these APIs with system token and if it is called it will fail with 500 error at this moment. So we need to handle all non-system admin apis to reject the request with 400 error if they are called with system token.
+  [s-rbac-system-scope-support.rst:62] None
+  [s-rbac-system-scope-support.rst:65] None
+  [s-rbac-system-scope-support.rst:72] None
+### S013 openstack/nova-specs CR-1 ABANDONED 2020-01-10 | Allow specify user to reset password
+  [allow-specify-user-to-reset-password.rst:14] this requires the guest to be deployed with the qemu guest agent correct. with out the guest agent i dont think libvirt can reset the password.
+  [allow-specify-user-to-reset-password.rst:24] unfrotunetly yes although they should really be using ssh keys or x509 certs for powershell on windows.
+  [allow-specify-user-to-reset-password.rst:36] vms are owned by the project so if we did this it would allow any memeber of a project to reset the password of any vm in the project. is that what we want? the most comment case other then forget the password where this would come up is an employee leave but they did nto transfer the vm to another and reset the password before they left.
+  [allow-specify-user-to-reset-password.rst:77] this is the user in the vm.  this would only work if the vm supported local login by the way. i dont think we would expect this to work if the vm use kerberous or a windows domain login right?
+  [allow-specify-user-to-reset-password.rst:85] see the issue with this is if that is a shared vm it would still  allow the non admin to reset the password of any user on the vm. that said i dont see a way to prevent that and still support letting the user reset there own accrount.
+  [allow-specify-user-to-reset-password.rst:94] i think there are several security impacts to this.  as i said above vms are owned by projects not users so this api would presuable allow any user of the poject to reset an user in the vms password. that seam like a pretty big security whole if that vm is shared between users.  in a public cloud env i see a need to be able to disable this feature 
+### S014 openstack/grian-ui CR-1 NEW 2025-09-13 | Replace unnecessary override of install_command
+  [tox.ini:27] this change the behaviour of editable installs.  https://github.com/openstack/nova/commit/5e5b6751d32aa50dc372c55b5c2044d0dade51f4  which is why we do not do it here.
+### S015 openstack/nova CR-1 MERGED 2025-03-20 | FUP Remove unnecessary PCI check
+  [COMMIT_MSG:30] Closes-Bug: #2103636
+  [PATCHSET_LEVEL:None] please fix the commit message, this patch not just related to the bug but actually fixing it. Then I will +2 it
+### S016 openstack/glance-tempest-plugin CR-1 MERGED 2021-10-18 | Implement API protection testing for metadef tags
+  [test_tags.py:72] I think you can modify create_tags method to create multiple tags rather than having separate method for the same.  IMO there is no need to create separate namespaces for creating multiple tags.
+  [test_tags.py:78] I think this should be self.alt_project_id, ditto for line number 59
+### S017 openstack/nova-specs CR-1 MERGED 2020-02-10 | Use PCPU and VCPU in one instance
+  [use-pcpu-vcpu-in-one-instance.rst:121] maybe just call it as 'pinned_cpus', I don't think we should have 'numa' prefix, since the pinned cpu isn't related to NUMA.
+  [use-pcpu-vcpu-in-one-instance.rst:178] we also required the "hw:numa_pinned_cpu" in the extra specs.
+  [use-pcpu-vcpu-in-one-instance.rst:189] This sounds like part of "Affect over emulator thread policy", since it is rule also for using "hw:" extra specs.
+  [use-pcpu-vcpu-in-one-instance.rst:269] and "hw:pinned_cpus"
+### S018 openstack/manila CR-1 MERGED 2020-07-08 | Enable cephfs snapshots
+  BODY: We set some env vars in devstack-plugin-tests, either we fix them here and we remove it from there, or we just fix them there
+  [run.yaml:77] We should do this in devstack-ceph-plugin. Precisely https://github.com/openstack/devstack-plugin-ceph/blob/master/manila/post_test_hook.sh#L145
+### S019 openstack/heat CR-1 NEW 2021-10-07 | Allow setting-up heat_api_root
+  BODY: This also needs to be fixed at https://opendev.org/openstack/heat/src/branch/master/heat/api/versions.py#L55, and possibly other places.
+  [wsgi.py:97] Can't this be obtained automatically from the keystone catalog?
+### S020 openstack/horizon CR-1 ABANDONED 2019-05-17 | Handle 403 response when update image attribute
+  BODY: I think that modifying the status code is not a good way to deal with it. Is there any other way of handling it?
+### S021 openstack/octavia CR-1 MERGED 2020-11-18 | Enable octavia-tempest-plugin for grenade job
+  BODY: What about pinning the py2 job to the last py2 version of the octavia-tempest-plugin?
+### S022 openstack/swift CR-1 MERGED 2023-08-09 | wsgi: bad request syntax response missing txn-id
+  [PATCHSET_LEVEL:None] test failures look legit  E       AssertionError: "ERROR WSGI: code 400, message Invalid PROXY line 'GET /someurl HTTP/1.0\\r\\n', transaction_id test-bad-req-trans-id" != "ERROR WSGI: code 400, message Invalid PROXY line 'GET /someurl HTTP/1.0\\r\\n', (txn_id: test-bad-req-trans-id)"  And the pep8 errors too
+### S023 openstack/masakari CR-1 MERGED 2020-08-26 | Search in nova services instead of hypervisors
+  BODY: I think this patch is the way to go. Some comments in need of addressing though.
+  [COMMIT_MSG:10] nit: ways
+  [COMMIT_MSG:12] nit: during
+  [hosts.inc:92] host, not binary
+  [hosts.inc:92] nit: from
+  [nova.py:247] find
+  [nova.py:256] when can it happen? (is find from nova case-insensitive? I'd doubt but never checked)
+### S024 openstack/manila-specs CR-1 MERGED 2021-12-30 | share transfer between project
+  [PATCHSET_LEVEL:None] Hi Haixin, thanks for proposing this transfer spec! I added some points, please, review them.
+  [share_transfer_between_project.rst:20] This
+  [share_transfer_between_project.rst:38] would the admin be able to configure this timeout ?   Having the configuration option can be useful for tempest test.
+  [share_transfer_between_project.rst:61] for audits purpose or even debugging, the fields: "created_at", "updated_at" and "deleted_at" should be also added, right ?
+  [share_transfer_between_project.rst:71] this spec just supports
+  [share_transfer_between_project.rst:77] only "per_share_gigabytes" ?!  All quotas resources must be validated, right ? With share transfer the snapshots and replicas also come, so those quotas must be checked.
+### S025 openstack/horizon CR-1 ABANDONED 2019-06-21 | Explicitly set force=False in nova.live_migrate when microversion supports it
+  [nova.py:606] I think horizon should specify a microversion we want to use instead of checking the API version. Specifying microversion is the responsibility of an API caller.

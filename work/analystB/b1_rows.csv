@@ -1,0 +1,71 @@
+set,sid,repo,v1,g,outcome_now,b2cls,ok,ref_src,agentdoc_base,contrib_base,anydoc_base,doc_status,sonnet_written,window_complete,window_until,upd_agentdoc,upd_contrib,upd_any,new_agentdoc,n_upd_commits,kw_n,kw_hits,kw_hit_words,related_added,related_strict
+aidev,G002,dotnet/msbuild,D-dir,D,merged,a,True,cache,True,False,True,no,no,True,2026-04-06,True,False,True,True,6,25,8,check keep microsoft msbuild names task tasks usage,True,True
+aidev,G006,microsoft/genaiscript,C1,C,merged,a,True,cache,True,True,True,no,,True,2026-02-02,False,False,False,False,0,11,0,,False,False
+aidev,G007,awesome-opencode/awesome-opencode,K-priv,K,closed,b,True,cache,False,False,False,could,no,True,2026-03-21,False,False,False,False,0,6,0,,False,False
+aidev,G011,joshuadavidthomas/django-language-server,R-tech,R,merged,a,True,graphql baseRefOid,False,True,True,could,no,True,2026-04-16,True,True,True,True,21,17,7,anyhow crate else needed result returning server,True,False
+aidev,G016,compas-dev/compas,C2,C,open,d,True,cache,False,True,True,could,no,True,2026-03-26,False,False,False,False,0,5,0,,False,False
+aidev,G020,doodlum/skyrim-community-shaders,C1,C,merged,a,False,,,,,未確認(repo取得不可),,,,,,,,,13,0,,,
+aidev,G024,collinbarrett/FilterLists,R-tech,R,merged,a,True,graphql baseRefOid,True,False,True,written-elsewhere,no,True,2026-01-25,True,False,True,False,4,23,10,broken different filterlistviewurl filterlistviewurls flavors intended mirrors multiple parts single,True,True
+aidev,G026,mgechev/revive,D-dir,D,closed,c,True,graphql baseRefOid,False,True,True,no,no,True,2026-03-01,False,False,False,False,0,7,0,,False,False
+aidev,G027,rsyslog/rsyslog,K-priv,K,closed,b,True,cache,True,True,True,written-repo,yes,True,2026-02-14,True,True,True,True,20,15,2,keep modules,True,False
+aidev,G029,firecrawl/firecrawl,D-dir,D,merged,a,True,cache,False,True,True,no,no,True,2025-12-23,True,True,True,True,12,10,0,,False,False
+aidev,G033,hi-ogawa/vite-plugins,D-dir,D,closed,b,True,graphql baseRefOid,False,False,False,no,no,True,2026-04-05,False,False,False,False,0,6,0,,False,False
+aidev,G036,neondatabase/website,D-dir,D,merged,a,True,cache,False,False,False,no,no,True,2025-10-01,False,False,False,False,0,2,0,,False,False
+aidev,G037,DGP-Studio/Snap.Hutao,R-tech,R,merged,a,False,,,,,未確認(repo取得不可),,,,,,,,,12,0,,,
+aidev,G045,microsoft/vscode-azurefunctions,X,X,merged,a,True,cache,True,False,True,-,,True,2026-02-04,True,False,True,False,2,3,0,,False,False
+aidev,G046,dotnet/sdk,C1,C,closed,c,True,graphql baseRefOid,True,False,True,-,,True,2026-04-06,True,False,True,False,9,14,0,,False,False
+aidev,G055,microsoft/vscode-pull-request-github,C1,C,merged,a,True,cache,True,False,True,-,,True,2026-03-24,True,False,True,False,1,13,0,,False,False
+aidev,G062,milkshakesoftware/PreMailer.Net,D-dir,D,merged,a,True,graphql baseRefOid,False,False,False,no,no,True,2025-11-17,False,False,False,False,0,17,0,,False,False
+aidev,G071,bugsink/bugsink,C2,C,closed,c,True,graphql baseRefOid,False,True,True,-,,True,2026-01-21,True,True,True,True,9,14,4,around gives overly verbose,True,False
+aidev,G075,codeceptjs/CodeceptJS,R-tech,R,closed,b,True,graphql baseRefOid,False,True,True,could,no,True,2026-02-28,True,True,True,True,2,22,4,implementation inside output runs,True,True
+aidev,G079,deepmodeling/deepmd-kit,K-pub,K,closed,b,True,cache,True,True,True,no,no,True,2026-02-22,True,True,True,True,7,14,4,backend environment tensorflow training,True,False
+aidev,G083,dotnet/sdk,K-pub,K,closed,c,True,cache,True,False,True,could,no,True,2026-04-06,True,False,True,False,9,17,2,built framework,True,False
+aidev,G087,microsoft/azure-pipelines-tasks,D-dir,D,closed,c,True,graphql baseRefOid,False,False,False,no,no,True,2025-11-17,True,False,True,True,1,25,4,extend microsoft optional version,True,False
+aidev,G093,OrchardCMS/OrchardCore,R-tech,R,closed,d,True,graphql baseRefOid,False,True,True,could,no,True,2026-01-16,True,False,True,True,1,3,2,manager needed,True,False
+aidev,G094,Azure/azure-sdk-for-rust,R-tech,R,closed,c,True,graphql baseRefOid,True,True,True,written-repo,yes,True,2026-01-25,True,True,True,True,10,6,2,generated typespec,True,False
+aidev,G098,Dart-Code/Dart-Code,C1,C,closed,c,True,cache,True,True,True,-,,True,2026-01-20,True,False,True,True,9,17,2,running windows,True,True
+aidev,G100,Metta-AI/metta,D-dir,D,merged,a,False,,,,,未確認(repo取得不可),,,,,,,,,24,0,,,
+ghhuman,H003,apache/airflow,C2,C,closed,d,True,cache,True,True,True,-,,True,2026-10-17,True,False,True,False,42,48,9,appropriate entire generate note refactor rename required support usage,True,True
+ghhuman,H004,home-assistant/core,R-gov,R,closed,b,True,cache,True,True,True,written-elsewhere,no,False,2027-02-01,True,True,True,False,8,22,0,,False,False
+ghhuman,H005,cilium/cilium,C2,C,merged,a,True,cache,False,True,True,-,no,True,2025-09-22,False,False,False,False,0,15,0,,False,False
+ghhuman,H007,backstage/backstage,K-pub,K,closed,d,True,cache,True,True,True,no,no,True,2026-10-08,True,True,True,False,10,28,3,backstage last original,True,False
+ghhuman,H010,espressif/arduino-esp32,R-tech,R,merged,a,True,cache,False,False,False,could,no,True,2026-06-29,False,False,False,False,0,12,0,,False,False
+ghhuman,H020,ceph/ceph,D-dir,D,merged,a,True,cache,False,True,True,no,no,True,2026-02-17,False,False,False,False,0,20,0,,False,False
+ghhuman,H022,apache/airflow,K-priv,K,closed,c,True,cache,True,True,True,no,no,True,2026-09-17,True,False,True,False,42,49,10,action design direct duplicate field information logic message move section,True,True
+ghhuman,H024,pytorch/pytorch,R-tech,R,closed,c,True,cache,False,True,True,written-repo,yes,True,2025-11-10,True,True,True,True,18,5,1,python,False,False
+ghhuman,H028,open-telemetry/opentelemetry-collector-contrib,D-dir,D,closed,c,True,cache,True,True,True,no,no,False,2026-11-11,True,True,True,False,8,19,0,,False,False
+ghhuman,H033,cilium/cilium,K-priv,K,merged,a,True,cache,False,True,True,could,no,False,2027-01-17,False,False,False,False,0,8,0,,False,False
+ghhuman,H034,ydb-platform/ydb,D-dir,D,open,d,True,cache,True,True,True,no,no,False,2027-02-01,True,False,True,False,7,1,0,,False,False
+ghhuman,H036,istio/istio,C1,C,merged,a,True,cache,False,True,True,-,,True,2025-11-30,True,False,True,True,1,9,2,istio service,True,False
+ghhuman,H044,juspay/hyperswitch,D-dir,D,merged,a,True,cache,False,True,True,no,no,True,2026-09-14,False,False,False,False,0,1,0,,False,False
+ghhuman,H047,tgstation/tgstation,D-dir,D,closed,d,True,cache,False,True,True,no,partial,True,2025-03-31,False,True,True,False,3,25,0,,False,False
+ghhuman,H051,ghostty-org/ghostty,D-risk,D,closed,c,True,cache,True,True,True,no,no,True,2026-09-04,True,True,True,True,7,5,0,,False,False
+ghhuman,H052,ghostty-org/ghostty,R-gov,R,merged,a,True,cache,True,True,True,written-repo,partial,True,2026-07-02,True,True,True,True,28,13,0,,False,False
+ghhuman,H059,istio/istio,K-pub,K,open,d,True,cache,True,True,True,no,no,False,2026-12-12,True,False,True,False,1,2,0,,False,False
+ghhuman,H062,home-assistant/core,R-tech,R,closed,c,True,cache,True,True,True,could,no,False,2026-11-16,True,True,True,False,36,6,1,existing,False,False
+ghhuman,H064,getsentry/sentry,K-pub,K,closed,b,True,cache,True,True,True,could,no,True,2026-08-12,True,False,True,False,19,45,3,data requests response,True,False
+ghhuman,H065,backstage/backstage,D-dir,D,closed,c,True,cache,True,True,True,no,no,True,2026-08-04,True,True,True,True,18,15,2,creating specific,True,False
+ghhuman,H068,grafana/grafana,R-tech,R,closed,b,True,cache,True,True,True,could,no,False,2027-01-30,True,False,True,False,7,17,0,,False,False
+ghhuman,H069,ceph/ceph,C1,C,closed,d,True,cache,True,True,True,-,,True,2026-10-03,False,True,True,False,3,16,1,merge,False,False
+ghhuman,H070,apache/airflow,K-pub,K,closed,c,True,cache,True,True,True,no,no,True,2026-10-07,True,False,True,False,44,12,0,,False,False
+ghhuman,H071,llvm/llvm-project,D-dir,D,closed,c,True,cache,False,True,True,no,partial,True,2026-08-12,False,False,False,False,0,14,0,,False,False
+ghhuman,H072,SigNoz/signoz,D-risk,D,closed,b,True,cache,False,True,True,no,no,True,2026-06-20,False,False,False,False,0,18,0,,False,False
+ghhuman,H073,gradle/gradle,C2,C,closed,d,True,cache,False,True,True,-,no,True,2025-09-21,False,True,True,False,6,18,0,,False,False
+ghhuman,H074,python/cpython,C3,C,closed,c,True,cache,False,False,False,-,no,True,2026-10-12,True,False,True,True,1,30,1,tools,False,False
+ghhuman,H075,dotnet/runtime,R-tech,R,closed,b,True,cache,True,True,True,could,no,True,2026-08-08,True,True,True,False,15,28,3,compiler input inputs,True,False
+ghhuman,H076,ghostty-org/ghostty,D-risk,D,closed,c,True,cache,True,True,True,no,no,True,2026-09-04,True,True,True,True,7,11,0,,False,False
+ghhuman,H079,cilium/cilium,C2,C,closed,b,True,cache,False,True,True,-,no,True,2026-08-16,False,False,False,False,0,27,0,,False,False
+ghhuman,H080,ydb-platform/ydb,D-risk,D,closed,b,True,cache,True,True,True,no,no,False,2026-11-23,True,False,True,False,8,0,0,,False,False
+ghhuman,H081,DefinitelyTyped/DefinitelyTyped,X,X,closed,c,True,cache,False,False,False,-,,True,2025-10-04,False,False,False,False,0,4,0,,False,False
+ghhuman,H083,home-assistant/core,R-tech,R,closed,b,True,cache,True,True,True,could,no,True,2026-09-24,True,True,True,False,53,9,0,,False,False
+ghhuman,H085,backstage/backstage,D-dir,D,closed,d,True,cache,True,True,True,no,no,True,2026-08-29,True,True,True,False,12,6,1,backstage,False,False
+ghhuman,H086,pytorch/pytorch,R-tech,R,closed,b,True,cache,True,True,True,could,no,False,2026-12-21,True,True,True,False,49,10,2,assessment views,True,False
+ghhuman,H087,ray-project/ray,K-priv,K,closed,d,True,cache,False,True,True,no,no,True,2025-12-27,False,False,False,False,0,8,0,,False,False
+ghhuman,H088,grafana/grafana,D-dir,D,closed,d,True,cache,True,True,True,no,no,False,2026-12-09,True,True,True,False,19,15,0,,False,False
+ghhuman,H090,apache/airflow,D-dir,D,closed,c,True,cache,True,True,True,no,no,True,2026-06-20,True,True,True,True,49,17,5,chart delete helm newsfragment versions,True,False
+ghhuman,H093,llvm/llvm-project,K-pub,K,closed,c,True,cache,False,True,True,no,no,True,2026-08-04,False,False,False,False,0,13,0,,False,False
+ghhuman,H094,open-telemetry/opentelemetry-collector-contrib,K-pub,K,closed,b,True,cache,True,True,True,no,no,False,2026-11-16,True,True,True,False,7,26,1,minimal,False,False
+ghhuman,H095,python/cpython,K-priv,K,closed,c,True,cache,False,False,False,no,no,True,2026-09-23,True,False,True,True,1,20,0,,False,False
+ghhuman,H096,tgstation/tgstation,C2,C,closed,d,True,cache,False,True,True,-,no,True,2025-05-19,False,True,True,False,2,16,0,,False,False
+ghhuman,H097,dotnet/runtime,C1,C,closed,b,True,cache,True,True,True,-,no,False,2027-02-28,True,False,True,False,3,8,0,,False,False
+ghhuman,H099,DefinitelyTyped/DefinitelyTyped,C2,C,closed,c,True,cache,True,False,True,-,,False,2027-01-01,False,False,False,False,0,22,0,,False,False

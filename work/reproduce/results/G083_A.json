@@ -1,0 +1,41 @@
+{
+ "text": "1. **`src/Tasks/Microsoft.NET.Build.Tasks/targets/Microsoft.NET.Sdk.CSharp.targets`, new `PropertyGroup` condition** — The condition uses `$(_IsNETCoreOrNETStandard)`, which suppresses CS8002 for **.NET Standard** targets too, not just modern .NET Core TFMs. This contradicts both the original issue (scoped to \".NET Core TFM\" only) and the PR's own description (\"Projects targeting ... .NET Standard are unaffected and will continue to receive CS8002 warnings\"). It's also a real correctness bug: a netstandard2.0/2.1 library can be consumed by a .NET Framework app where strong-name validation is still enforced at load time, so silently suppressing this warning for netstandard authors is wrong. Fix: gate on `'$(TargetFrameworkIdentifier)' == '.NETCoreApp'` (as the PR description actually claims to do) and exclude `.NETStandard`.\n\n2. **Same `PropertyGroup` condition — undefined/unverified property** — `_IsNETCoreOrNETStandard` is not defined anywhere in this diff, and the PR description says detection should be via `TargetFrameworkIdentifier` directly, not this property. Before merging, confirm this property actually exists elsewhere in the SDK's common targets with the exact semantics assumed here; if it doesn't exist, the condition silently evaluates to false (MSBuild treats undefined properties as empty, not an error) and the whole feature becomes a silent no-op that only \"works\" because the added tests happen to also be wrong (see #3). Fix: use the well-known `TargetFrameworkIdentifier` property explicitly in this file rather than an opaque, seemingly-undocumented internal property.\n\n3. **`test/.../GivenThatWeWantToSuppressCS8002Warning.cs`, `CS8002_is_suppressed_for_modern_net_tfms`** — This test asserts CS8002 *is* suppressed for `netstandard2.0`/`netstandard2.1`, directly contradicting the PR description's claim that .NET Standard is unaffected, and masking the scope bug in #1. Fix: move netstandard cases to the \"not suppressed\" theory (or add a dedicated test asserting they're NOT suppressed) once the targets file is corrected to exclude .NETStandard.\n\n4. **Test coverage gap at the TFM boundary** — No test covers older `.NETCoreApp` TFMs (e.g. `netcoreapp3.1`) or pre-6.0 TFMs like `net5.0`/`net core 2.x` to confirm the identifier-based check behaves consistently across the whole .NETCoreApp family, not just net6.0–net8.0. Given the fix suggests gating purely on `TargetFrameworkIdentifier`, add at least one older netcoreapp case to lock in that this isn't accidentally version-gated.",
+ "cost": 0.0744368,
+ "sec": 46.3,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 6838,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 4178,
+  "output_tokens_details": {
+   "thinking_tokens": 3181
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 6838,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 4178,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 6838,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 6838
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G083",
+ "cond": "A"
+}

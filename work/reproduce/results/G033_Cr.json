@@ -1,0 +1,41 @@
+{
+ "text": "1. **`packages/fullstack/src/plugin.ts` — `load` handler for `no-split-css`, CSS traversal logic**: The new code reimplements CSS collection from scratch (`collectCssFromModule` walking `moduleGraph.idToModuleMap.values()`) instead of reusing the existing `collectCss(environment, id, { eager })` helper already used by `processAssetsImport`. This means it silently drops the `experimental.devEagerTransform` behavior and only sees modules that have already been transformed/requested by the dev server — any route/module not yet hit in the current dev session won't appear in `idToModuleMap`, so \"collects all CSS\" is not actually guaranteed. Fix: reuse/extend `collectCss` (or factor its traversal into a shared helper) so both APIs share one source of truth and the eager-transform guarantee applies here too.\n\n2. **`packages/fullstack/src/plugin.ts` — `hasSpecialCssQuery` usage**: This function is called but not shown as imported/defined anywhere in the diff. Confirm it actually exists and is imported; if it's new, it's missing from the diff and will fail to compile.\n\n3. **Test coverage**: This adds a new public virtual module and plugin option but includes no automated tests (only \"manually tested\" per the PR description). Given this repo's convention of example-backed/e2e-tested plugin features, this should not merge without at least one test exercising dev-mode CSS collection.\n\n4. **Missing example**: Every existing fullstack feature (`?assets`, `mergeAssets`, etc.) has a corresponding example under `packages/fullstack/examples/` referenced from the README. This PR adds no example demonstrating `virtual:fullstack/no-split-css`, breaking that convention and leaving the feature effectively unverified end-to-end.\n\n5. **`packages/fullstack/src/plugin.ts` — `result` construction**: `hrefs.map((href, i) => ({ href, \"data-vite-dev-id\": [...cssIds][i] }))` re-spreads the `cssIds` Set on every iteration, making this O(n²) for large module graphs. Fix: zip `id` and `href` together in a single pass (e.g., build `result` directly from `[...cssIds].map(id => ({ href: normalizeViteImportAnalysisUrl(environment, id), \"data-vite-dev-id\": id }))`).\n\n6. **Environment scoping**: The new logic only excludes `this.environment.name === \"client\"`, ignoring `pluginOpts?.serverEnvironments` which the rest of the plugin (`configEnvironment`, `serverHandlerPlugin`) uses to determine which environments are \"server\" environments. This is inconsistent — in a multi-environment setup (e.g. an additional non-ssr, non-client environment) the module would behave unexpectedly. Fix: gate on `(pluginOpts?.serverEnvironments ?? [\"ssr\"]).includes(this.environment.name)`.\n\n7. **DX when flag is disabled**: When `experimental.noSplitCss` is false, `resolveId` simply falls through, so importing `virtual:fullstack/no-split-css` produces a generic \"failed to resolve import\" error rather than a clear message telling the user to enable the flag. Fix: when the source matches but the flag is off, throw/return a descriptive error.",
+ "cost": 0.1206288,
+ "sec": 62.6,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 15356,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 5390,
+  "output_tokens_details": {
+   "thinking_tokens": 4273
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 15356,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 5390,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 15356,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 15356
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G033",
+ "cond": "Cr"
+}

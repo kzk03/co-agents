@@ -1,0 +1,41 @@
+{
+ "text": "1. **vite.config.ts (`build` script / package.json `\"build\": \"vite build\"`)** — The `load-rsc-dev` virtual module's build-mode branch (`return await import(\"/dist/rsc/index.js\")`) has no actual way to be reached: there's no `vite build --app` / multi-environment build wiring shown, no `entry.browser` build config, and no step that produces `dist/rsc/index.js` consumable this way in a browser context. The PR explicitly says it's \"focusing on dev-only,\" yet ships a `build`/`preview` script and README section claiming build support. Fix: either implement and verify the build path end-to-end, or strip the `build`/`preview` scripts and README build instructions and clearly mark the example as dev-only until build is supported.\n\n2. **src/framework/main.tsx / load-rsc-dev.tsx** — No HMR wiring for the RSC-via-module-runner path despite `hmr: false` being passed to `ModuleRunner`, while `entry.rsc.tsx` contains `import.meta.hot.accept()` and `entry.browser.tsx` listens for `rsc:update`. Nothing in this PR emits `rsc:update` or invalidates the module runner's cache on server file changes, so HMR is dead code / misleading. Fix: either implement HMR updates through the `handleInvoke` transport (matching how `browser-mode`'s `load-client-dev.tsx` wires HMR) or remove the unused `import.meta.hot` block and the \"HMR Support\" claim in the README.\n\n3. **README.md** — Claims \"HMR Support: Hot module replacement for both client and RSC code\" and documents a full `build`/`preview` workflow, but the PR's own description says it only \"focuses on dev only\" per maintainer request and admits incomplete work. This oversells functionality to anyone copying the example. Fix: rewrite README to match actual verified behavior (dev-only, no HMR for RSC) until those are implemented and tested.\n\n4. **vite.config.ts `configureServer` middleware** — `server.environments['rsc']!.hot.handleInvoke(payload)` is invoked with a non-null assertion and no check that the `rsc` environment exists/is configured as expected; also `JSON.parse(url.searchParams.get('data')!)` will throw an unhandled exception on malformed/missing input, crashing the middleware chain rather than returning a proper 400. Fix: validate the `rsc` environment exists and wrap parsing in a try/catch returning a 400 response instead of throwing into Express/Connect's default error handler.\n\n5. **Missing test coverage** — CONTRIBUTING.md requires new features/examples to be exercised by the playground `__tests__` convention used across this repo (e.g., `no-ssr` and `browser-mode` examples have corresponding e2e specs). This PR adds a new example with no accompanying test, so regressions in this fairly fragile dev-only module-runner wiring won't be caught by CI. Fix: add an e2e spec under the appropriate `__tests__` directory mirroring the pattern used for `browser-mode`/`no-ssr`.\n\n6. **Issue scope mismatch (#932 acceptance criteria)** — The linked issue explicitly says the example \"should be able to use `import rsc from \"@vitejs/plugin-rsc\"` like `examples/no-ssr`. It shouldn't use `vitePluginRscMinimal` like `browser-mode`.\" The diff does import `rsc from '@vitejs/plugin-rsc'` directly, which satisfies this, but the issue's intent of running the *existing* `no-ssr` `rsc` environment via module runner (reusing it, not reimplementing it) isn't clearly demonstrated — the PR duplicates `entry.rsc.tsx`, `action.tsx`, `client.tsx`, `root.tsx` essentially copy-pasted from `no-ssr` rather than sharing/referencing it. Fix: confirm with the issue author (hi-ogawa) whether duplication is acceptable or whether the example should factor out shared pieces, since this is a judgment call on example-maintenance burden (nearly-identical example trees have historically been flagged for consolidation in this repo).\n\n7. **src/framework/virtual.d.ts** — Declares the module runner's dynamic import type as `Promise<typeof import('./entry.rsc')>`, but the actual build-mode implementation returns `import(\"/dist/rsc/index.js\")`, an absolute path unrelated to `entry.rsc` module shape guarantees post-build (no type-checking ties these together, and `tsconfig.json` has `skipLibCheck`/`noEmit` only, so this mismatch wouldn't surface in `pnpm build` but misleads consumers reading the type declaration as authoritative). Fix: either remove the unverified build-mode return path (per item 1) or correct the type to reflect what's actually returned.\n\n8. **package.json `devDependencies`** — Uses `\"@vitejs/plugin-react\": \"latest\"` and `\"@vitejs/plugin-rsc\": \"latest\"` instead of a workspace link (`workspace:*` / `../../dist` convention used by sibling examples like `no-ssr`/`browser-mode`), which the lockfile diff resolves to `link:../../../plugin-react` and `link:../..` anyway — i.e., package.json and lockfile disagree on intent (`latest` vs. workspace link). Fix: declare these as `workspace:*` in package.json to match actual resolution and the convention used by every other example in `packages/plugin-rsc/examples/*`.",
+ "cost": 0.1254548,
+ "sec": 22.5,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 25380,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 1863,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 25380,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1863,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 25380,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 25380
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G030",
+ "cond": "C"
+}

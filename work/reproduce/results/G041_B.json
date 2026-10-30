@@ -1,0 +1,41 @@
+{
+ "text": "1. **webviews/components/timeline.tsx — `MergedEventView` (unmodified)**: The PR title/description explicitly claims merge-commit links are fixed (\"both regular commits and merge commits\", \"Handle both `CommitEvent` and `MergedEvent` timeline entries\"), but the diff only touches `CommitEventView`. `MergedEventView` still renders `<a href={event.commitUrl}>` unchanged, so merge commit links still open the browser. Either implement the `MergedEvent` click handler too, or correct the PR description/title to reflect the reduced scope — don't merge claiming behavior that isn't there.\n\n2. **src/github/pullRequestModel.ts — `openCommitChanges`, `GitChangeType.DELETE` branch**: `args.push([uri, baseUri, undefined])` uses the raw local filesystem `uri` as the \"current\" side of a deleted file, instead of an empty/review-scheme URI like the `ADD` branch does (`headUri`/undefined pattern). A deleted file won't exist at that path in the working tree (or will show unrelated current content if a same-named file now exists), so the diff will error or show incorrect content. Fix to mirror the `ADD` branch symmetrically: current side should be `undefined`/empty, not the plain `vscode.Uri.file(...)`.\n\n3. **src/github/pullRequestModel.ts — `openCommitChanges`, root-commit case**: `commitSha + '~1'` is passed straight into `diffBetween` with no check for a commit having no parent. For a repo's initial commit this ref doesn't resolve and the user gets a raw git error surfaced via the generic catch block rather than a sensible diff-against-empty-tree or friendly message. Add a parent-existence check (e.g. via `git rev-parse ${commitSha}^` or catching this specific case) and fall back appropriately.\n\n4. **src/github/pullRequestModel.ts — `openCommitChanges`, merge commits**: Diffing with `commitSha~1` always picks the first parent, silently producing a two-parent-only diff for merge commits with no indication to the user that this is \"first-parent diff\" rather than the full merge diff shown on GitHub. At minimum this should be a deliberate, documented choice (and ideally match what GitHub's UI shows for the merge commit), not an incidental side effect of blindly appending `~1`.\n\n5. **src/github/pullRequestModel.ts — `openCommitChanges`, missing local-availability check**: The command assumes `commitSha` is resolvable in the local `repository`. The frontend only gates the UI by `pr.isCurrentlyCheckedOut`, which doesn't guarantee the specific commit is present locally (branch could be stale, force-pushed, or the command invoked directly). This should check that the commit exists locally first and give an actionable \"fetch latest changes\" message instead of letting a raw git error bubble up through the generic catch.\n\n6. **src/github/pullRequestModel.ts — `RENAME` branch**: `baseUri` is built from `uri` (resolved from the *new* path, `change.uri`) together with `baseFileName` (the *old* path string) passed into `toReviewUri`. This mixes the new file's resource identity with the old file's path for fetching base content, which is inconsistent with how the `ADD`/`DELETE`/modified branches each use a single consistent uri/filename pairing. Verify against the existing renamed-file handling pattern used elsewhere in this file (e.g. `openChanges`) and make it consistent, since a subtly wrong pairing will silently produce the wrong \"before\" content for renamed files.\n\n7. **webviews/components/timeline.tsx — inline `style={{ cursor: 'pointer' }}`**: Two new inline styles are introduced directly in JSX. The rest of this component (and the codebase generally) styles via CSS classes. Add the cursor rule to the existing stylesheet for `.message`/`.sha` instead of inlining it, per repo convention.\n\n8. **src/github/pullRequestModel.ts — `path.resolve(repository.rootUri.fsPath, change.uri.fsPath)`**: `change.uri.fsPath` from the git API is already absolute, so `path.resolve` with an absolute second argument is a no-op and the first argument is dead code. This is misleading (implies relative-path handling that isn't happening) — simplify to `change.uri` directly, or confirm/handle the case where it actually can be relative.\n\n9. **No tests added**: Per `.github/copilot-instructions.md` (\"Testing: Place tests under `src/test`\") and the PR's own \"Testing\" section claiming URL/SHA handling and message-flow were verified, no automated tests were added under `src/test` for `PullRequestModel.openCommitChanges` (status handling, missing-parent case, message routing in `pullRequestOverview.ts`). This is a non-trivial new code path touching diff construction logic that's easy to silently regress — add unit coverage before merging.",
+ "cost": 0.1659908,
+ "sec": 69.5,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 25189,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 5993,
+  "output_tokens_details": {
+   "thinking_tokens": 4325
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 25189,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 5993,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 25189,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 25189
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G041",
+ "cond": "B"
+}

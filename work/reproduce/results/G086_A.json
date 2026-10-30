@@ -1,0 +1,41 @@
+{
+ "text": "1. **package.json `test-only`** — `[ $# -eq 0 ] && npm run test-grammar || echo \"Skipping grammar tests when filter provided\"` has the classic `A && B || C` bug: when no filter is given (the default path, used in CI) and `npm run test-grammar` itself fails, the compound's exit status still becomes 0 because the `||` branch (`echo`) succeeds. This silently turns a real grammar-test failure into a passing build. Fix by using an explicit `if/then/else/fi` (or separate the grammar-skip decision out of shell entirely, e.g. into `test_all.ts`) so `test-grammar`'s exit code is actually propagated.\n\n2. **package.json `test` / `test-only`** — both scripts are rewritten to require a POSIX shell (`sh -c '...' --`) purely to forward `\"$@\"` into the inner `npm run` call. This breaks `npm test` / `npm run test-only` on Windows (no `sh` on PATH under `cmd.exe`), which this extension's contributors/CI are expected to support. Needs a cross-platform mechanism (e.g. do the filter-arg plumbing inside `test_all.ts`/a small Node script instead of nested shell quoting, or verify and document that this now hard-requires Git Bash/WSL on Windows).\n\n3. **src/test/test_runner.ts** — when `testFilter` matches zero files, the code calls `resolve()` with no indication of failure, and since grammar tests are also skipped whenever any filter is passed, a mistyped filter (e.g. `npm test autolaunh`) makes the whole run exit 0 having executed nothing — indistinguishable from a real pass. This should fail loudly (reject/throw or non-zero exit) when a filter was explicitly requested but matched nothing, rather than reporting success.\n\n4. **src/test/test_runner.ts** — `testPattern = `**/*${testFilter}*.test.js`` interpolates the raw filter string directly into a glob without escaping glob metacharacters (`*`, `?`, `[...]`, etc.), so filters containing those characters silently change matching semantics instead of doing plain substring matching. Escape special glob characters, or filter the already-globbed file list with plain string `.includes()` instead of building a dynamic glob pattern.\n\n5. **package.json** — embedding the \"was a filter provided → skip grammar tests\" branching logic as nested `sh -c` one-liners is hard to read, hard to test, and is exactly what produced the bug in (1). This logic (arg forwarding, grammar-skip decision) belongs in `test_all.ts`, which is already TypeScript and cross-platform via `child_process`, consistent with how the rest of the test harness is implemented.\n\n6. **src/test/test_all.ts / test_runner.ts** — no automated test was added for the new filtering behavior itself (zero-match handling, multi-word join-to-substring semantics, pattern construction); the PR only describes manual verification. For a change to the project's own test infrastructure, at least a minimal check (e.g. a unit test around the glob-building logic) would catch regressions like (4) going forward.",
+ "cost": 0.15628299999999998,
+ "sec": 151.5,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 5072,
+  "cache_read_input_tokens": 26305,
+  "output_tokens": 13073,
+  "output_tokens_details": {
+   "thinking_tokens": 12023
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 5072,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 13073,
+    "cache_read_input_tokens": 26305,
+    "cache_creation_input_tokens": 5072,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 5072
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G086",
+ "cond": "A"
+}

@@ -1,0 +1,41 @@
+{
+ "text": "1. `rule/struct_tag.go`, `checkTaggedField`: disabling a checker only skips the `tagCheckers` lookup — `checkTagNameIfNeed` and `checkOptionsOnIgnoredField` still run unconditionally before the disabled check. For `bson`, `json`, `xml`, `yaml`, `protobuf`, `spanner` (all handled by `checkTagNameIfNeed`), setting `\"json,disabled\"` will still flag duplicate tag names, contradicting the documented/expected \"fully ignored\" behavior. Move the `disabledCheckers` check to the top of the loop so a disabled tag is skipped entirely, or explicitly document/test that disabling only suppresses the value checker, not name-duplication checks.\n\n2. `rule/struct_tag.go`, `Configure`: the `disabled` sentinel is parsed by generic string-splitting on the same `key,option,...` syntax used for arbitrary custom options, so `\"validate,disabled\"` silently changes meaning for anyone who previously configured `disabled` as a legitimate custom option name — this breaks the PR's own \"fully backward compatible\" claim. It's also brittle: the check requires `len(parts) == 2` exactly, so `\"validate,disabled,foo\"` silently falls through to being treated as custom options `disabled` and `foo` with no error, no warning, and no indication the disable didn't take effect. Use an unambiguous, dedicated configuration path (e.g. a separate `disabled = [\"validate\", \"toml\"]` argument, or require `disabled` to be the sole option) instead of overloading the existing option-list syntax.\n\n3. `rule/struct_tag.go`, `Configure`: a disabled-checker key with a typo (e.g. `\"valdiate,disabled\"`) is accepted silently — it's stored in `disabledCheckers` under a key that matches no entry in `tagCheckers`, so it has no effect and the user gets no feedback that validation is still active. Validate the key against `tagCheckers` (or at least against known `tagKey` constants) and return a configuration error for unknown keys.\n\n4. `rule/struct_tag.go`, `checkTaggedField`: `tagKey := tagKey(tag.Key)` shadows the package-level type `tagKey` with a local variable of the same name. This is poor practice anywhere, and particularly so in a linter whose own rule set (e.g. naming/shadowing checks) would flag this pattern in user code. Rename the local variable (e.g. `key`).\n\n5. `rule/struct_tag.go`, `Configure` and `testdata/struct_tag_disabled_checkers.go`: the diff introduces trailing whitespace on blank lines (after `r.disabledCheckers = make(...)` and after the `key := ...` line) and the new testdata file is missing a final newline. Clean these up — `gofmt`/CI whitespace checks should catch this, but it shouldn't ship in a PR to a linter project.",
+ "cost": 0.1530188,
+ "sec": 60.0,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 22931,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 5599,
+  "output_tokens_details": {
+   "thinking_tokens": 4610
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 22931,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 5599,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 22931,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 22931
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G026",
+ "cond": "C"
+}

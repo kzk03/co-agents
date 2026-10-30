@@ -1,0 +1,3146 @@
+### G001 | Copilot | openai/openai-dotnet#531 | reviewer=KrzysztofCwalina | requester=KrzysztofCwalina | src=None
+TITLE: Add ChatModelFactory class to OpenAI namespace for easier mocking
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: nan
+[src/Custom/ChatModelFactory.cs] User chat message can be instantiated using public constructor and it seems like all its properties can be initialized with public APIs too. Therefore, there does not seem to be a need for the model factory method. Can you review all the types that you added factory method for and make sure we are not adding factory methods that are not necessary
+
+### G002 | Copilot | dotnet/msbuild#12623 | reviewer=baronfel | requester=baronfel | src=issue
+TITLE: Track subclasses of MSBuild tasks for telemetry
+--- REQUEST ---
+Collect telemetry about MSBuild- and SDK-delivered Tasks that are loaded during the build
+### Summary
+
+We want to mark our tasks `sealed`, but this would be an API breaking change. To justify this change we need data. So we want to collect data about MSBuild, SDK, and generally Microsoft-authored Task usage to drive this decision making.
+
+### Background and Motivation
+
+Today tasks shipped by MSBuild and the SDK generally are not `sealed`. This means that folks consuming our NuGet packages can extend the Tasks and use them in their own code. This presents problems when we want to do things like enlighten our Tasks to support multithreading. 
+
+### Proposed Feature
+
+When loading Tasks for execution, we should collect metrics on the characteristics of that Task _if that Task is shipped by MSBuild_.
+
+* if the Task is sealed or not
+* if the Task inherits from `Microsoft.Build.Utilities.Task` (our helper base class)
+* (once the multithreaded APIs are in) if the task directly implements IMultiThreadedTask
+* (once the multithreaded APIs are in) if the task supports multithreading through the attribute-detection mechanism
+
+In the future we may want expand the set of Task information gathered, and we may want to allow external MSBuild users (like the dotnet SDK) to add Tasks to the set of Tasks to collect this information about, so there should be some extensibility mechanism for both of these.
+
+
+### Alternative Designs
+
+_No response_
+--- REVIEW (CR) ---
+BODY: nan
+[src/Build/BackEnd/Components/Logging/ProjectTelemetry.cs] @copilot you need to check the entire inheritance heirarchy, not just the first level
+[src/Build/BackEnd/Components/Logging/ProjectTelemetry.cs] @copilot rename this event - it's not about 'microsoft tasks' per se - it's about MSBuild tasks specifically. And I want to change the shape of the data we're collecting.
+
+I want to track the usage of non-sealed Microsoft-owned Tasks specifically. So let's keep a dictionary of Microsoft Task Names to counts of their non-sealed usage. We should inspect every Task, and if it is a subclass of a MIcrosoft-owned Task, we should track the name of that Microsoft-owned Task and increment the usage count
+
+### G003 | Copilot | dotnet/fsharp#18687 | reviewer=T-Gro | requester=T-Gro | src=issue
+TITLE: [WIP] Support --typecheck-only for fsi run (just typecheck, no execution)
+--- REQUEST ---
+Support --typecheck-only for fsi run (just typecheck, no execution)
+# Instructions for Adding `--typecheck-only` Support to F# Interactive Scripts
+
+## Problem Statement
+
+The `--typecheck-only` flag already exists for F# project compilation but is not supported for `.fsx` script files in F# Interactive (FSI). Currently, there's no way to type-check scripts without executing them through the FSI command line. This feature would allow developers to validate script syntax and types without running potentially side-effect-producing code.
+
+## Implementation Steps
+
+### 1. Add Command Line Option
+
+Add the `--typecheck-only` option to the FSI command line parser. Insert a new `CompilerOption` in the advanced options section:
+
+```fsharp
+CompilerOption("typecheck-only", "", OptionUnit(fun () -> tcConfigB.typeCheckOnly <- true), None, Some("Type-check only, don't execute"))
+```
+
+This should be added alongside other advanced options like `exec`, `gui`, `quiet`, etc.
+
+### 2. Modify ProcessInputs Function
+
+The core implementation goes in the `ProcessInputs` function. In [2](#2-1) , add a check after `CheckClosedInputSet` and before `ProcessTypedImpl`:
+
+```fsharp
+let tcState, topCustomAttrs, declaredImpls, tcEnvAtEndOfLastInput =
+    lock tcLockObject (fun _ ->
+        CheckClosedInputSet(
+            ctok,
+            (fun () -> diagnosticsLogger.CheckForRealErrorsIgnoringWarnings),
+            tcConfig,
+            tcImports,
+            tcGlobals,
+            Some prefixPath,
+            tcState,
+            eagerFormat,
+            inputs
+        ))
+
+// Add this check after CheckClosedInputSet
+if tcConfig.typeCheckOnly then
+    raise StopProcessing
+
+let codegenResults, optEnv, fragName =
+    ProcessTypedImpl(...)
+```
+
+### 3. Exception Handling
+
+The `StopProcessing` exception is already handled . This infrastructure will properly catch the exception and stop processing without executing the script.
+
+## Testing Implementation
+
+### Test Location and Structure
+
+All tests should be added to the `FSharp.Compiler.ComponentTests` project.
+
+Create a new test file:
+`tests/FSharp.Compiler.ComponentTests/Scripting/TypeCheckOnlyTests.fs`
+
+### Test Implementation
+
+```fsharp
+module FSharp.Compiler.ComponentTests.Scripting.TypeCheckOnlyTests
+
+open Xunit
+open FSharp.Test
+open FSharp.Test.Compiler
+
+[<Fact>]
+let ``typecheck-only flag works for valid script``() =
+    Fsx """
+let x = 42
+printfn "This should not execute"
+"""
+    |> withOptions ["--typecheck-only"]
+    |> compile
+    |> shouldSucceed
+
+[<Fact>]
+let ``typecheck-only flag catches type errors``() =
+    Fsx """
+let x: int = "string"  // Type error
+"""
+    |> withOptions ["--typecheck-only"]
+    |> compile
+    |> shouldFail
+    |> withDiagnostics [
+        (Error 1, Line 2, Col 14, Line 2, Col 22, "This expression was expected to have type\n    'int'    \nbut here has type\n    'string'")
+    ]
+
+[<Fact>]
+let ``typecheck-only flag prevents execution side effects``() =
+    Fsx """
+System.IO.File.WriteAllText("test-file.tx
+--- REVIEW (CR) ---
+BODY: nan
+[src/Compiler/Driver/CompilerOptions.fs] This option is now available for help, hence the following 4 tests are failing:
+
+CompilerOptions\fsi\help (-?-40) -- failed
+CompilerOptions\fsi\help (--help-40) -- failed
+CompilerOptions\fsi\help (/?-40) -- failed
+CompilerOptions\fsi\help (-? --nologo-40) -- failed
+
+They are part of the FsharpQa suite.
+
+This can help you, the new lines are added between clearResultsCache and exec options:
+```
+--clearResultsCache                      Clear the package manager results
+
+               
+[src/Compiler/Interactive/fsi.fs] Because of this change, line numbers after ilxgen for closures have shifted and therefore slightly changed ilverify baseline.
+
+Read this repo docs for `ilverify` (search for it) and follow the guide for updating the baseline. It will require setting an env var and then running a script.
+
+### G004 | Devin | GlareDB/glaredb#3529 | reviewer=scsmithr | requester=scsmithr | src=pr_body(agent/human-written)
+TITLE: Add isfinite function for float types
+--- REQUEST ---
+Implements the isfinite function to check if a floating-point value is finite (not infinite and not NaN).
+
+Link to Devin run: https://app.devin.ai/sessions/85afc451fad642e88f3193503ba8a4f0
+Requested by: Sean Smith (sean@glaredb.com)
+--- REVIEW (CR) ---
+BODY: nan
+[slt/standard/isfinite.slt] ```suggestion
+# isfinite
+```
+
+Just the function name is fine.
+[slt/standard/isfinite.slt] ```suggestion
+```
+[slt/standard/isfinite.slt] ```suggestion
+```
+[slt/standard/isfinite.slt] ```suggestion
+```
+
+### G005 | Copilot | tjy-gitnub/win12#635 | reviewer=tangyuan0821 | requester=None | src=None
+TITLE: gh-154:Enhance terminal commands and improve whiteboard user interface
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: nan
+[desktop.html] ```suggestion
+						<div class="update-now disabled"><icon>&#xE794;</icon><div><p>此功能暂未完善</p><p>Windows 更新已被禁用</p></div><div class="alr"><a class="a button disabled" style="font-size: 16px;margin-top: -7.5px; opacity: 0.5; pointer-events: none;">更新</a></div></div>
+```
+[desktop.js] ```suggestion
+                    <p style="margin-bottom: 20px;">我们只假装收集某些错误信息，然后为你重新启动。</p>
+```
+我们并没有在蓝屏时收集错误信息
+
+### G006 | Copilot | microsoft/genaiscript#1844 | reviewer=pelikhan | requester=pelikhan | src=None
+TITLE: Add streamlined GenAIScript cheat sheet focusing on core functionality
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: nan
+[docs/src/content/docs/cheat-sheet.mdx] Not correct, you don't access environment variables through env.vars @copilot
+[docs/src/content/docs/cheat-sheet.mdx] Remove section @copilot
+[docs/src/content/docs/cheat-sheet.mdx] Move this section much earlier, super important @copilot
+
+### G007 | Copilot | awesome-opencode/awesome-opencode#1 | reviewer=ShamanicArts | requester=ShamanicArts | src=None
+TITLE: [WIP] the starter repo for what will become an awesome-list for opencode
+
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: you are not completing the correct task. this is an awesome-list for opencode.ai the codeing agent cli 
+
+
+
+### G008 | Copilot | dsccommunity/SqlServerDsc#2268 | reviewer=johlju | requester=johlju | src=issue
+TITLE: Add integration tests for Save-SqlDscSqlServerMediaFile command
+--- REQUEST ---
+Integration test missing for Save-SqlDscSqlServerMediaFile
+### Problem description
+
+The command Save-SqlDscSqlServerMediaFile does not have an integration test.
+
+### Verbose logs
+
+```text
+n/a
+```
+
+### How to reproduce
+
+n/a
+
+### Expected behavior
+
+An integration test should exist for Save-SqlDscSqlServerMediaFile to ensure command reliability.
+
+### Current behavior
+
+Currently, there is no integration test implemented for Save-SqlDscSqlServerMediaFile.
+
+### Suggested solution
+
+Add integration test coverage for Save-SqlDscSqlServerMediaFile.
+
+### Operating system the target node is running
+
+```text
+n/a
+```
+
+### PowerShell version and build the target node is running
+
+```text
+n/a
+```
+
+### Module version used
+
+```text
+n/a
+```
+--- REVIEW (CR) ---
+BODY: nan
+[tests/Integration/Commands/Save-SqlDscSqlServerMediaFile.Integration.Tests.ps1] @copilot This seems to fail with:
+
+```console
+Running tests from 'D:\a\1\s\tests\Integration\Commands\Save-SqlDscSqlServerMediaFile.Integration.Tests.ps1'
+VERBOSE: Created test download directory: C:\Users\VSSADM~1\AppData\Local\Temp\SqlDscTestDownloads_772591486
+Describing Save-SqlDscSqlServerMediaFile
+ Context When downloading SQL Server media using direct ISO URL
+   [+] Should download the ISO file directly and return a FileInfo object 24.5s (24.49s|11ms)
+##[error]    [-] Should overwrite exi
+
+### G009 | Copilot | scikit-hep/mplhep#601 | reviewer=andrzejnovak | requester=andrzejnovak | src=issue
+TITLE: Expose kwargs for ylow, yscale_legend, and yscale_anchored_text in mpl_magic
+--- REQUEST ---
+not possible to pass soft_fail to mpl_magic
+Hi,
+
+in the `mpl_magic` function it is not possible to pass `soft_fail = True` to the `yscale_legend` function used inside (or any other arguments).
+Is this by design?
+
+https://github.com/scikit-hep/mplhep/blob/6cff4a018edcb7c52acbd08b6a60025d4ac198f6/src/mplhep/plot.py#L1243-L1256
+
+it could be changed like this
+```python
+def mpl_magic(ax=None, info=True, soft_fail=False):
+    """
+    Consolidate all ex-post style adjustments:
+        ylow
+        yscale_legend
+    """
+    if ax is None:
+        ax = plt.gca()
+    if info:
+        pass
+
+    ax = ylow(ax)
+    ax = yscale_legend(ax, soft_fail=soft_fail)
+    return yscale_anchored_text(ax)
+```
+
+Or would it be preferable, if we need this functionality in our own code, to use `yscale_legend` function directly?
+We currently use the `mpl_magic` function like this: https://github.com/cms-btv-pog/BTVNanoCommissioning/issues/135
+
+Best,
+Felix
+--- REVIEW (CR) ---
+BODY: @copilot  There's a bunch of errors in the current tests. Fix them. Also generate visual tests for pytest-mpl where by default we could see overlap with the legend/text with the artists and create baseline images for these tests with
+
+python -m pytest -r sa --mpl -n 4 --mpl-generate-path=tests/baseline <new_tests>
+
+An easy way to make the tests is to fill the axis with uniform scatter of maybe 5 different entries across the axis and then add text and legend.
+
+
+### G010 | OpenAI_Codex | nextcloud/desktop#8407 | reviewer=nilsding | requester=Rello | src=pr_body(agent/human-written)
+TITLE: Add consistent logging to CFAPI callbacks
+--- REQUEST ---
+Add consistent logging to CFAPI callbacks
+--- REVIEW (CR) ---
+BODY: nan
+[src/libsync/vfs/cfapi/cfapiwrapper.cpp] should be using `qC*` for log categories here as well
+
+```suggestion
+    qCDebug(lcCfApiWrapper) << "Fetch data callback called. File size:" << callbackInfo->FileSize.QuadPart;
+```
+[src/libsync/vfs/cfapi/cfapiwrapper.cpp] ```suggestion
+    qCInfo(lcCfApiWrapper) << "Cancel fetch data of" << path;
+```
+
+### G011 | Copilot | joshuadavidthomas/django-language-server#334 | reviewer=joshuadavidthomas | requester=joshuadavidthomas | src=issue
+TITLE: Setup server logging to file using standard XDG directory
+--- REQUEST ---
+Setup server logging to file using standard XDG dir
+Follow up to #170, right now we're just logging to `/tmp` but we should really use the XDG standard dir for this -- especially because we have the `directories` crate right there.
+--- REVIEW (CR) ---
+BODY: nan
+[crates/djls-server/src/logging.rs] @copilot should have read more files before asking for the const change. All logic for the log dir should be in the conf crate, including checking its existence. So a function is needed again, returning an anyhow result. The only thing in this server crate file should be let log_dir = log_dir()? Everything else in the conf crate.
+
+### G012 | Copilot | dotnet/maui#31728 | reviewer=jsuarezruiz | requester=jfversluis | src=issue
+TITLE: Fix NumberOfTapsRequired > 2 on Windows and Android platforms with simplified unlimited tap support
+--- REQUEST ---
+RC1 - NumberOfTapsRequired fails when greater than 2 (Xamarin.Forms legacy issue)
+### Description
+
+The NumberOfTapsRequired of a GestureRecognizers fails when it's greater than 2, I've tried it on both Android and Windows. This is an old Xamarin.Forms bug. It could be an opportunity to rescue it and fix it at the framework level.
+
+Xamarin.Forms legacy issue:
+https://github.com/xamarin/Xamarin.Forms/issues/6976
+
+```
+<Image Source="dotnet_bot.svg">
+    <Image.GestureRecognizers>
+        <TapGestureRecognizer
+                Tapped="OnTapGestureRecognizerTapped"
+                NumberOfTapsRequired="3" />
+  </Image.GestureRecognizers>
+</Image>
+```
+
+### Steps to Reproduce
+
+Set the NumberOfTapsRequired of a GestureRecognizers to any number greater than 2 and you will see that the event is not executed.
+
+### Version with bug
+
+Release Candidate 1 (current)
+
+### Last version that worked well
+
+Unknown/Other
+
+### Affected platforms
+
+Android, Windows, I was *not* able test on other platforms
+
+### Affected platform versions
+
+Windows 11, Android 10
+
+### Did you find any workaround?
+
+_No response_
+
+### Relevant log output
+
+_No response_
+--- REVIEW (CR) ---
+BODY: <img width="344" height="128" alt="image" src="https://github.com/user-attachments/assets/57d6c639-27cd-491a-b2ad-603adcc2d812" />
+There are related tests failing.
+
+QuintupleTapGestureShouldWork
+
+```
+Assert.That(counterText, Is.EqualTo("Quintuple taps: 1"))
+String lengths are both 17. Strings differ at index 16.
+Expected: "Quintuple taps: 1"
+But was:  "Quintuple taps: 0"
+---------------------------^
+```
+
+@copilot Review
+
+
+### G013 | Copilot | thorek1/MacroModelling.jl#160 | reviewer=thorek1 | requester=thorek1 | src=pr_body:Original prompt
+TITLE: Add dynamic equations function to model structure for direct equation evaluation
+--- REQUEST ---
+> Write some code that generates a function using the dynamic equations which has as input the parameters, the variables in the past, present, future, steady state, the shocks, and the first argument is the residual and that is supposed to be filled so this is pre-allocated
+> 
+> This function can be saved inside the model object
+> 
+> You can test it by putting in the parameters, the steady state values for all the variables in their respective timing, and setting shocks to zero
+--- REVIEW (CR) ---
+BODY: nan
+
+
+### G014 | Copilot | ifad/chronomodel#377 | reviewer=tagliala | requester=tagliala | src=issue
+TITLE: Fix includes + joins with as_of not propagating temporal context to eager loaded associations
+--- REQUEST ---
+Unexpected results with joins and eager loading
+```rb
+# frozen_string_literal: true
+
+require 'bundler/inline'
+
+gemfile(true) do
+  source 'https://rubygems.org'
+
+  gem 'chrono_model'
+  # Test against latest Chronomodel:
+  # gem 'chrono_model', github: 'ifad/chronomodel'
+
+  gem 'pg'
+  gem 'debug'
+  gem 'rails'
+end
+
+require 'chrono_model'
+require 'minitest/autorun'
+require 'logger'
+require 'debug'
+
+# Needs a database called `chronomodel_test`
+
+ActiveRecord::Base.establish_connection(adapter: 'chronomodel', database: 'chronomodel_test')
+ActiveRecord::Base.logger = Logger.new($stdout)
+
+ActiveRecord::Schema.define do
+  enable_extension :btree_gist
+
+  create_table :countries, force: true, temporal: true do |t|
+    t.string :name
+    t.timestamps
+  end
+
+  create_table :cities, force: true, temporal: true do |t|
+    t.references :country
+    t.string :name
+  end
+
+  create_table :schools, force: true, temporal: true do |t|
+    t.references :city
+
+    t.string :name
+
+    t.timestamps
+  end
+end
+
+class Country < ActiveRecord::Base
+  include ChronoModel::TimeMachine
+
+  has_many :cities, dependent: :destroy
+  has_many :schools, through: :cities
+
+  validates :name, presence: true
+end
+
+class City < ActiveRecord::Base
+  include ChronoModel::TimeMachine
+
+  validates :name, presence: true
+
+  belongs_to :country
+
+  has_many :schools, dependent: :destroy
+end
+
+class School < ActiveRecord::Base
+  include ChronoModel::TimeMachine
+
+  belongs_to :city
+  has_one :country, through: :city
+
+  validates :name, presence: true
+end
+
+ITALY = Country.create!(name: 'Italy')
+
+rome = ITALY.cities.create!(name: 'Rome')
+rome.schools.create!(name: 'G. Galilei')
+rome.schools.create!(name: 'L. Da Vinci')
+
+sleep 2
+
+ITALY.update name: 'Italia'
+
+class BugTest < Minitest::Test
+  def test_joins
+    assert_equal ['Italy'], School.as_of(ITALY.updated_at - 1.second).joins(:city).map { |s| s.city.country.name }.uniq
+  end
+
+  def test_includes
+    assert_equal ['Italy'], School.as_of(ITALY.updated_at - 1.second).joins(:city).map { |s| s.city.country.name }.uniq
+  end
+
+  def test_includes_left_outer_joins
+    assert_equal ['Italy'], School.includes(:city).as_of(ITALY.updated_at - 1.second).left_outer_joins(:city).map { |s| s.city.country.name }.uniq
+  end
+
+  def test_includes_joins
+    assert_equal ['Italy'], School.includes(:city).as_of(ITALY.updated_at - 1.second).joins(:city).map { |s| s.city.country.name }.uniq
+  end
+end
+```
+
+## Tests:
+
+### ✅  `joins`
+```rb
+# Expected: Italy, Got: Italy
+School.as_of(italy.updated_at - 1.second).joins(:city).map { |s| s.city.country.name }.uniq
+```
+
+### ✅ `includes`
+```rb
+# Expected: Italy, Got: Italy
+School.includes(:city).as_of(italy.updated_at - 1.second).map { |s| s.city.country.name }.uniq
+```
+
+### ✅ `includes` + `left_outer_joins`
+```rb
+# Expected: Italy, Got: Italy
+School.includes(:city).as_of(italy.updated_at - 1.second).left_outer_join
+--- REVIEW (CR) ---
+BODY: @copilot without changing the production code and the current specs, what would you need to add to the test data to cover this case?
+
+
+### G015 | Copilot | dotnet/maui#31019 | reviewer=jsuarezruiz | requester=jfversluis | src=issue
+TITLE: Fix Android location permission CheckStatusAsync to return Restricted instead of Denied for partial permissions
+--- REQUEST ---
+Maui Essentials Permissions CheckStatusAsync<LocationWhenInUse> Or CheckStatusAsync<LocationAlways> returns Denied instead of restricted
+### Description
+
+I am using Permission to get and/or check the users location Permission on API 31 or API 34.
+When checking the current permission status it will returns PermissionStatus.Denied even when RequestAsync returns PermissionStatus.Restricted 
+
+I found a related issue in the Maui repo: https://github.com/dotnet/maui/issues/10053 and it seems to be fixed. 
+
+iOS is working as far as i know
+
+Note: The Microsoft.Maui.Essentials" Version="9.0.0-preview.5.24307.10"  encounters the same error.
+Manifest :
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+   
+
+### Steps to Reproduce
+
+1. Add all permissions to Manifest.xml
+2. Call await Permissions.CheckAsync<Permissions.LocationWhenInUse>();
+3. Which shows a popup asking whether you allow approximate location, precise location or not allow location at all.
+4. Select approximate location.
+5. It returns PermissionStatus.Restricted;
+6. Call await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
+7. It returns value PermissionStatus.Denied
+
+### Link to public reproduction project repository
+
+_No response_
+
+### Version with bug
+
+8.0.40 SR5
+
+### Is this a regression from previous behavior?
+
+Not sure, did not test other versions
+
+### Last version that worked well
+
+Unknown/Other
+
+### Affected platforms
+
+Android
+
+### Affected platform versions
+
+Android API 31+
+
+### Did you find any workaround?
+
+_No response_
+
+### Relevant log output
+
+_No response_
+--- REVIEW (CR) ---
+BODY: nan
+[src/Essentials/test/DeviceTests/Tests/Permissions_Tests.cs] To ensure the fix works and avoids regressions, add unit tests that simulate the coarse-only state and verify that `CheckStatusAsync` returns `Restricted`.
+
+### G016 | Copilot | compas-dev/compas#1483 | reviewer=gonzalocasas | requester=gonzalocasas | src=issue
+TITLE: Add optional units and uncertainties support with comprehensive geometry integration
+--- REQUEST ---
+Support for unit and uncertainty (tolerance)
+# Feature Request
+
+It would be desirable to support units across the board in the core framework. Unit support should be optional, not mandatory, and it should not affect the API, ie. should be in the style of gradual typing-ish, that if used as input, it should produce unit-aware results, but if not used, regular numeric results should be returned.
+
+The data sub-system (encoders/decoders) should also be extended to support. Support for numpy data should also be included.
+
+As a secondary feature, it would be ideal to support uncertainties when using values, e.g. `0.20+/-0.01`.
+
+The steps to tackle this would be to:
+1. Analyze the impact and reach of this change, potential side effects, etc. 
+2. Draft a concrete proposal for technical implementation, potentially, [`pint`](https://pint.readthedocs.io/en/stable/index.html) and [`uncertainties`](https://pythonhosted.org/uncertainties/) as concrete python packages to rely on for unit/uncertainty descriptors/calculation
+3. Draft diagrams if needed, and any other supporting documentation useful to decide on whether this change is green-light or not
+
+After all these are sorted out, we can start a draft implementation.
+--- REVIEW (CR) ---
+BODY: @copilot the ironpython tests are still failing. Just ignore them but not with the `skipif`, instead do `if not compas.IPY:` to ignore
+
+
+### G017 | Copilot | mcpjungle/MCPJungle#130 | reviewer=duaraghav8 | requester=duaraghav8 | src=issue
+TITLE: Add server inclusion and exclusion support to tool groups
+--- REQUEST ---
+Tool Groups: Allow including whole MCP server
+https://github.com/orgs/mcpjungle/discussions/22#discussioncomment-14280137
+
+Currently, tool groups allows `included_tools` - so the user can cherry-pick tools to include in a group.
+This is great when you only want to include a couple of tools (5-7), especially if they're from different MCPs.
+
+But if the user wants to include all or most tools from an MCP, it is very inconvenient to have to specify all tools.
+Its way more convenient to just include the whole MCP and then optionally exclude a few of those tools.
+
+eg Tool group JSON config:
+
+```json
+{
+  "name": "claude-tools",
+  "description": "This group only contains tools for Claude Desktop to use",
+  "included_servers": [ "time", "deepwiki" ],
+  "excluded_tools": [
+    "time__convert_time"
+  ]
+}
+```
+
+Above config includes ALL tools deepwiki and all tools from time except `time__convert_time`.
+
+The first iteration can be to simply introduce `included_servers` field.
+
+The second iteration could be to allow excluding.
+
+Question: Should we allow a user to specify all 3 fields in a config (included, excluded tools, included servers)?
+How will we do conflict resolution in this case?
+--- REVIEW (CR) ---
+BODY: @copilot 
+1. Please add the changes to the README as well. The user-facing documentation about tool groups should reflect that users can now also use `included_servers` and `excluded_tools` fields in the tool group configuration.
+2. Also update the code in cmd/update.go. The runUpdateGroup() should now take into account that updates can also be made in included servers or excluded tools.
+
+
+### G018 | Claude_Code | CherryHQ/cherry-studio#9992 | reviewer=GeorgeDong32 | requester=luw2007 | src=pr_body(agent/human-written)
+TITLE: Fix mini-app cache issue when switching navigation modes
+--- REQUEST ---
+## Summary
+Fixes a critical bug where mini-app cache doesn't work when switching from sidebar navigation to top navigation mode.
+
+## Problem Description
+When users switch from sidebar navigation to top navigation mode, mini-apps opened in top navigation fail to cache properly. This occurs because `MinAppPage.tsx` uses `initialIsTopNavbar.current` (captured at component mount) instead of the real-time `isTopNavbar` value.
+
+### Root Cause
+- `initialIsTopNavbar.current` captures the navigation bar position when the component first mounts
+- When users switch navigation modes, this ref remains unchanged
+- This causes incorrect routing logic where top navigation mini-apps are redirected to popup mode instead of tab mode
+
+### Steps to Reproduce
+1. Start Cherry Studio in sidebar navigation mode
+2. Switch to top navigation mode in settings
+3. Open any mini-app from the top navigation
+4. Observe that the mini-app doesn't cache properly (redirects to popup mode)
+
+## Solution
+- Replace `initialIsTopNavbar.current` with real-time `isTopNavbar` value
+- Use `useState` instead of `useRef` for redirect tracking
+- Reset redirect state when app ID or navigation mode changes
+- Ensure proper cache integration for top navigation mode
+
+## Changes Made
+- Removed `initialIsTopNavbar` ref usage
+- Replaced `hasRedirected` ref with `hasHandledRedirect` state
+- Added state reset logic when app or navigation mode changes
+- Updated all conditional logic to use real-time `isTopNavbar`
+- Removed unused `useRef` import
+
+## Testing
+- ✅ Sidebar navigation mode works correctly (popup + cache)
+- ✅ Top navigation mode works correctly (tab + cache)
+- ✅ Switching from sidebar to top navigation now works
+- ✅ Switching from top to sidebar navigation works
+- ✅ Cache persists correctly across navigation mode changes
+- ✅ No infinite redirect loops
+- ✅ All quality checks pass (format, lint, typecheck, i18n, tests)
+
+## Impact
+- Fixes mini-app cache functionality when switching navigation modes
+- Improves user experience by ensuring consistent behavior
+- No breaking changes to existing functionality
+
+## Type of Change
+- [x] Bug fix (non-breaking change which fixes an issue)
+- [ ] New feature (non-breaking change which adds functionality)
+- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
+- [ ] Documentation update
+
+## Checklist
+- [x] My code follows the style guidelines of this project
+- [x] I have performed a self-review of my own code
+- [x] I have commented my code, particularly in hard-to-understand areas
+- [x] I have made corresponding changes to the documentation
+- [x] My changes generate no new warnings
+- [x] I have added tests that prove my fix is effective or that my feature works
+- [x] New and existing unit tests pass locally with my changes
+- [x] Any dependent changes have been merged and published in downstream modules
+
+## Additional Notes
+This fix resolves a user-reported issue where mini-app cache functionality was broken after sw
+--- REVIEW (CR) ---
+BODY: nan
+[PR_TEMPLATE.md] Please delete this unnecessary file.
+
+### G019 | Copilot | celzero/rethink-app#2279 | reviewer=hussainmohd-a | requester=hussainmohd-a | src=issue
+TITLE: Fix UI bug: Icons overlap text in Other DNS cards
+--- REQUEST ---
+UI Bug: Icons in Other DNS overlaps on text
+Under Other DNS, the colored icons can overlap on those with long text (DoH, DNS 53, oDoH). The texts on DNS 53 and oDoH has also been cut when they exceeded the box ("DNS Proxy" and "TPS", respectively).
+
+![Other DNS Icons Bug](https://github.com/celzero/rethink-app/assets/168715079/a72703d7-11cd-485e-beab-4ded6951d881)
+
+I think this is a minor bug as it's often advanced users that tinker with DNS (who already know what those acronyms mean), though... it doesn't look right. I'll leave it to the developer to decide whether it's worth fixing.
+
+Btw I find these icons really neat, clearly communicating the advantage and limitations of Rethink DNS (fast but not anonymous).
+
+--- REVIEW (CR) ---
+BODY: @copilot added comments which needs to be addressed
+
+
+### G020 | Copilot | doodlum/skyrim-community-shaders#1281 | reviewer=alandtse | requester=None | src=None
+TITLE: perf: cache GetRuntimeData usage for improved performance
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: Please handle other similar examples you identified.
+
+Is this something that should be implemented in our commonlib dependency or is this a client application issue?
+
+Also, is this approach developer friendly?
+
+
+### G021 | Copilot | microsoft/PowerToys#40740 | reviewer=michaeljolley | requester=michaeljolley | src=issue
+TITLE: Add "Show Details" context action to ListItems when ShowDetails=false
+--- REQUEST ---
+Add a "Show Details" context action to ListItem's with non-null Details when a Page's ShowDetails = false
+_originally filed by @zadjii-msft_
+
+> If the page returns `ShowDetails = true`, the DevPal automatically expand out
+> the [Details](#details) for list items with `Details` set to a non-null value.
+> If `ShowDetails = false`, the DevPal will not expand out the details for list
+> items by default, but will add a "Show details" action to the item's list of
+> actions (if it sets `Details`).
+> * For example: in the Windows Search box, when you search for an app, you get a
+>   "details" that is pre-expanded.
+> * Similarly for file searches - you get a preview of the file, and metadata on
+>   those details for the file path, last modified time, etc.
+> * But something like the "GitHub" extension may not want to always fetch issue
+>   bodies to show their details by default. So it would set `ShowDetails =
+>   false`. If the user activates the automatic "Show details" action, then the
+>   github action can then fetch the body and show it.
+--- REVIEW (CR) ---
+BODY: nan
+[src/modules/cmdpal/doc/show-details-feature.md] Thanks for this, but please don't include it in the repository. Make sure we remove it before this PR gets merged.
+[src/modules/cmdpal/Microsoft.CmdPal.Core.ViewModels/ListItemViewModel.cs] An override doesn't work here as SlowInitializeProperties isn't an abstract or virtual method. This probably needs to be a virtual method in the parent class.
+[src/modules/cmdpal/Microsoft.CmdPal.Core.ViewModels/ListItemViewModel.cs] No subtitle needed
+[src/modules/cmdpal/Microsoft.CmdPal.Core.ViewModels/ListItemViewModel.cs] The title and name properties shouldn't be hard coded. We want to support localization efforts so their values should be pulled from Resources.
+[src/modules/cmdpal/Microsoft.CmdPal.Core.ViewModels/ListItemViewModel.cs] This message is getting sent but where does the code live that listens for this to actually expand the details?
+
+### G022 | Copilot | dotnet/android#10335 | reviewer=PureWeen | requester=jonathanpeppers | src=None
+TITLE: Fix NRT annotations in `src\Xamarin.Android.Build.Tasks\Utilities\` directory with proper MSBuild compatibility
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: @copilot fix the new set of errors:
+```
+ "/Users/builder/azdo/_work/7/s/android/Xamarin.Android.sln" (default target) (1:2) ->
+       "/Users/builder/azdo/_work/7/s/android/src/Xamarin.Android.Build.Tasks/Tests/Xamarin.ProjectTools/Xamarin.ProjectTools.csproj" (default target) (25:8) ->
+       (CoreCompile target) -> 
+         /Users/builder/azdo/_work/7/s/android/src/Xamarin.Android.Build.Tasks/Utilities/MonoAndroidHelper.Basic.cs(180,14): error CS7036: There is no argument given that corresponds to the required parameter 'value' of 'string.IsNullOrEmpty(string?)' [/Users/builder/azdo/_work/7/s/android/src/Xamarin.Android.Build.Tasks/Tests/Xamarin.ProjectTools/Xamarin.ProjectTools.csproj]
+         /Users/builder/azdo/_work/7/s/android/src/Xamarin.Android.Build.Tasks/Utilities/MonoAndroidHelper.Basic.cs(186,11): error CS7036: There is no argument given that corresponds to the required parameter 'value' of 'string.IsNullOrEmpty(string?)' [/Users/builder/azdo/_work/7/s/android/src/Xamarin.Android.Build.Tasks/Tests/Xamarin.ProjectTools/Xamarin.ProjectTools.csproj]
+         /Users/builder/azdo/_work/7/s/android/src/Xamarin.Android.Build.Tasks/Utilities/MonoAndroidHelper.Basic.cs
+
+
+### G023 | Copilot | dotnet/macios#22840 | reviewer=rolfbjarne | requester=rolfbjarne | src=issue
+TITLE: .NET: Add AppBundleResourcePrefix property to unify resource prefix properties
+--- REQUEST ---
+.NET: Unify the MonoMacResourcePrefix, XamMacResourcePrefix and IPhoneResourcePrefix MSBuild properties
+We have the `IPhoneResourcePrefix ` property for Xamarin.iOS and the `MonoMacResourcePrefix ` and `XamMacResourcePrefix` properties for Xamarin.Mac.
+
+We should unify these for .NET.
+
+Maybe just use `ResourcePrefix`? Other ideas?
+
+--- REVIEW (CR) ---
+BODY: Always use the code formatting as configured in the root directory's .editorconfig file.
+[tests/dotnet/UnitTests/ResourcePrefixTest.cs] Use `Xamarin.Tests.Configuration.GetAllPlatforms ()` instead to get a list of all the currently enabled platforms.
+[tests/dotnet/UnitTests/ResourcePrefixTest.cs] Use '$(BundledNETCoreAppTargetFrameworkVersion)' instead of hardcoding '8.0'.
+[tests/dotnet/UnitTests/ResourcePrefixTest.cs] Add a new method called `GetProperty` in tests/common/DotNet.cs that will run dotnet to get the property.
+[tests/dotnet/UnitTests/ResourcePrefixTest.cs] Use `dotnet build -getProperty:...` as explained here: https://learn.microsoft.com/en-us/visualstudio/msbuild/evaluate-items-and-properties?view=vs-2022#use-command-line-options-to-output-values to get the property value. This means a separate target to print the property value is not necesssary.
+
+### G024 | Copilot | collinbarrett/FilterLists#5003 | reviewer=collinbarrett | requester=collinbarrett | src=issue
+TITLE: Split GameIndustry hosts into separate FilterList entries for each template variant
+--- REQUEST ---
+add hosts.gameindustry.eu
+https://hosts.gameindustry.eu/
+--- REVIEW (CR) ---
+BODY: @copilot , multiple FilterListViewUrls for a single FilterList are intended to be used if there are multiple mirrors of the same list or if the same list is broken into multiple parts per this wiki: https://github.com/collinbarrett/FilterLists/wiki/FilterListViewUrl
+
+In this case, these are different "flavors" of the same list, so let's give each one their own entry in FilterList.json and all the related entities/.json files as well.
+
+Capture this design in copilot-instructions.md as well so you remember that in the future.
+
+
+### G025 | Copilot | detekt/detekt#8735 | reviewer=3flex | requester=3flex | src=issue
+TITLE: Rename `md` report to `markdown`
+--- REQUEST ---
+Rename `md` report to `markdown`
+It is the same idea as #8471. The name of the report shouldn't be the extension of the file but the format.
+
+This point was pointed out by @3flex at https://github.com/detekt/detekt/pull/8595#discussion_r2361774893
+
+He also pointed out this:
+
+> Also, at the risk of starting an unhelpful discussion, should this actually be `commonmark`? We use code fences in the output, which is not part of Markdown syntax.
+
+I agree that we could call it `commonmark` too but I don't think we should. Everyone calls it `markdown` and we don't want to support `githubmark` nor any other flavor. So I would vote to call it `markdown`. 
+--- REVIEW (CR) ---
+BODY: @copilot also rename MdOutputReport to MarkfownOutputReport, and mdOutputPath to markdownOutputPath
+
+
+### G026 | Copilot | mgechev/revive#1510 | reviewer=chavacava | requester=alexandear | src=issue
+TITLE: Add support for disabling specific struct-tag checkers
+--- REQUEST ---
+`struct-tag` for `validate` tag is too opinionated
+**Describe the bug**
+I use a validate package https://github.com/gookit/validate in my repo which makes use of the `validate` struct tag. Today the linter failed on `revive` claiming the struct tags were invalid. However, they were actually correct.
+
+It's not entirely apparent from the [docs page](https://github.com/mgechev/revive/blob/master/RULES_DESCRIPTIONS.md#struct-tag), but the validate rule is actually for the https://pkg.go.dev/github.com/go-playground/validator/v10 package.
+
+In my opinion, this linter is too opinionated to have on by default - `validate` as a name is very generic and probably used by lots of packages.
+
+To make matters worse, it appears there is no way to disable only the `validate` struct-tag rule but keep the others.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Use `golangci-lint` with the `revive` linter enabled
+2. Create a struct with a validator function that `gookit/validate` has that `go-playground/validator` doesn't. For example:
+```go
+type Foo struct {
+	Version      int    `validate:"gt:0"`
+    EnableFooBar bool
+    FooType      string `filter:"trim" validate:"in:FOO,BAR,BAZ"`
+	FooBarName   string   `filter:"trim" validate:"required_if:enableFooBar,true|max_len:255"`
+	Name         string `filter:"trim" validate:"min_len:1|max_len:256"`
+}
+```
+
+**Expected behavior**
+I can think of a few possible options/changes that might make sense:
+* Disable this rule by default and have it opt-in (since `go-playground/validator` is not part of the standard library)
+* Only run these validation rules if `go-playground/validator` is found in the `go.mod` file
+* Make the specific `struct-tag` rules configurable.
+    * Currently I can only enable/disable `struct-tag` entirely, but I actually would like to use the rules for `json`, `yaml`, `datastore`, etc.
+    * It would be great if these could be granularly enabled/disabled
+* Document on the [struct-tag](https://github.com/mgechev/revive/blob/master/RULES_DESCRIPTIONS.md#struct-tag) README which package each of the rules is for
+
+
+**Logs**
+The above example struct `Foo` will fail with errors like this:
+```
+foo.go: struct-tag: unknown option "gt:0" in validate tag (revive)
+	Version      int       `validate:"gt:0"`
+
+foo.go: struct-tag: unknown option "required_if:enableFooBar" in validate tag (revive)
+	FooBarName  string   `filter:"trim" validate:"required_if:enableFooBar,true|max_len:255"`
+	                              ^
+foo.go: struct-tag: unknown option "min_len:1" in validate tag (revive)
+	Name      string `filter:"trim" validate:"min_len:1|max_len:256"`
+
+foo.go: struct-tag: unknown option "in:FOO" in validate tag (revive)
+	FooType string `filter:"trim" validate:"in:FOO,BAR,BAZ"`
+```
+
+**Desktop (please complete the following information):**
+ - OS: MacOS 15.6.1
+ - Version of Go: 1.25.0
+
+**Additional context**
+Add any other context about the problem here.
+
+```
+golangci-lint --version                                        
+--- REVIEW (CR) ---
+BODY: The configuration approach avoids configuring `disabled` as a custom option for a tag.
+
+
+
+### G027 | Cursor | rsyslog/rsyslog#5973 | reviewer=rgerhards | requester=alorbach | src=issue
+TITLE: Fix rsyslog issue 5957
+--- REQUEST ---
+[Feature]: Refactor `omhttp` to modern state; upgrade to project-supported module
+### 💡 Feature Description:
+
+Refactor and modernize `omhttp` along three axes:
+
+1. **Transaction API:** Migrate from the older `doAction()`-based transaction interface to the recommended `commitTransaction()` interface used by the action subsystem. The older interface is emulated via a compatibility layer and may subtly diverge in semantics and performance compared to native `commitTransaction()`.
+
+2. **Retry handling (core-native):** Replace the current “secondary **retryRuleset**” pattern with **core-standard retry/backoff** as the default (no per-action retry ruleset required). **Do not deprecate** `retryRuleset`; keep it **optional** for exotic/advanced use-cases and backward compatibility, but treat it as a non-default path that we evaluate critically for blocking behavior in high-volume setups.
+
+3. **HTTP status code semantics (clear, safe defaults):** Align module behavior with HTTP/common-sense delivery semantics and recent core fixes:
+
+   * Treat **1xx/2xx** as success.
+   * Treat **3xx** as failure (non-retriable by default; consider follow-redirect support in future).
+   * Treat **4xx** as **permanent failure** (non-retriable), unless explicitly listed in `httpignorablecodes`.
+   * Treat **5xx** (and transport errors / status 0) as **retriable** by default, consistent with `httpretrycodes` defaults.
+     This dovetails with the recent core changes around transaction suspension/retry behavior and test updates that clarified 4xx as non-retriable and pushed retry focus to 5xx. ([[GitHub](https://github.com/rsyslog/rsyslog/pull/5945)][1])
+
+Additionally:
+
+* **Loki:** Acknowledge that Loki is already *partially supported* (e.g., `batch.format=lokirest`), but confirm templates, label handling, and batching details during the refactor to ensure first-class Loki support (we plan to use `omhttp` for Loki in containerized/docker profiles).
+* **Generic “profile” configs (meta-config):** Introduce simple pre-baked **profiles** to set multiple parameters at once, e.g., `"profile=hec:<vendor>"` (Splunk, OpenSearch HEC-like, etc.) or `"profile=loki"`. This avoids module forks such as the **HEC-specific** module proposal and streams users toward a single, well-supported HTTP output with profiles. Reference: PR **#5756** proposing `omsplunkhec`. ([[GitHub](https://github.com/rsyslog/rsyslog/pull/5756)][2])
+
+### ❓ Problem it Solves:
+
+* **Legacy transaction path:** The current `doAction()` path, bridged by a compatibility layer, may cause slightly degraded performance/feature richness vs. native `commitTransaction()`, and can produce more duplicates than strictly needed in error paths (still “at-least-once,” but not optimal).
+* **Retry ruleset complexity and blocking risk:** The “retryRuleset” approach complicates configuration, can block under load when the retry queue fills, and is a poor default for high-volume, cloud/containerized deployments.
+* **Ambiguous status handlin
+--- REVIEW (CR) ---
+BODY: we should keep omhttp in contrib for the time being. I intend to assign kind of tags to modules (possibly via readme), and potentially merge contrib & plugins later.
+
+
+### G028 | Copilot | Mapsui/Mapsui#3083 | reviewer=pauldendulk | requester=pauldendulk | src=None
+TITLE: Convert ClassicAssert to Assert.That syntax in Mapsui.Tests
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: There are a number of 'Argument missing' compile errors. Could you fix them?
+
+
+### G029 | Devin | firecrawl/firecrawl#1714 | reviewer=mogery | requester=Micah Stairs (not mogery) | src=pr_body(agent/human-written)
+TITLE: fix: replace hardcoded search billing with calculateCreditsToBeBilled
+--- REQUEST ---
+# Fix Search Endpoint Billing Logic
+
+This PR addresses the hardcoded billing logic in the `/search` endpoint by integrating the proper `calculateCreditsToBeBilled` function to handle stealth mode pricing and PDF page counting correctly.
+
+## Changes Made
+
+### Core Implementation
+- **Removed `bypassBilling: true`** from `scrapeSearchResult` function in `search.ts` to enable proper billing flow
+- **Replaced hardcoded billing logic** with `calculateCreditsToBeBilled` function integration
+- **Added import** for `calculateCreditsToBeBilled` from `scrape-billing.ts`
+
+### Billing Logic Improvements
+- **Stealth mode pricing**: Now correctly adds 4 extra credits per search result when `document.metadata.proxyUsed === "stealth"`
+- **PDF page pricing**: Properly accounts for page count using `document.metadata.numPages` when PDF parsing is enabled
+- **Base pricing**: Maintains 1 credit per document as baseline
+
+### Testing
+- **Added stealth mode test**: Verifies that stealth mode results in higher credit usage than regular results
+- **Added PDF billing test**: Validates correct credit calculation based on PDF page count
+- **Updated existing billing test suite** in `src/__tests__/snips/billing.test.ts`
+
+## Technical Details
+
+The previous implementation had a TODO comment indicating the billing logic was "horrid" and needed fixing:
+
+```typescript
+// TODO: This is horrid. Fix soon - mogery
+const credits_billed = responseData.data.reduce((a, x) => {
+  if (x.metadata?.numPages !== undefined && x.metadata.numPages > 0 && req.body.scrapeOptions?.parsePDF !== false) {
+    return a + x.metadata.numPages;
+  } else {
+    return a + 1;
+  }
+}, 0)
+```
+
+This has been replaced with:
+
+```typescript
+const credits_billed = await Promise.all(
+  responseData.data.map(async (document) => {
+    return await calculateCreditsToBeBilled(req.body.scrapeOptions, document, costTracking);
+  })
+).then(credits => credits.reduce((sum, credit) => sum + credit, 0));
+```
+
+## Testing Transparency
+
+### What I Actually Checked
+- ✅ Code compiles without TypeScript errors
+- ✅ Import paths are correct and `calculateCreditsToBeBilled` function exists
+- ✅ Test syntax is valid and follows existing patterns
+- ✅ Billing logic integration matches patterns used in `queue-worker.ts`
+- ✅ Removed `bypassBilling: true` flag that was preventing proper billing
+
+### What I Did Not Check
+- ❌ **Local API server testing**: Could not test with running servers due to Redis connection issues in test environment
+- ❌ **End-to-end billing verification**: Unable to verify actual credit deduction with live API calls
+- ❌ **Stealth mode integration testing**: Could not test stealth proxy functionality locally
+- ❌ **PDF document processing**: Could not verify PDF page counting with real PDF files
+
+## Reviewer Checklist
+
+Please verify the following when reviewing:
+
+1. **Test the search endpoint** with stealth mode enabled and verify 4 extra credits are charged per result
+2. **Test PDF search results** and confirm page-based pri
+--- REVIEW (CR) ---
+BODY: nan
+[apps/api/src/controllers/v1/search.ts] rework so that scrapeSearchResult returns a costTracking for each document, and each separate costTracking is utilized to calculate a separate price for each document, which is then summed
+
+### G030 | Copilot | vitejs/vite-plugin-react#933 | reviewer=hi-ogawa | requester=hi-ogawa | src=issue
+TITLE: chore(rsc): example of `rsc` environment on browser module runner
+--- REQUEST ---
+Add example which runs `react-server` conditioned environment with module runner on browser
+- this is a variant of `packages/plugin-rsc/examples/no-ssr` and `packages/plugin-rsc/examples/browser-mode` 
+- runs `rsc` environment of `packages/plugin-rsc/examples/no-ssr` on browser via module runner like `packages/plugin-rsc/examples/browser-mode/src/framework/load-client-dev.tsx`
+- it should be able to use `import rsc from "@vitejs/plugin-rsc"` like `examples/no-ssr`. It shouldn't use `vitePluginRscMinimal` like `browser-mode`.
+- add `examples/browser-mode2`
+
+Related https://bsky.app/profile/danabra.mov/post/3m3iei53v3c2k
+--- REVIEW (CR) ---
+BODY: @copilot add e2e. it should pass the same test case as `no-ssr`.
+
+
+### G031 | Copilot | streamich/memfs#1113 | reviewer=streamich | requester=streamich | src=issue
+TITLE: Remove helper functions from Dir class and use existing utilities
+--- REQUEST ---
+Implememt `Dir` API
+- [ ] [Implement `Dir`-compatible API](https://github.com/streamich/memfs/blob/90a4bc6714911c43559a49cf9129153f27dd6c3d/src/Dir.ts#L10)
+  - [ ] [Docs](https://nodejs.org/api/fs.html#class-fsdir)
+  - [ ] [Implementation](https://github.com/nodejs/node/blob/a627a999f022d05403af6b53395f7cac7ee89840/lib/internal/fs/dir.js)
+- [ ] Cleanup
+  - [ ] Remove from `Dir` class helper functions
+    - [ ] `wrapAsync`
+    - [ ] `isFunction`
+    - [ ] `promisify`
+- [ ] `Dir` interface
+  - [ ] `.close()`
+  - [ ] `.close(callback)`
+  - [ ] `.closeSync()`
+  - [ ] `.path`
+  - [x] `.read()`
+  - [x] `.read(callback)`
+  - [x] `.readSync()`
+  - [x] `.[Symbol.asyncIterator]()`
+
+---
+
+See Node.js implementation for reference. You need to implement similar functionality but for in-memory `memfs` library:
+
+```js
+'use strict';
+
+const {
+  ArrayPrototypePush,
+  ArrayPrototypeShift,
+  FunctionPrototypeBind,
+  ObjectDefineProperty,
+  PromiseReject,
+  SymbolAsyncIterator,
+} = primordials;
+
+const pathModule = require('path');
+const binding = internalBinding('fs');
+const dirBinding = internalBinding('fs_dir');
+const {
+  codes: {
+    ERR_DIR_CLOSED,
+    ERR_DIR_CONCURRENT_OPERATION,
+    ERR_MISSING_ARGS,
+  },
+} = require('internal/errors');
+
+const { FSReqCallback } = binding;
+const internalUtil = require('internal/util');
+const {
+  getDirent,
+  getOptions,
+  getValidatedPath,
+} = require('internal/fs/utils');
+const {
+  validateFunction,
+  validateUint32,
+} = require('internal/validators');
+
+class Dir {
+  #handle;
+  #path;
+  #bufferedEntries = [];
+  #closed = false;
+  #options;
+  #readPromisified;
+  #closePromisified;
+  // Either `null` or an Array of pending operations (= functions to be called
+  // once the current operation is done).
+  #operationQueue = null;
+
+  constructor(handle, path, options) {
+    if (handle == null) throw new ERR_MISSING_ARGS('handle');
+    this.#handle = handle;
+    this.#path = path;
+    this.#options = {
+      bufferSize: 32,
+      ...getOptions(options, {
+        encoding: 'utf8',
+      }),
+    };
+
+    validateUint32(this.#options.bufferSize, 'options.bufferSize', true);
+
+    this.#readPromisified = FunctionPrototypeBind(
+      internalUtil.promisify(this.#readImpl), this, false);
+    this.#closePromisified = FunctionPrototypeBind(
+      internalUtil.promisify(this.close), this);
+  }
+
+  get path() {
+    return this.#path;
+  }
+
+  read(callback) {
+    return this.#readImpl(true, callback);
+  }
+
+  #readImpl(maybeSync, callback) {
+    if (this.#closed === true) {
+      throw new ERR_DIR_CLOSED();
+    }
+
+    if (callback === undefined) {
+      return this.#readPromisified();
+    }
+
+    validateFunction(callback, 'callback');
+
+    if (this.#operationQueue !== null) {
+      ArrayPrototypePush(this.#operationQueue, () => {
+        this.#readImpl(maybeSync, callback);
+      });
+      return;
+    }
+
+    if (this.#bufferedEntries.length > 0) {
+      try {
+        const dirent = ArrayPrototypeShift(this.#bufferedEntries);
+
+        if (this.#options
+--- REVIEW (CR) ---
+BODY: Tests are not passing, make sure all tests pass.
+
+Afterwards, run `yarn prettier` to reformat the codebase.
+
+
+### G032 | Copilot | kurotu/VRCQuestTools#131 | reviewer=kurotu | requester=kurotu | src=issue
+TITLE: Implement PhysBone tree structure preview with MultiChildType support and tapered capsule visualization
+--- REQUEST ---
+PhysBoneのプレビュー描画
+### タスク概要
+
+一覧表示されているPhysBoneの作用範囲をシーンに描画する
+
+### 背景・目的
+
+AvatarDynamicsSelectorやPhysBoneRemoverで削減対象のPhysBoneを選択するとき、どのPhysBoneが対象なのかが視覚的にわかりにくい課題がある。
+通常のPhysBoneのプレビューのように、シーンに対象のPhysBoneが描画されているとわかりやすい。
+
+### 技術要件
+
+- AvatarDynamicsSelectorやPhysBoneRemoverで一覧表示したPhysBone, Collider, Contactの作用範囲をシーンにプレビュー表示する。
+- 描画対象は、上記ウィンドウで一覧表示したコンポーネントのうち、マウスカーソルがホバーされているものとする。
+- それぞれの描画方法は以下の通り。
+    - PhysBone: 可動対象のTransformにワイヤフレームの球を描画し、球同士を直線で結ぶ。VRCPhysBoneProviderBaseを活用すること
+    - Collider: コライダーの種類(Sphere, Capsule, Planar)に応じてワイヤフレームの球、カプセル、正方形を描画する
+    - Contact: ワイヤフレームの球を描画する。
+- 描画処理の実装とVRCPhysBoneProviderBaseは関心を分離すること。
+
+### 補足情報
+
+_No response_
+
+### 完了条件
+
+ビルドが成功すること
+--- REVIEW (CR) ---
+BODY: @copilot Update the branch.
+[PREVIEW_IMPLEMENTATION.md] Instruction file is not needed. Remove this.
+[Assets/VRCQuestTools-Tests/Editor/Services/AvatarDynamicsPreviewServiceTests.cs.meta] Do not create new meta files.
+[Assets/VRCQuestTools-Tests/Editor/Services.meta] Do not create new meta files.
+[Packages/com.github.kurotu.vrc-quest-tools/Editor/Services/AvatarDynamicsPreviewService.cs] Use red to avoid confusing with original physbone preview.
+[Packages/com.github.kurotu.vrc-quest-tools/Editor/Utils/PreviewServiceValidation.cs] #if UNITY_EDITOR is not needed.
+
+### G033 | Copilot | hi-ogawa/vite-plugins#1251 | reviewer=hi-ogawa | requester=hi-ogawa | src=issue
+TITLE: feat(fullstack): add virtual:fullstack/no-split-css module for simplified CSS collection
+--- REQUEST ---
+[fullstack] rework API for dev server css? (simplified API for no css code split)
+I think current approach has fundamental limitation in terms of API.
+
+We may give up current uniform API. Instead, we could simply provide another API for simplified use case where code-splitting by each route is not important:
+
+```js
+function renderHtml() {
+  // collect all css in server module graph at this point
+  const css = await import("virtual:dev-server-css");
+}
+```
+--- REVIEW (CR) ---
+BODY: @copilot It should not be dev only. Explore what this means for build to work to simplify server css integration.
+
+
+### G034 | Copilot | semantic-release/gitlab#892 | reviewer=fgreinacher | requester=fgreinacher | src=None
+TITLE: fix: allow templating asset glob patterns
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: nan
+[lib/publish.js] @copilot Get rid of these variables
+[lib/publish.js] @copilot Get rid of this comment
+[lib/publish.js] @copilot Do we have test coverage for this?
+[lib/publish.js] Keep the original syntax with the ternary operator
+
+### G035 | Copilot | microsoft/finops-toolkit#1635 | reviewer=flanakin | requester=flanakin | src=issue
+TITLE: [BICEP] Add support for custom resource naming in FinOps Toolkit
+--- REQUEST ---
+[BICEP] FinOps Toolkit - Custom resource naming
+## ⚠️ Problem
+The bicep deployment doesn't allow the names of the resources to be set. This means that companies with naming standards can't deploy FinOps using bicep or the accept the resources won't adhere to their naming standards.
+
+## 🛠️ Solution
+Update the bicep code to include parameters for the names of the keyvault, data factory and storage accounts, this means that consumers can generate names using their own bicep naming modules and pass it through to the FinOps Toolkit deployment, providing a repeatable deployment.
+
+## ℹ️ Additional context
+Looking at the FinOps Toolkit bicep code the main.bicep should be fairly easy to update for the data factory and storage account as there are two variables that are set.
+![Image](https://github.com/user-attachments/assets/862f0698-f841-4f44-9765-3d0aeb4b3437)
+
+The keyvault name appears to be set within the keyvault.bicep so that would need a parameter defining and the main.bicep updating to pass through said parameter.
+
+I believe parameters can have default values set, so these could be set to what the bicep deployment currently uses, that way it wouldn't break existing deployments.
+
+This was originally posted in the wrong place;
+https://github.com/Azure/bicep-registry-modules/issues/3740#issuecomment-2461047695
+
+## 🙋‍♀️ Ask for the community
+We could use your help:
+1. Please vote this issue up (👍) to prioritize it.
+
+--- REVIEW (CR) ---
+BODY: nan
+[src/templates/finops-hub/main.bicep] Revert
+[src/templates/finops-hub/main.bicep] Revert
+[src/templates/finops-hub/modules/hub-types.json] Revert this file
+[src/templates/finops-hub/modules/hub-app.json] Revert this file
+
+### G036 | Devin | neondatabase/website#3276 | reviewer=davidgomes | requester=davidgomes? | src=pr_body(agent/human-written)
+TITLE: docs: remove references to 'SQL from the frontend' from RLS documentation
+--- REQUEST ---
+# Remove references to 'SQL from the frontend' from RLS documentation
+
+This PR removes all references to 'SQL from the frontend' from the Neon RLS documentation, as requested in Slack channel #proj-neon-rls. The changes include:
+- Removing 'SQL from the frontend' from sample application descriptions
+- Removing 'SQL from the frontend' from roadmap items
+- Replacing 'SQL' tab labels with 'PostgreSQL'
+
+Link to Devin run: https://app.devin.ai/sessions/946d4d8765a24eb587c5de4350b2a378
+Requested by: david@neon.tech
+
+--- REVIEW (CR) ---
+BODY: nan
+[content/docs/guides/neon-rls-auth0.md] This was fine as just SQL before
+[content/docs/guides/neon-rls-clerk.md] undo
+[content/docs/guides/neon-rls-descope.md] undo
+[content/docs/guides/neon-rls-propelauth.md] undo
+[content/docs/guides/neon-rls-stytch.md] undo
+
+### G037 | Copilot | DGP-Studio/Snap.Hutao#2991 | reviewer=Lightczx | requester=None | src=None
+TITLE: Add comprehensive GitHub Copilot instructions with detailed project structure, coding standards, and UI guidelines
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: nan
+[.github/copilot-instructions.md] not required, the build validation will be performed by actions
+[.github/copilot-instructions.md] always targets to latest .NET SDK
+[.github/copilot-instructions.md] Never introducing code behind pattern.
+
+### G038 | Copilot | MicrosoftLearning/AZ400-DesigningandImplementingMicrosoftDevOpsSolutions#683 | reviewer=LuizMacedo | requester=LuizMacedo | src=issue
+TITLE: Fix Lab 12 Dynamic Configuration feedback issues - improve user experience
+--- REQUEST ---
+Lab 12 Feedback
+### Contact Details
+
+_No response_
+
+### What should we change?
+
+Dynamic Config, Ex 1, Task 2, Step 8 | GitHub lists Lab   duration as 45 minutes which is reasonable.    Website took a very long time to load initially. |   |   | You must click Save   and Run twice. Should add a note if the Jobs window displays a permission   needed message, select Deploy from the Jobs window, Select View, and then   Permit twice to complete pipline run.
+
+Dynamic Config, Ex 2, Task 2, Step 5 |   |   |   | After selecting   Managed Identity you must select +Select Members then in the Managed Identity   field Select App Service (1), Select your app service then click Select
+
+Dynamic Config, Ex 2, Task 2, Step 6 |   |   |   | You must click Review   and Assign twice.
+
+Dynamic Config, Ex 2, Task 3, Step 3 |   |   |   | Type Text should be   enabled for data that needs to be entered.
+
+Dynamic Config, Ex 2, Task 4, Step 5 |   |   |   | Type Text should be   enabled for data that needs to be entered.
+
+### Lab
+
+Other
+
+### Relevant screenshots
+
+paste here 😉
+--- REVIEW (CR) ---
+BODY: nan
+[Instructions/Labs/AZ400_M04_L11_Enable_Dynamic_Configuration_and_Feature_Flags.md] Do not make this update.
+[Instructions/Labs/AZ400_M04_L11_Enable_Dynamic_Configuration_and_Feature_Flags.md] Do not make this update.
+
+### G039 | Copilot | rnwood/smtp4dev#1821 | reviewer=rnwood | requester=rnwood | src=None
+TITLE: feat: show emails using their inbuilt dark mode support if they have it rather than inverting them
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: @copilot more for you to do.
+[Rnwood.Smtp4dev/ClientApp/src/components/messageviewhtml.vue] Please use package css-tree instead.
+
+### G040 | OpenAI_Codex | OGKevin/obsidian-kobo-highlights-import#374 | reviewer=OGKevin | requester=thitemple | src=issue
+TITLE: Add setting for simple highlight list
+--- REQUEST ---
+Option to remove Highlight Markers
+Exactly what it says on the tin. The highlight markers makes my existing workflow pretty painful and I'm curious if we can get an option to remove them from the file? 
+
+Thanks!
+--- REVIEW (CR) ---
+BODY: Thanks for this PR. 
+
+The tests pass locally 👍🏾 ( poor man's CI 😆 ).
+
+I only have 1 small change request.
+[src/settings/Settings.ts] Since this is only controlling higlight markers, I say we name this setting accordingly?
+
+E.g. Disable highlight markers
+
+And when enabled, the markers are not generated. 
+
+### G041 | Copilot | microsoft/vscode-pull-request-github#7217 | reviewer=alexr00 | requester=alexr00 | src=issue
+TITLE: Fix commit links in PR description to open multi diff editor instead of browser
+--- REQUEST ---
+Commit links in PR description should open multi diff editor
+https://github.com/microsoft/vscode-pull-request-github/issues/7182
+--- REVIEW (CR) ---
+BODY: nan
+[src/github/pullRequestModel.ts] The `~1` syntax doesn't work. You need to actually find the parent commit sha.
+
+### G042 | Copilot | spcl/dace#2043 | reviewer=tbennun | requester=tbennun | src=issue
+TITLE: Design Document: Modular Frontend Architecture
+--- REQUEST ---
+Design Document: Modular Frontend Architecture
+### Overview
+
+This issue proposes creating a design document for refactoring DaCe's frontend architecture to be more portable, verifiable, and modular. The goal is to establish a common intermediate representation and pipeline that can be shared across different language frontends.
+
+### Motivation
+
+Currently, DaCe's frontends (Python, etc.) each implement their own conversion logic directly to SDFG. This approach has several limitations:
+
+1. **Code duplication**: Each frontend reimplements similar conversion patterns
+2. **Maintainability**: Bug fixes and improvements must be replicated across frontends
+3. **Verification difficulty**: Direct AST-to-SDFG conversion makes it hard to verify correctness
+4. **Limited optimization opportunities**: Current architecture makes it difficult to apply high-level optimizations before SDFG generation
+5. **Pipeline inconsistency**: The Python frontend uses a series of ad-hoc preprocessing calls rather than a structured pipeline
+
+### Proposed Architecture
+
+The design document should outline a new frontend architecture based on:
+
+1. **Schedule Tree IR**: Use the existing Schedule Tree representation (see `dace/sdfg/analysis/schedule_tree/treenodes.py`) as a common intermediate representation for all frontends
+
+2. **Multi-Pass Pipeline**: Structure frontends as a series of passes:
+   - **Pass 1**: Language-specific AST preprocessing (analysis passes, strip syntactic sugar, embed globals, etc.)
+   - **Pass 2**: Language-specific AST → Schedule Tree conversion
+   - **Pass 3**: Potential schedule Tree transformations and optimizations (user-extensible)
+   - **Pass 4**: Schedule Tree → SDFG conversion (shared across all frontends, see #1466)
+
+3. **Pass Pipeline Integration**: Leverage DaCe's existing Pass Pipeline interface (`dace/transformation/pass_pipeline.py`) to:
+   - Standardize the preprocessing pipeline (especially for Python)
+   - Enable pass composition and configuration
+   - Support debugging and verification at each stage
+
+### Benefits
+
+- **Code reuse**: Single Schedule Tree → SDFG converter shared by all frontends
+- **Easier verification**: Schedule Tree provides a simpler IR to verify and test
+- **Better optimization opportunities**: Can implement optimizations like loop-invariant code motion at the Schedule Tree level
+- **Cleaner architecture**: Clear separation of concerns between language parsing and SDFG generation
+- **Extensibility**: New language frontends only need to implement AST → Schedule Tree conversion
+
+### Deliverables
+
+The design document should include:
+
+1. Detailed specification of the Schedule Tree extensions needed to support all frontend features (if any). Use Python/NumPy and FORTRAN frontends as examples.
+2. Pipeline definitions for each stage of the frontend architecture (see above Multi-Pass Pipeline)
+3. Migration strategy for existing frontends
+4. Examples showing how common patterns would be represented
+5. Testing and verification st
+--- REVIEW (CR) ---
+BODY: Please address comment on Python frontend pipeline. Otherwise looks good.
+[docs/design/modular-frontend-architecture.md] This should be a nested, fixed-point pipeline to match the existing behavior.
+
+### G043 | Copilot | OWASP/mastg#3373 | reviewer=cpholguera | requester=cpholguera | src=issue
+TITLE: Convert .r2 scripts to Python with r2pipe for generic binary analysis
+--- REQUEST ---
+Rewrite all .r2 scripts in the MASTG-DEMO-xxxx folders to use python and r2pipe
+ROLE.
+You are an expert in radare2 automation with r2pipe for Python, you know radare2 analysis and query commands, you default to JSON producing commands and [r2pipe](https://github.com/radareorg/radare2-r2pipe/tree/master/python) `cmdj` parsing, you design maintainable utilities and minimal per demo scripts.
+
+https://book.rada.re/scripting/r2pipe.html
+
+GOAL.
+Refactor the MASTG-DEMOs that currently runs radare2 .r2 scripts via run.sh into Python scripts using r2pipe so each demo can run on any compatible binary without hardcoded addresses, by locating targets dynamically through analysis, symbols, imports, strings, xrefs, and call sites. ([[rada.re](https://rada.re/advent/06.html)][2])
+
+CONTEXT YOU MUST FOLLOW.
+The current scripts are repetitive and hardcode addresses, each demo should become a tiny config plus a few calls, all generic logic must move into a shared utility module "r2ooky" (under utils/r2/).
+Avoid hardcoding patterns such as function names, class names, field names, instead support configurable matchers, exact match, contains, regex, and allow multiple candidates with ranking and disambiguation output.
+Every result must be reproducible and stable across binaries, print what was matched, how it was resolved, and the address or symbol chosen.
+
+example: r2ooky MASTestApp config.json
+
+DELIVERABLES.
+
+1. A proposed Python package layout with a shared module, a thin per demo runner, and a common CLI entry point that accepts a binary path and a demo config path.
+2. A concrete utility API design, function signatures, return structures, and how they map to radare2 commands.
+3. A migration plan that converts the existing demo scripts into configs and small runners, including how to replace each current behavior.
+4. Working example implementations for the utilities that cover, find functions by name patterns, find imports by name patterns, find strings by content patterns, resolve xrefs to symbols and addresses, find call sites of a function, print disassembly around an address, print the containing function disassembly, dump bytes at an address, and evaluate simple expressions or data reads.
+5. Output formatting rules that match current demo output style, with optional color off, bytes off, vars off equivalents where relevant.
+
+RADARE2 AND R2PIPE RULES.
+
+Always open radare2 with analysis enabled or run analysis early, then rely on analyzed function lists and xrefs, do not assume fixed base addresses. ([[book.rada.re](https://book.rada.re/analysis/code_analysis.html)][3])
+
+Prefer JSON output forms and parse with r2pipe cmdj, do not scrape human text output. ([[r2wiki.readthedocs.io](https://r2wiki.readthedocs.io/en/latest/home/radare2-python-scripting)][1])
+
+Where radare2 offers both text and JSON variants, choose the JSON variant, for example function list JSON, xrefs JSON, imports JSON, strings JSON. ([[r2wiki.readthedocs.io](https://r2wiki.readthedocs.io/en/la
+--- REVIEW (CR) ---
+BODY: @copilot This is very good, but you can do it even better. If you look at the scripts they still share a lot of similarities so you can try this:
+
+- avoid hardcoding the patterns like function names, class names, field names  
+- extract as many generic functionality to the shared utility module as possible, e.g. searching for use of strings, searching for use of functions, etc.
+
+The scripts in each demo must be as minimal as it gets, e.g. just a config first indicating what to look for (pattern/flag, functions, strings, etc.) and then the corresponding calls to the shared utility module and prints (which can be also parametrized).
+
+
+
+### G044 | Copilot | nanvix/nanvix#797 | reviewer=ppenna | requester=ppenna | src=issue
+TITLE: [ci] Re-Structure Nanvix-Bench Results: Organize by Benchmark Instead of Machine Type
+--- REQUEST ---
+[ci] Re-Structure Nanvix-Bench Results
+## Context
+
+Right now, as part of our benchmarks workflow `.github/actions/benchmark/action.yml`, we generate a table summarizing the results of the `nanvix-bench` suite. The table is generated using the `./scripts/ci_bench_summary.py` and it looks something like the following:
+
+```
+================================================== microvm (X64) ==================================================
+|           boot-time (us)             cold-start (us)            warm-start (us)          warm-start-vmm (us)    |
+|        dev    target      Δ       dev    target      Δ       dev    target      Δ       dev    target      Δ    |
+| p50   23945    22942    -4.2%    8444     8286     -1.9%     134      132     -1.5%     138      138     -0.0%  |
+| p95   29937    28953    -3.3%    8838     8566     -3.1%     141      140     -0.7%     140      139     -0.7%  |
+| p99   32891    31952    -2.9%    11475    8886    -22.6%     217      144    -33.6%     141      141     -0.0%  |
+===================================================================================================================
+
+================================================ hyperlight (X64) =================================================
+|           boot-time (us)             cold-start (us)            warm-start (us)          warm-start-vmm (us)    |
+|        dev    target      Δ       dev    target      Δ       dev    target      Δ       dev    target      Δ    |
+| p50  514642   515594    +0.2%   316563   316065    -0.2%    18703    18474    -1.2%     NA       NA       NA    |
+| p95  523410   522892    -0.1%   319775   320100    +0.1%    18882    18622    -1.4%     NA       NA       NA    |
+| p99  527685   526833    -0.2%   321166   321409    +0.1%    18951    18720    -1.2%     NA       NA       NA    |
+===================================================================================================================
+```
+
+Unfortunately, this design does not scale with the number of benchmarks, as we would keep growing horizontally and introduce the need to scroll.
+
+Instead, we should have one box per benchmark (where benchmark is boot-time, cold-start, warm-start, and warm-start-vmm), and inside each box we have the same columns (dev/target/delta) for microvm X64 and hyperlight X64?
+
+In summary, the resulting table should look something like the following:
+
+```
+============================================= boot-time (us) =============================================
+| quant |           microvm (X64)            |            hyperlight (X64)          |
+|       |     dev      target      Δ         |      dev       target       Δ        |
+|-------+------------------------------------+--------------------------------------|
+| p50   |    23945      23940     -0.0%      |    514642      515022     +0.1%      |
+| p95   |    29937      29937     -0.0%      |    523410      522653     -0.1%      |
+| p99   |    32891      32898     +0.0%      |    527685      
+--- REVIEW (CR) ---
+BODY: @copilot make sure the "|" characters in the last column are aligned with the "|" character of the header.
+
+
+### G045 | Copilot | microsoft/vscode-azurefunctions#4644 | reviewer=nturinski | requester=nturinski | src=None
+TITLE: Upgrade TypeScript devDependency to ^5.9.2
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: Abandoning this pending review as requested.
+
+
+### G046 | Copilot | dotnet/sdk#51169 | reviewer=baronfel | requester=baronfel | src=issue
+TITLE: Suppress CS8002 warning for modern .NET TFMs
+--- REQUEST ---
+Pdb file for assembly /usr/local/share/dotnet/x64/shared/Microsoft.NETCore.App/8.0.8/System.Private.CoreLib.dll was not found or failed to read
+<!--
+Please keep in mind that the GitHub issue tracker is not intended as a general support forum, but for reporting **non-security** bugs and feature requests.
+
+If you believe you have an issue that affects the SECURITY of the platform, please do NOT create an issue and instead email your issue details to secure@microsoft.com. Your report may be eligible for our [bug bounty](https://www.microsoft.com/en-us/msrc/bounty-dot-net-core) but ONLY if it is reported through email.
+For other types of questions, consider using [StackOverflow](https://stackoverflow.com).
+
+-->
+
+### Describe the bug
+Environment: Mac with .NET 8 SDK (x64). 
+When in debugging mode received the following error:
+Pdb file for assembly /usr/local/share/dotnet/x64/shared/Microsoft.NETCore.App/8.0.8/System.Private.CoreLib.dll was not found or failed to read
+Seems .Net 8 SDK for Mac (x64) version doesn't include System.Private.CoreLib.dll.  I checked the same for .NET 6, the mentioned dll is in place. 
+
+### To Reproduce
+<!--
+We ❤ code! Point us to a minimalistic repro project hosted in a GitHub repo, Gist snippet, or other means to see the isolated behavior.
+We may close this issue if:
+- the repro project you share with us is complex. We can't investigate custom projects, so don't point us to such, please.
+- if we will not be able to repro the behavior you're reporting
+-->
+1. install x64 .Net SDK on Mac
+2. /usr/local/share/dotnet/x64/shared/Microsoft.NETCore.App/8.0.8/System.Private.CoreLib.dll is not in place as .Net 6
+
+
+### Exceptions (if any)
+<!-- 
+Include the exception you get when facing this issue
+-->
+
+### Further technical details
+- Include the output of `dotnet --info`
+.NET SDK:
+ Version:           8.0.401
+ Commit:            811edcc344
+ Workload version:  8.0.400-manifests.b6724b7a
+ MSBuild version:   17.11.4+37eb419ad
+
+Runtime Environment:
+ OS Name:     Mac OS X
+ OS Version:  14.6
+ OS Platform: Darwin
+ RID:         osx-x64
+ Base Path:   /usr/local/share/dotnet/x64/sdk/8.0.401/
+
+.NET workloads installed:
+Configured to use loose manifests when installing new manifests.
+There are no installed workloads to display.
+
+Host:
+  Version:      8.0.8
+  Architecture: x64
+  Commit:       08338fcaa5
+
+.NET SDKs installed:
+  6.0.425 [/usr/local/share/dotnet/x64/sdk]
+  8.0.401 [/usr/local/share/dotnet/x64/sdk]
+
+.NET runtimes installed:
+  Microsoft.AspNetCore.App 6.0.33 [/usr/local/share/dotnet/x64/shared/Microsoft.AspNetCore.App]
+  Microsoft.AspNetCore.App 8.0.8 [/usr/local/share/dotnet/x64/shared/Microsoft.AspNetCore.App]
+  Microsoft.NETCore.App 8.0.8 [/usr/local/share/dotnet/x64/shared/Microsoft.NETCore.App]
+
+Other architectures found:
+  arm64 [/usr/local/share/dotnet]
+    registered at [/etc/dotnet/install_location_arm64]
+
+Environment variables:
+  DOTNET_ROOT       [/usr/local/sh
+--- REVIEW (CR) ---
+BODY: @copilot redo this work. you expanded the scope beyond what was requested - only on _modern .NET_ (so TargetFramework values that are `netx.y` and compatible) should the CS8002 NoWarn value be added.
+
+
+### G047 | OpenAI_Codex | home-assistant/core#150460 | reviewer=joostlek | requester=jakeyr | src=pr_body(agent/human-written)
+TITLE: fix totalconnect integration bypass functionality by adding async coordinator refresh
+--- REQUEST ---
+<!--
+  You are amazing! Thanks for contributing to our project!
+  Please, DO NOT DELETE ANY TEXT from this template! (unless instructed).
+-->
+
+
+## Proposed change
+Fix the existing totalconnect bypass buttons to work with the async coordinator
+
+
+## Type of change
+<!--
+  What type of change does your PR introduce to Home Assistant?
+  NOTE: Please, check only 1! box!
+  If your PR requires multiple boxes to be checked, you'll most likely need to
+  split it into multiple PRs. This makes things easier and faster to code review.
+-->
+
+- [ ] Dependency upgrade
+- [x] Bugfix (non-breaking change which fixes an issue)
+- [ ] New integration (thank you!)
+- [ ] New feature (which adds functionality to an existing integration)
+- [ ] Deprecation (breaking change to happen in the future)
+- [ ] Breaking change (fix/feature causing existing functionality to break)
+- [ ] Code quality improvements to existing code or addition of tests
+
+## Additional information
+The bypass buttons on the panel and sensors were not actually triggering any calls to the totalconnect api. This PR adds handlers for the async button press hook and refreshes the coordinator to actually trigger the action when buttons are pressed.
+
+- This PR fixes or closes issue: fixes #
+- This PR is related to issue: 
+- Link to documentation pull request: 
+- Link to developer documentation pull request: 
+- Link to frontend pull request: 
+
+## Checklist
+<!--
+  Put an `x` in the boxes that apply. You can also fill these out after
+  creating the PR. If you're unsure about any of them, don't hesitate to ask.
+  We're here to help! This is simply a reminder of what we are going to look
+  for before merging your code.
+-->
+
+- [x] The code change is tested and works locally.
+- [x] Local tests pass. **Your PR cannot be merged unless tests pass**
+- [x] There is no commented out code in this PR.
+- [x] I have followed the [development checklist][dev-checklist]
+- [x] I have followed the [perfect PR recommendations][perfect-pr]
+- [x] The code has been formatted using Ruff (`ruff format homeassistant tests`)
+- [x] Tests have been added to verify that the new code works.
+
+If user exposed functionality or configuration variables are added/changed:
+
+- [ ] Documentation added/updated for [www.home-assistant.io][docs-repository]
+
+If the code communicates with devices, web services, or third-party tools:
+
+- [ ] The [manifest file][manifest-docs] has all fields filled out correctly.  
+      Updated and included derived files by running: `python3 -m script.hassfest`.
+- [ ] New or updated dependencies have been added to `requirements_all.txt`.  
+      Updated by running `python3 -m script.gen_requirements_all`.
+- [ ] For the updated dependencies - a link to the changelog, or at minimum a diff between library versions is added to the PR description.
+
+<!--
+  This project is very active and we have a high turnover of pull requests.
+
+  Unfortunately, the number of incoming
+--- REVIEW (CR) ---
+BODY: The title and PR description doesn't describe what this does though
+[homeassistant/components/totalconnect/button.py] ```suggestion
+        await self.hass.async_add_executor_job(self._zone.bypass)
+```
+and then remove the `press`
+
+### G048 | Copilot | deepmodeling/dpgen#1794 | reviewer=njzjz | requester=njzjz | src=None
+TITLE: docs: add comprehensive documentation for supported software
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: nan
+[doc/overview/supported-software.md] @copilot document the `mlp_engine` key.
+
+https://github.com/deepmodeling/dpgen/blob/23c48c7e336d2168e7d80e88a9c40f26ae208fb4/dpgen/generator/arginfo.py#L232-L242
+[doc/overview/supported-software.md] @copilot add the link for how to install LAMMPS integrated with DeePMD-kit. 
+Easy install: https://docs.deepmodeling.com/projects/deepmd/en/stable/install/easy-install.html
+
+Build from source: https://docs.deepmodeling.com/projects/deepmd/en/stable/install/install-lammps.html
+[doc/overview/supported-software.md] @copilot reactive force field simulations -> biomolecular simulations
+And not related to chemical bonds.
+[doc/overview/supported-software.md] @copilot dpamber is not needed here, but needed in fp.
+[doc/overview/supported-software.md] @copilot AmberTools needs enable the DeePMD-kit integration - refer to Amber documentation,
+
+### G049 | Copilot | primer/react#6197 | reviewer=francinelucca | requester=jonrohan | src=issue
+TITLE: Cleanup styled-components in *.stories.tsx files and convert to CSS modules
+--- REQUEST ---
+Cleanup styled-components in *.stories.tsx files
+Remove the import `style-components` from all *.stories.tsx files and convert the styling to using CSS modules. 
+--- REVIEW (CR) ---
+BODY: nan
+[packages/react/src/stories/deprecated/ActionList.stories.tsx] this doesn't look right
+[packages/react/src/stories/deprecated/ActionMenuStories.module.css] I don't see this one in the original
+```suggestion
+```
+[packages/react/src/stories/FocusTrapStories.module.css] ```suggestion
+/* Helper styles for focus trap visual aids */
+```
+
+### G050 | Copilot | 1c-syntax/bsl-language-server#3486 | reviewer=nixel2007 | requester=nixel2007 | src=issue
+TITLE: Fix ClassCastException in MagicNumberDiagnostic with soft error handling
+--- REQUEST ---
+CompletionException: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'diagnostics' defined in class path resource [com/github/_1c_syntax/bsl/languageserver/diagnostics/infrastructure/DiagnosticsConfiguration.class]: Failed to instantia...
+Sentry Issue: [BSL-LANGUAGE-SERVER-DW](https://1c-syntax.sentry.io/issues/6671485945/?referrer=github_integration)
+
+```
+ClassCastException: class java.util.ArrayList cannot be cast to class java.lang.String (java.util.ArrayList and java.lang.String are in module java.base of loader 'bootstrap')
+    at com.github._1c_syntax.bsl.languageserver.diagnostics.MagicNumberDiagnostic.configure(MagicNumberDiagnostic.java:72)
+    at com.github._1c_syntax.bsl.languageserver.diagnostics.infrastructure.DiagnosticBeanPostProcessor.postProcessAfterInitialization(DiagnosticBeanPostProcessor.java:68)
+    at com.github._1c_syntax.bsl.languageserver.diagnostics.infrastructure.DiagnosticObjectProvider.get(DiagnosticObjectProvider.java:36)
+    at com.github._1c_syntax.bsl.languageserver.diagnostics.infrastructure.DiagnosticsConfiguration.diagnostics(DiagnosticsConfiguration.java:84)
+    at com.github._1c_syntax.bsl.languageserver.diagnostics.infrastructure.DiagnosticsConfiguration$$SpringCGLIB$$0.CGLIB$diagnostics$0(<generated>)
+...
+(55 additional frame(s) were not displayed)
+
+BeanCreationException: Error creating bean with name 'magicNumberDiagnostic' defined in URL [jar:nested:/C:/Program%20Files/BSL%20Language%20Server/app/bsl-language-server-0.24.2-exec.jar/!BOOT-INF/classes/!/com/github/_1c_syntax/bsl/languageserver/diagnostics/MagicNumberDiagnostic.class]: class java.util.ArrayList cannot be cast to class java.lang.String (java.util.ArrayList and java.lang.String are in module java.base of loader 'bootstrap')
+    at com.github._1c_syntax.bsl.languageserver.diagnostics.infrastructure.DiagnosticObjectProvider.get(DiagnosticObjectProvider.java:36)
+    at com.github._1c_syntax.bsl.languageserver.diagnostics.infrastructure.DiagnosticsConfiguration.diagnostics(DiagnosticsConfiguration.java:84)
+    at com.github._1c_syntax.bsl.languageserver.diagnostics.infrastructure.DiagnosticsConfiguration$$SpringCGLIB$$0.CGLIB$diagnostics$0(<generated>)
+    at com.github._1c_syntax.bsl.languageserver.diagnostics.infrastructure.DiagnosticsConfiguration$$SpringCGLIB$$FastClass$$1.invoke(<generated>)
+    at com.github._1c_syntax.bsl.languageserver.diagnostics.infrastructure.DiagnosticsConfiguration$$SpringCGLIB$$0.diagnostics(<generated>)
+...
+(51 additional frame(s) were not displayed)
+
+BeanInstantiationException: Failed to instantiate [java.util.List]: Factory method 'diagnostics' threw exception with message: Error creating bean with name 'magicNumberDiagnostic' defined in URL [jar:nested:/C:/Program%20Files/BSL%20Language%20Server/app/bsl-language-server-0.24.2-exec.jar/!BOOT-INF/classes/!/com/github/_1c_syntax/bsl/languageserver/diagnostics/MagicNumberDiagnostic.class]: class java.util.ArrayList cannot be ca
+--- REVIEW (CR) ---
+BODY: nan
+[src/main/java/com/github/_1c_syntax/bsl/languageserver/diagnostics/infrastructure/DiagnosticParameterValidator.java] нужен javadoc на класс
+[src/main/java/com/github/_1c_syntax/bsl/languageserver/diagnostics/infrastructure/DiagnosticParameterValidator.java] используй `@Getter(lazy = true)` 
+[src/main/java/com/github/_1c_syntax/bsl/languageserver/diagnostics/infrastructure/DiagnosticParameterValidator.java] промаркируй его как @Nullable, раз оно может быть null даже при отложенной инициализации
+
+### G051 | Copilot | Azure/azure-mcp#362 | reviewer=joshfree | requester=joshfree | src=issue
+TITLE: Update TROUBLESHOOTING and Authentication.md (from README) for advanced scenarios
+--- REQUEST ---
+Update TROUBLESHOOTING and Authentication.md (from README) for advanced scenarios
+Use CoPilot to generate docs to help users working against protected resources (local auth disabled, firewall blocking public internet) who need some basic guidance for working with their resource administrator directly.
+--- REVIEW (CR) ---
+BODY: nan
+[docs/Authentication.md] add a link in this section for more details on Managed Identity and Federated Identity that would be useful for a developer using Azure
+[docs/Authentication.md] Also add a sentence about how the user can request help by filing a GitHub issue in this repo.  Include a link to the (blank) new issue template
+
+### G052 | Copilot | cybersemics/em#3045 | reviewer=raineorshine | requester=raineorshine | src=issue
+TITLE: Refactor: editing → isKeyboardOpen
+--- REQUEST ---
+Refactor: editing → isKeyboardOpen
+Rename `state.editing` to `state.isKeyboardOpen` which is more explicit and intuitive. 
+
+See: `/src/@types/State.ts`
+
+Replace all instances of "edit mode" in the comments.
+--- REVIEW (CR) ---
+BODY: nan
+[src/components/Note.tsx] ```ts
+import { keyboardOpenActionCreator as keyboardOpen } from '../actions/keyboardOpen'
+```
+[src/hooks/useLongPress.ts] ```ts
+import { keyboardOpenActionCreator as keyboardOpen } from '../actions/keyboardOpen'
+```
+[src/util/handleKeyboardVisibility.ts] ```ts
+import { keyboardOpenActionCreator as keyboardOpen } from '../actions/keyboardOpen'
+```
+
+### G053 | Copilot | ifad/chronomodel#382 | reviewer=tagliala | requester=tagliala | src=issue
+TITLE: Respect as_of timestamp in eager loaded joins
+--- REQUEST ---
+Eager queries are not temporal
+Bug, not regression.
+Queries that join associations inline (`.jois`, `.left_outer_joins`, `.eager_load`) produce SQL that does not take `as_of_time` into account.
+
+```ruby
+# frozen_string_literal: true
+
+require 'bundler/inline'
+
+gemfile(true) do
+  source 'https://rubygems.org'
+
+  # gem 'chrono_model', github: 'ifad/chronomodel', tag: 'v3.0.1'
+  # gem 'chrono_model', github: 'ifad/chronomodel', tag: 'v4.0.0'
+  gem 'chrono_model', github: 'ifad/chronomodel'
+
+  gem 'pg'
+  gem 'debug'
+  gem 'rails'
+end
+
+require 'chrono_model'
+require 'minitest/autorun'
+require 'logger'
+require 'debug'
+
+# Needs a database called `chronomodel_test`
+
+ActiveRecord::Base.establish_connection(adapter: 'chronomodel', database: 'chronomodel_test')
+ActiveRecord::Base.logger = Logger.new($stdout)
+
+ActiveRecord::Schema.define do
+  enable_extension :btree_gist
+
+  create_table :activities, temporal: true, force: true do |t|
+    t.string :name
+
+    t.timestamps
+  end
+
+  create_table :activity_roadmaps, temporal: true, force: true do |t|
+    t.belongs_to :activity
+    t.string :name
+
+    t.timestamps
+  end
+end
+
+class Activity < ActiveRecord::Base
+  include ChronoModel::TimeMachine
+
+  has_many :activity_roadmaps, dependent: :destroy
+end
+
+class ActivityRoadmap < ActiveRecord::Base
+  include ChronoModel::TimeMachine
+
+  belongs_to :activity
+end
+
+activity = Activity.new(name: 'Activity')
+activity.save!
+activity.activity_roadmaps.new(name: 'Roadmap').save!
+
+activity.update! name: 'Updated Activity'
+
+$activity_roadmap_recorded_at = ActivityRoadmap.first.history.first.recorded_at
+
+class BugTest < Minitest::Test
+  # OK - no preload
+  def test_historical_roadmap
+    activity_roadmap = ActivityRoadmap.as_of($activity_roadmap_recorded_at).first
+    activity = activity_roadmap.activity
+
+    assert activity.name == 'Activity'
+    # assert activity.as_of_time == activity_roadmap.as_of_time
+  end
+
+  # OK - lazy load
+  def test_lazy_historical_roadmap
+    activity_roadmap = ActivityRoadmap.as_of($activity_roadmap_recorded_at).includes(:activity).first
+    activity = activity_roadmap.activity
+
+    assert activity.name == 'Activity'
+    # assert activity.as_of_time == activity_roadmap.as_of_time
+  end
+
+  # Not OK - eager load
+  def test_eager_historical_roadmap
+    activity_roadmap = ActivityRoadmap.as_of($activity_roadmap_recorded_at).eager_load(:activity).first
+    activity = activity_roadmap.activity
+
+    assert activity.name == 'Activity'
+    # assert activity.as_of_time == activity_roadmap.as_of_time
+  end
+end
+```
+
+Generated query for the last case (association query skips as of):
+
+```sql
+SELECT "activity_roadmaps"."id"          AS t0_r0,
+       "activity_roadmaps"."activity_id" AS t0_r1,
+       "activity_roadmaps"."name"        AS t0_r2,
+       "activity_roadmaps"."created_at"  AS t0_r3,
+       "activity_roadmaps"."updated_at"  AS t0_r4,
+       "activities"."id"                 AS t1_r0,
+       "activities"."name"               AS t1_r1,
+       "activities"."creat
+--- REVIEW (CR) ---
+BODY: @copilot according to the contributing guidelines and copilot instructions, add an empty commit with a good message following the 7 rules for a good commit
+
+Please also explain what did you change, because the comment in the commit is not clear. And, if it is possible, improve the comments in the actual fix, the ones starting with "Handle both..."
+
+
+### G054 | Copilot | microsoft/PSRule#3018 | reviewer=BernieWhite | requester=ElinoraWhite | src=None
+TITLE: Add hot reload support for PSRule options with VS Code configuration synchronization
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: nan
+[src/vscode-ps-rule/client.ts] @copilot If option `PSRule.options.path` is set, watch that file, otherwise default to watching `ps-rule.yaml`.
+
+Don't include the other variations e.g. `ps-rule.yml`, `psrule.yaml` or `ps-rule.yml`.
+[src/PSRule.EditorServices/Handlers/WorkspaceChangeWatcherHandler.cs] @copilot If option `PSRule.options.path` is set, watch that file, otherwise default to watching `ps-rule.yaml`.
+
+Don't include the other variations e.g. `ps-rule.yml`, `psrule.yaml` or `ps-rule.yml`.
+
+### G055 | Copilot | microsoft/vscode-pull-request-github#7846 | reviewer=alexr00 | requester=alexr00 | src=issue
+TITLE: Fix wrong commit checkout when local branch exists with same name as PR
+--- REQUEST ---
+Wrong commit is checked out when local branch exists with the same name
+<!-- Please search existing issues to avoid creating duplicates. -->
+
+<!-- Use Help > Report Issue to prefill some of these. -->
+
+- Extension version: 0.116.2
+- VSCode Version: 1.103.2
+- OS: Windows
+- Repository Clone Configuration (single repository/fork of an upstream repository):
+- GitHub Product (GitHub.com/GitHub Enterprise version x.x.x):
+
+Steps to Reproduce:
+
+1. Create local branch called my-branch
+2. Create an unrelated PR with an upstream source branch called my-branch
+3. Click the Checkout Pull Request button
+4. Note the commit checked out is the local my-branch not the remote one.
+
+--- REVIEW (CR) ---
+BODY: nan
+[src/github/pullRequestGitHelper.ts] @copilot This is dangerous. We shouldn't just delete the user's local branch. Instead, we should create a local branch with a different, available, name, and point the branch's remote to the correct upstream branch.
+
+### G056 | Copilot | CravateRouge/bloodyAD#81 | reviewer=CravateRouge | requester=CravateRouge | src=pr_body:Original prompt
+TITLE: Refactor bloodyAD to use native async/await instead of threading hacks
+--- REQUEST ---
+> bloodyAD app is synchronous but relies on asynchronous functions belonging to the badldap lib. To call them a new thread (threading.Thread) is created in ldap.py and a loop is added in this thread (asyncio.new_event_loop). This has been done because when calling the badldap lib function connect() it creates a state for a network connection. So the async code must run in parallel of bloodyAD synchronous code. Right now I want to remove those hacks by making the bloodyAD function which needs it asynchronous too. Be careful, sometimes default class functions such as __init__ or __str__ are calling directly or indirectly asynchronous code, you'll have to make change accordingly. I also use generators or triggers functions when calling print() because I want the results of those functions be returned directly when available in main.py print_entry. Update the codebase accordingly to what I want.
+--- REVIEW (CR) ---
+BODY: Finish the work
+
+
+### G057 | Claude_Code | swc-project/swc#11156 | reviewer=kdy1 | requester=delino[bot] | src=issue
+TITLE: feat(es/minifier): Implement parameter inlining optimization
+--- REQUEST ---
+`es/minifier`: Inline parameters
+### Describe the feature
+
+See [playground](https://play.swc.rs/?version=1.13.2&code=H4sIAAAAAAAAA33NsQ7CMBAD0D1fYXXKSShlYYWJkY8IIWkjpXfVkVIE4t8JAxti9bNskxYONQsjyDSXeLdJZIPEhKcB%2Bh6zxlvkiswlc%2BahpTnBnnwdnXq%2ByGQJe2zdjlBHlRUcVxxVRS21ssa6KLfFg%2Ftsk3kZE4SvUqIrMtjvb9ewI%2FptZ69%2F7NHsDUQbW4fJAAAA&config=H4sIAAAAAAAAA41VS47bMAzd5xSB17OYDopB0QMU3fQMgmJRjlJZEkTKE2OQu5f%2BBc6ENrqz%2BcSPHh%2Bpz8PxWF2wrn4eP%2FmTf5LOCPn%2BzxbsA%2BkrWyqoW411domqlwW94ABZ7RFG021CKh8jwoLMttYFZ%2Ft17Dq2KQPiysZWnZvSQqDBTLnAyxrK8UOwn2L0oMMOojQqFwgayPhY11yJ9zohqE5nIcpQqM4Oo5RiAAuBUSnHJOLBOHIxcM5n1IA2qo4GBMhlqMl1ILlxLnYLyNcT7jPCBk6lacZ2fvGGTvuiScgJ17EjXK0Q9RwdkrIlSBRO4AYHEziT%2B9XTWZWBSg7PfpfowkZP%2FgIwA14jBt2CFHc8YVlOW95219MFy4qlXsBZ3tItAzRMqnLOCswOzEAmJ3Uzgyk1DMzWUjkzvEEfOgMKrGWtCKHxw1F9lpJSnyBaAeD%2BaiupagLUfQo38GEgduBffEuaBCYmVq2m87Y79u0p%2Bp34LdA5mp0D3AmK23DmJXFN23gJBlgZYMQjBUfgeQew%2FikqDyRJg6eDI6rGx5O4JRLLfOzh%2B2y73Vdwq0Mz7oDVCqWYPHTgt6T9H2Ozi3LB3aD0ZdqfJhp%2BSELVPIzu2%2BvDi8FXeXg54EqQeVX%2BBp%2BednVFPM0jgxXg2%2Bvb9%2Bowe1ZtNGVFw6ju6dz76tDyBC30Vg7%2FLI6z7XD7Byzd7fcXBwAA)
+
+```
+function complex(foo, fn) {
+  // prevent inlining
+  if (Math.random() > 0.5) throw new Error()
+  return fn?.(foo)
+}
+
+console.log(complex("foo"))
+console.log(complex("bar"))
+console.log(complex("baz"))
+```
+
+If i remove the `if (Math.random)...` line then SWC will just inline this function as `void 0` at all callsites, however, if the function is not a trivial inlining candidate it backs off and preserves the function pretty much as is.
+
+In that case, i would like swc to just inline the _parameter_, all callsites are implicitly passing `undefined` to the `fn` parameter.  If the minifier could delete that parameter and add a variable `const fn  = undefined` then another minifier pass would just simplify the `return` statement to `return undefined`.
+
+This example is of course somewhat trivial, but my actual usecase is wanting to pass an optional callback through a few layers of shared functions.  If we could inline `undefined` when not passed then it would allow this callback to be eliminated altogether in the common case where it isn't passed.
+
+The closure compiler has a pass like this: https://github.com/google/closure-compiler/blob/master/src/com/google/javascript/jscomp/OptimizeParameters.java
+
+The semantics are that parameters will get inlined if all callsites pass the same value and that value is side effect free and 'not too big'.   There was a once a code size regression where a large string literal got inlined in a way that moved it into an earlier chunk.  I don't think swc needs to worry about that since it doesn't support cross chunk optimizations (does it?)
+
+Since swc is happy to potentially inline this function and delete it, it could perhaps also be happy to modify the signature in the same situations.
+
+
+### Babel plugin or link to the feature description
+
+_No response_
+
+### Additional context
+
+I was hoping for something like this as i am working on the turb
+--- REVIEW (CR) ---
+BODY: Run `UPDATE=1 cargo test -p swc --test tsc --test projects` and `UPDATE=1 cargo test -p swc_ecma_minifier`
+
+
+### G058 | Devin | wolfSSL/wolfssl-examples#491 | reviewer=gasbytes | requester=danielinux (daniele@wolfssl.com) | src=pr_body(agent/human-written)
+TITLE: Add FreeRTOS + wolfIP + wolfSSL HTTPS example
+--- REQUEST ---
+# Add FreeRTOS + wolfIP + wolfSSL HTTPS Example
+
+This PR adds a new full-stack example demonstrating embedded HTTPS server functionality using:
+- FreeRTOS (POSIX port) for RTOS simulation
+- wolfIP for zero-allocation networking
+- wolfSSL for TLS 1.3 security
+
+## Features
+- Virtual networking through TAP interface (10.10.0.0/24)
+- HTTPS server with TLS 1.3 support
+- UDP echo server for testing
+- Comprehensive test scripts
+
+## Testing
+- Built and tested on Ubuntu
+- Verified TLS 1.3 handshake with TLS_AES_256_GCM_SHA384
+- Confirmed network connectivity through TAP interface
+- Tested HTTPS functionality with curl
+
+## Link to Devin run
+https://app.devin.ai/sessions/9009e1c8e0304b43a2e0c5effeb90b2c
+
+## Requested by
+daniele@wolfssl.com
+
+--- REVIEW (CR) ---
+BODY: nan
+[fullstack/freertos-wolfip-wolfssl-https/README.md] Please remove the command `make -p build`, since the build directory gets already created at the end of the setup.sh script.
+[fullstack/freertos-wolfip-wolfssl-https/setup.sh] The correct path is `../../../../` for the cmake command to work correctly.
+[fullstack/freertos-wolfip-wolfssl-https/setup.sh] Add the command `sudo make install` after the make.
+[fullstack/freertos-wolfip-wolfssl-https/setup.sh] Please remove the commands `./autogen.sh` and `./configure`.
+
+### G059 | Copilot | microsoft/mssql-python#149 | reviewer=bewithgaurav | requester=bewithgaurav | src=issue
+TITLE: FIX: Contribution process for internal/external contributors & documentation
+--- REQUEST ---
+FIX: Ensure cursors are freed before connection (segfault) with added tests
+### ADO Work Item Reference  
+<!-- Insert your ADO Work Item ID below (e.g. AB#37452) -->
+> [AB#37863](https://sqlclientdrivers.visualstudio.com/c6d89619-62de-46a0-8b46-70b92a84d85e/_workitems/edit/37863)
+-------------------------------------------------------------------
+### Summary   
+<!-- Insert your Copilot Generated Summary below -->  
+This pull request introduces several updates to enhance connection management, improve cursor handling, and update test cases for better coverage and consistency. The most important changes include the implementation of weak references for cursor tracking, additional safeguards for connection cleanup, and modifications to test cases to align with schema conventions.
+
+### Connection Management Enhancements:
+* Replaced `ctypes` with `weakref` and introduced `WeakSet` for managing cursors to prevent memory leaks and ensure automatic cleanup of unused cursors. (`mssql_python/connection.py`) [[1]](diffhunk://#diff-29bb94de45aae51c23a6426d40133c28e4161e68769e08d046059c7186264e90L8-R8) [[2]](diffhunk://#diff-29bb94de45aae51c23a6426d40133c28e4161e68769e08d046059c7186264e90R57-R69)
+* Added logic to ensure all cursors are closed before closing the connection and made `close()` idempotent to handle multiple calls safely. (`mssql_python/connection.py`)
+
+### Cursor Handling Improvements:
+* Updated the `cursor()` method to raise an exception if called on a closed connection and track active cursors using `WeakSet`. (`mssql_python/connection.py`)
+
+### Test Case Updates:
+* Added new tests to validate cursor cleanup behavior, weak reference handling, cleanup order, and connection idempotency. (`tests/test_003_connection.py`)
+* Updated stored procedure-related tests to use the `dbo` schema prefix for better compatibility and clarity. (`tests/test_004_cursor.py`) [[1]](diffhunk://#diff-82594712308ff34afa8b067af67db231e9a1372ef474da3db121e14e4d418f69L873-R879) [[2]](diffhunk://#diff-82594712308ff34afa8b067af67db231e9a1372ef474da3db121e14e4d418f69L895-R895) [[3]](diffhunk://#diff-82594712308ff34afa8b067af67db231e9a1372ef474da3db121e14e4d418f69L907-R907) [[4]](diffhunk://#diff-82594712308ff34afa8b067af67db231e9a1372ef474da3db121e14e4d418f69L918-R918)
+* Modified table creation and cleanup logic in multiple test cases to use temporary tables (`#pytest_*`) for isolation and reduced side effects. (`tests/test_004_cursor.py`, `tests/test_005_exceptions.py`) [[1]](diffhunk://#diff-82594712308ff34afa8b067af67db231e9a1372ef474da3db121e14e4d418f69L1153-R1153) [[2]](diffhunk://#diff-82594712308ff34afa8b067af67db231e9a1372ef474da3db121e14e4d418f69L1164-R1170) [[3]](diffhunk://#diff-82594712308ff34afa8b067af67db231e9a1372ef474da3db121e14e4d418f69L1192-R1231) [[4]](diffhunk://#diff-82594712308ff34afa8b067af67db231e9a1372ef474da3db121e14e4d418f69L1240-R1240) [[5]](diffhunk://#diff-282f76cf72519247beed3fe56aa378a339af5ecbdef32fb468a3470969d15b69L88-R128)
+--- REVIEW (CR) ---
+BODY: nan
+[.github/PULL_REQUEST_TEMPLATE.MD] can link the GH issue using just a hashtag (#)
+[.github/PULL_REQUEST_TEMPLATE.MD] Can use a better term here. something like `mssql-python` maintainers
+[.github/PULL_REQUEST_TEMPLATE.MD] Can use a better term here. something like mssql-python maintainers
+
+### G060 | Copilot | celestiaorg/celestia-app#4913 | reviewer=evan-forbes | requester=evan-forbes | src=issue
+TITLE: docs: Add v4 release notes with message changes
+--- REQUEST ---
+v4 release notes lack details on changed messages
+## Context
+
+Celenium is requesting a more exhaustive release notes section.
+
+## Problem
+
+The current release notes are lacking details on any messages that were modified between v3 and v4.
+
+See: https://github.com/celestiaorg/celestia-app/blob/main/docs/release-notes/release-notes.md
+
+## Proposal
+
+> These upgrades introduce updates to messages, data structures, field types, and the logic behind some calculations. There are also some changes to the node API.
+Here’s what would be most useful for us:
+> - A list of all changed messages
+> - A list of all newly introduced messages and data structures
+> - A list of all deprecated properties
+> - A summary of updated logic or calculations
+> A great example of the kind of changelog we’re looking for is the Tezos changelog (https://octez.tezos.com/docs/CHANGES.html), which clearly outlines updates to operators, parameters, call limits, and both low-level and general changes. Something in a similar format would be ideal.
+
+--- REVIEW (CR) ---
+BODY: overall this feels very repetitive
+
+be more concise. if a change impacted apis and imports etc, just mention that instead of having separate sections mentioning the same exact thing
+[docs/release-notes/release-notes.md] also mention the change from CometBFT v0.34 -> v0.38
+[docs/release-notes/release-notes.md] ```suggestion
+**IBC Protocol Update (v6 → v8)**:
+```
+[docs/release-notes/release-notes.md] please double check these and only include them if something changed. if something did change, then only mention that
+[docs/release-notes/release-notes.md] ```suggestion
+```
+
+I think we can delete these
+[docs/release-notes/release-notes.md] does this include all api changes? what about to `TxClient` or the user package?
+
+### G061 | Copilot | microsoft/Spartan2#45 | reviewer=srinathsetty | requester=srinathsetty | src=issue
+TITLE: Replace panics with proper Error types throughout the codebase
+--- REQUEST ---
+Replace panics (via asserts) and return Error types
+The code contains a bunch of assert!, assert_eq!, unwrap or other methods that could panic when running. 
+
+Instead, I would like you to make them return Error types.
+
+Include additional errors in src/errors.rs if necessary.
+
+Make sure all tests pass. Make sure to run cargo fmt and clippy to ensure CI passes.
+
+Do no worry about panic inside the tests as it is okay if we do unwrap or assert_eq! inside tests.
+--- REVIEW (CR) ---
+BODY: Address comments.
+
+
+### G062 | Devin | milkshakesoftware/PreMailer.Net#427 | reviewer=martinnormark | requester=martinnormark | src=pr_body(agent/human-written)
+TITLE: Fix #171: Preserve empty HTML tags during serialization
+--- REQUEST ---
+# Fix issue #171: Preserve empty HTML tags during serialization
+
+## Problem
+When processing HTML with empty tags like `<u></u>`, PreMailer.Net converts them to self-closing tags `<u/>` during HTML serialization. This causes unintended styling effects, such as making all subsequent text underlined.
+
+## Solution
+Created a comprehensive `EmailHtmlMarkupFormatter` that:
+1. Preserves empty HTML tags by always generating closing tags
+2. Preserves HTML entities (combining functionality from the existing `PreserveEntitiesHtmlMarkupFormatter`)
+
+Modified `GetMarkupFormatterForDocType()` to use this new formatter by default.
+
+## Testing
+Added test cases to verify:
+- Empty tags like `<u></u>` are preserved and not converted to self-closing tags
+- HTML entities like `&copy;` are preserved and not converted to Unicode characters
+
+All tests are passing.
+
+## Example
+Before:
+```html
+<u></u>
+```
+After serialization (incorrect):
+```html
+<u/>
+```
+With fix (correct):
+```html
+<u></u>
+```
+
+Link to Devin run: https://app.devin.ai/sessions/c8d484e6ffd64961adb7ae618a4ec011
+Requested by: m@martinnormark.com
+
+--- REVIEW (CR) ---
+BODY: `PreserveEntitiesHtmlMarkupFormatter` should be removed, and the new EmailHtml markup formatter should be opt-in based on the options given to premailer - the option flag right now is preserveEntities - it should be something to indicate use of the opnionated html email formatter.
+
+
+### G063 | Copilot | demergent-labs/azle#3060 | reviewer=lastmjs | requester=lastmjs | src=issue
+TITLE: Add property tests for jsonStringify and jsonParse functions
+--- REQUEST ---
+Create property tests for jsonStringify and jsonParse
+Our testing for these functions is implicitly done in our StableBTreeMap testing, but for thoroughness we might want to make dedicated property tests for these functions.
+
+I would like you to create property tests for our jsonStringify and jsonParse functions, available to import from the top level azle npm package.
+
+You should add a new test directory in examples/stable/test/property/ic_api/json. Follow the structure of the tests in that directory.
+
+The tests should be property tests. I'm thinking that they should work like this: Generate an arbitrary JavaScript object, make sure that it can have all supported values found in the jsonStringify and jsonParse function implementations, including regular JavaScript/JSON values that are already supported. You will create one static canister that has one method in it used for the testing. It should have an IDL.Text as its one parameter, and IDL.Text as its return type. In the tests.ts code, you should import jsonStringify from Azle. In the test implementation, with the arbitrary value, you should call jsonStringify to get a string. You should call the canister method with that string as the parameter. Then, the implementation of the canister method should call jsonParse, then take that result and call jsonStringify again. You should return that value from the canister method. Then back in the property test itself, check that the original value created from jsonStringify and passed into the canister matches the string value returned from the canister method. Change the default number of runs to 100x whatever is passed in through the environment variables that control the number of runs.
+
+Actually, you should have two canister methods, they will be exactly the same, but one will be a query method and the other an update method.
+
+Ignore this for now, it's just a note: We might want to follow some of the advice from o3 and ask the current LLMs of the time how to improve our implementation: https://chatgpt.com/share/68127bc6-2950-8002-b582-c91784a39c0d
+--- REVIEW (CR) ---
+BODY: nan
+[examples/stable/test/property/ic_api/json/test/pretest.ts] I don't think you need to add --no-wallet here
+
+### G064 | Copilot | mvdicarlo/postybirb#375 | reviewer=mvdicarlo | requester=mvdicarlo | src=issue
+TITLE: feat: Improve Username Shortcut experience in BlockNote Editor
+--- REQUEST ---
+feat: Improve Username Shortcut inside of Blocknote Editor
+Currently the Username Shortcut custom blocknote inline element is somewhat finicky when someone uses backspaces, it might be nice to explore improving the behavior so that the element feels more natural to use when a user uses arrow keys for navigation and backspacing for deletions (except when inside of the shortcut itself).
+
+Additionally, we have not yet added a dropdown within the element for picking between websites (by website id) in the Only field for username shortcuts.
+
+Currently the idea is for the component to be [shortcut-name<dropdown of Only website picker>|"username text"]
+
+A few different iterations might be worth exploring here to figure out a best and most pleasant fit.
+
+We also need to make it clear to the user that using a ~ will allow insertion of a shortcut.
+
+The logic is currently within https://github.com/mvdicarlo/postybirb/blob/5db7b884ee872e89430ad48b6daeffac90106208/apps/postybirb-ui/src/components/shared/postybirb-editor/custom/username-shortcut.tsx
+
+https://github.com/mvdicarlo/postybirb/blob/5db7b884ee872e89430ad48b6daeffac90106208/apps/postybirb-ui/src/components/shared/postybirb-editor/custom/shortcut.css
+
+https://github.com/mvdicarlo/postybirb/blob/5db7b884ee872e89430ad48b6daeffac90106208/apps/postybirb-ui/src/components/shared/postybirb-editor/postybirb-editor.tsx
+--- REVIEW (CR) ---
+BODY: nan
+[apps/postybirb-ui/src/components/shared/postybirb-editor/custom/username-shortcut.tsx] Still having issue of the cursor being trapped within the element when hitting the left arrow.
+
+### G065 | Copilot | Catfriend1/syncthing-lite#54 | reviewer=Catfriend1 | requester=None | src=None
+TITLE: .
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: .
+
+
+### G066 | Devin | cloudflare/workers-sdk#10242 | reviewer=penalosa | requester=penalosa | src=pr_body(agent/human-written)
+TITLE: feat: add experimental API to expose Wrangler command tree structure
+--- REQUEST ---
+## Summary
+
+This PR adds a new experimental API `experimental_getWranglerCommands()` to expose Wrangler's complete command tree structure with metadata for cloudflare-docs consumption. The API leverages the existing `CommandRegistry` infrastructure to provide programmatic access to all registered commands, their hierarchical relationships, and associated metadata.
+
+**Link to Devin run**: https://app.devin.ai/sessions/e7ce795996a34292a84d4aabe9ec9f92
+**Requested by**: @penalosa 
+
+## Key Changes
+
+- **New experimental method** in `CommandRegistry.ts`: Added `experimental_getCommandsForDocs()` to expose the internal command tree
+- **New API module** `experimental-commands-api.ts`: Contains `experimental_getWranglerCommands()` function that registers all Wrangler commands and returns the tree structure
+- **Export from CLI**: Added export in `cli.ts` following existing experimental API patterns
+- **Comprehensive tests**: Added test coverage for command tree structure, metadata validation, and nested command verification
+- **Changeset**: Added minor version bump changeset for the new feature
+
+## Important Review Areas
+
+⚠️ **Command Coverage Completeness**: During implementation, several command imports had to be removed due to import errors (typesCommand, whoamiCommand, queues, r2, vectorize, hyperdrive, triggers). **Please verify that all important Wrangler commands are actually included in the experimental API output.**
+
+⚠️ **Manual Synchronization**: The experimental API currently duplicates command definitions from `index.ts`, creating a maintenance burden. Consider whether this approach is sustainable or if a more automated solution is needed.
+
+⚠️ **API Design**: The API recreates the command registry on each call. Verify this performance characteristic is acceptable for cloudflare-docs usage patterns.
+
+## Testing
+
+The new API has been tested to ensure:
+- Returns valid command tree structure with Map-based subtrees
+- Includes expected commands (docs, init, dev, deploy, etc.) with proper metadata
+- Preserves nested command hierarchies (e.g., d1 subcommands, kv operations)
+- Validates metadata properties (description, status, owner)
+- Distinguishes between command types (commands vs namespaces)
+
+All tests pass locally and verify the basic structure, though **human verification of complete command coverage is recommended**.
+
+---
+
+- Tests
+  - [x] Tests included
+- Public documentation
+  - [x] Documentation not necessary because: This is an experimental API for internal tooling consumption
+- Wrangler V3 Backport
+  - [x] Not necessary because: This is a new feature, not a bug fix, and experimental APIs don't require v3 backporting
+--- REVIEW (CR) ---
+BODY: nan
+[packages/wrangler/src/core/CommandRegistry.ts] This function is unnecessary. It does the same thing as `getDefinitionTreeRoot()`, which can be used instead
+[packages/wrangler/src/experimental-commands-api.ts] This is a _lot_ of duplication. Can you think of a way to expose this without any duplication of command registration?
+
+### G067 | Copilot | microsoft/TypeScript#61939 | reviewer=RyanCavanaugh | requester=RyanCavanaugh | src=issue
+TITLE: Deprioritize native function methods in IntelliSense completions
+--- REQUEST ---
+Intellisense: deprioritise native function methods
+### 🔍 Search Terms
+
+native methods apply bind deprioritise autocomplete
+
+### ✅ Viability Checklist
+
+- [x] This wouldn't be a breaking change in existing TypeScript/JavaScript code
+- [x] This wouldn't change the runtime behavior of existing JavaScript code
+- [x] This could be implemented without emitting different JS based on the types of the expressions
+- [x] This isn't a runtime feature (e.g. library functionality, non-ECMAScript syntax with JavaScript output, new syntax sugar for JS, etc.)
+- [x] This isn't a request to add a new utility type: https://github.com/microsoft/TypeScript/wiki/No-New-Utility-Types
+- [x] This feature would agree with the rest of our Design Goals: https://github.com/Microsoft/TypeScript/wiki/TypeScript-Design-Goals
+
+### ⭐ Suggestion
+
+In autocomplete on a function, it would be great if TypeScript could prioritise extra methods/properties over the native ones.
+
+### 📃 Motivating Example
+
+Bun has some APIs that exist on a function, for example `Bun.inspect()` and also `Bun.inspect.table`. When typing `Bun.inspect.` the first few suggestions are more likely not as useful as the extra properties
+
+Here I would have preferred for `.custom` and `.table` to be first in the list:
+
+![Image](https://github.com/user-attachments/assets/aa19d9a5-ae80-4784-96ac-55f45adc1b8b)
+
+### 💻 Use Cases
+
+1. What do you want to use this for?: Would make it easier for the developer to discover often more useful methods and properties
+2. What shortcomings exist with current approaches?: Extra methods/props are more difficult to see
+4. What workarounds are you using in the meantime?: N/A
+
+
+I would be very happy to help implement this, with some guidance as to roughly where I should look to implement it! Cheers.
+--- REVIEW (CR) ---
+BODY: nan
+[src/services/completions.ts] The only thing you need here is the symbol. Check that its *binding* parent is an interface declaration in the global scope whose name is `Function` or `CallbableFunction`. That's it.
+
+### G068 | Copilot | DaveSkender/Stock.Indicators#1382 | reviewer=DaveSkender | requester=DaveSkender | src=None
+TITLE: docs: Migrate to Angular/markdown doc site
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: @copilot use playwright MCP server to ensure whole site is visible and navigable
+[docs/angular.json] When I run dev server or deploy to Cloudflare, the landing page is empty
+
+### G069 | Copilot | microsoft/vscode#259933 | reviewer=connor4312 | requester=connor4312 | src=issue
+TITLE: Fix DEBUG CONSOLE not detecting file paths with ANSI escape sequences
+--- REQUEST ---
+DEBUG CONSOLE - does not match file paths with ANSI escape sequences.
+<!-- ⚠️⚠️ Do Not Delete This! bug_report_template ⚠️⚠️ -->
+<!-- Please read our Rules of Conduct: https://opensource.microsoft.com/codeofconduct/ -->
+<!-- 🕮 Read our guide about submitting issues: https://github.com/microsoft/vscode/wiki/Submitting-Bugs-and-Suggestions -->
+<!-- 🔎 Search existing issues to avoid creating duplicates. -->
+<!-- 🧪 Test using the latest Insiders build to see if your issue has already been fixed: https://code.visualstudio.com/insiders/ -->
+<!-- 💡 Instead of creating your report here, use 'Report Issue' from the 'Help' menu in VS Code to pre-fill useful information. -->
+<!-- 🔧 Launch with `code --disable-extensions` to check. -->
+Yes
+
+<!-- 🪓 If you answered No above, use 'Help: Start Extension Bisect' from Command Palette to try to identify the cause. -->
+<!-- 📣 Issues caused by an extension need to be reported directly to the extension publisher. The 'Help > Report Issue' dialog can assist with this. -->
+- VS Code Version: 1.100.0-insider
+- OS Version:  windows 10 x64
+
+Steps to Reproduce:
+
+1. open a folder /tmp with abc.js file in it in vsc
+
+run the `abc.js` file in the **DEBUG CONSOLE**
+
+```
+console.log("/tmp/abc.js\x1b[0m:1:7");
+// but without ansi escape sequence it selects the line number and column
+console.log("/tmp/abc.js:1:7");
+```
+
+if you run this in terminal, both log lines select the file including the line number and column
+so the problem is isolated to the DEBUG CONSOLE
+
+
+https://github.com/oven-sh/bun/issues/20185
+
+<img src="https://github.com/user-attachments/assets/0167c3f3-c2e0-48da-b6bb-a9a9bcff1af4" width=550 />
+
+--- REVIEW (CR) ---
+BODY: nan
+[src/vs/workbench/contrib/debug/browser/linkDetector.ts] This is not a realiable way to build the cleanedText, because characters within the escaped sequence could match. Instead use the `forAnsiStringParts` function.
+
+### G070 | Copilot | manusa/electronim#616 | reviewer=manusa | requester=manusa | src=pr_body:Original prompt
+TITLE: Revert: Keep window in settings preload for contextIsolation:false
+--- REQUEST ---
+> src/settings/preload.js
+> 
+> Sonar is complaining about "Prefer globalThis over window."
+> Refactor to remove the sonar alert
+--- REVIEW (CR) ---
+BODY: @copilot the tests are failing now, it's likely that since this is done in the preload the globalWindow approach doesn't work here. Is this possible?
+
+
+### G071 | Copilot | bugsink/bugsink#166 | reviewer=vanschelven | requester=vanschelven | src=issue
+TITLE: Add remote_addr field to Event model to log client IP addresses
+--- REQUEST ---
+Log `remote_addr` on the event
+Add `remote_addr` as a field on the event, based on the client's IP address.
+
+It should be captured at ingest-time and carried through to digest-time. Use the same metadata-passing mechanism we already use elsewhere.
+
+We already rely on `SetRemoteAddrMiddleware` to ensure `request.REMOTE_ADDR` reflects the real client IP, even behind a proxy, so this value is usable in both the proxy/non-proxy case.
+
+The field may be `None` for both backwards compatibility and misconfigured proxies (the middleware returns `None` for some such cases)
+--- REVIEW (CR) ---
+BODY: nan
+[events/models.py] Overly verbose; drop the whole comment
+[events/tests.py] that's a lot of testing for very little functionality, which gives me a "bad feeling" generally and esp. since it was done by a bot.
+
+could we not have a "tighter fit" around what's actually happening?
+
+### G072 | Copilot | cybersemics/em#3001 | reviewer=raineorshine | requester=raineorshine | src=issue
+TITLE: Scroll cursor into view on sort
+--- REQUEST ---
+Scroll cursor into view on sort
+Try calling `scrollCursorIntoViewIfNeeded` in the `sort` action creator. 
+
+## Steps to Reproduce
+
+```
+- z
+- a
+- b
+- c
+- d
+- e
+- f
+- g
+- h
+- i
+- j
+- k
+- l
+- m
+- n
+- o
+- p
+- q
+- r
+- s
+- t
+- u
+- v
+- w
+- x
+- y
+```
+
+1. Set the cursor on `z`. 
+2. Sort alphabetical. 
+
+## Current Behavior
+
+The cursor moves off screen as `z` is sorted to the end of the list. 
+
+## Expected Behavior
+
+The window should scroll so that the cursor is in view.
+--- REVIEW (CR) ---
+BODY: nan
+[src/actions/__tests__/scrollCursorIntoViewOnSort.test.ts] The test is pointless if `scrollCursorIntoView` is mocked. Please make a puppeteer test for a more realistic test. 
+[src/redux-middleware/scrollCursorIntoView.ts] Named exports are not allowed in this project. Only default exports. 
+
+Instead, check `action.type` in the middleware to see if sort has been toggled. Or run an effect whenever the sort preference changes. 
+
+### G073 | Copilot | srid/haskell-flake#439 | reviewer=srid | requester=srid | src=None
+TITLE: Fix `custom` expected to be unique
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: Your implementation looks suss, but add a test case so we can confirm the fix for sure.
+
+
+### G074 | Copilot | justtrackio/gosoline#1275 | reviewer=applike-ss | requester=applike-ss | src=issue
+TITLE: Implement Reader interface for blob fixture loading using Object type
+--- REQUEST ---
+Blob fixture loading adjustments
+Currently the blob fixtures are loaded via a base path from the settings (see blob package).
+This should be adjusted, so that the writer is using a reader implementation, saved as a property on the `blobFixtureWriter` struct upon creation.
+There must be a reader implementation which should work like the file reading part of the current implementation that is part of the Write func.
+In the `BlobFixturesSettings` struct we then need to be able to set a `Reader` instead of the base path, which is then not needed anymore.
+The `Reader` must implement a interface that should return a channel which the Write func can use to iterate over.
+Don't forget to close channels in the correct spot.
+--- REVIEW (CR) ---
+BODY: nan
+[pkg/blob/writer_blob.go] ```suggestion
+		return fmt.Errorf("failed to read blob fixtures: %w", err)
+```
+
+### G075 | Copilot | codeceptjs/CodeceptJS#5126 | reviewer=DavertMik | requester=kobenguyent | src=issue
+TITLE: Extend CodeceptJS CLI to run failed tests with --save-failed-tests and --failed-tests options
+--- REQUEST ---
+Extend the current codeceptjs cli to run failed tests
+Currently after executing tests using either run or run-workers, there are possibly some failed tests due to flaky or something like that. To rerun those failed tests, user may need to filer them out and run them. 
+
+Proposed solution:
+- extend the current run or run-workers commands to generate the failed-tests.json file for instance which stores crucial info of failed tests.
+- user now could use the run or run-workers to specify the path to failed tests file and codeceptjs now loads only those failed tests and then executing them.
+--- REVIEW (CR) ---
+BODY: This implementation is very ugly. Everything should be handled via plugin:
+
+- auto-saving of fialned runs (by listening to failed event) to file inside output folder
+- re-running the last saved file from output folder using the same plugin
+[docs/plugins.md] bad naming
+[bin/codecept.js] bad defaults, this should be enabled for all runs if a plugin is turned on
+[bin/codecept.js] we need a plugin for that, not a new option
+
+### G076 | Copilot | microsoft/BotFramework-WebChat#5499 | reviewer=OEvgeny | requester=OEvgeny | src=issue
+TITLE: [Tests Migration] Migrate fluentTheme/customElement tests from html to html2
+--- REQUEST ---
+[Tests Migration] fluentTheme/customElement tests
+Following the below guide migrate tests located in folder:
+
+```
+__tests__/html/fluentTheme/customElement
+```
+
+
+# Migrating BotFramework-WebChat Tests from html to html2
+
+This guide covers the migration process from the legacy [`__tests__/html`](__tests__/html ) test structure to the modern [`__tests__/html2`](__tests__/html2 ) structure, based on the simplified migration patterns established in the BotFramework-WebChat project.
+
+## Overview
+
+The migration involves updating test files to use:
+- **ES Modules (ESM)** instead of Babel transpilation
+- **CDN dependencies** for React instead of bundled assets
+- **Global `renderWebChat` function** where possible for consistent rendering
+- **Theme and variant query parameters** where appropriate for consistent theming
+
+## Migration Steps
+
+### 1. File Structure and Organization
+
+#### Creating Test Directories
+```bash
+# Create the html2 directory structure or check existance
+mkdir -p __tests__/html2/[feature-name]/
+```
+
+#### File Naming Convention
+- **Main test file**: `[testName].html`
+- **Theme/variant files**: `[testName].[theme].[variant].html` (redirect files)
+- **Examples**: 
+  - `typingIndicator.scroll.fluent.copilot.html`
+  - `layout.fluent.html`
+
+### 2. HTML Document Structure Migration
+
+#### Before (Legacy Structure)
+```html
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <script crossorigin="anonymous" src="https://unpkg.com/@babel/standalone@7.8.7/babel.min.js"></script>
+  <script crossorigin="anonymous" src="https://unpkg.com/react@16.8.6/umd/react.development.js"></script>
+  <script crossorigin="anonymous" src="https://unpkg.com/react-dom@16.8.6/umd/react-dom.development.js"></script>
+  <!-- More UMD scripts -->
+</head>
+```
+
+#### After (Modern Structure)
+```html
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <link href="/assets/index.css" rel="stylesheet" type="text/css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@18.3.1",
+          "react-dom": "https://esm.sh/react-dom@18.3.1",
+          "react-dom/": "https://esm.sh/react-dom@18.3.1/"
+        }
+      }
+    </script>
+    <script crossorigin="anonymous" src="/test-harness.js"></script>
+    <script crossorigin="anonymous" src="/test-page-object.js"></script>
+    <script type="module">
+      import React from 'react';
+      window.React = React;
+    </script>
+    <script defer crossorigin="anonymous" src="/__dist__/webchat-es5.js"></script>
+    <script defer crossorigin="anonymous" src="/__dist__/botframework-webchat-fluent-theme.production.min.js"></script>
+  </head>
+```
+
+### 3. Dependency Management
+
+#### Remove These Dependencies
+- `@babel/standalone`
+
+#### Keep These Dependencies
+```html
+<!-- Test infrastructure -->
+<script crossorigin="anonymous" src="/test-harness.js"></script>
+<script crossorigin="anonymous" src="/test-page-object.js"></script>
+
+<!-- defer WebChat bundles to wait for React availability -->
+<script defer crossorigin
+--- REVIEW (CR) ---
+BODY: (see below)
+
+
+### G077 | Copilot | ImBIOS/bun-node#40 | reviewer=ImBIOS | requester=ImBIOS | src=issue
+TITLE: feat: Add Node.js 24 support
+--- REQUEST ---
+[FEAT]: Support Node.js 24
+### Clear and concise description of the problem
+
+Since Node.js 24 will be LTS soon.
+
+### Suggested solution
+
+_No response_
+
+### Alternative
+
+_No response_
+
+### Additional context
+
+_No response_
+
+### Validations
+
+- [x] Follow our [Code of Conduct](https://github.com/ImBIOS/.github/blob/main/CODE_OF_CONDUCT.md)
+- [x] Read the [Contributing Guide](https://github.com/ImBIOS/contribute).
+- [x] Check that there isn't already an issue that request the same feature to avoid creating a duplicate.
+--- REVIEW (CR) ---
+BODY: make sure 24 is successful and remove thos unsued
+[.github/workflows/release.yml] follow what's in https://github.com/nodejs/docker-node
+only 20, 22, 24 should left, the others should be deleted.
+[versions.json] while you at it, remove 18 and 23
+
+### G078 | Copilot | SkBlaz/py3plex#36 | reviewer=SkBlaz | requester=SkBlaz | src=issue
+TITLE: Add comprehensive function-level test coverage with robust dependency handling
+--- REQUEST ---
+Test coverage
+Existing tests cover main examples, let's go deeper to function level.
+--- REVIEW (CR) ---
+BODY: @copilot tests no longer pass after the change. revisit + run them yourself prior to commiting final version
+
+
+### G079 | OpenAI_Codex | deepmodeling/deepmd-kit#4921 | reviewer=njzjz | requester=caic99 | src=pr_body(agent/human-written)
+TITLE: chore: Clarify CPU-specific thread warning
+--- REQUEST ---
+clarify that thread configuration environment variables only apply to CPU
+
+
+<!-- This is an auto-generated comment: release notes by coderabbit.ai -->
+
+## Summary by CodeRabbit
+
+* **New Features**
+  * Device-aware default threading initialization across backends (CPU vs. GPU) for more sensible defaults.
+  * Option to suppress CPU threading configuration warnings when running in CPU mode.
+  * Clearer log messaging highlighting that certain thread settings apply only to CPU for best performance.
+* **Documentation**
+  * Updated parameter documentation to reflect the new CPU-mode option and clarify threading behavior.
+
+<!-- end of auto-generated comment: release notes by coderabbit.ai -->
+--- REVIEW (CR) ---
+BODY: #1284 shows that setting `OMP_NUM_THREADS` is still meaningful in the GPU training. I am wondering why we dismiss the warning.
+[deepmd/env.py] ```suggestion
+    if use_cpu and (
+```
+[deepmd/tf/env.py] I don't think this environment variable is used in the TensorFlow backend.
+
+### G080 | Copilot | Code-A2Z/code-a2z#1227 | reviewer=Avdhesh-Varshney | requester=Avdhesh-Varshney | src=None
+TITLE: Upgrade Project JSX to TSX: Complete migration from frontend to client directory with TypeScript support and deployment compatibility
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: Still deployment failed
+
+Please update until the deployment passed OK
+
+
+### G081 | Devin | calcom/cal.com#18378 | reviewer=sean-brydon | requester=None | src=issue
+TITLE: feat: default admin bookings to own user by default
+--- REQUEST ---
+[CAL-4851] If you're an admin, automatically filter to show your own bookings
+I'm an admin, and now when I go to the bookings page I'm seeing everyone's bookings, but for the most part, I'm just looking to see my own. Meaning that I have to go Bookings > Filters > People > Bailey Pumfleet
+
+This filter should be the default for admins
+
+![Screenshot 2024-12-05 at 11.54.26.png](https://uploads.linear.app/e86bf957-d82f-465e-b205-135559f4b623/a5b2b9e2-471f-432b-ba47-91ac96787948/45f791aa-1581-4966-959b-7cc4ac508f8a?signature=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXRoIjoiL2U4NmJmOTU3LWQ4MmYtNDY1ZS1iMjA1LTEzNTU1OWY0YjYyMy9hNWIyYjllMi00NzFmLTQzMmItYmE0Ny05MWFjOTY3ODc5NDgvNDVmNzkxYWEtMTU4MS00OTY2LTk1OWItN2NjNGFjNTA4ZjhhIiwiaWF0IjoxNzMzNDE3NzI2LCJleHAiOjE3NjQ5NTM3MjZ9.enj-RdXueuMYO--gcvQEscHFgWX_r3rceE5u-XgxSkk)
+
+<sub>From [SyncLinear.com](https://synclinear.com) | [CAL-4851](https://linear.app/calcom/issue/CAL-4851/if-youre-an-admin-automatically-filter-to-show-your-own-bookings)</sub>
+--- REVIEW (CR) ---
+BODY: nan
+[packages/features/bookings/components/PeopleFilter.tsx] Can we useSession here to get current userId instead of hitting the useMeQuery which is a redudant api call as we have this data in session? 
+
+### G082 | Devin | airbytehq/PyAirbyte#691 | reviewer=aaronsteers | requester=aaronsteers | src=pr_body(agent/human-written)
+TITLE: feat(mcp): Add MCP server for PyAirbyte connector management
+--- REQUEST ---
+Related:
+
+- https://github.com/quintonwall/airbyte-labs-pyairbyte-mcp
+
+---
+
+# feat(mcp): Add 5 new MCP actions for manifest-only connector development
+
+## Overview
+Expands the existing MCP server with 5 new actions specifically designed for developing manifest-only connectors using PyAirbyte and the Airbyte CDK. This creates a complete workflow for building, testing, and iterating on declarative YAML-based connectors.
+
+## New MCP Actions
+
+### 1. `create_stream_template`
+Creates or modifies stream templates in manifest-only connectors.
+- **Parameters**: `connector_name`, `stream_name`, `url_base`, `path`, `http_method`, `output_format`
+- **Output**: YAML or JSON stream template with proper DeclarativeStream structure
+- **Use case**: Bootstrap new streams with correct CDK structure
+
+### 2. `create_auth_logic` 
+Creates or modifies authentication logic for stream templates.
+- **Parameters**: `connector_name`, `auth_type`, `auth_config`, `output_format`
+- **Supported auth types**: `api_key`, `bearer`, `oauth`, `basic_http`, `no_auth`
+- **Output**: YAML or JSON authenticator configuration
+- **Use case**: Configure authentication for different API types
+
+### 3. `test_auth_logic`
+Tests authentication logic for streams or stream templates.
+- **Parameters**: `connector_name`, `manifest_config`, `stream_name`, `endpoint_url`
+- **Modes**: Test without hitting endpoints OR test against specific endpoint
+- **Output**: Authentication validation results with success/failure details
+- **Use case**: Validate auth configuration before full connector testing
+
+### 4. `create_stream_from_template`
+Creates new streams leveraging existing stream templates.
+- **Parameters**: `connector_name`, `template_config`, `stream_config`, `output_format`
+- **Features**: Deep copy templates, modify paths/schemas/keys, nested config updates
+- **Output**: YAML or JSON stream configuration based on template
+- **Use case**: Rapidly create similar streams from proven templates
+
+### 5. `test_stream_read`
+Tests stream reads using CDK's test-read functionality.
+- **Parameters**: `connector_name`, `manifest_config`, `stream_name`, `max_records`
+- **Integration**: Uses CDK's TestReader and connector builder handler
+- **Output**: Detailed test results with record counts, logs, and sample data
+- **Use case**: Validate stream functionality and data extraction
+
+## Rick & Morty API Example
+Includes a complete working example using the Rick & Morty API:
+- **File**: `examples/rick_morty_manifest.yaml`
+- **Features**: No authentication required, pagination support, proper schema definition
+- **Structure**: Uses CDK 6.30.0 format with definitions, references, and schemas
+- **Testing**: Comprehensive test scripts for validation and MCP action testing
+
+## Implementation Details
+
+### Architecture
+- **Module**: `airbyte/mcp/connector_development.py` - separate from main server
+- **Integration**: Imports into main MCP server via `airbyte/mcp/server.
+--- REVIEW (CR) ---
+BODY: nan
+[airbyte/mcp/server.py] This file level docstring will be rendered as docs my pdoc. With that in mind, I'd request these changes: 
+
+1. Let's call this experimental. That means we may have breaking changes between any version and the next, until we exit experimental status for this feature. 
+2. Let's add usage examples and docs here. We can do this by providing links to generic MCP resources as well as in-line examples in the docstring.
+
+All the above should be in markdown in the docstring. See the caches module for a g
+[airbyte/mcp/server.py] Whenever we have string inputs in a public arg like this, our docstring should explain what strings are valid. If using docstring standards, use Google docstring for args. Don't redundantly declare types though, since those are already in the method signature.
+
+Let's also add a format option, like we did elsewhere. The current implementation could be the "markdown" format, but we should also add JSON. (No need for YAML in this case. Markdown is our human/LLM-readable version and JSON is our prog
+[airbyte/mcp/server.py] We can delete/remove this.
+
+### G083 | Copilot | dotnet/sdk#51169 | reviewer=KalleOlaviNiemitalo | requester=baronfel | src=issue
+TITLE: Suppress CS8002 warning for modern .NET TFMs
+--- REQUEST ---
+Pdb file for assembly /usr/local/share/dotnet/x64/shared/Microsoft.NETCore.App/8.0.8/System.Private.CoreLib.dll was not found or failed to read
+<!--
+Please keep in mind that the GitHub issue tracker is not intended as a general support forum, but for reporting **non-security** bugs and feature requests.
+
+If you believe you have an issue that affects the SECURITY of the platform, please do NOT create an issue and instead email your issue details to secure@microsoft.com. Your report may be eligible for our [bug bounty](https://www.microsoft.com/en-us/msrc/bounty-dot-net-core) but ONLY if it is reported through email.
+For other types of questions, consider using [StackOverflow](https://stackoverflow.com).
+
+-->
+
+### Describe the bug
+Environment: Mac with .NET 8 SDK (x64). 
+When in debugging mode received the following error:
+Pdb file for assembly /usr/local/share/dotnet/x64/shared/Microsoft.NETCore.App/8.0.8/System.Private.CoreLib.dll was not found or failed to read
+Seems .Net 8 SDK for Mac (x64) version doesn't include System.Private.CoreLib.dll.  I checked the same for .NET 6, the mentioned dll is in place. 
+
+### To Reproduce
+<!--
+We ❤ code! Point us to a minimalistic repro project hosted in a GitHub repo, Gist snippet, or other means to see the isolated behavior.
+We may close this issue if:
+- the repro project you share with us is complex. We can't investigate custom projects, so don't point us to such, please.
+- if we will not be able to repro the behavior you're reporting
+-->
+1. install x64 .Net SDK on Mac
+2. /usr/local/share/dotnet/x64/shared/Microsoft.NETCore.App/8.0.8/System.Private.CoreLib.dll is not in place as .Net 6
+
+
+### Exceptions (if any)
+<!-- 
+Include the exception you get when facing this issue
+-->
+
+### Further technical details
+- Include the output of `dotnet --info`
+.NET SDK:
+ Version:           8.0.401
+ Commit:            811edcc344
+ Workload version:  8.0.400-manifests.b6724b7a
+ MSBuild version:   17.11.4+37eb419ad
+
+Runtime Environment:
+ OS Name:     Mac OS X
+ OS Version:  14.6
+ OS Platform: Darwin
+ RID:         osx-x64
+ Base Path:   /usr/local/share/dotnet/x64/sdk/8.0.401/
+
+.NET workloads installed:
+Configured to use loose manifests when installing new manifests.
+There are no installed workloads to display.
+
+Host:
+  Version:      8.0.8
+  Architecture: x64
+  Commit:       08338fcaa5
+
+.NET SDKs installed:
+  6.0.425 [/usr/local/share/dotnet/x64/sdk]
+  8.0.401 [/usr/local/share/dotnet/x64/sdk]
+
+.NET runtimes installed:
+  Microsoft.AspNetCore.App 6.0.33 [/usr/local/share/dotnet/x64/shared/Microsoft.AspNetCore.App]
+  Microsoft.AspNetCore.App 8.0.8 [/usr/local/share/dotnet/x64/shared/Microsoft.AspNetCore.App]
+  Microsoft.NETCore.App 8.0.8 [/usr/local/share/dotnet/x64/shared/Microsoft.NETCore.App]
+
+Other architectures found:
+  arm64 [/usr/local/share/dotnet]
+    registered at [/etc/dotnet/install_location_arm64]
+
+Environment variables:
+  DOTNET_ROOT       [/usr/local/sh
+--- REVIEW (CR) ---
+BODY: nan
+[src/Tasks/Microsoft.NET.Build.Tasks/targets/Microsoft.NET.Sdk.CSharp.targets] CS8002 must not be automatically suppressed when targeting .NET Standard 2.0 or lower.  Assemblies that were built targeting those frameworks can be run on .NET Framework, which still checks strong names, so the warnings are justified.
+
+When targeting .NET Standard 2.1, CS8002 could in principle be suppressed because no version of .NET Framework supports .NET Standard 2.1.  However, I recommend that the SDK not suppress CS8002 on any version of .NET Standard, because this will be easier for user
+
+### G084 | Copilot | AzureAD/microsoft-identity-web#3409 | reviewer=keegan-caruso | requester=jennyf19 | src=issue
+TITLE: Add high-performance loggers to credential providers
+--- REQUEST ---
+[Feature Request] Add high performance loggers in the credentials providers
+**Is your feature request related to a problem? Please describe.**
+The credential providers don't use high performance loggers
+For example: https://github.com/AzureAD/microsoft-identity-web/blob/d207aee74e6dae879f8208e0e0e30438c352ee95/src/Microsoft.Identity.Web.OidcFIC/OidcIdpSignedAssertionProvider.cs#L47
+
+**Describe the solution you'd like**
+Replace the add-hoc code by high performance loggers - https://learn.microsoft.com/en-us/dotnet/core/extensions/high-performance-logging
+
+**Example**
+https://github.com/AzureAD/microsoft-identity-web/blob/d207aee74e6dae879f8208e0e0e30438c352ee95/src/Microsoft.Identity.Web.TokenCache/Distributed/MsalDistributedTokenCacheAdapter.cs#L122
+
+https://github.com/AzureAD/microsoft-identity-web/blob/master/src/Microsoft.Identity.Web.TokenCache/Distributed/MsalDistributedTokenCacheAdapter.Logger.cs#L17
+
+Specifically in the CredentialsLoader:
+https://github.com/AzureAD/microsoft-identity-web/blob/d207aee74e6dae879f8208e0e0e30438c352ee95/src/Microsoft.Identity.Web.Certificate/DefaultCredentialsLoader.Logger.cs#L11
+
+https://github.com/AzureAD/microsoft-identity-web/blob/d207aee74e6dae879f8208e0e0e30438c352ee95/src/Microsoft.Identity.Web.Certificate/DefaultCredentialsLoader.cs#L87
+--- REVIEW (CR) ---
+BODY: nan
+[src/Microsoft.Identity.Web.OidcFIC/OidcIdpSignedAssertionProvider.cs] @copilot the class that is using the logger doesn't need to be partial, only the class that defines the log messages itself.
+[src/Microsoft.Identity.Web.OidcFIC/OidcIdpSignedAssertionLoader.Logger.cs] @copilot Please define log messages following this example:
+
+```cs
+internal partial class OidcIdpSignedAssertionLoaderLoggerExtensions
+{
+    [LoggerMessage(
+        EventId = new EventId(1, nameof(CustomSignedAssertionProviderDataIsNull)),
+        Level = LogLevel.Error,
+        Message = "CustomSignedAssertionProviderData is null")]
+        public static partial void CustomSignedAssertionProviderDataIsNull(this ILogger);
+}
+```
+
+Or like this if they accept an exception:
+
+```cs
+[LoggerMessage(
+  
+
+### G085 | Devin | whitphx/streamlit-webrtc#1930 | reviewer=whitphx | requester=whitphx? | src=pr_body(agent/human-written)
+TITLE: Replace npm with pnpm and poetry with uv
+--- REQUEST ---
+# Replace npm with pnpm and poetry with uv
+
+This PR replaces npm with pnpm for the frontend part and poetry with uv for the Python part.
+
+Changes:
+- Converted package-lock.json to pnpm-lock.yaml
+- Added streamlit-component-lib dependency to package.json
+- Updated Makefile to use pnpm and uv
+- Updated GitHub workflows to use pnpm and uv
+- Updated Dockerfile to use uv
+- Updated bump-version.sh to work with uv
+- Updated DEVELOPMENT.md to reflect the new package managers
+
+Link to Devin run: https://app.devin.ai/sessions/333118ba716f47c982a145dd464294d7
+
+Requested by: t.yic.yt@gmail.com
+
+--- REVIEW (CR) ---
+BODY: nan
+[requirements.txt] Don't use `requirements.txt`.
+Update `pyproject.toml` for `uv`.
+[streamlit_webrtc/frontend/package.json] Why did you downgrade this?
+[.github/workflows/main.yml] Don't use the pip-like API, `uv pip install`.
+Instead use `uv sync`.
+[.github/workflows/main.yml] Use the official action to set up `uv`: https://github.com/astral-sh/setup-uv
+
+### G086 | Copilot | Dart-Code/Dart-Code#5605 | reviewer=DanTup | requester=DanTup | src=issue
+TITLE: Support running individual test files from Dart-Code's test suite
+--- REQUEST ---
+Support running individual test files from Dart-Code's test suite
+Currently when you run `npm test` it runs all tests (either for all bots, or for a single bot if the `BOT` env var is set).
+
+It would be convenient to be able to run individual files with `npm test foo` and have it run any of the test files that contain "foo".
+
+To do this, we need to:
+
+- ensure `npm test` passes any additional args to `npm test-only`
+- ensure `npm test-only` passes the additional args to `./out/src/test/test_all.js` (and ideally skip `npm run test-grammar` if args are passed)
+- have `test_all.ts` (which compiles to `test_all.js`) pass these args in an env variable when invoking `vstest.runTests`
+- read the env variable in `test_runner.ts` (which is imported into each test suites `index.ts` to tun tests) and include it in the pattern used for locating the test files
+
+To verify this is done, set `BOT=dart` and try tunning some of the test files like:
+
+```
+npm test autolaunch
+```
+
+This should run only the files from `dart/debug/autolaunch.test.ts`.
+
+Running `npm test` without any args (but still with `BOT=dart`) should run all of the standard Dart test suite tests.
+
+The changes must work for all platforms, including Windows.
+--- REVIEW (CR) ---
+BODY: The VS Code download problem should be resolved now, so you should be able to run the tests.
+[package.json] The changes must work on all platforms, including Windows. Will this work there?
+[src/test/test_all.ts] We need to support passing multiple files, for example:
+
+```
+npm test myfile1 my file2
+```
+
+And this should run both `test/myfile1.test.js` and `test/myfile2.test.js`. I don't think joining them here and then just putting them in the glob will work.
+
+### G087 | Copilot | microsoft/azure-pipelines-tasks#21038 | reviewer=rm-dmiri | requester=rm-dmiri | src=issue
+TITLE: Add extension version support to Azure App Service Manage task
+--- REQUEST ---
+[enhancement]: Add the ability to specify extension version when using the "Install Extensions" action in AzureAppServiceManageV0.
+### Task name
+
+AzureAppServiceManageV0
+
+### Describe your feature request here
+
+When using the "Install Extensions" action in AzureAppServiceManageV0, you can only specify the extension name (or a list of extension names) but not a specific version. So when you want to update the extension, you have to manually remove the extension and rerun the task so that it reinstalls the extension with the latest version. Having the ability to specify the version of the extension you want installed, will allow you to better manage your app service extensions.
+
+In addition to that, having some sort of feature that allows a user to just take the latest available version of an extension could be helpful as well. In the current state, the task checks for if the extension is already installed and doesn't take any further action if that condition is true.
+--- REVIEW (CR) ---
+BODY: nan
+[Tasks/AzureAppServiceManageV0/azureappservicemanage.ts] @copilot Let's not add ExtensionVersions and extend ExtensionsList instead by supporting version suffix in brackets.
+Like this: ExtensionsList: 'Microsoft.AspNetCore.AzureAppServices.SiteExtension(latest),AspNetCoreRuntime.6.0.x64(6.0.5)'. Also make suffix optional and keep old logic to be executed in that case.
+[Tasks/AzureAppServiceManageV0/operations/KuduServiceUtils.ts] Add telemetry log here in case of an error.
+[Tasks/AzureAppServiceManageV0/operations/KuduServiceUtils.ts] Cover all changes with feature flag named "AzureAppServiceManageV0.ExtensionVersionSupport"
+
+### G088 | Google_Jules | google/perfetto#2465 | reviewer=LalitMaganti | requester=None | src=pr_body(agent/human-written)
+TITLE: Add support for linking counter y-axis with TrackEvent
+--- REQUEST ---
+This PR adds support for linking the y-axis of counter tracks in the Perfetto UI, as requested in issue #2461.
+
+When multiple counter tracks are related, it is useful to display them with the same y-axis range for easier comparison. This change introduces a `y_axis_share_key` in the `CounterDescriptor` proto. All counter tracks with the same `y_axis_share_key` and the same parent track will now share their y-axis range in the UI.
+
+### Changes
+-   **Proto**: Added `y_axis_share_key` to `CounterDescriptor`.
+-   **Trace Processor**:
+    -   The `y_axis_share_key` is now parsed from the `CounterDescriptor` and stored as a track argument.
+-   **UI**:
+    -   The `y_axis_share_key` and `parentId` are concatenated in the UI plugin to create a unique key for y-axis sharing.
+-   **Testing**: Added a new diff test to verify that the `y_axis_share_key` is correctly parsed and stored.
+-   **Documentation**: Updated `docs/reference/synthetic-track-event.md` with information about the new feature.
+--- REVIEW (CR) ---
+BODY: nan
+[protos/perfetto/trace/track_event/counter_descriptor.proto] Please improve the comments here. Be verbose and explain the terminology of what you are doing. Add motivation for why someone may want to use this
+[protos/perfetto/trace/perfetto_trace.proto] Make sure to run tools/gen_all out/linux_clang_release once you make other changes.
+[docs/reference/synthetic-track-event.md] Don't include this line.
+[ui/src/plugins/dev.perfetto.TrackEvent/index.ts] This should eb changed to something like `trackEvent:parent-${parentId}-key-${yAxisShareKey}
+
+### G089 | Copilot | rocicorp/mono#4908 | reviewer=arv | requester=arv | src=None
+TITLE: Update to @rocicorp/eslint-config 0.8.0 and migrate to ESLint 9 flat config
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: @copilot 
+[packages/zero-react/src/use-query.tsx] nope
+
+Suspense requires throwing promises.
+
+### G090 | Copilot | microsoft/genaiscript#1828 | reviewer=pelikhan | requester=pelikhan | src=None
+TITLE: Enhanced NPM Update Risk Assessment with Source Diff Analysis and Dependency Change Detection
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: nan
+[samples/sample/genaisrc/npm-update-risk-assessment.genai.mts] Also collect a diff of the sources changes between the 2 versions. This is the actual truth in the bc hanges. Detect if the packages contains dependency updates as well. @copilot
+
+### G091 | Copilot | primer/react#6299 | reviewer=joshblack | requester=joshblack | src=None
+TITLE: Migrate batch of components from Jest to Vitest
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: nan
+[packages/react/src/experimental/SelectPanel2/__tests__/SelectPanelLoading.test.tsx] These tests were change din a way that did not preserve the original meaning. These tests should stay the same in this migration but should use vitest's version of timers in order to work
+
+### G092 | Copilot | camunda/camunda#35888 | reviewer=megglos | requester=megglos | src=None
+TITLE: Use OffsetDateTime for date-time fields in Java client
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: Please address all the comments I posted + cleanup the imports on all classes. The import of the OffsetDatetime type is only needed in case its used in the class and if so only once.
+
+
+### G093 | Copilot | OrchardCMS/OrchardCore#18184 | reviewer=MikeAlhayek | requester=MikeAlhayek | src=issue
+TITLE: Migrate IContentDefinitionEventHandler to unified IContentDefinitionHandler interface
+--- REQUEST ---
+Migrate `IContentDefinitionEventHandler` to the new `IContentDefinitionHandler`
+Currently, the `IContentDefinitionEventHandler` interface introduces events that are triggered by the `ContentDefinitionService`. However, this service is primarily intended for use by controllers, and while it’s acceptable to retain it "if needed," it should not be responsible for triggering event handlers.
+
+To improve consistency and ensure proper separation of concerns, all content definition events should be triggered by the `ContentDefinitionManager`, which is better suited for managing content definitions. Moving forward, the `ContentDefinitionManager` should be responsible for invoking events and continue using the `IContentDefinitionHandler` interface.
+
+To streamline this process, the `IContentDefinitionEventHandler` interface and its associated events should be marked as obsolete. This approach ensures that event handling is centralized in the `ContentDefinitionManager`, leading to better maintainability and cleaner architecture.
+--- REVIEW (CR) ---
+BODY: nan
+[global.json] Don't make changes to this file
+[src/OrchardCore/OrchardCore.ContentManagement.Abstractions/IContentDefinitionManager.cs] this change is not needed
+[src/OrchardCore/OrchardCore.ContentManagement/ContentDefinitionManager.cs] this should not be injected or used by the manager.
+
+### G094 | Copilot | Azure/azure-sdk-for-rust#2831 | reviewer=heaths | requester=RickWinter | src=None
+TITLE: Add tests to demonstrate etag deserialization issue in BlobPropertiesInternal struct
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: @copilot you must not change files under the "generated" folder. These changes must be made in the TypeSpec.
+
+@vincenttran-msft @seanmck are these changes queued up for your TypeSpec?
+
+
+### G095 | Copilot | s3s-project/s3s#311 | reviewer=Nugine | requester=Nugine | src=issue
+TITLE: Fix optional_object_attributes to be Optional in ListObjectsV2Input
+--- REQUEST ---
+[s3-aws] optional_object_attributes for ListObjectsV2Input should be Option
+I'm having a bit of trouble with using the `ListObjectsV2Input` struct. The `optional_object_attributes` field is not an `Option` at the moment, so the natural thing to do is to use `Vec::new()`. However, the S3 API return a 400 if this header is specified but empty:
+```
+<Error><Code>InvalidArgument</Code><Message>Invalid attribute name specified.</Message><ArgumentName>x-amz-optional-object-attributes</ArgumentName><ArgumentValue></ArgumentValue>
+```
+My workaround is to just add something inside that I don't actually need:
+```
+req.input.optional_object_attributes = vec![
+            OptionalObjectAttributes::from_static(OptionalObjectAttributes::RESTORE_STATUS)
+        ];
+```
+This allows the request to go through, but it would be nicer to make this field `Option` so we can set it to `None` and omit the header in the request.
+--- REVIEW (CR) ---
+BODY: Run `just dev` steps to ensure that the basic checks are normal.
+
+
+### G096 | Copilot | bryanedds/Nu#1085 | reviewer=bryanedds | requester=bryanedds | src=issue
+TITLE: Fix spatial tree invariant violation by removing elements from both node tree and fallback
+--- REQUEST ---
+Apply fix to allow removal of recently-added hacks in spatial trees.
+A bug surfaced in the spatial trees recently in Omni Blade that I did not have time to track down a proper fix for. These hacks were added instead -
+
+https://github.com/bryanedds/Nu/blob/60edda53bf0ebc3601349fd44675534ce9dab47b/Nu/Nu/Transform/Quadtree.fs?plain=1#L358C1-L360C67
+
+https://github.com/bryanedds/Nu/blob/60edda53bf0ebc3601349fd44675534ce9dab47b/Nu/Nu/Transform/Octree.fs?plain=1#L539C1-L541C66
+
+The purpose of this task is to find and fix the logic bug that causes the intended invariant of an element being only either in the fallback set OR node tree, never in BOTH.
+--- REVIEW (CR) ---
+BODY: All you did was add / change defensive programming to hide the root cause logic bug. I am not asking for this. I am asking for the root cause logic bug to be found and fixed so that this defensive coding can be removed. Adding defensive coding without fixing the underlying bug just wastes compute resources.
+
+
+### G097 | Copilot | vitejs/vite#20418 | reviewer=sapphi-red | requester=sapphi-red | src=None
+TITLE: [WIP] @vitejs/vite/issues/20415 Fix this issue. Make sure to write a test for it. The related line should be @vitejs/vite/files/packages/vite/src/node/server/middlewares/transform.ts
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: nan
+[packages/vite/src/node/server/middlewares/transform.ts] This part can be removed
+[playground/resolve/__tests__/resolve.spec.ts] Send `Accept: text/css` header here.
+[playground/resolve/__tests__/resolve.spec.ts] ```suggestion
+```
+[playground/resolve/__tests__/resolve.spec.ts] ```suggestion
+```
+[playground/resolve/test.css] ```suggestion
+}
+
+```
+
+### G098 | Copilot | Dart-Code/Dart-Code#5605 | reviewer=DanTup | requester=DanTup | src=issue
+TITLE: Support running individual test files from Dart-Code's test suite
+--- REQUEST ---
+Support running individual test files from Dart-Code's test suite
+Currently when you run `npm test` it runs all tests (either for all bots, or for a single bot if the `BOT` env var is set).
+
+It would be convenient to be able to run individual files with `npm test foo` and have it run any of the test files that contain "foo".
+
+To do this, we need to:
+
+- ensure `npm test` passes any additional args to `npm test-only`
+- ensure `npm test-only` passes the additional args to `./out/src/test/test_all.js` (and ideally skip `npm run test-grammar` if args are passed)
+- have `test_all.ts` (which compiles to `test_all.js`) pass these args in an env variable when invoking `vstest.runTests`
+- read the env variable in `test_runner.ts` (which is imported into each test suites `index.ts` to tun tests) and include it in the pattern used for locating the test files
+
+To verify this is done, set `BOT=dart` and try tunning some of the test files like:
+
+```
+npm test autolaunch
+```
+
+This should run only the files from `dart/debug/autolaunch.test.ts`.
+
+Running `npm test` without any args (but still with `BOT=dart`) should run all of the standard Dart test suite tests.
+
+The changes must work for all platforms, including Windows.
+--- REVIEW (CR) ---
+BODY: nan
+[src/test/test_all.ts] This doesn't sem to work on Windows. The bot failed with:
+
+```
+Running grammar tests...
+Failed to run grammar tests: Error: spawn npm ENOENT
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'spawn npm',
+  path: 'npm',
+  spawnargs: [ 'run', 'test-grammar' ]
+}
+```
+
+### G099 | Copilot | commonwarexyz/monorepo#1863 | reviewer=patrick-ogrady | requester=patrick-ogrady | src=issue
+TITLE: [storage/journal] Implement contiguous wrapper for variable journal
+--- REQUEST ---
+[storage/journal] Make Contiguous Variable
+Unlike `journal::fixed`, `journal::variable` does not assume that you are working over a contiguous global log (just one per section). The rationale for this was that you need to store consensus messages in multiple views and you want to prune them independently (if you added to a contiguous log, you'd have to track the lowest view active at some index): https://github.com/commonwarexyz/monorepo/blob/9a87cd8e17fdd066d46fff0a4d00d307f4572e3c/consensus/src/threshold_simplex/actors/voter/actor.rs#L1072-L1108
+
+We should make a wrapper around `journal::variable` that provides this contiguous functionality (likely from logic that already exists in `adb`). This would make implementing much of the `adb-related` logic MUCH simpler (as there is a ton of logic mapping index to location).
+--- REVIEW (CR) ---
+BODY: nan
+[storage/src/journal/contiguous.rs] @copilot this isn't being done concurrently? You are awaiting one and then calling the other?
+[storage/src/journal/contiguous.rs] @copilot move imports to the top of the file.
+[storage/src/journal/contiguous.rs] @copilot to properly test this, you must accept a `tail` and `tail_index` fields in config like fixed journal.
+
+### G100 | OpenAI_Codex | Metta-AI/metta#2165 | reviewer=nishu-builder | requester=None | src=None
+TITLE: feat: add MCP server
+--- REQUEST ---
+(none)
+--- REVIEW (CR) ---
+BODY: mcp server seems like a great idea
+
+this has ~500k lines changed -- i figure some of that's unintentional?
+
+right now you've got custom definition of a bunch of abilities. i think that the interface for it should be a thin wrapper around the Tool interface we now have, so i dont think we should have all that many things in `src/metta/mcp_server/*.py`. the exception is stuff that queries observatory
+
+I also think we probably dont need to commit usage examples
+
+I think there may be changes that are unrelated to the MCP server in this PR, like experiments/marimo/policy-selector-example.py
+

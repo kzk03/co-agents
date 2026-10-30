@@ -1,0 +1,8 @@
+{"sid":"W151","cat":"H1","inferable":"no"}
+{"sid":"W152","cat":"C2","inferable":"yes"}
+{"sid":"W153","cat":"C1","inferable":"partial"}
+{"sid":"W154","cat":"C1","inferable":"yes"}
+{"sid":"W155","cat":"C1","inferable":"yes"}
+{"sid":"W156","cat":"H2","inferable":"partial"}
+{"sid":"W157","cat":"UNK","inferable":"-"}
+{"sid":"W158","cat":"H3","inferable":"no"}

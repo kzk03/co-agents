@@ -1,0 +1,11 @@
+{
+ "sid": "G029",
+ "issue": null,
+ "issue_text": null,
+ "review_submitted_at": "2025-06-26T13:11:23Z",
+ "n_disc": 3,
+ "n_disc_same_reviewer": 1,
+ "disc_chars": 650,
+ "disc_truncated": false,
+ "discussion": "[2025-06-25T20:50:10Z commented by devin-ai-integration[bot]]\n### 🤖 Devin AI Engineer\n\nI'll be helping with this pull request! Here's what you should know:\n\n✅ I will automatically:\n- Address comments on this PR. Add '(aside)' to your comment to have me ignore it.\n- Look at CI failures and help fix them\n\nNote: I can only respond to comments from users who have write access to this repository.\n\n⚙️ Control Options:\n- [ ] Disable automatic comment and CI monitoring\n\n[2025-06-26T10:55:00Z commented by mogery]\n<!-- linear:isThreadRoot -->\n\nthis is deeply wrong\n\n[2025-06-26T10:57:26Z reviewed by micahstairs state=changes_requested]\na few changes plz"
+}

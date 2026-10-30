@@ -1,0 +1,103 @@
+### W026 home-assistant/core | Add network MAC connection to Rabbit Air devices
+  BODY: Thanks for adding the MAC connection here!  One change request: the `format_mac()` call isn't needed. The device registry already normalizes `CONNECTION_NETWORK_MAC` connections through `format_mac()` itself in `_normalize_connections()` (`homeassistant/helpers/device_registry.py`), which `async_get_or_create()` runs on whatever connections an entity passes in:  ```python def _normalize_connections(connections):     """Normalize connections to ensure we can match mac addresses."""     return {  
+### W027 PaddlePaddle/Paddle | [Profiler] Export common host event gather
+  BODY: 需要先调整后再继续合入。  阻塞点：`tools/windows/run_unittests.sh` 的 Windows-Inference skip list 目前把 `^new_profiler_test$` 替换成了 `^operator_test$`。本 PR 的目标是恢复 `new_profiler_test` 覆盖并修复 profiler DLL 状态共享；新增跳过 `operator_test` 会降低无关单测覆盖，且 PR 描述没有说明它与本修复的关系。建议这里仅移除 `new_profiler_test`；如果 `operator_test` 确实需要临时 skip，请拆成独立 PR/变更并说明失败原因和恢复条件。  其余 profiler 导出入口方向看起来合理；已有线程里提到的共享声明/头文件契约问题也建议一并处理，避免后续签名或 `PADDLE_API` 属性漂移。当前 required checks 仍有失败/运行中任务，修复后还需要再看最终 CI。
+### W028 ray-project/ray | [rllib] Fix segment_tree.py edge case
+  BODY: Awesome PR @pseudo-rnd-thoughts!! Thanks for fixing this hard-to-find one.
+  [segment_tree.py] Nice! 
+  [segment_tree.py] Awesome! Simple fix for a big problem :)
+  [test_segment_tree_replay_buffer_api.py] Great! Could we maybe use the checks provided by `TestCase` itself or the rllib one used in many testcases? 
+  [test_segment_tree_replay_buffer_api.py] Again, like above. Could we use the `TestCase` checking methods or the one from us? Or is there a specific reason why you would prefer the `assert` here?
+  [test_segment_tree_replay_buffer_api.py] Very nice! Could we add a comment of why this case could cause problems on the `SumSegment`?
+### W029 home-assistant/core | Type the ios registration data with a HassKey
+  BODY: I think the HassKey can be improved.
+  [const.py] I think all keys are dicts: ```suggestion IOS_DATA: HassKey[dict[str, dict[str, Any]]] = HassKey(DOMAIN) ```
+### W030 NVIDIA/Megatron-LM | Muon CPU offload
+  BODY: Dear @pengdurice, sorry to be the bearer of bad news. We're moving toward a unification of layer- and elementwise optimizers and these changes lead to further divergence between these types of optimizers.
+ 
+ In order not to merge the PR by accident, I'll block it for now while we figure out how to continue with this. For now, I appreciate greatly that you took the time to address all the requests and am sorry that we cannot move forward yet.
+### W031 dotnet/docs | Add common patterns for field keyword in C# 14
+  BODY: Hi @gidadomukhtar   This is a great addition. I have a couple suggestions, and we need to fix the lint issues. Then, this is ready to merge.
+  [csharp-14.md] I try to keep the what's new pages structurally simple. Let's change this from an H3 to a short bit of prose:   ```suggestion   You can also simplify common patterns like lazy initialization, property change notifications, and structured string fields. The following code shows examples of each: ```
+### W032 backstage/backstage | frontend-dev-utils: add helper for plugin dev apps
+  BODY: nan
+  [createDevApp.test.tsx] could go for a single root `jest.setTimeout` too 
+  [createDevApp.tsx] This seems to make sense to me
+  [report.api.md] Why was the features field extracted here? Its type didn't change right? Did you just want to defer the others to look more like advanced options so to speak, so they aren't too visible upfront?
+### W033 ydb-platform/ydb | Add worklflow for compatibility tests
+  BODY: nan
+  [regression_run_compatibility.yml] Это избыточно, по дефолту и так будет `default: small,medium,large`
+### W034 getsentry/sentry | feat(search): Middle-ellipsis filter values in the query builder
+  BODY: This looks awesome in general, and I _really_ like the reasoning for the change. +1 to putting the ellipses in the middle.  But, the current implementation crops out a lot more text than the current prod behavior in some cases:  <table> <thead> <tr> <th>Case</th> <th>Before</th> <th>After</th> </tr> </thead> <tbody> <tr> <td>Single value, 1600px<br />(value fits in 373px uncropped)</td> <td><img alt="before-1600" src="https://github.com/user-attachments/assets/7a14076d-b439-4aab-a081-1161919cfc5
+  [formattedQuery.spec.tsx] [Testing] You can get away without much of the manual resize observer shenanigans by using the existing `triggerResizeObservers` test helper:  ```ts it('re-fits the filter value when an observed ancestor resizes', () => {   const path = '/api/0/organizations/{organization_id_or_slug}/events/';   render(<FormattedQuery {...defaultProps} query={`tran
+### W035 ray-project/ray | [Data] - Update pandas, modin, and pyarrow minimums
+  BODY: Can you remove the old pyarrow v9 depset? https://github.com/ray-project/ray/blob/master/python/deplocks/ci/data-pyarrow-v9-ci_depset_py3.10.lock
+### W036 getsentry/sentry | feat(dynamic-sampling): Compare EAP vs outcomes org sliding-window rate
+  BODY: nan
+  [queries.py] `DataCategory.TRANSACTION` should not have any `Sampled:` outcomes. These are reserved for the indexed category, as the indexed payload is dropped, not the "total". 
+  [queries.py] I think the right abstraction to use here would be `sentry.snuba.outcomes.QueryDefinition`.
+  [queries.py] I thought we needed 5 minutes of data?  Last 1 minute, may be off because of aggregation delays of outcomes.
+### W037 PaddlePaddle/Paddle | [Build] Ensure load nvidia libraries from `site-packages` on arm64 build
+  BODY: 已复查最新提交。之前的 formatter 和 cuSPARSELt 加载问题在当前 head 仍保持已修复；这次新提交在 ARM64 早期 preload 分支引入了一个需要新 commit 修复的回归，细节见行内评论。  <div align="right">    <sup>Powered by Nyanpasu with gpt-5.5 xhigh, please check the suggestions carefully.</sup> </div>
+  [__init__.py] ![P1](https://img.shields.io/badge/P1-high-orange) **优先级：P1**  **处理要求：请针对该评论修复并提交新的 commit。**  这次把这里改成 `builtins.int` 会让 ARM64 的早期 preload 分支失效：这个代码块在文件顶部执行，但 `builtins` 直到后面 `typing.TYPE_CHECKING` 的 `else` 分支才导入。`platform.machine() == 'aarch64'` 时会先触发 `NameError`，随后被外层 `except Exception` 吞掉，导致 `_preload_nvidia_lib()` 不会执行，PR 要修的 ARM build 下从 site-
+### W038 home-assistant/core | Add Raspberry Pi Firmware update entity
+  BODY: Small piece of feedback on the warning that we can take or leave. I think we should adjust the setup error handling a little to differentiate between Supervisor communication error and endpoint missing like we do elsewhere in this integration.  I also should note that it feels rather inconsistent to have the rpi board features handled by `hassio` when we have `homeassistant_yellow` and `homeassistant_green` for those boards. Why did we choose not to follow that established model and make a new i
+  [update.py] ```suggestion             "Power loss during the EEPROM update can permanently damage your device." ``` The term "brick your device" seems like jargon only more technical users would understand. Do we use that elsewhere? I asked claude and it agreed and came up with some options. I liked that the suggestion above best but here were the others if yo
+  [coordinator.py] It does feel odd to me that this is within the `hassio` integration when we have separate `homeassistant_yellow` and `homeassistant_green` integrations which handle those boards and provide devices for those board features. Feels inconsistent that those integrations provide a device for the led toggles but the main `hassio` integration is providing
+  [update.py] ```suggestion             try:                 rpi_firmware = await client.os.raspberry_pi_firmware_info()             except SupervisorNotFoundError as err:                 # Older supervisors (pre OS 18) don't expose the endpoint.                 rpi_firmware = None                 _LOGGER.debug("Raspberry Pi firmware info unavailable: %s", err) 
+### W039 getsentry/sentry | Refactor dynamic sampling rule ID assignment using ORM query
+  BODY: See previous comment.
+### W040 home-assistant/core | Add button platform to bosch_shc
+  BODY: nan
+  [button.py] What's a scenario? Is it the same as a scene?
+  [conftest.py] why don't you use `with patch()` and directly patch the object?
+  [conftest.py] Do we need to patch zeroconf as we have `bosch_shc_mock_async_zeroconf` as fixture?
+  [test_button.py] Why do we have this as a fixture, as we already have this as a generic one?
+  [test_button.py] I think you could consider bootstrapping the mock with devices by default, as some devices would probably yield multiple entities
+### W041 apache/airflow | [Helm]Support tpl rendering in ServiceAccount annotations, metadataConnection, and config 
+  BODY: Looks much better! Just small nits
+  [test_annotations.py] ```suggestion                 "airflowVersion": "2.11.0", ``` We support all 2.11 versions currently, so it is safer to test with the first 2.11 version.
+  [test_annotations.py] Currently, the `workers.serviceAccount` is deprecated in favour of `workers.celery.serviceAccount` (tested here) and `workers.kubernetes.serviceAccount` (tested in test_pod_template_file.py). Could you modify this test to test the celery one and add a similar test case for the Kubernetes one?
+  [test_annotations.py] ```suggestion ``` Just for consistency with other test cases, which are testing Airflow 3 renderings.
+  [test_annotations.py] ```suggestion                 "airflowVersion": "2.11.0", ```
+  [test_annotations.py] Could you separate pgbouncer to the dedicated test case to remove the conditional logic from the test (basically point 2 https://github.com/apache/airflow/pull/64763#discussion_r3046002491)?
+### W042 dotnet/docs | Update .NET 10 overview page for Preview 6
+  BODY: There are a lot of code examples in the release notes that were omitted here. I think they should be added.
+  [libraries.md] ```suggestion
+ This article describes new features in the .NET libraries for .NET 10. It has been updated for Preview 6.
+ ```
+  [libraries.md] ```suggestion
+ The JSON specification doesn't specify how to handle duplicate properties when deserializing a JSON payload. This can lead to unexpected results and security vulnerabilities. .NET 10 introduces the <xref:System.Text.Json.JsonSerializerOptions.AllowDuplicateProperties?displayProperty=nameWithType> option to disallow duplicate JSON pro
+  [libraries.md] ```suggestion
+ Duplicates are detected by checking if a value is assigned multiple times during deserialization, so it works as expected with other options like case-sensitivity and naming policy.
+ ```
+  [libraries.md] ```suggestion
+ The JSON serializer accepts many options to customize serialization and deserialization, but the defaults might be too relaxed for some applications. .NET 10 adds a new <xref:System.Text.Json.JsonSerializerOptions.Strict?displayProperty=nameWithType> preset that follows best practices by including the following options:
+ ```
+  [libraries.md] These should probably end in periods and use xref links to the APIs.
+  [libraries.md] Use xref links to APIs.
+### W043 home-assistant/core | Utility Meter: capture periodically resetting state from zero
+  BODY: This fixes a real gap. On a reset we currently discard the negative delta and also lose any post-reset accumulation from zero.   Aligning with total_increasing stats is reasonable in spirit, but this PR treats any decrease as a reset and adds the full new value (100→95 would add 95), which is unsafe. The recorder already gates this with a 10% dip heuristic in [reset_detected()](homeassistant/components/sensor/recorder.py), and we shouldn’t copy that arbitrary rule into utility meter wholesale wi
+### W044 home-assistant/core | Fix hassio.backup_partial AttributeError when folders are specified
+  BODY: nan
+  [services.py] We can use `vol.Coerce(Folder)` and drop the custom validation for this part.
+### W045 NVIDIA/Megatron-LM | Add config option to set attrs in TE quantization recipe
+  BODY: nan
+  [transformer_engine.py] Can we add this recipe to the regular nvfp4 recipe as well? I assume `CustomRecipe` is a nice way to support various RL recipes, but for uniform recipes like nvfp4, it can also benefit from E5M3.
+### W046 getsentry/sentry | chore: exclude bin/ from pre-push mypy
+  BODY: shouldn't we just be ignoring bin/ instead?
+### W047 home-assistant/core | Add 100% coverage to binary_sensor for Fritz
+  BODY: tests are also failing
+  [test_binary_sensor.py] Copilot is right here in principle, but move L52&53 out of the patch and only add L55&56
+### W048 ydb-platform/ydb | [html report] highlight sanitizer issues
+  BODY: Поправь замечения, пожалуйста
+### W049 home-assistant/core | Split HDFury coordinator into separate info and config coordinators
+  BODY: Sorry for the delay, have some busy days. Commented on some small cleanups. Can you also update the PR title and description so people reviewing after me understand that we are going for a split coordinator within this PR
+  [button.py] This can be removed when assigned in the entity.py  ```suggestion  ```
+  [entity.py] ```suggestion         self.runtime_data = runtime_data         self.entity_description = entity_description ```
+  [number.py] This can be removed when assigned in the entity.py   ```suggestion  ```
+  [button.py] ```suggestion             await self.entity_description.press_fn(self.runtime_data.client) ```
+  [number.py] ```suggestion             await self.entity_description.set_value_fn(self.runtime_data.client, str(int(value))) ```
+  [select.py] This can be removed when assigned in the entity.py  ```suggestion  ```
+### W050 home-assistant/core | Limit Matter light color temperature values
+  BODY: See my latest comment. Lets please clamp to practical ranges AND matter range (whichever makes more sense for min/max)

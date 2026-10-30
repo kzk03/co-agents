@@ -1,0 +1,45 @@
+{
+ "text": "{\"main\":\"The test file slt/standard/isfinite.slt should just contain the function name documentation line, not the extra content that was added.\",\"R1\":\"no\",\"R1_item\":0,\"R2\":\"no\",\"R2_item\":0,\"R3\":\"no\",\"R3_item\":0}",
+ "cost": 0.028992800000000003,
+ "sec": 5.0,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 5707,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 86,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 5707,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 86,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 5707,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 5707
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G004",
+ "order": [
+  "A",
+  "C",
+  "B"
+ ]
+}

@@ -1,0 +1,41 @@
+{
+ "text": "1. **README.md** (Quick Start → Gradle example) — Still shows `md.required.set(true)` and the comment `// Enable/Disable MD report (default: false)`, which no longer match the renamed API introduced by this PR. Fix: update to `markdown.required.set(true)` / `// Enable/Disable Markdown report (default: false)`, mirroring the equivalent fix already made in `website/docs/gettingstarted/gradle.mdx`.\n\n2. **detekt-report-markdown/.../MdOutputReport.kt** — The PR's own Summary states \"Class: `MdOutputReport` → `MarkdownOutputReport`\" and \"Report ID: `MdOutputReport` → `MarkdownOutputReport`\", but the diff shows the class is still named `MdOutputReport` and `id` is still the literal string `\"MdOutputReport\"` (only `reportId = \"markdown\"` was added). This also directly contradicts an earlier checklist line that says to keep \"class name, id, and ending as-is.\" Resolve the contradiction: either actually finish the class/id rename everywhere it's referenced, or correct the PR description so it doesn't claim work that wasn't done — leaving it as-is misleads reviewers about the real scope of the change.\n\n3. **detekt-core/src/test/kotlin/.../OutputFacadeSpec.kt** — Local variable `mdOutputPath` was left unrenamed (still `val mdOutputPath = tempDir.resolve(\"detekt.md\")`) even though the PR claims \"Rename `mdOutputPath` variables to `markdownOutputPath`\" was done. Rename for consistency with the new `\"markdown\"` report-id strings used right next to it.\n\n4. **detekt-report-markdown/src/test/kotlin/.../MdOutputReportSpec.kt** — File/class retains the old `Md` prefix after only the package was moved, inconsistent with the \"update test files to reference markdown instead of md\" checklist item. Should be resolved the same way as item 2 (rename consistently or amend the description).\n\n5. **Public API break with no migration aid** (`DetektReports.md`→`markdown`, `DetektReportType.MD`→`MARKDOWN`, CLI `--report md:path`→`markdown:path`) — no deprecated/forwarding alias is provided for users with existing `reports.md { ... }` blocks or CI invocations using `--report md:...`; these will now fail to compile/parse with no soft-migration path. Since the README shows this targets `2.0.0-alpha.0`, a hard break may be acceptable for this project's stage, but it should be explicitly confirmed (and ideally called out in a changelog/migration-guide entry) rather than merged silently.",
+ "cost": 0.1536788,
+ "sec": 89.2,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 17751,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 7737,
+  "output_tokens_details": {
+   "thinking_tokens": 6831
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 17751,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 7737,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 17751,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 17751
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G025",
+ "cond": "C"
+}

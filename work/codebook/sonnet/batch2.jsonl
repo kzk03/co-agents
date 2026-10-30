@@ -1,0 +1,12 @@
+{"sid":"G098","cat":"C","also":"","doc":"-"}
+{"sid":"G100","cat":"C","also":"","doc":"-"}
+{"sid":"H003","cat":"C","also":"R-gov","doc":"-"}
+{"sid":"H004","cat":"R-gov","also":"","doc":"could"}
+{"sid":"H005","cat":"D-dir","also":"","doc":"no"}
+{"sid":"H007","cat":"K-pub","also":"","doc":"no"}
+{"sid":"H010","cat":"D-dir","also":"","doc":"no"}
+{"sid":"H020","cat":"C","also":"","doc":"-"}
+{"sid":"H022","cat":"D-risk","also":"C","doc":"no"}
+{"sid":"H024","cat":"R-tech","also":"","doc":"could"}
+{"sid":"H028","cat":"D-dir","also":"","doc":"no"}
+{"sid":"H033","cat":"K-priv","also":"","doc":"no"}

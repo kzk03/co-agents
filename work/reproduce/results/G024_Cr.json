@@ -1,0 +1,41 @@
+{
+ "text": "1. **Target: entire PR scope vs. maintainer's explicit request (PR conversation, 2025-07-29).** The maintainer asked twice for each \"flavor\" to be split into its own separate FilterList entry (new FilterList.json rows + related junction entries), but the PR still only updates the single existing entry 1706 and adds the Gaming-Full/Android-Mini templates as extra ViewURLs on it. This directly contradicts the documented ViewURL semantics (mirrors/parts of the *same* list only) and ignores maintainer feedback. Fix: create new FilterList entries for Gaming-Full-Template and Android-Mini-Template (each with its own id, name, description, viewUrl, tags, maintainer link), and leave entry 1706 with only the Main-Template as its (single/primary) ViewURL.\n\n2. **Target: `services/Directory/data/FilterList.json` (entry 1706) / migration `UpdateData` for \"FilterList\".** `description` still reads \"Hosts file for blocking spyware, ads, analytics and tracking on German websites and domains,\" which is stale copy from the old DE-only list and is not updated to reflect the new multi-template, non-German-specific project. Fix: update `description` to match the new scope (and write per-entry descriptions once split per #1).\n\n3. **Target: `copilot-instructions.md`.** Maintainer explicitly asked to \"capture this design in copilot-instructions.md as well so you remember that in the future\" (the one-FilterList-per-template-variant rule). The diff contains no changes to this file. Fix: add a short section documenting that distinct template/flavor variants of a list get separate FilterList entries, while FilterListViewUrl is reserved for mirrors/parts of the same content.\n\n4. **Target: `services/Directory/data/FilterListTag.json` / migration tag inserts (tagId 19, 20).** The PR description claims tags \"anti-corp, admin\" were added, but there's no visible mapping from those tag IDs to a Tag.json definition in the diff, and \"anti-corp\"/\"admin\" are not among FilterLists' established tag taxonomy (ads, privacy, malware, tracking, etc.) — \"admin\" in particular is a vague/unestablished category for a hosts file. Fix: verify tagId 19/20 actually correspond to intended tags in Tag.json, and reconsider whether \"anti-corp\" and \"admin\" fit the existing tag vocabulary or should map to existing tags (e.g., \"tracking\"/\"corporate\") instead of introducing ad hoc new semantics.\n\n5. **Target: `FilterListViewUrl.json`, new entries 3072/3073 `primariness` values.** Per the wiki-documented semantics reiterated by the maintainer, multiple primariness values are meant for mirrors of the *same* content, not functionally different template variants (general/gaming/mobile) with different blocking scope. Even setting aside issue #1, encoding \"Gaming-Full\" and \"Android-Mini\" as primariness 2/3 mirrors of the Main-Template is semantically wrong — they're not fallback mirrors, they're different content. Fix: resolved by the split in #1; these should not exist as secondary/tertiary ViewURLs on the same entry at all.",
+ "cost": 0.1118608,
+ "sec": 15.1,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 23939,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 1080,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 23939,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1080,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 23939,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 23939
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G024",
+ "cond": "Cr"
+}

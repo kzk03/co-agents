@@ -1,0 +1,41 @@
+{
+ "text": "1. `rule/struct_tag.go`, `Configure()` — the \"disabled\" directive is only recognized when `len(parts) == 2`. Any other arrangement (e.g. `\"validate,disabled,extra\"`, or \"disabled\" appearing with another option for the same key) silently falls through to the normal option-parsing loop and gets stored as a literal custom option string `\"disabled\"` instead of erroring or disabling. This is a confusing, undocumented edge case for a brand-new public config keyword. Fix: detect `\"disabled\"` anywhere in `parts[1:]` and either treat the whole entry as a disable-directive consistently or return a config error when it's combined with other options, instead of silently misinterpreting it.\n\n2. `rule/struct_tag.go`, `checkTaggedField()` — `tagKey := tagKey(tag.Key)` shadows the package-level type `tagKey` with a local variable of the same name. This hurts readability and is a landmine for future edits in that scope (any reference to the `tagKey` type there now resolves to the variable). Rename the local variable (e.g. `key`), consistent with how `Configure()` already names its equivalent variable.\n\n3. `testdata/struct_tag_disabled_checkers.go` — file has no trailing newline and contains trailing whitespace on several lines (after the `Field8`/`Field9` comments). `gofmt`/`golangci-lint` will flag this and likely break CI. Run `gofmt -w` on all changed files before merge (also check `rule/struct_tag.go` for the stray blank line with a trailing tab introduced around `r.disabledCheckers = make(...)`).\n\n4. `test/struct_tag_test.go` — the new test only exercises the happy path (two independently-disabled keys) through the golden-file fixture. There's no coverage for the Configure-level edge cases this PR introduces: combining `\"key,disabled\"` with custom options for the same key, malformed combinations like `\"validate,disabled,extra\"`, or case sensitivity of the `disabled` keyword. Add direct unit tests against `Configure()`'s error/parsing behavior, not just an end-to-end lint fixture.\n\n5. Design/API scope — overloading the existing comma-separated \"custom options\" argument syntax with a magic string `\"disabled\"` mixes two distinct concerns (per-checker custom options vs. an enable/disable toggle) into one ambiguous flat format, with no namespacing against a future real option literally named `disabled`. This is a new, permanent piece of public configuration surface for a widely-used linter — worth confirming with maintainers whether a more explicit/structured syntax (e.g. a dedicated `disabled-checks` option) is preferred over this convention before locking it in.",
+ "cost": 0.379288,
+ "sec": 102.3,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 72061,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 9104,
+  "output_tokens_details": {
+   "thinking_tokens": 8199
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 72061,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 9104,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 72061,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 72061
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G026",
+ "cond": "A"
+}

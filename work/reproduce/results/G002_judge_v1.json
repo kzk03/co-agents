@@ -1,0 +1,45 @@
+{
+ "text": "{\"main\":\"The implementation must walk the entire inheritance hierarchy (not just check the first-level base type) and rename/reshape the telemetry to track MSBuild-specific task names mapped to counts of their non-sealed subclass usage.\",\"R1\":\"yes\",\"R1_item\":8,\"R2\":\"yes\",\"R2_item\":2,\"R3\":\"yes\",\"R3_item\":1}",
+ "cost": 0.0436388,
+ "sec": 4.0,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 9271,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 125,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 9271,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 125,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 9271,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 9271
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G002",
+ "order": [
+  "A",
+  "C",
+  "B"
+ ]
+}

@@ -1,0 +1,71 @@
+sid,v1,also,doc_ex,note
+G002,D-dir,C1,no,テレメトリで何を集計するかを持ち主が決め直す(非sealedのMS製Taskの数)
+G006,C1,D-dir,no,env.varsの誤り(先頭)+節の削除・移動は編集上の優先度判断
+G007,K-priv,,could,依頼の意図(opencode.aiのawesome-list)を取り違え
+G011,R-tech,,could,ログdirのロジックはconf crateに置く(配置規約)
+G016,C2,D-risk,could,IPYテスト失敗は無視してよい(判断)+skipifでなくcompas.IPYで(既存の書き方)
+G020,C1,D-dir,no,他の同様箇所も(先頭)+commonlib側の責務か
+G024,R-tech,,could,FilterListViewUrlsはミラー/分割用というwikiの設計
+G026,D-dir,,no,設定方式の選択(短文)
+G027,K-priv,D-dir,could,omhttpはcontribに残す(メンテナの今後の計画)
+G029,D-dir,,no,課金を文書ごとに計算する設計へ
+G033,D-dir,,no,dev専用にしない(スコープ)
+G036,D-dir,,no,元のSQLのままでよい(変更範囲の判断)
+G037,R-tech,K-priv,could,ビルド検証はActions・最新SDK・code-behind禁止(規約をinstructionsに書く場面そのもの)
+G045,X,,-,Abandoning this pending review as requested
+G046,C1,,-,依頼にあった範囲(modern .NETのみ)を超えた=仕様不遵守
+G055,C1,D-risk,-,ユーザーのローカルブランチ削除は危険(誰でも挙げる規範)
+G062,D-dir,,no,オプトインのformatterに作り直すAPI設計の選択
+G071,C2,,-,冗長なコメント・過剰なテスト
+G075,R-tech,D-dir,could,オプションでなくプラグインで実装
+G079,K-pub,,no,#1284(GPUでもOMP_NUM_THREADSが効く)
+G083,K-pub,,could,netstandard2.0以下は.NET Frameworkで強名検証される(外部仕様)
+G087,D-dir,R-tech,no,ExtensionsList拡張+feature flag必須
+G093,R-tech,,could,global.jsonを触らない
+G094,R-tech,R-gov,could,generated配下は直接変更せずTypeSpecで
+G098,C1,,-,Windowsで動かない(botの失敗)
+G100,D-dir,C2,no,MCPはTool interfaceの薄いラッパにすべき
+H003,C2,R-gov,-,単一責務へ分割+AI利用の申告
+H004,R-gov,,could,エンティティモデル変更はarchitecture discussionの承認が先
+H005,C2,K-priv,-,Loggerを渡すと変更が大きい+その挙動はどうせ消す予定
+H007,K-pub,D-dir,no,standardschemaへ向かう方針(関連PR #33836)
+H010,R-tech,,could,KConfigにオプションを追加し既定値を決める
+H020,D-dir,,no,既定placementのみ選べるUIに
+H022,K-priv,D-risk,no,Helm Chart リリースの議論が終わるまで待つ
+H024,R-tech,,could,Python 3.9をサポートするのでPEP604は使えない
+H028,D-dir,K-pub,no,TTLキャッシュは過剰(スキーマ不変・大規模展開でのコスト)
+H033,K-priv,,could,base image変更時にレビュー依頼が飛ぶという運用上の事情
+H034,D-dir,,no,Roadmapは消さずに直す(自分で直す)
+H036,C1,,-,後方互換(古いIstioは新serviceを理解しない)
+H044,D-dir,,no,V2に必要か(スコープの問い)
+H047,D-dir,,no,ゲームバランス(セキュリティが無限に武器を得る)
+H051,D-risk,,no,依存PRを先にレビューするのでマージを止める
+H052,R-gov,,could,AI利用の申告・人間が書いたPRメタデータ必須
+H059,K-pub,,no,以前この設定があって削除した経緯
+H062,R-tech,K-pub,could,既存文字列にplaceholderを足すと既存翻訳が壊れる→新キーを
+H064,K-pub,,could,SLOWLOGはノード単位(Redisの仕様)
+H065,D-dir,,no,ブラウザのパスワード管理UIは残す方が有用(価値判断)
+H068,R-tech,K-priv,could,当面新しいplugin aliasは受け付けない(Slackのスレッド)
+H069,C1,R-tech,-,全OSD up+inを要求するのは大きな後退
+H070,K-pub,,no,類似PRが壊してrevertされた経緯
+H071,D-dir,C2,no,なぜこの内部関数を足すのか(必要性)
+H072,D-risk,C2,no,影響範囲が大きいのでこの方式では進めない
+H073,C2,,-,APIの形(public・抽象化・パッケージ)
+H074,C3,R-gov,-,blurbの文面修正(+CLA署名)
+H075,R-tech,,could,AOTコンパイラは不正入力で失敗させる方針
+H076,D-risk,,no,1.3リリースまでマージを止める
+H079,C2,,-,forbidigoルール追加・チェックスクリプトの除外
+H080,D-risk,,no,ログなしのgreenは受け入れられない
+H081,X,,-,Requesting changes so the bot understands the current state
+H083,R-tech,K-priv,could,議論済み:stateトピックは1つ
+H085,D-dir,K-pub,no,方針がまだ合意できていない(Issue #33052)
+H086,R-tech,,could,CompositeImplicitAutogradでないviewだけにview_scatterを
+H087,K-priv,,no,顧客が4ノード×1GPUでメモリ問題に遭った
+H088,D-dir,C2,no,trace処理は削除しAlloyへ(方向の提案)
+H090,D-dir,C3,no,旧バージョンでも動かすべきか・第二の意見を求める
+H093,K-pub,,no,上流の破壊的変更コミットに合わせてrebase
+H094,K-pub,,no,PR #34342で意図的に決めた挙動
+H095,K-priv,,no,自分のmacでの実際の出力
+H096,C2,,-,仮のアートを直す
+H097,C1,,-,原因を突き止めずに回避している
+H099,C2,R-tech,-,変更を分割して(+just-in-timeで型を足す方針)

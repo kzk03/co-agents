@@ -1,0 +1,41 @@
+{
+ "text": "1. **File:** `src/Tasks/Microsoft.NET.Build.Tasks/targets/Microsoft.NET.Sdk.CSharp.targets`, new `PropertyGroup Condition=\"'$(_IsNETCoreOrNETStandard)' == 'true'\"`.\n**Wrong:** The condition keys off `$(_IsNETCoreOrNETStandard)`, a property that is never defined anywhere in the diff or the shown base file. There's no way to confirm it exists, what it actually evaluates to, or where it's set relative to this targets file's import order. If it's undefined, the condition silently evaluates to false everywhere and the \"fix\" is a complete no-op.\n**Fix:** Use an explicit, self-contained condition — the exact same pattern already used two blocks above in this file for the hot-reload `ItemGroup`: `'$(TargetFrameworkIdentifier)' == '.NETCoreApp'`. Don't introduce a new opaque helper property for a one-line check.\n\n2. **File:** same targets file (comment + condition) vs. PR description.\n**Wrong:** The comment says \"Suppress CS8002 ... for .NET Core **and .NET Standard** TFMs,\" and the property name `_IsNETCoreOrNETStandard` implies netstandard is included — but the PR description explicitly states \"Projects targeting .NET Framework and .NET Standard are unaffected and will continue to receive CS8002 warnings.\" The code and the description directly contradict each other.\n**Fix:** Pick one behavior and make the condition, comment, tests, and description all agree. Per the original issue (\"the TFM is a .NET Core TFM\"), scope should be `.NETCoreApp` only.\n\n3. **File:** `src/Tasks/Microsoft.NET.Build.Tasks/targets/Microsoft.NET.Sdk.CSharp.targets` — suppressing for netstandard.\n**Wrong:** Suppressing CS8002 for netstandard2.0/2.1 class libraries is substantively incorrect: a netstandard library can be referenced by a .NET Framework app, where strong-name/assembly-binding checks still apply and the warning is meaningful. Blanket suppression hides a legitimate warning for that consumption scenario.\n**Fix:** Restrict suppression strictly to `.NETCoreApp`, not netstandard.\n\n4. **File:** `test/Microsoft.NET.Build.Tests/GivenThatWeWantToSuppressCS8002Warning.cs`, `CS8002_is_suppressed_for_modern_net_tfms` (includes `netstandard2.0`/`netstandard2.1`).\n**Wrong:** This test asserts netstandard **is** suppressed, directly contradicting the PR description's testing section which claims netstandard is **not** suppressed. This inconsistency, combined with the undefined property in finding #1, casts doubt on the \"All tests pass successfully\" claim — it looks like the description was written without actually re-validating against the final diff.\n**Fix:** Re-run `dotnet test`/`GetValuesCommand` against a real local SDK build for this test class before merging, and align the test expectations with the corrected (`.NETCoreApp`-only) scope from #2/#3.",
+ "cost": 0.1187828,
+ "sec": 77.2,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 11072,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 6919,
+  "output_tokens_details": {
+   "thinking_tokens": 5830
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 11072,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 6919,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 11072,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 11072
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G083",
+ "cond": "B"
+}

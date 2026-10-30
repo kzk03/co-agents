@@ -1,0 +1,41 @@
+{
+ "text": "1. `configure.ac` (deleted, -3255 lines): The entire generated/autoconf input file is removed with no justification tied to the stated issue. This will break `autoreconf`/the build. This must be reverted — it looks like an accidental artifact of the contrib→plugins move and is wildly out of scope for a retry-classification bugfix.\n\n2. `contrib/omhttp/omhttp.c` `checkResult()`: Changing the *default* behavior so 3xx/4xx are no longer retried (RS_RET_DATAFAIL instead of RS_RET_SUSPENDED) is a backward-incompatible change to a widely-deployed module's out-of-the-box behavior. It isn't gated behind a compatibility flag, a new parameter default, or a major-version note — existing configs relying on 4xx retry will silently start dropping messages after upgrade. This needs to either keep the old default and add an opt-in parameter (e.g. `retryOnDataFail` or similar), or be clearly called out as a breaking change with a deprecation cycle, per rsyslog's usual compatibility conventions.\n\n3. `Makefile.am` / `plugins/omhttp/omhttp.c` / doc: Moving omhttp from `contrib` to `plugins` and relabeling it \"supported — maintained by rsyslog core team\" is a project-governance decision that should not be bundled into (or decided by) a bug-fix PR for issue 5957. It also isn't actually moved — `plugins/omhttp/omhttp.c` is a 6-line stub that `#include`s `../../contrib/omhttp/omhttp.c`, while the real source and edits still live under `contrib/omhttp/`. This is fragile (relative include path, duplicated directory structure, confusing for future contributors) and should be either a real `git mv` done as its own reviewed PR, or dropped entirely from this change.\n\n4. `doc/source/configuration/modules/omhttp.rst`: The removed paragraphs describing the transaction-commit bug (issue #2420) are replaced with an unverified claim (\"Core transactional retry handling has since been improved\"). If issue #2420 is not actually confirmed fixed, this removes load-bearing operator guidance (why `action.resumeRetryCount` doesn't work for multi-message batches) based on an assumption. Needs a linked confirmation/issue reference, or keep the original caveat.\n\n5. Test changes across `tests/omhttp-*.sh` go far beyond \"raise load / drop debug noise\": several tests had assertions removed or weakened, e.g. `omhttp-batch-retry-metadata.sh` drops the `httpretrycodes=[\"207\",\"500\"]` coverage and the `omhttp_validate_metadata_response` / response-log check entirely, and several tests switch from dedicated ports (`get_free_port`) to the shared `omhttp_server_lstnport`. These look like coverage regressions smuggled into an unrelated PR and should be split out and justified individually, not folded into a \"fix issue 5957\" diff.\n\n6. No new test actually exercises the core behavioral change (3xx/4xx now returning RS_RET_DATAFAIL and not being retried). Given this is the entire point of the PR, there should be a dedicated test asserting a 4xx/3xx response is counted as failed/dropped and not retried, and that `httpretrycodes`/`httpignorablecodes` still let an operator override it.\n\n7. `checkResult()`: removal of `iRet = RS_RET_OK; // We've done all we can...` in the trailing block changes control flow — `iRet` now falls through to whatever it was set to earlier instead of being forced to OK. This needs an explicit audit (and ideally a comment) showing all code paths reaching that point already have the correct `iRet`, otherwise it risks silently treating a message as failed/suspended when it previously completed, or vice versa.\n\n8. PR description/scope: the diff mixes at least three independent concerns (retry-classification logic, module promotion contrib→plugins, large unrelated test rewrites) in one PR. For a project like rsyslog with careful compatibility practices, these should be separate PRs so each can be reviewed and reverted independently if needed.",
+ "cost": 0.1130528,
+ "sec": 46.1,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 17272,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 3866,
+  "output_tokens_details": {
+   "thinking_tokens": 2474
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 17272,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 3866,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 17272,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 17272
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G027",
+ "cond": "A"
+}

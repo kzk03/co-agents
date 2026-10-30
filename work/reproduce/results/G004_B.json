@@ -1,0 +1,41 @@
+{
+ "text": "1. `crates/glaredb_execution/src/functions/scalar/builtin/mod.rs` — The diff silently drops `FUNCTION_SET_IS_INF` from both the `use numeric::{...}` import block and the `BUILTIN_SCALAR_FUNCTION_SETS` array. In the base file `FUNCTION_SET_IS_INF` sits immediately after `FUNCTION_SET_FLOOR`/`FUNCTION_SET_IS_NAN` in each location, but neither hunk's context nor any `-` line shows it — it's simply gone after the patch is applied. Merging this as-is deregisters the existing `isinf()` builtin. Fix: regenerate the diff so it only inserts the new `FUNCTION_SET_IS_FINITE` entries and leaves `FUNCTION_SET_IS_INF` intact in both places; verify by grepping the post-merge file for `FUNCTION_SET_IS_INF` and confirming `select isinf(...)` still resolves.\n\n2. `slt/standard/isfinite.slt` — Several queries (`isfinite(1.0)`, `isfinite(0.0)`, `isfinite(-1.0)`, `isfinite(1.0 + 2.0)`, `isfinite(1.0 / 0.0)`) pass bare decimal literals with no `::float` cast, while every other test in the same file explicitly casts (`'Infinity'::float`, `1.0::float16`, etc.). Since `isfinite`'s signature only accepts `Float16/Float32/Float64` (no Decimal/Numeric), these untyped-literal cases silently depend on whatever the default literal-to-float coercion/implicit cast rule is. Make the test suite consistent and unambiguous by adding explicit `::float` (or `::double`) casts to those five queries, matching the rest of the file.",
+ "cost": 0.1276328,
+ "sec": 87.7,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 10077,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 8202,
+  "output_tokens_details": {
+   "thinking_tokens": 7576
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 10077,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 8202,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 10077,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 10077
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G004",
+ "cond": "B"
+}

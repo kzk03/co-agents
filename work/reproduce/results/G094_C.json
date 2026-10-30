@@ -1,0 +1,41 @@
+{
+ "text": "1. **sdk/storage/azure_storage_blob/src/generated/models/pub_models.rs (etag rename change)** — PR edits a file under `generated/` directly (`#[serde(rename = \"ETag\" → \"Etag\")]`), which CONTRIBUTING.md explicitly forbids: generated files must not be hand-edited and the fix must go through the TypeSpec spec in `Azure/azure-rest-api-specs`. The PR's own description even says \"this issue must be fixed in the TypeSpec specification... not by modifying the generated files directly,\" yet the diff does exactly that. Revert this hunk; the PR should only add tests demonstrating the bug (ideally marked `#[ignore]` or asserting the *current* broken behavior), not silently change production behavior inside a generated file. This mismatch between stated intent and actual diff is also misleading to reviewers.\n\n2. **sdk/storage/azure_storage_blob/src/lib.rs test module placement** — Repo convention (`.github/copilot-instructions.md`) requires tests to live in a `#[cfg(test)] mod tests` within the module file being tested, importing via `use super::*`. These tests belong next to `BlobPropertiesInternal` in `generated/models/pub_models.rs` (or a non-generated wrapper), not appended to the crate root `lib.rs`, and should `use super::*` rather than reaching in via `crate::models::...`.\n\n3. **Tests assert the \"fixed\" behavior, not the documented bug** — `test_etag_deserialization_with_capital_etag` and friends assert behavior consistent with the unauthorized rename change in #1, not the actual upstream bug state. If #1 is reverted (as it should be), all four tests will fail as written. The tests need to be rewritten to assert against the *current/shipped* generated code (rename = \"ETag\") and demonstrate that `\"Etag\"` in a real API response fails to populate `etag` — i.e., they should encode the bug as currently shipped, e.g. via `#[should_panic]`/inverted assertions or clearly marked as demonstrating a known-broken state, not quietly depend on an in-PR workaround.\n\n4. **CHANGELOG.md entry is inaccurate/premature** — The added \"Bugs Fixed\" entry claims the etag rename was fixed, but per project policy this must be fixed upstream in TypeSpec, not in this PR. Remove the CHANGELOG entry (or rephrase as \"known issue\" with a test reference) since no real fix is being shipped here.\n\n5. **serde_json dependency addition** — Check whether `serde_json` is actually necessary as a new direct dev-dependency; if the crate already depends on `typespec_client_core`'s serde/json utilities elsewhere, prefer reusing the existing JSON (de)serialization path used by generated code tests rather than adding a new dependency just for this test, to stay consistent with how other model tests in this codebase (de)serialize fixtures.\n\n6. **Debug `println!` calls in tests** — Multiple tests contain `println!` statements (including an emoji ✅) used for debugging/narration rather than as actual test assertions. These should be removed; assertions alone should carry the test's intent, consistent with the \"informal but clean\" style guide and to avoid noisy test output.",
+ "cost": 0.0902988,
+ "sec": 15.8,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 18521,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 1091,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 18521,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1091,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 18521,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 18521
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G094",
+ "cond": "C"
+}

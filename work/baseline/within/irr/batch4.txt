@@ -1,0 +1,104 @@
+### W101 dotnet/runtime | Remove leading plus sign validation from Version JSON deserialization
+  BODY: Rather than making checks stricter, this should make the reader more permissive allowing inputs that `Version.Parse` permits. Please update the PR title and description to reflect that.
+### W102 apache/airflow | Add run_after to TriggerDagRunOperator
+  BODY: Mark as request changes in case of further regression on main CI.
+  [uv.lock] Even though the CI passed, I'm still concerned about the `uv.lock` change. Would it be possible to revert the `uv.lock` change before we merge?
+### W103 dotnet/docs | [WIP] Update F1 keywords for tokens with multiple uses
+  BODY: This is a good start but it needs changes.
+ 
+ An `f1_keyword` can only have one target file. Where a keyword (like `in`) has multiple uses, the file for that keyword (for example "in.md") should have the appropriate f1 keyword tag. The text of that file should link to articles on all the different uses of that keyword.
+  [ref-struct.md] This line should be removed. There's a different target for `ref`. Check the file "ref.md" to see if it's got a link to this file.
+  [extension.md] This should be removed. The `this` keyword targets "this.md". Check that file to see if it links to this file.
+  [from-clause.md] Remove this. The `in` keyword already targets "in.md". Make sure there's a link in that file to this one.
+  [in-generic-modifier.md] Same comment about `in_CSharpKeyword`
+  [join-clause.md] Same comment.
+### W104 pytorch/pytorch | Fix ONNX type promotion for scalar-first tensor operations
+  BODY: Address automated feedback from claude
+### W105 backstage/backstage | fix: use persistent slot counter for scheduled PR sync
+  BODY: Couldn't we just save the last successful batch execution start time and diff against that? I've seen these delayed by 12 hours 💀
+### W106 home-assistant/core | Add event color support to Google Calendar integration
+  BODY: Hello,
+ (1) See https://github.com/home-assistant/architecture/discussions/883 where a spec was approved for calendar color. 
+ (2) See https://github.com/home-assistant/core/pull/145606#issuecomment-3449860457 for an existing PR that was attempting color for another calendar integration, but more importantly the discussion on the next level of detail on how to implement the approach in the architecture discussion
+ (3) This PR is not following appearing to follow current coding standards (e.g. wo
+### W107 home-assistant/core | Add templatable price multiplier to Nord Pool actions
+  BODY: I would prefer to keep the service as simple as possible, every user will have their own case and add to the price so it seems to not be logical to me to add this into here.
+### W108 ray-project/ray | [Train] Allow `contextlib.redirect_stdout()` to bypass print redirect to logs
+  BODY: Thanks for the PR, overall looks good. Could you just merge the two if statements and add to the test
+  [patch_print.py] Update to  ```python if (    file is None    or (file is sys.stdout and sys.stdout is not sys.__stdout__)    or (file is sys.stderr and sys.stderr is not sys.__stderr__) ): ```
+  [test_logging.py] add `redirect_stderr` case as well   Also if we are missing a test that checks that logs eats the print by default could you add to this test 
+### W109 ray-project/ray | [Data] Don't push limit past `map_batches` by default
+  BODY: This is a breaking change
+### W110 ydb-platform/ydb | HTML report: Create issue button
+  BODY: nan
+  [summary.html] @copilot Мне кажется эта строчка избыточна. Мы заводим issue (или mute issue) и из titlte все понятно. да я же хочу чтобы эта кнопка была не только для sanitize error, но для всех muted и failed
+### W111 dotnet/runtime | Unify documentation for ML-DSA and SLH-DSA
+  BODY: see comments
+### W112 dotnet/docs | Update .NET 10 documentation with comprehensive feature integration and address review fee
+  BODY: nan
+  [libraries.md] Nothing should be preview-specific in these files.
+  [libraries.md] This is so long it should go in a separate code file.
+  [libraries.md] Separate code file?
+  [libraries.md] Don't use we/our/us.
+  [libraries.md] Separate code file?
+  [libraries.md] Separate code file?
+### W113 home-assistant/core | Add quality scale for speedtestdotnet integration
+  BODY: Hey, thanks for your contribution!  We should make sure that the PRs only change one thing at a time. This PR adds the `quality_scale.yaml`, but it also updates the `strings.json` to make the CI pass. These should be separate PRs.  So I would suggest the following: 1. Update this PR to only add the `quality_scale.yaml` and update `quality_scale.py`, but mark `config-flow` as `todo`. That will make the CI pass without the `strings.json` modification. 2. Create a separate follow-up PR with the `st
+### W114 dotnet/runtime | Fix Tensor.StdDev vs TensorPrimitives.StdDev differences for Complex input
+  BODY: nan
+  [Tensor.cs] @copilot This approach might have an undesired performance penalty as it leads to performing the `.Abs` call for all types even when that isn't necessary to get the correct result. In `SquaredDifferenceOperator<T>` within TensorPrimitives.StdDev.cs, there is a comment indicating the Abs call is only relevant to non-vectorizable types and the `Vecto
+### W115 home-assistant/core | Add velocity selection to Velux covers and windows
+  BODY: So we had a discussion about this in https://discord.com/channels/330944238910963714/1506300735460216832 and we don't want to use RestoreEntity to restore settings and use them as a parameter in other action calls
+### W116 dotnet/runtime | Include unboxing stubs in r2r images
+  BODY: ## Holistic Review
+ 
+ **Motivation**: Precompiling unboxing stubs is justified where the runtime cannot generate a usable frameless shuffle thunk, particularly on targets without runtime code generation.
+ 
+ **Approach**: The current dependency analysis is too broad because it emits a complete R2R method for every reachable unboxing stub, including common cases already handled by a much smaller runtime-generated shuffle thunk.
+ 
+ **Summary**: ⚠️ Needs Changes. Please restrict precompiled unboxing
+### W117 dotnet/runtime | [mono] Fix g_str_hash skipping the first byte and remove mono_metadata_str_hash
+  BODY: nan
+  [ghashtable.c] https://github.com/mono/mono/issues/21844#issuecomment-3172722655  I agree.
+### W118 dotnet/runtime | Fix buffer slicing in (U)Int128 property name serialization
+  BODY: nan
+  [Value.WriteTests.cs] Use `Assert.Equal` to compare `json` with the expected string instead of using `Assert.Contains`.
+  [Value.WriteTests.cs] Might as well check `Int128.MaxValue` and `Int128.MinValue` too. I think `Assert.Equal` compares `Dictionary<TKey,TValue>` in the expected way so you can use that instead.
+### W119 NVIDIA/Megatron-LM | MInf: Add hooks to preprocess and stage
+  BODY: nan
+  [handlers.py] request_metadata here is confusing. Everything in this list is request level metadata. 
+### W120 dotnet/runtime | Support IReadOnlyDictionary as JsonExtensionData
+  BODY: nan
+  [JsonTypeInfo.cs] This is the same as writing ```suggestion                 propertyType == typeof(IReadOnlyDictionary<string, object>) || ```
+  [JsonSourceGenerator.Parser.cs] Practically, this means we're extending support for only two types: IReadOnlyDictionary<> and Dictionary<> (which we already support). So we only need to check for an exact match of the former.
+### W121 ydb-platform/ydb | Add comprehensive documentation for sessions system view
+  BODY: nan
+  [system-views.md] ```suggestion
+ | `State` | Текущее состояние сессии (например, `IDLE` или `EXECUTING`). | `Utf8` |
+ ```
+  [system-views.md] ```suggestion
+ | `State` | Current state of the session (e.g., `IDLE` or `EXECUTING`). | `Utf8` |
+ ```
+  [system-views.md] a complete list of possible states would be helpful
+  [system-views.md] This column is optional/nullable, then? What's the value when there's no currently executing query?
+  [system-views.md] Security identifier -> link to concepts/glossary.md
+  [system-views.md] ```suggestion
+     QueryStartAt,
+     CurrentUtcTimestamp() - QueryStartAt AS Duration,
+ ```
+### W122 espressif/arduino-esp32 | feat(board): Add new board variant LilyGo T-Deck
+  BODY: nan
+  [boards.txt] Please rename the board entry to match other lily boards and move it in the `boards.txt` file next to other lily boards. Thanks  ```suggestion lilygo_tdeck.name=LilyGo T-Deck ```
+### W123 ydb-platform/ydb | Ydb issue #19821 decimal final fix
+  BODY: nan
+  [abstract_scheme.cpp] Не достаточно ли просто тип подменить на fixed_size_binary раз они совместимы?
+  [rpc_load_rows.cpp] А возможно ли перемести в ConvertArrowToYdbPrimitive? Или в этом случае что-то ломается?
+  [constructor.cpp] Давай оставим файлы в которых нету изменений как есть
+  [columnshard_ut_common.h] а точно хотим тут fixed_size_binary поддерживать? Может всегда требовать на входе decimal128?
+  [decimal_ut.cpp] Все тесты в этом файле должны стать параметризованными для ScanQuery и ExecuteQuery. Также давай добавим еще тестов на другие размерности, например 12, 2
+### W124 ray-project/ray | [Data] Add support for reading ORC files
+  BODY: nan
+  [orc_datasource.py] Do we need this in `ORCDatasource`? Reads are implemented as a `BlockMapTransformFn` during planning time (`plan_read_op.py`), and the output of this map transform fn undergoes shaping into output blocks (`_shape_blocks()`, which should take into account the target max block size.  Based on my understanding, we explicitly do block output shaping in
+### W125 home-assistant/core | Add event status to calendar events
+  BODY: nan
+  [const.py] OK just to save time and be more prescriptive: I would say send separate PRs to update integrations to filter cancelled events. We won't have events in the calendar entity with a canceled status as we already agreed in the discussion.

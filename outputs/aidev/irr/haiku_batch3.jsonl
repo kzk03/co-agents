@@ -1,0 +1,27 @@
+```json lines
+{"sid":"G076","cat":"UNK","inferable":"-"}
+{"sid":"G077","cat":"C1","inferable":"yes"}
+{"sid":"G078","cat":"C1","inferable":"yes"}
+{"sid":"G079","cat":"C1","inferable":"partial"}
+{"sid":"G080","cat":"M","inferable":"no"}
+{"sid":"G081","cat":"C2","inferable":"yes"}
+{"sid":"G082","cat":"C3","inferable":"partial"}
+{"sid":"G083","cat":"C1","inferable":"partial"}
+{"sid":"G084","cat":"C2","inferable":"yes"}
+{"sid":"G085","cat":"C2","inferable":"partial"}
+{"sid":"G086","cat":"C1","inferable":"yes"}
+{"sid":"G087","cat":"H2","inferable":"no"}
+{"sid":"G088","cat":"C3","inferable":"yes"}
+{"sid":"G089","cat":"C1","inferable":"yes"}
+{"sid":"G090","cat":"C1","inferable":"yes"}
+{"sid":"G091","cat":"C1","inferable":"yes"}
+{"sid":"G092","cat":"C2","inferable":"yes"}
+{"sid":"G093","cat":"H2","inferable":"no"}
+{"sid":"G094","cat":"H2","inferable":"partial"}
+{"sid":"G095","cat":"C1","inferable":"yes"}
+{"sid":"G096","cat":"H2","inferable":"no"}
+{"sid":"G097","cat":"C1","inferable":"yes"}
+{"sid":"G098","cat":"H3","inferable":"partial"}
+{"sid":"G099","cat":"C1","inferable":"yes"}
+{"sid":"G100","cat":"H2","inferable":"partial"}
+```

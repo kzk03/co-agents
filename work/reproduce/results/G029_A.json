@@ -1,0 +1,41 @@
+{
+ "text": "1. **apps/api/src/controllers/v1/search.ts, catch block around `calculateCreditsToBeBilled`** — on any error (e.g. a single bad document throwing) the fallback silently bills `responseData.data.length` (1 credit/doc), discarding stealth/PDF surcharges and undercharging revenue-critical billing without alerting on-call; a thrown error here should not be swallowed into a flat-rate guess. Either let it propagate (fail the request) or fall back to per-document `try/catch` so one bad document doesn't flatten billing for the whole batch, and alert/metric on the failure instead of just `logger.error`.\n\n2. **apps/api/src/controllers/v1/search.ts, `calculateCreditsToBeBilled` call site** — `costTracking` is passed for every document, but `costTracking` in this file represents the search-level/agent cost tracking, not per-document; need to verify it's the correct per-document `CostTracking` instance expected by `calculateCreditsToBeBilled` (used elsewhere per-scrape in `queue-worker.ts`). If it's a single shared tracker reused across all search results, stealth/agent cost-based pricing (`totalCost * 1800` branch) will be computed from aggregate cost rather than per-document cost, over- or under-billing.\n\n3. **apps/api/src/controllers/v1/search.ts** — removing `bypassBilling: true` from `scrapeSearchResult` changes production billing behavior for every search call; PR provides no confirmation this was tested against a live/staging environment (explicitly flagged by the author as untested). Given \"Medium Risk: billing... critical for revenue,\" this should not merge without at least a staging verification run, not just type-checking.\n\n4. **apps/api/src/__tests__/snips/billing.test.ts, \"bills search with stealth mode correctly\"** — asserts `expectedCredits = results.length * 5` (1 base + 4 stealth), which only matches `calculateCreditsToBeBilled`'s stealth branch if that function's stealth pricing is actually a flat +4; need to confirm this constant isn't drifting from the implementation in `scrape-billing.ts` (magic number duplicated in test rather than referencing the real constant/branch), so a future change to stealth pricing breaks the test without indicating why.\n\n5. **apps/api/src/__tests__/snips/billing.test.ts, \"bills search with PDF correctly\"** — test computes `expectedCredits` using `Math.max(1, pages)` per doc, but `scrape-billing.ts`'s actual formula is `1 + creditsPerPDFPage * (numPages - 1)` (only when `numPages > 1`), which is not equivalent unless `creditsPerPDFPage === 1`. The test's expected-value formula doesn't mirror the real billing formula, so it's not actually verifying the fix's correctness — it could pass against a wrong implementation or fail on a correct one depending on `creditsPerPDFPage`.\n\n6. **apps/api/src/__tests__/snips/billing.test.ts, both new tests** — rely on live/non-deterministic data (`search({ query: \"firecrawl\" ... })`, `\"filetype:pdf firecrawl\"`), with credit expectations derived from `results` returned at runtime rather than fixed fixtures. This is consistent with other tests in the file, but combined with #4/#5 it means a flaky external search result (e.g., zero PDF results, or a differently-shaped proxy response) can mask real billing bugs — worth confirming this matches the suite's existing tolerance for non-determinism before merging as the primary verification of this fix.",
+ "cost": 0.0432668,
+ "sec": 15.9,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 6468,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 1209,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 6468,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1209,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 6468,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 6468
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G029",
+ "cond": "A"
+}

@@ -1,0 +1,45 @@
+{
+ "text": "{\"main\":\"The test fixtures/expected outputs were never actually verified by running the test suite, so the reviewer is asking the author to run `UPDATE=1 cargo test` to regenerate and confirm correct output.\",\"R1\":\"yes\",\"R1_item\":1,\"R2\":\"yes\",\"R2_item\":8,\"R3\":\"yes\",\"R3_item\":3}",
+ "cost": 0.0583908,
+ "sec": 15.2,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 10324,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 1179,
+  "output_tokens_details": {
+   "thinking_tokens": 1061
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 10324,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1179,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 10324,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 10324
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G057",
+ "order": [
+  "A",
+  "C",
+  "B"
+ ]
+}

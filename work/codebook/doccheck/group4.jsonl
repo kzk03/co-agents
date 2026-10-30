@@ -1,0 +1,8 @@
+{"sid":"H024","written":"yes","quote":"Python 3.9 or later"}
+{"sid":"H086","written":"no","quote":""}
+{"sid":"H087","written":"no","quote":""}
+{"sid":"G027","written":"yes","quote":"These are retained in `contrib/` even if adopted later, to avoid disruptions in dependent software."}
+{"sid":"H047","written":"partial","quote":"Assert and argue that any downsides introduced by your solution as a matter of design, if any, are worth it, and why they are worth it."}
+{"sid":"H096","written":"no","quote":""}
+{"sid":"H034","written":"no","quote":""}
+{"sid":"H080","written":"no","quote":""}

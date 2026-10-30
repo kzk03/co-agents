@@ -1,0 +1,82 @@
+# Fix Search Endpoint Billing Logic
+
+This PR addresses the hardcoded billing logic in the `/search` endpoint by integrating the proper `calculateCreditsToBeBilled` function to handle stealth mode pricing and PDF page counting correctly.
+
+## Changes Made
+
+### Core Implementation
+- **Removed `bypassBilling: true`** from `scrapeSearchResult` function in `search.ts` to enable proper billing flow
+- **Replaced hardcoded billing logic** with `calculateCreditsToBeBilled` function integration
+- **Added import** for `calculateCreditsToBeBilled` from `scrape-billing.ts`
+
+### Billing Logic Improvements
+- **Stealth mode pricing**: Now correctly adds 4 extra credits per search result when `document.metadata.proxyUsed === "stealth"`
+- **PDF page pricing**: Properly accounts for page count using `document.metadata.numPages` when PDF parsing is enabled
+- **Base pricing**: Maintains 1 credit per document as baseline
+
+### Testing
+- **Added stealth mode test**: Verifies that stealth mode results in higher credit usage than regular results
+- **Added PDF billing test**: Validates correct credit calculation based on PDF page count
+- **Updated existing billing test suite** in `src/__tests__/snips/billing.test.ts`
+
+## Technical Details
+
+The previous implementation had a TODO comment indicating the billing logic was "horrid" and needed fixing:
+
+```typescript
+// TODO: This is horrid. Fix soon - mogery
+const credits_billed = responseData.data.reduce((a, x) => {
+  if (x.metadata?.numPages !== undefined && x.metadata.numPages > 0 && req.body.scrapeOptions?.parsePDF !== false) {
+    return a + x.metadata.numPages;
+  } else {
+    return a + 1;
+  }
+}, 0)
+```
+
+This has been replaced with:
+
+```typescript
+const credits_billed = await Promise.all(
+  responseData.data.map(async (document) => {
+    return await calculateCreditsToBeBilled(req.body.scrapeOptions, document, costTracking);
+  })
+).then(credits => credits.reduce((sum, credit) => sum + credit, 0));
+```
+
+## Testing Transparency
+
+### What I Actually Checked
+- ✅ Code compiles without TypeScript errors
+- ✅ Import paths are correct and `calculateCreditsToBeBilled` function exists
+- ✅ Test syntax is valid and follows existing patterns
+- ✅ Billing logic integration matches patterns used in `queue-worker.ts`
+- ✅ Removed `bypassBilling: true` flag that was preventing proper billing
+
+### What I Did Not Check
+- ❌ **Local API server testing**: Could not test with running servers due to Redis connection issues in test environment
+- ❌ **End-to-end billing verification**: Unable to verify actual credit deduction with live API calls
+- ❌ **Stealth mode integration testing**: Could not test stealth proxy functionality locally
+- ❌ **PDF document processing**: Could not verify PDF page counting with real PDF files
+
+## Reviewer Checklist
+
+Please verify the following when reviewing:
+
+1. **Test the search endpoint** with stealth mode enabled and verify 4 extra credits are charged per result
+2. **Test PDF search results** and confirm page-based pricing works correctly  
+3. **Run the billing tests** to ensure new test cases pass
+4. **Verify no regressions** in existing search functionality
+5. **Check that regular search** (without stealth/PDF) still works as expected
+
+## Risk Assessment
+
+**Medium Risk**: This change affects billing logic which is critical for revenue. The integration follows established patterns from other endpoints, but billing accuracy is essential.
+
+**Mitigation**: The `calculateCreditsToBeBilled` function is already well-tested and used throughout the codebase. The change primarily removes a bypass flag and integrates existing, proven billing logic.
+
+---
+
+**Link to Devin run**: https://app.devin.ai/sessions/dbf75b71eaba4f5a89b143f6b9ae1718
+
+**Requested by**: Micah Stairs (micah@sideguide.dev)

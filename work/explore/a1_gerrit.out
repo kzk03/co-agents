@@ -1,0 +1,21 @@
+== 母集団: -1/-2 投票 31662
+ vote -1: n=29360 core 比率 0.764
+   core: n=22435 最終 MERGED 0.704 ABANDONED 0.210
+   非core: n=6925 最終 MERGED 0.534 ABANDONED 0.364
+   ABANDONED 差 core−非core -0.154 95%CI [-0.16687113 -0.14219659]
+ vote -2: n=909 core 比率 0.964
+   core: n=876 最終 MERGED 0.196 ABANDONED 0.672
+   非core: n=33 最終 MERGED 0.152 ABANDONED 0.818
+   ABANDONED 差 core−非core -0.146 95%CI [-0.27097862 -0.01305002]
+
+== サンプル100 × v0 多数決ラベル
+ [gerrit] 有効 n=91 core 68 件 H 35/68=0.515 | 非core 23 件 H 10/23=0.435 | 差 +0.080 95%CI [-0.1668798   0.31265985]
+   -1 のみ: core H 22/55  非core H 9/21  差 -0.029 95%CI [-0.29177489  0.2078355 ]
+   過去 owner 件数 > 中央値3: H 21/43  ≤: H 24/48
+   H系: n=45 最終 ABANDONED 29 MERGED 13
+   C系: n=46 最終 ABANDONED 11 MERGED 26
+ [gerrit_blind] 有効 n=68 core 54 件 H 23/54=0.426 | 非core 14 件 H 7/14=0.500 | 差 -0.074 95%CI [-0.3625      0.21428571]
+   -1 のみ: core H 21/52  非core H 7/13  差 -0.135 95%CI [-0.44230769  0.17307692]
+   過去 owner 件数 > 中央値5: H 14/33  ≤: H 16/35
+   H系: n=30 最終 ABANDONED 20 MERGED 9
+   C系: n=38 最終 ABANDONED 7 MERGED 23

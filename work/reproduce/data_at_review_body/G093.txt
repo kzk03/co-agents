@@ -1,0 +1,84 @@
+This PR migrates the `IContentDefinitionEventHandler` interface to the unified `IContentDefinitionHandler` interface to improve consistency and ensure proper separation of concerns as requested in issue #16926.
+
+## Problem
+
+Previously, content definition events were handled through two separate interfaces:
+- `IContentDefinitionEventHandler` - for lifecycle events (created, updated, removed, etc.)  
+- `IContentDefinitionHandler` - for building events (content type building, part building, etc.)
+
+This separation led to:
+- Inconsistent event handling patterns
+- Events being triggered by `ContentDefinitionService` (primarily for controllers) instead of `ContentDefinitionManager`
+- Confusion about which interface to implement for different scenarios
+
+## Solution
+
+### Core Changes
+- **Marked `IContentDefinitionEventHandler` as `[Obsolete]`** with clear migration guidance
+- **Extended `IContentDefinitionHandler`** with all event methods from the obsolete interface as default implementations
+- **Added event trigger methods to `ContentDefinitionManager`** for all content definition events
+- **Updated `ContentDefinitionService`** to trigger events through `ContentDefinitionManager` instead of directly
+- **Migrated existing implementation** (`DynamicContentFieldsIndexAliasProvider`) to use the unified interface
+
+### Backward Compatibility
+- **Full backward compatibility maintained** - existing `IContentDefinitionEventHandler` implementations continue to work
+- **Events triggered through both patterns** during transition period with deprecation warnings
+- **Service registrations preserved** for both interfaces during transition
+
+### Developer Experience Improvements
+- **Simplified implementation** - event methods have default implementations, developers only override what they need
+- **Unified interface** - single interface for all content definition handling
+- **Better architecture** - events triggered by appropriate service (`ContentDefinitionManager`)
+
+## Example Migration
+
+```csharp
+// Before (still works but obsolete)
+public class MyHandler : IContentDefinitionEventHandler
+{
+    public void ContentTypeCreated(ContentTypeCreatedContext context) { /* logic */ }
+    public void ContentTypeUpdated(ContentTypeUpdatedContext context) { }
+    // ... implement all other required methods
+}
+
+// After (recommended)
+public class MyHandler : IContentDefinitionHandler
+{
+    // Required building methods
+    public void ContentTypeBuilding(ContentTypeBuildingContext context) { }
+    public void ContentPartBuilding(ContentPartBuildingContext context) { }
+    public void ContentTypePartBuilding(ContentTypePartBuildingContext context) { }
+    public void ContentPartFieldBuilding(ContentPartFieldBuildingContext context) { }
+    
+    // Event methods (override only what you need)
+    public void ContentTypeCreated(ContentTypeCreatedContext context) { /* logic */ }
+    // Other event methods have default implementations
+}
+```
+
+## Testing
+- Added comprehensive tests to verify event migration works correctly
+- Tests ensure both old and new interfaces receive events during transition
+- Interface compatibility tests verify new interface works with minimal implementation
+
+## Documentation
+- Updated release notes with breaking change documentation and migration path
+- Added detailed migration guide with step-by-step instructions and examples
+- Comprehensive troubleshooting section for common migration issues
+
+## Files Changed
+- **Core interfaces**: Extended `IContentDefinitionHandler`, marked `IContentDefinitionEventHandler` obsolete
+- **ContentDefinitionManager**: Added event trigger methods and updated to handle events
+- **ContentDefinitionService**: Updated to use new trigger methods while maintaining backward compatibility  
+- **DynamicContentFieldsIndexAliasProvider**: Migrated to implement unified interface
+- **Tests**: Added migration and compatibility tests
+- **Documentation**: Added migration guide and updated release notes
+
+This change provides a cleaner, more consistent architecture while maintaining full backward compatibility during the transition period.
+
+Fixes #16926.
+
+<!-- START COPILOT CODING AGENT TIPS -->
+---
+
+💡 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.

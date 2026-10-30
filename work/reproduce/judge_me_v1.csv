@@ -1,0 +1,31 @@
+sid,main,A,A_item,B,B_item,C,C_item,note
+G002,継承階層全体を調べ、Microsoft 所有タスク名→非 sealed 利用数の辞書に形を変える(イベント名も変更),yes,2,yes,1,yes,1,
+G004,テストファイルの冗長なコメント行を削る,,,,,no,0,
+G011,ログディレクトリの判定・作成は全部 conf crate の関数に置く,,,,,yes,3,
+G018,不要な PR_TEMPLATE.md を削除する,yes,4,yes,4,yes,3,
+G023,テストはリポジトリの既存ヘルパー(GetAllPlatforms・dotnet -getProperty)と .editorconfig 書式に従う,yes,3,yes,4,yes,4,主要指摘の特定が曖昧(複数の小指示)
+G024,別フレーバーは FilterList を別エントリに分ける,,,,,yes,1,
+G025,MdOutputReport と mdOutputPath も改名する,,,,,yes,2,
+G026,disabled をタグのカスタムオプションにせず設定側の仕組みで無効化する,,,,,yes,2,
+G027,omhttp は当面 contrib に残す(plugins へ移さない),yes,3,yes,3,partial,2,C は「本当に git mv せよ」と逆方向
+G029,scrapeSearchResult が文書ごとの costTracking を返し、文書ごとに料金を計算して合計する,yes,2,partial,1,partial,1,
+G030,no-ssr と同じテストケースを通す e2e を追加する,partial,3,yes,7,yes,5,
+G033,dev 限定にせず build でも動くようにする,,,,,yes,1,
+G041,~1 は動かないので親コミット SHA を実際に求める,,,,,partial,3,
+G046,modern .NET だけに NoWarn を付ける(範囲を広げすぎ),,,,,yes,2,
+G053,ガイドラインに沿った空コミット(良いメッセージ)を追加し、変更を説明し、Handle both... コメントを改善する,no,0,partial,5,no,0,B は副次のコメント改善のみ
+G057,UPDATE=1 でテストを実行し期待出力を更新する,,,,,partial,8,
+G061,Address comments.(中身なし),,,,,no,0,
+G062,旧フォーマッタを削除し新フォーマッタをオプションで opt-in にする,,,,,partial,2,
+G067,シンボルの binding parent がグローバルの Function/CallableFunction インターフェースかだけを見る,yes,1,yes,2,yes,1,
+G071,コメントを削除し、テストを機能に見合う量に絞る,partial,6,no,0,no,0,A は副次のコメント削除のみ
+G073,テストケースを追加して修正を確認する,,,,,yes,3,
+G075,新 CLI オプションではなくプラグインで実装する,,,,,no,0,
+G081,useMeQuery ではなく useSession で userId を取る,no,0,no,0,no,0,
+G083,.NET Standard ではどのバージョンでも CS8002 を抑制しない,yes,1,yes,3,yes,2,
+G086,複数ファイル指定に対応する(結合して glob にする方式は動かない),,,,,yes,3,
+G087,ExtensionVersions を追加せず ExtensionsList の括弧付き接尾辞で対応,,,,,no,0,
+G089,throw p を戻す(Suspense は promise を throw する),,,,,yes,1,
+G091,テストの意味を変えず vitest の fake timers で移行する,,,,,yes,4,
+G093,マネージャーにイベントハンドラーを注入・使用しない(+global.json を変えない),partial,4,yes,4,yes,4,
+G094,generated 配下を変更しない。TypeSpec 側で直す,,,,,yes,1,

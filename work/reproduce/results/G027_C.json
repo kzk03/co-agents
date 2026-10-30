@@ -1,0 +1,41 @@
+{
+ "text": "1. **configure.ac — \"+0 -3255\" deletion is almost certainly accidental/unrelated to the stated change.** The diff shows the entire `configure.ac` body removed with no replacement content shown and no mention in the PR description. This would break the build system entirely. Fix: restore `configure.ac` to its base content; this file should not be touched by a status-code/module-promotion PR at all.\n\n2. **`plugins/omhttp/omhttp.c` is a wrapper that `#include`s `../../contrib/omhttp/omhttp.c`, while the real implementation and all edits still live under `contrib/omhttp/`.** This is not a module promotion — it's a hack that leaves two copies of the module path alive, breaks tooling that keys off `plugins/` vs `contrib/` (per `AGENTS.md`'s module map and the stated contrib policy of \"not actively maintained by the core team\"), and complicates relative `#include` resolution and packaging (`EXTRA_DIST=` is empty, headers/deps not accounted for). Fix: actually move `contrib/omhttp/*` to `plugins/omhttp/*` (git mv), update all build files accordingly, and remove the stub/include trick; don't leave the old directory behind.\n\n3. **`checkResult()` behavior change (3xx/4xx → `RS_RET_DATAFAIL` instead of `RS_RET_SUSPENDED`) is a breaking default-behavior change not scoped to \"Fix rsyslog issue 5957\" title/description given, and goes beyond what's being reviewed in isolation** — it silently drops messages on any 3xx/4xx by default. Given CONTRIBUTING.md's emphasis on explicit Impact/Before-After (which is present) but also the magnitude of this change (previously-retried messages now silently fail), confirm this doesn't interact badly with `RS_RET_DATAFAIL`'s core handling for non-batch/non-transactional paths (e.g., does the single-message `doAction` compat path, mentioned in the linked issue as having its own quirks, correctly honor `RS_RET_DATAFAIL` without double-counting or crashing?). Needs an explicit test for the non-batch/compat-layer path, not just batched high-volume tests.\n\n4. **Removed `finalize_it:` label and the trailing `RS_RET_OK` without verifying no other code path still `goto finalize_it`.** The diff removes the label entirely; if any other `goto finalize_it` exists elsewhere in the (unshown) function or file, this is a compile error, not just a cleanup. Fix: grep the full file for `goto finalize_it` before removing the label, or keep the label if any jump remains.\n\n5. **Test changes bundle unrelated behavioral/config fixes into a PR titled \"Fix rsyslog issue 5957.\"** E.g. `omhttp-batch-retry-metadata.sh` drops the `httpretrycodes=[\"207\",\"500\"]` override and the `kafkarest`→`jsonarray` format switch, removes response-metadata validation (`omhttp_validate_metadata_response`), and changes message counts (50000→1000) — these look like pre-existing broken/flaky tests being quietly rewritten rather than updated for the status-code change. Fix: split out test fixes unrelated to 3xx/4xx retry semantics into their own PR/commit, or explain each test's change in the commit message per CONTRIBUTING.md's requirement for technical overview.\n\n6. **Load increase to 50k messages and queue batch-size bumps across many unrelated tests (`omhttp-batch-dynrestpath.sh`, `omhttp-httpheaderkey.sh`, `omhttp-multiplehttpheaders.sh`, etc.) inflate CI runtime without a stated reason tied to the 3xx/4xx fix.** CONTRIBUTING.md notes CI jobs already take 10–40 min and concurrency is constrained. Fix: justify or revert the unrelated load/test-restructuring changes (e.g. `omhttp-dynrestpath.sh` message count drop from 10000→100, template rewrite, `dynrestpath` semantics swap) that are unrelated to the status-code classification fix.\n\n7. **Documentation change in `omhttp.rst` deletes the detailed explanation of the transaction-commit bug (issue #2420) and the batch/retry caveats**, replacing it with a vaguer claim (\"Core transactional retry handling has since been improved\") with no reference or verification that the underlying bug is actually fixed. Fix: don't remove historically-important caveat text unless the referenced bug is confirmed fixed and cited; otherwise keep the original warning alongside the new retry guidance.\n\n8. **No mention of `httpignorablecodes`/`httpretrycodes` documentation update or migration guidance for operators who relied on default retry-on-4xx.** This is a behavior-breaking change by default (per the PR's own \"Impact\" note: \"messages are ... dropped unless explicitly overridden\"). CONTRIBUTING.md requires documentation updates for user-visible behavior changes. Fix: add a release-notes/upgrade-guide entry (not just the module doc) and explicit documentation of the default `httpretrycodes`/`httpignorablecodes` values and how to restore old behavior.\n\n9. **Scope mismatch with linked issue #5957**: the issue requests a much larger refactor (commitTransaction migration, profiles, retryRuleset reassessment) while this PR only does status-code reclassification + a cosmetic directory move. The PR title/description implies this closes/addresses #5957 without clarifying it's a partial step. Fix: clarify in the PR description that this is a partial/first step toward #5957, and use `Refs:` rather than implying full resolution, so the issue isn't prematurely closed by automation.",
+ "cost": 0.1696848,
+ "sec": 23.8,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 36230,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 1946,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 36230,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1946,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 36230,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 36230
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G027",
+ "cond": "C"
+}

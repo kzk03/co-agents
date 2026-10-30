@@ -1,0 +1,51 @@
+- [x] Use `@vitejs/plugin-rsc/browser` instead of `@vitejs/plugin-rsc/react/browser`
+- [x] Use `@vitejs/plugin-rsc/rsc` instead of `@vitejs/plugin-rsc/react/rsc`
+- [x] Remove `setRequireModule` calls from both entry files
+- [x] Remove `initialize()` function from entry.rsc.tsx
+- [x] Simplify `initialize()` in entry.browser.tsx to only set fetchRsc
+- [x] Update main.tsx to remove rsc.initialize() call
+- [x] Verify dev server works
+
+## Changes Made
+
+Updated import paths and removed unnecessary `setRequireModule` as requested by @hi-ogawa:
+1. Changed imports from `@vitejs/plugin-rsc/react/*` to `@vitejs/plugin-rsc/*`
+2. Removed `setRequireModule` setup from entry.browser.tsx
+3. Removed entire `initialize()` function and `setRequireModule` from entry.rsc.tsx
+4. Removed `rsc.initialize()` call from main.tsx
+
+The code is now simpler and uses the correct import paths without the extra `/react` segment.
+
+<!-- START COPILOT CODING AGENT SUFFIX -->
+
+
+
+<details>
+
+<summary>Original prompt</summary>
+
+> 
+> ----
+> 
+> *This section details on the original issue you should resolve*
+> 
+> <issue_title>Add example which runs `react-server` conditioned environment with module runner on browser</issue_title>
+> <issue_description>- this is a variant of `packages/plugin-rsc/examples/no-ssr` and `packages/plugin-rsc/examples/browser-mode` 
+> - runs `rsc` environment of `packages/plugin-rsc/examples/no-ssr` on browser via module runner like `packages/plugin-rsc/examples/browser-mode/src/framework/load-client-dev.tsx`
+> - add `examples/browser-mode2`</issue_description>
+> 
+> ## Comments on the Issue (you are @copilot in this section)
+> 
+> <comments>
+> </comments>
+> 
+
+
+</details>
+
+Fixes vitejs/vite-plugin-react#932
+
+<!-- START COPILOT CODING AGENT TIPS -->
+---
+
+💡 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.

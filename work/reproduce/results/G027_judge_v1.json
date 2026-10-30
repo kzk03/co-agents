@@ -1,0 +1,45 @@
+{
+ "text": "{\"main\":\"omhttp should remain in contrib for now rather than being promoted/moved to plugins, pending a separate module-tagging scheme.\",\"R1\":\"yes\",\"R1_item\":2,\"R2\":\"yes\",\"R2_item\":3,\"R3\":\"yes\",\"R3_item\":3}",
+ "cost": 0.0449328,
+ "sec": 3.6,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 9672,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 94,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 9672,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 94,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 9672,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 9672
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G027",
+ "order": [
+  "C",
+  "B",
+  "A"
+ ]
+}

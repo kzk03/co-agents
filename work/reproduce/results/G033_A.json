@@ -1,0 +1,41 @@
+{
+ "text": "1. **`packages/fullstack/src/plugin.ts` (load handler) / PR description** — The PR description and feature table repeatedly claim build-mode support (\"Works in both dev and build modes\", \"Build-optimized: ... collects CSS from the bundle and generates a manifest\", manifest key `__no_split_css__`), but the actual diff only implements the dev-mode path; build mode just returns `export default [];`. The README within the diff even contradicts the PR body by stating \"Only works in dev mode (returns empty array in build mode)\". Fix: either implement the described build-mode manifest collection, or strip all the fabricated build-mode claims from the PR description/README/feature table so the shipped behavior matches what's documented. Shipping docs that describe a non-existent feature is a correctness problem for anyone enabling this flag in production.\n\n2. **`collectCssFromModule` traversal root (`plugin.ts`, load handler for `\\0virtual:fullstack/no-split-css`)** — The collector seeds traversal from *every* module currently in `environment.moduleGraph.idToModuleMap`, not from the actual entry point(s) that are live/reachable. Vite's dev module graph can retain stale/orphaned entries after HMR invalidation or removed imports, so this can surface CSS from modules that are no longer actually imported by the running app. Fix: traverse from the known server entry module(s) (or the importer of this virtual module) rather than iterating the whole id map.\n\n3. **No automated tests** — A new public, documented virtual module API ships with only \"manually tested\" claims in the PR description, no test file in the diff. Given this package appears to have existing tests for the `?assets` query approach, add at least a dev-mode test covering CSS collection, special-query skipping (`?url`/`?inline`/`?raw`), and the `data-vite-dev-id` output before merging.\n\n4. **Missing guard when module imported without the flag** — `resolveId` only intercepts `virtual:fullstack/no-split-css` when `experimental.noSplitCss` is true; otherwise the import falls through to a generic Rollup \"could not resolve\" error. Fix: when the specifier is requested but the flag is off, resolve it anyway and throw/return a clear error message telling the user to enable `experimental.noSplitCss`.\n\n5. **Duplicated CSS-collection logic vs. existing `?assets` implementation** — This adds a second, independent implementation of module-graph traversal, CSS detection, and circular-dependency skipping, likely duplicating logic already present for the `?assets` virtual module in the same file. This risks the two code paths silently diverging (e.g. different special-query handling) over time. Fix: factor the shared traversal/CSS-detection logic into a common helper used by both features.",
+ "cost": 0.341742,
+ "sec": 67.0,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 71227,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 5683,
+  "output_tokens_details": {
+   "thinking_tokens": 4770
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 71227,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 5683,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 71227,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 71227
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G033",
+ "cond": "A"
+}

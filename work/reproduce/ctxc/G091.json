@@ -1,0 +1,11 @@
+{
+ "sid": "G091",
+ "issue": null,
+ "issue_text": null,
+ "review_submitted_at": "2025-07-07T20:42:37Z",
+ "n_disc": 1,
+ "n_disc_same_reviewer": 0,
+ "disc_chars": 1005,
+ "disc_truncated": false,
+ "discussion": "[2025-07-07T20:21:05Z commented by changeset-bot[bot]]\n###  ⚠️  No Changeset found\n\nLatest commit: f1e9687a3f7fc771e2b2fbc2b27726023b0a5077\n\nMerging this PR will not cause a version bump for any packages. If these changes should not result in a new version, you're good to go. **If these changes should result in a version bump, you need to add a changeset.**\n\n<details><summary>This PR includes no changesets</summary>\n\n  When changesets are added to this PR, you'll see the packages that this PR includes changesets for and the associated semver types\n\n</details>\n\n[Click here to learn what changesets are, and how to add one](https://github.com/changesets/changesets/blob/main/docs/adding-a-changeset.md).\n\n[Click here if you're a maintainer who wants to add a changeset to this PR](https://github.com/primer/react/new/copilot/fix-6298?filename=.changeset/selfish-pens-arrive.md&value=---%0A%22%40primer%2Freact%22%3A%20patch%0A---%0A%0AMigrate%20batch%20of%20components%20from%20Jest%20to%20Vitest%0A)"
+}

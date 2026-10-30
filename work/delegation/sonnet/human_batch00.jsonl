@@ -1,0 +1,10 @@
+{"sid": "H004", "up": "U3", "dec": "N", "req_quote": "", "rev_quote": "This change touches our entity model, which needs approval in a discussion on the architecture repository"}
+{"sid": "H007", "up": "U3", "dec": "Y", "req_quote": "replace all usage of zod-to-json-schema with native Zod 4 JSON schema support", "rev_quote": "the direction we want to head in is likely to move towards standardschema.dev... rather than zod v4"}
+{"sid": "H008", "up": "U3", "dec": "Y", "req_quote": "Add the following (and any additional) context - data source, panel type, query type...", "rev_quote": "need to update the code comment as well"}
+{"sid": "H015", "up": "U3", "dec": "N", "req_quote": "", "rev_quote": "let's make this less code added to the codebase"}
+{"sid": "H016", "up": "U3", "dec": "Y", "req_quote": "Its implementation will follow the approach used for the parse_leef function", "rev_quote": "this guard isn't [case-insensitive], so a malformed lowercase #fields slips past the hard error"}
+{"sid": "H021", "up": "U1", "dec": "Y", "req_quote": "add tests to ensure that the params in the URL are not passed as empty in the API call", "rev_quote": "better to assert the values of fields here than just the presence of fields"}
+{"sid": "H026", "up": "U3", "dec": "Y", "req_quote": "I'd prefer we move the 'arrow' ... improved diagnostic wording ... would be appreciated", "rev_quote": "this should have a diagnostic pointer test... do we have something better at this point?"}
+{"sid": "H027", "up": "U3", "dec": "N", "req_quote": "", "rev_quote": "have you considered type casing the concrete implementations like we for file collections"}
+{"sid": "H028", "up": "U3", "dec": "Y", "req_quote": "Add a cache_ttl configuration option that controls how long successfully fetched schemas are kept", "rev_quote": "having a ttl cache is overkill here considering that schemas are immutable"}
+{"sid": "H029", "up": "U4", "dec": "NA", "req_quote": "", "rev_quote": ""}

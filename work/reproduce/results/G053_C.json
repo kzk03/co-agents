@@ -1,0 +1,41 @@
+{
+ "text": "1. **`lib/chrono_model/patches/relation.rb` – `chrono_join_history`**: The old fallback `ChronoModel.history_models[join.left]` (direct hash lookup using the join object itself, e.g. when `join.left` was already a String/Symbol table name) was removed and replaced by `return unless table_name` when neither `table_name` nor `name` responds. This silently skips chrono-joining for any join shape that isn't Arel::Table-like, re-introducing the exact class of bug this PR fixes (non-temporal join silently passes through) for other join node types. Restore handling for raw String/Symbol table names, or explicitly enumerate the supported node types instead of duck-typing away the previous fallback.\n\n2. **Inconsistent failure behavior between `join_node.rb` and `relation.rb`** for the identical \"can't determine table name\" condition: `JoinNode#initialize` raises `ArgumentError`, while `chrono_join_history` just returns and leaves the join untouched (producing the original non-temporal bug, not an error). Pick one strategy — prefer a loud failure (or at least a log warning) in both places so an unhandled join type breaks visibly instead of quietly serving stale/non-temporal data.\n\n3. **`join_node.rb` — aliasing via `Arel::Nodes::TableAlias` not handled**: the generic `respond_to?(:name)` fallback uses `.name` as the *table name* key for `ChronoModel.history_models[table_name]`, but for `Arel::Nodes::TableAlias` nodes `.name` returns the *alias*, not the real table name — this lookup will miss and the join will silently stay non-temporal for aliased/self-joined associations (e.g. joining the same temporal table twice). Needs an explicit branch that unwraps `TableAlias#relation.name` for the lookup key and preserves the alias separately, rather than treating `name`/`table_name` as interchangeable.\n\n4. **Missing tests for `.joins` and `.left_outer_joins`**: issue #379 explicitly lists `joins`, `left_outer_joins`, and `eager_load` as all affected. The PR only adds a spec for `eager_load`, so there's no verification that the fix (or lack of regression) covers the other two entry points the linked issue is about, despite the PR claiming \"issue #379 fixed!\".\n\n5. **Spec coupling to shared global fixture timeline** (`spec/chrono_model/time_machine/as_of_eager_loading_spec.rb`, `$t.subbar.ts[0]`, `$t.bar`): review already caught two rounds of brittle-timing failures from reusing the shared `Bar`/`SubBar` structure's implicit timeline. Hardcoding `ts[0]` with just a comment is fragile against future edits to the shared fixture; add an explicit assertion of the precondition it depends on (e.g. assert `$t.bar.name` at that timestamp before using it) so a future shared-fixture change fails loudly here instead of producing a confusing unrelated failure.",
+ "cost": 0.241774,
+ "sec": 79.4,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 44390,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 6421,
+  "output_tokens_details": {
+   "thinking_tokens": 5406
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 44390,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 6421,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 44390,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 44390
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G053",
+ "cond": "C"
+}

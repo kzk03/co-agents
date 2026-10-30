@@ -1,0 +1,60 @@
+# v0 集計(protocol §4。AIDev 18件)
+注: 予算超過のため sonnet 列は §4 の v0 判定プロンプトではなく v1 盲検判定の A/B(変更履歴 2026-10-22)。opus 列は judge_me.csv。
+群: {'C': 9, 'H': 9}
+
+## 再現率(判定者=opus)
+cond grp  n  yes  yes%  [95%CI]        yes+partial%
+   A   H  9    6  66.7% [0.35-0.88]   77.8%
+   A   C  9    5  55.6% [0.27-0.81]   77.8%
+     Fisher(yes, H vs C) p=1.000;  yes+partial p=1.000
+   B   H  9    5  55.6% [0.27-0.81]   88.9%
+   B   C  9    4  44.4% [0.19-0.73]   77.8%
+     Fisher(yes, H vs C) p=1.000;  yes+partial p=1.000
+
+## 再現率(判定者=sonnet)
+cond grp  n  yes  yes%  [95%CI]        yes+partial%
+   A   H  9    4  44.4% [0.19-0.73]   66.7%
+   A   C  9    6  66.7% [0.35-0.88]   88.9%
+     Fisher(yes, H vs C) p=0.637;  yes+partial p=0.576
+   B   H  9    4  44.4% [0.19-0.73]   66.7%
+   B   C  9    6  66.7% [0.35-0.88]   88.9%
+     Fisher(yes, H vs C) p=0.637;  yes+partial p=0.576
+
+## 判定者間一致 opus vs sonnet(v0)
+cond=A n=18  一致率(3値)=0.833  κ3=0.710  一致率(yes/非yes)=0.833  κ2=0.658
+cond=B n=18  一致率(3値)=0.667  κ3=0.455  一致率(yes/非yes)=0.722  κ2=0.444
+cond=A+B n=36  一致率(3値)=0.750  κ3=0.578  一致率(yes/非yes)=0.778  κ2=0.550
+混同行列(行=opus, 列=sonnet)
+sonnet   yes  partial  no
+opus                     
+yes       16        2   2
+partial    2        6   1
+no         2        0   5
+
+## 主観 inferable × 実測(判定者=opus)
+cond=A(行=主観 majority_inf, 列=実測)
+label    yes  partial  no
+inf                      
+NOAGREE    1        0   0
+partial    6        2   2
+yes        4        1   2
+cond=B(行=主観 majority_inf, 列=実測)
+label    yes  partial  no
+inf                      
+NOAGREE    1        0   0
+partial    5        4   1
+yes        3        2   2
+
+## 主観 inferable × 実測(判定者=sonnet)
+cond=A(行=主観 majority_inf, 列=実測)
+label    yes  partial  no
+inf                      
+NOAGREE    1        0   0
+partial    4        3   3
+yes        5        1   1
+cond=B(行=主観 majority_inf, 列=実測)
+label    yes  partial  no
+inf                      
+NOAGREE    1        0   0
+partial    4        3   3
+yes        5        1   1

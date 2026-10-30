@@ -1,0 +1,132 @@
+### W001 grafana/grafana | Stat: Improve unit test coverage
+  BODY: nan
+  [common.test.ts] are there any other combinations that would make sense to test?
+  [StatPanel.test.tsx] expect doesn't match description
+  [StatPanel.test.tsx] Could we check the percent change value is added as well?
+### W002 home-assistant/core | Update add-on state from Supervisor state change events
+  BODY: Small comment to match the pattern we used in #179025 for updating part of the data from events when there's also a poll loop. Copilot does also seem to have identified an edge case race condition as well, proposed some possible ideas.
+  [coordinator.py] ```suggestion
+         self.data = replace(
+             self.data,
+             addons={
+                 **self.data.addons,
+                 slug: replace(addon_data, addon=updated_addon),
+             }
+         )
+         self.async_update_listeners()
+ ```
+ 
+ Think your comment on my PR applies here too https://github.com/home-assistant/core/p
+  [coordinator.py] This took me a second but I see what its saying here. There's an edge case where the main `_async_update_data` gets the list response and then while awaiting a subsequent task (the info one in this example I suppose) the state of an app changes. In that situation this code will run and change the state of the app in the data only to have `_async_up
+### W003 backstage/backstage | fix: set explicit second-scale histogram bucket boundaries
+  BODY: Thanks for the contribution @nojaf, left some comments regarding the changesets and can you please follow up on the Copilot comments as well. 👍
+  [fix-catalog-histogram-buckets.md] ```suggestion **BREAKING** This change alters the bucket boundaries of the `catalog.processing.duration`, `catalog.processors.duration`, `catalog.processing.queue.delay`, `catalog.stitching.duration`, and `catalog.stitching.queue.delay` OpenTelemetry histogram metrics. If you have dashboards or alerts that depend on specific bucket label values (e.
+  [fix-scaffolder-histogram-buckets.md] ```suggestion **BREAKING** This change alters the bucket boundaries of the `scaffolder.task.duration` and `scaffolder.step.duration` OpenTelemetry histogram metrics. If you have dashboards or alerts that depend on specific bucket label values (e.g. `le="5"`) for these metrics, they will need to be updated. ```  This should also be major.
+  [fix-scheduler-histogram-buckets.md] ```suggestion **BREAKING** This change alters the bucket boundaries of the `backend_tasks.task.runs.duration` OpenTelemetry histogram metric. If you have dashboards or alerts that depend on specific bucket label values (e.g. `le="5"`) for this metric, they will need to be updated. ```  This should be minor.
+### W004 grafana/grafana | MySQL: Preserve SQLCommenter tags in stripSQLComments
+  BODY: nan
+  [macros.go] The guard checks the comment in isolation, but interpolation later runs over the whole SQL, so `SELECT 1 /*k='$__timeFilter(t'*/ WHERE (x = 1)` is preserved and then interpolated across the comment boundary. I tested it locally and got `SELECT 1 /*k='t'*/ WHERE (x = 1 BETWEEN FROM_UNIXTIME(1000) AND FROM_UNIXTIME(2000)`, a corrupted query that cont
+  [macros.go] `sqleng.Interpolate` does blind `strings.ReplaceAll` of `$__interval`, `$__interval_ms`, `$__unixEpochFrom()`/`To()` on the raw SQL before the macro engine calls `stripSQLComments`, so `/*i='$__interval'*/` reaches the guard already rewritten to `/*i='2m'*/` and is preserved with an interpolated value. This is inconsistent with stripping paren-form
+  [macros.go] This drops the remainder (`"SELECT 1 /*ab" becomes `"SELECT 1 "`), but Postgres/MSSQL keep the old fall-through that leaks the final byte back into the query (`"SELECT 1 b"`, and `"SELECT 1 /*ab'"` become `"SELECT 1 '"`). Please either port the fix to all three or note the intentional divergence, as written the parallel implementations silently dif
+  [macros.go] The spec escapes single quotes in values as `\'` and URL-encodes keys (which may contain `%`), but `[^']*` and the key charset reject both. I verified `/*controller='it\'s'*/` and `/*a%20b='x'*/` are dropped whole. The feature the PR advertises silently fails for those tags with no signal.
+  [macros.go] Now that a package-level `macroRegExp` compiled from the same `sExpr` exists, `Interpolate` should use it and drop this per-call compile, otherwise the guard's regex and the actual interpolation regex can drift apart, which would reintroduce exactly the bug the guard prevents. Note that this exists in the implementations for the other SQL variants 
+  [macros.go] This is copied verbatim in 3 different places, let's reduce this to 1 shared implementation if possible.
+### W005 dotnet/docs | Add formatting guidelines for F# reverse pipeline operator
+  BODY: Fantomas, the commonly used tooling for F# formatting, which is also closely aligned with F# style guide, thinks the opposite for these samples if they are short and fit on a single line.  End of line wrapping is only recommended due to line length limits:  https://fsprojects.github.io/fantomas-tools/#/fantomas/preview?data=N4KABGBEDGD2AmBTSAuKB6dZAo5IeD%2BwDyA0gDoBOJAdgGYCGAlgDYDu9ALgBZgA8APmAGcADmXqU21MCUjVYsAEa0yaAKQCwAWjCyFSxQC9VA6eSoRzFy1Z2KKFSlceObe2vtOUPmHPmIQPjIhsYAC2iAICtADmiGAAvIIiYhJS
+### W006 getsentry/sentry | feat(replay): Add Tap Event To event_parser.py
+  BODY: Approved but review blocking until Snuba changes are merged.
+### W007 ydb-platform/ydb | HTML report: Create issue button
+  BODY: nan
+  [generate-summary.py] @copilot давай без фолбека, либо обьясни зачем он нужен. я не хочу чтобы у нас рандомные sha писались в тикетах
+  [kqp_join_order_ut.cpp] @copilot  можешь откатить эти изменения
+  [kqp_locks_tricky_ut.cpp] @copilot  можешь откатить эти изменения
+  [kqp_locks_tricky_ut.cpp] @copilot  можешь откатить эти изменения
+  [test_sql_streaming.py] @copilot  можешь откатить эти изменения
+### W008 home-assistant/core | Add HLS streaming support to go2rtc integration
+  BODY: nan
+  [__init__.py] Extend the WebRTCProvider instead creating a new one
+  [__init__.py] ```suggestion     url = r"/api/go2rtc/hls/{entity_id}/{file_name:.*}" ```
+  [__init__.py] Move it to the new file web.py
+  [__init__.py] Use global imports
+  [__init__.py] It looks hacky... It is really needed?
+### W009 home-assistant/core | Trigger reauth on Teslemetry LoginRequired errors
+  BODY: The CI is failing. Have you run `prek` locally before submitting? :)
+### W010 espressif/arduino-esp32 | feat(matter): allow setting Matter Descriptor TagList attribute for endpoint
+  BODY: @lboue - Thanks for the PR. 
+ 
+ **Recommendation:** do not hard-restrict.
+ Put setTagList() on MatterEndPoint (generic)
+ 
+ #### Example:
+ 
+ ``` cpp
+ // Allowed on any endpoint — common namespaces
+ Light1.setTagList({MatterTags::Position::Top, MatterTags::Number::One});
+ // Natural for switches — still just presets, not a gate
+ ButtonOn.setTagList({MatterTags::Switches::On, MatterTags::Position::Right});
+ // Escape hatch always available
+ ep.setTagList({MatterTags::make(ns, tag, "my-label")});
+ `
+### W011 home-assistant/core | Add PR template instruction to AGENTS.md
+  BODY: The PR agent that was merged yesterday already has this instruction: https://github.com/home-assistant/core/blob/6470cbeadaecfff688da859356da3206dbd07083/.claude/agents/raise-pull-request.md#L208-L208  Do we still need this in AGENTS.md?
+### W012 home-assistant/core | Add live activity token retention, notify usage and clean up cycle to mobile_app
+  BODY: nan
+  [store.py]  ```suggestion ) -> None: ```  Return value never used
+  [store.py]  ```suggestion     if (device_tokens := live_activity_tokens.get(webhook_id)) is None or device_tokens.pop(activity_tag, None) is None:         return ```
+  [store.py]  ```suggestion ```
+  [__init__.py] As the return value now is None you can remove the inline function and use partial
+  [const.py] but in the end it's a token to start a live activity nothing more. Also it will used to start the a live activity when we use "local push", which is as you explained not even a push. Therefore I prefer to remove the push as it's not even true
+  [test_webhook.py] Do here the same assert as in the other tests. We should assert the whole object. Adopt it for the other assertions
+### W013 ydb-platform/ydb | stable-25-4 in CI
+  BODY: nan
+  [ya.make] ```suggestion
+    ydb/tests/library/compatibility/binaries/downloader download prestable-26-1/release/config-meta.json stable-26-1
+    OUT_NOAUTO prestable-26-1
+ ```
+### W014 dotnet/docs | Clarify difference between type annotation and type test patterns in F# documentation
+  BODY: Missing frontmatter/metadata.
+### W015 dotnet/runtime | [R2R] Expand discovery of non-generic virtual methods on generic types
+  BODY: I like the work, and it looks correct, but we need to utilize the test framework in ILCompiler.ReadyToRun.Tests to make the change long-term robust especially if we find that this regresses crossgen2 performance in some way by adding so many new dependencies. You've written a nice test file, which should be checked into ILCompiler.ReadyToRun.Tests and should have validation that the expected methods are being compiled. Talk to @jtschuster for details on how to use that test framework if you have
+### W016 dotnet/runtime | Fix DataContractJsonSerializer not passing ISerializationSurrogateProvider to internal ser
+  BODY: nan
+  [DataContractJsonSerializer.cs] Instead of introducing new test classes, try to reuse the `NonSerializablePerson`, `NonSerializablePersonSurrogate`, and `MyPersonSurrogateProvider` from the shared file '' in place of `TestClassA`, `TestClassB`, and `TestSurrogateProvider`. You are allowed to add the '*WasCalled' properties to `MyPersonSurrogateProvider`.
+  [DataContractJsonSerializer.cs] Let's use a consistent single-line pattern like we already use in `DataContractSerializer.RootContract`:
+ ```cs
+ _rootContract = DataContract.GetDataContract((_serializationSurrogateProvider == null) ? _rootType : GetSurrogatedType(_serializationSurrogateProvider, _rootType));
+ ```
+  [DataContractJsonSerializer.cs] This "cache invalidation" is not necessary and it is not done in the big brother DataContractSerializer. Please undo this change.
+  [DataContractJsonSerializer.cs] This "cache invalidation" is not necessary and it is not done in the big brother DataContractSerializer. Please undo this change.
+### W017 dotnet/runtime | Use the NativeBinary property instead of reconstructing the path in NativeAOT target
+  BODY: Turns out this isn't necessary. Native AOT shouldn't need any entitlements. The rest of the cleanup is still nice though.
+### W018 dotnet/runtime | [iOS][globalization] Implement CompareInfo.Version for hybrid globalization
+  BODY: nan
+  [pal_collation.m] This is code or novel? Littering comments unnecessarily.​​​​​​​​​​​​​​​​
+### W019 ray-project/ray | [ci] [docs] Restore formatting checks for doc/source/ after format.sh removal
+  BODY: nan
+  [.pre-commit-config.yaml] Is this required? 
+  [.pre-commit-config.yaml] a little skeptical that these would fail but ill trust you on these ones
+### W020 home-assistant/core | Add climate platform for niko_home_control
+  BODY: .. some more ..
+  [const.py] Be consistent with the prefix.
+ 
+ ```suggestion
+ NIKO_HOME_CONTROL_THERMOSTAT_MODES = {
+ ```
+  [climate.py] Consider adding `ClimateEntityFeature.TURN_OFF` and `turn_off` function.
+  [climate.py] Is this `NIKO_THERMOSTAT_MODES_MAP.off`?
+  [climate.py] Please add this to `strings.json` as well.
+  [climate.py] Please add this to `strings.json` as well.
+  [icons.json] Preset will never be `off` as you use `HVACMode.OFF` instead.
+### W021 dotnet/runtime | Rename AsyncMethodDesc to AsyncMethodVariant, add "AsyncVariant" flag to MethodWithToken a
+  BODY: nan
+  [EcmaMethod.cs] I agree with @MichalStrehovsky . This should stay as is.
+### W022 home-assistant/core | Add energy history support to Tessie
+  BODY: Making good progress! Few points left on my end. :)
+  [coordinator.py] It's good that we guard against it. Just wondering if this is something in the API we can guard first. For instance, if there are no valid results, throw the proper HTTP status code on the API instead? No showstopper: just curious to know the inner workings and how it's intended. :)
+  [test_coordinator.py] We have the MissingToken and TeslaFleetError as well. Am I overlooking or are they not in scope? :)
+### W023 grafana/grafana | Dashboards: Use async DataSource APIs in panel edit and scene context
+  BODY: The bulk of this is solid. I checked `hasBackendDatasource` against the original and it's a faithful translation, `useHasBackendDatasource`'s `lookupKey` correctly discards stale results, and `createDefaultAnnotationLayer`'s only caller is updated. One race I'd like closed plus a small nit.  **`getAdHocFilterVariableFor` now reads-then-writes across an await** (`setDashboardPanelContext.ts` L290-310)  The "find an existing ad-hoc variable" scan happens before the await, and `setState` reads `var
+### W024 pytorch/pytorch | Enable NCCLSymmetricMemory (RCCL) symmetric-memory support on ROCm
+  BODY: I had Claude go over this alongside the Codex pass. I agree with all three Codex P1s (device-comm destroy before unregister, stale `devcomm_registry_` on replacement, and `nccl_wait_signal` bypassing the liveness guard), so please treat those as blockers too.  Three additional blockers from that review, quoted below with my framing. The first one is the one I care most about, since the PR's own test codifies the broken recovery path. The second is a straight deletion that shrinks the ROCm blast 
+### W025 dotnet/docs | Capitalize Terminal Logger as proper noun in .NET CLI documentation
+  BODY: If it's a proper noun, then I don't think it should be "The Terminal Logger". It should just be "Terminal Logger". E.g. you wouldn't say "The Visual Studio".

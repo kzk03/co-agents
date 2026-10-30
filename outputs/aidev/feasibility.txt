@@ -1,0 +1,30 @@
+== PR
+PRs 71677 repos 6673
+outcome       closed  merged  open
+agent                             
+Claude_Code      406    1271   265
+Copilot         7803   11935  3758
+Cursor          1445    2127   487
+Devin           2604    3400   168
+Google_Jules     129     283    75
+OpenAI_Codex    4907   29435  1179
+
+== reviews
+state      APPROVED  CHANGES_REQUESTED  COMMENTED  DISMISSED
+user_type                                                   
+Bot             144                278      34613         79
+User          19300               4682      24080        639
+
+== 人間の CHANGES_REQUESTED(PR 作者本人・ボットを除く)
+reviews 4681 PRs 2848 repos 1067 reviewers 1275
+理由テキストあり(本文 or インライン) 4681 (100%) 本文あり 2800 インラインあり 2868
+PR の結末: {'merged': 1719, 'closed': 669, 'open': 460}
+エージェント別 PR 数: {'Copilot': 2376, 'Devin': 255, 'OpenAI_Codex': 102, 'Claude_Code': 58, 'Cursor': 47, 'Google_Jules': 10}
+強い拒否(CR → マージされず閉じた) PRs 669 うちテキストあり 669
+repo 集中: 上位10 repo が 17% の CR を占める
+
+== CR なしで閉じられた PR(コメントで止めた可能性)
+closed PRs 17294 うち人間 CR なし 16625 うち他者の人間コメントあり 4487
+
+== 比較用: 人間が作った PR(agent=Human)
+Human PR に対する人間 CR 0 PRs 0

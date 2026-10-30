@@ -1,0 +1,41 @@
+This PR adds a `remote_addr` field to the Event model to capture the client's IP address at ingest-time and carry it through to digest-time.
+
+## Changes Made
+
+- **Event Model**: Added `remote_addr = models.GenericIPAddressField(blank=True, null=True, default=None)` to store client IP addresses
+- **Ingest Pipeline**: Updated `get_event_meta()` to capture `request.META['REMOTE_ADDR']` and pass it through the existing metadata mechanism
+- **Event Creation**: Modified `Event.from_ingested()` to handle the `remote_addr` field from metadata
+- **Database Migration**: Created migration `0023_event_remote_addr.py` to add the new field
+- **Tests**: Added comprehensive test coverage for all scenarios including backwards compatibility
+
+## Implementation Details
+
+The implementation leverages the existing `SetRemoteAddrMiddleware` which already processes proxy headers (`X-Real-IP`, `X-Forwarded-For`) to determine the real client IP address, even when behind proxies. The middleware sets `request.META['REMOTE_ADDR']` to the correct value, which is then captured during ingest and stored with the event.
+
+The field can be `None` for both backwards compatibility and misconfigured proxy scenarios (as intended by the existing middleware design).
+
+## Example Usage
+
+After this change, events will automatically include the client's IP address:
+
+```python
+# Event ingested from IP 192.168.1.100
+event = Event.objects.get(...)
+print(event.remote_addr)  # "192.168.1.100"
+
+# Events from misconfigured proxies or old events
+print(event.remote_addr)  # None (backwards compatible)
+```
+
+## Backwards Compatibility
+
+- The field is nullable, so existing events continue to work without issues
+- Uses the same metadata-passing pattern as existing fields like `debug_info`
+- No breaking changes to any existing APIs
+
+Fixes #165.
+
+<!-- START COPILOT CODING AGENT TIPS -->
+---
+
+💡 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.

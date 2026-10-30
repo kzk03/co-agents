@@ -1,0 +1,597 @@
+### W001 grafana/grafana | Stat: Improve unit test coverage
+  BODY: nan
+  [common.test.ts] are there any other combinations that would make sense to test?
+  [StatPanel.test.tsx] expect doesn't match description
+  [StatPanel.test.tsx] Could we check the percent change value is added as well?
+### W002 home-assistant/core | Update add-on state from Supervisor state change events
+  BODY: Small comment to match the pattern we used in #179025 for updating part of the data from events when there's also a poll loop. Copilot does also seem to have identified an edge case race condition as well, proposed some possible ideas.
+  [coordinator.py] ```suggestion         self.data = replace(             self.data,             addons={                 **self.data.addons,                 slug: replace(addon_data, addon=updated_addon),             }         )         self.async_update_listeners() ```  Think your comment on my PR applies here too https://github.com/home-assistant/core/p
+  [coordinator.py] This took me a second but I see what its saying here. There's an edge case where the main `_async_update_data` gets the list response and then while awaiting a subsequent task (the info one in this example I suppose) the state of an app changes. In that situation this code will run and change the state of the app in the data only to have `_async_up
+### W003 backstage/backstage | fix: set explicit second-scale histogram bucket boundaries
+  BODY: Thanks for the contribution @nojaf, left some comments regarding the changesets and can you please follow up on the Copilot comments as well. 👍
+  [fix-catalog-histogram-buckets.md] ```suggestion **BREAKING** This change alters the bucket boundaries of the `catalog.processing.duration`, `catalog.processors.duration`, `catalog.processing.queue.delay`, `catalog.stitching.duration`, and `catalog.stitching.queue.delay` OpenTelemetry histogram metrics. If you have dashboards or alerts that depend on specific bucket label values (e.
+  [fix-scaffolder-histogram-buckets.md] ```suggestion **BREAKING** This change alters the bucket boundaries of the `scaffolder.task.duration` and `scaffolder.step.duration` OpenTelemetry histogram metrics. If you have dashboards or alerts that depend on specific bucket label values (e.g. `le="5"`) for these metrics, they will need to be updated. ```  This should also be major.
+  [fix-scheduler-histogram-buckets.md] ```suggestion **BREAKING** This change alters the bucket boundaries of the `backend_tasks.task.runs.duration` OpenTelemetry histogram metric. If you have dashboards or alerts that depend on specific bucket label values (e.g. `le="5"`) for this metric, they will need to be updated. ```  This should be minor.
+### W004 grafana/grafana | MySQL: Preserve SQLCommenter tags in stripSQLComments
+  BODY: nan
+  [macros.go] The guard checks the comment in isolation, but interpolation later runs over the whole SQL, so `SELECT 1 /*k='$__timeFilter(t'*/ WHERE (x = 1)` is preserved and then interpolated across the comment boundary. I tested it locally and got `SELECT 1 /*k='t'*/ WHERE (x = 1 BETWEEN FROM_UNIXTIME(1000) AND FROM_UNIXTIME(2000)`, a corrupted query that cont
+  [macros.go] `sqleng.Interpolate` does blind `strings.ReplaceAll` of `$__interval`, `$__interval_ms`, `$__unixEpochFrom()`/`To()` on the raw SQL before the macro engine calls `stripSQLComments`, so `/*i='$__interval'*/` reaches the guard already rewritten to `/*i='2m'*/` and is preserved with an interpolated value. This is inconsistent with stripping paren-form
+  [macros.go] This drops the remainder (`"SELECT 1 /*ab" becomes `"SELECT 1 "`), but Postgres/MSSQL keep the old fall-through that leaks the final byte back into the query (`"SELECT 1 b"`, and `"SELECT 1 /*ab'"` become `"SELECT 1 '"`). Please either port the fix to all three or note the intentional divergence, as written the parallel implementations silently dif
+  [macros.go] The spec escapes single quotes in values as `\'` and URL-encodes keys (which may contain `%`), but `[^']*` and the key charset reject both. I verified `/*controller='it\'s'*/` and `/*a%20b='x'*/` are dropped whole. The feature the PR advertises silently fails for those tags with no signal.
+  [macros.go] Now that a package-level `macroRegExp` compiled from the same `sExpr` exists, `Interpolate` should use it and drop this per-call compile, otherwise the guard's regex and the actual interpolation regex can drift apart, which would reintroduce exactly the bug the guard prevents. Note that this exists in the implementations for the other SQL variants 
+  [macros.go] This is copied verbatim in 3 different places, let's reduce this to 1 shared implementation if possible.
+### W005 dotnet/docs | Add formatting guidelines for F# reverse pipeline operator
+  BODY: Fantomas, the commonly used tooling for F# formatting, which is also closely aligned with F# style guide, thinks the opposite for these samples if they are short and fit on a single line.  End of line wrapping is only recommended due to line length limits:  https://fsprojects.github.io/fantomas-tools/#/fantomas/preview?data=N4KABGBEDGD2AmBTSAuKB6dZAo5IeD%2BwDyA0gDoBOJAdgGYCGAlgDYDu9ALgBZgA8APmAGcADmXqU21MCUjVYsAEa0yaAKQCwAWjCyFSxQC9VA6eSoRzFy1Z2KKFSlceObe2vtOUPmHPmIQPjIhsYAC2iAICtADmiGAAvIIiYhJS
+### W006 getsentry/sentry | feat(replay): Add Tap Event To event_parser.py
+  BODY: Approved but review blocking until Snuba changes are merged.
+### W007 ydb-platform/ydb | HTML report: Create issue button
+  BODY: nan
+  [generate-summary.py] @copilot давай без фолбека, либо обьясни зачем он нужен. я не хочу чтобы у нас рандомные sha писались в тикетах
+  [kqp_join_order_ut.cpp] @copilot  можешь откатить эти изменения
+  [kqp_locks_tricky_ut.cpp] @copilot  можешь откатить эти изменения
+  [kqp_locks_tricky_ut.cpp] @copilot  можешь откатить эти изменения
+  [test_sql_streaming.py] @copilot  можешь откатить эти изменения
+### W008 home-assistant/core | Add HLS streaming support to go2rtc integration
+  BODY: nan
+  [__init__.py] Extend the WebRTCProvider instead creating a new one
+  [__init__.py] ```suggestion     url = r"/api/go2rtc/hls/{entity_id}/{file_name:.*}" ```
+  [__init__.py] Move it to the new file web.py
+  [__init__.py] Use global imports
+  [__init__.py] It looks hacky... It is really needed?
+### W009 home-assistant/core | Trigger reauth on Teslemetry LoginRequired errors
+  BODY: The CI is failing. Have you run `prek` locally before submitting? :)
+### W010 espressif/arduino-esp32 | feat(matter): allow setting Matter Descriptor TagList attribute for endpoint
+  BODY: @lboue - Thanks for the PR.   **Recommendation:** do not hard-restrict. Put setTagList() on MatterEndPoint (generic)  #### Example:  ``` cpp // Allowed on any endpoint — common namespaces Light1.setTagList({MatterTags::Position::Top, MatterTags::Number::One}); // Natural for switches — still just presets, not a gate ButtonOn.setTagList({MatterTags::Switches::On, MatterTags::Position::Right}); // Escape hatch always available ep.setTagList({MatterTags::make(ns, tag, "my-label")}); `
+### W011 home-assistant/core | Add PR template instruction to AGENTS.md
+  BODY: The PR agent that was merged yesterday already has this instruction: https://github.com/home-assistant/core/blob/6470cbeadaecfff688da859356da3206dbd07083/.claude/agents/raise-pull-request.md#L208-L208  Do we still need this in AGENTS.md?
+### W012 home-assistant/core | Add live activity token retention, notify usage and clean up cycle to mobile_app
+  BODY: nan
+  [store.py]  ```suggestion ) -> None: ```  Return value never used
+  [store.py]  ```suggestion     if (device_tokens := live_activity_tokens.get(webhook_id)) is None or device_tokens.pop(activity_tag, None) is None:         return ```
+  [store.py]  ```suggestion ```
+  [__init__.py] As the return value now is None you can remove the inline function and use partial
+  [const.py] but in the end it's a token to start a live activity nothing more. Also it will used to start the a live activity when we use "local push", which is as you explained not even a push. Therefore I prefer to remove the push as it's not even true
+  [test_webhook.py] Do here the same assert as in the other tests. We should assert the whole object. Adopt it for the other assertions
+### W013 ydb-platform/ydb | stable-25-4 in CI
+  BODY: nan
+  [ya.make] ```suggestion    ydb/tests/library/compatibility/binaries/downloader download prestable-26-1/release/config-meta.json stable-26-1    OUT_NOAUTO prestable-26-1 ```
+### W014 dotnet/docs | Clarify difference between type annotation and type test patterns in F# documentation
+  BODY: Missing frontmatter/metadata.
+### W015 dotnet/runtime | [R2R] Expand discovery of non-generic virtual methods on generic types
+  BODY: I like the work, and it looks correct, but we need to utilize the test framework in ILCompiler.ReadyToRun.Tests to make the change long-term robust especially if we find that this regresses crossgen2 performance in some way by adding so many new dependencies. You've written a nice test file, which should be checked into ILCompiler.ReadyToRun.Tests and should have validation that the expected methods are being compiled. Talk to @jtschuster for details on how to use that test framework if you have
+### W016 dotnet/runtime | Fix DataContractJsonSerializer not passing ISerializationSurrogateProvider to internal ser
+  BODY: nan
+  [DataContractJsonSerializer.cs] Instead of introducing new test classes, try to reuse the `NonSerializablePerson`, `NonSerializablePersonSurrogate`, and `MyPersonSurrogateProvider` from the shared file '' in place of `TestClassA`, `TestClassB`, and `TestSurrogateProvider`. You are allowed to add the '*WasCalled' properties to `MyPersonSurrogateProvider`.
+  [DataContractJsonSerializer.cs] Let's use a consistent single-line pattern like we already use in `DataContractSerializer.RootContract`: ```cs _rootContract = DataContract.GetDataContract((_serializationSurrogateProvider == null) ? _rootType : GetSurrogatedType(_serializationSurrogateProvider, _rootType)); ```
+  [DataContractJsonSerializer.cs] This "cache invalidation" is not necessary and it is not done in the big brother DataContractSerializer. Please undo this change.
+  [DataContractJsonSerializer.cs] This "cache invalidation" is not necessary and it is not done in the big brother DataContractSerializer. Please undo this change.
+### W017 dotnet/runtime | Use the NativeBinary property instead of reconstructing the path in NativeAOT target
+  BODY: Turns out this isn't necessary. Native AOT shouldn't need any entitlements. The rest of the cleanup is still nice though.
+### W018 dotnet/runtime | [iOS][globalization] Implement CompareInfo.Version for hybrid globalization
+  BODY: nan
+  [pal_collation.m] This is code or novel? Littering comments unnecessarily.​​​​​​​​​​​​​​​​
+### W019 ray-project/ray | [ci] [docs] Restore formatting checks for doc/source/ after format.sh removal
+  BODY: nan
+  [.pre-commit-config.yaml] Is this required? 
+  [.pre-commit-config.yaml] a little skeptical that these would fail but ill trust you on these ones
+### W020 home-assistant/core | Add climate platform for niko_home_control
+  BODY: .. some more ..
+  [const.py] Be consistent with the prefix.  ```suggestion NIKO_HOME_CONTROL_THERMOSTAT_MODES = { ```
+  [climate.py] Consider adding `ClimateEntityFeature.TURN_OFF` and `turn_off` function.
+  [climate.py] Is this `NIKO_THERMOSTAT_MODES_MAP.off`?
+  [climate.py] Please add this to `strings.json` as well.
+  [climate.py] Please add this to `strings.json` as well.
+  [icons.json] Preset will never be `off` as you use `HVACMode.OFF` instead.
+### W021 dotnet/runtime | Rename AsyncMethodDesc to AsyncMethodVariant, add "AsyncVariant" flag to MethodWithToken a
+  BODY: nan
+  [EcmaMethod.cs] I agree with @MichalStrehovsky . This should stay as is.
+### W022 home-assistant/core | Add energy history support to Tessie
+  BODY: Making good progress! Few points left on my end. :)
+  [coordinator.py] It's good that we guard against it. Just wondering if this is something in the API we can guard first. For instance, if there are no valid results, throw the proper HTTP status code on the API instead? No showstopper: just curious to know the inner workings and how it's intended. :)
+  [test_coordinator.py] We have the MissingToken and TeslaFleetError as well. Am I overlooking or are they not in scope? :)
+### W023 grafana/grafana | Dashboards: Use async DataSource APIs in panel edit and scene context
+  BODY: The bulk of this is solid. I checked `hasBackendDatasource` against the original and it's a faithful translation, `useHasBackendDatasource`'s `lookupKey` correctly discards stale results, and `createDefaultAnnotationLayer`'s only caller is updated. One race I'd like closed plus a small nit.  **`getAdHocFilterVariableFor` now reads-then-writes across an await** (`setDashboardPanelContext.ts` L290-310)  The "find an existing ad-hoc variable" scan happens before the await, and `setState` reads `var
+### W024 pytorch/pytorch | Enable NCCLSymmetricMemory (RCCL) symmetric-memory support on ROCm
+  BODY: I had Claude go over this alongside the Codex pass. I agree with all three Codex P1s (device-comm destroy before unregister, stale `devcomm_registry_` on replacement, and `nccl_wait_signal` bypassing the liveness guard), so please treat those as blockers too.  Three additional blockers from that review, quoted below with my framing. The first one is the one I care most about, since the PR's own test codifies the broken recovery path. The second is a straight deletion that shrinks the ROCm blast 
+### W025 dotnet/docs | Capitalize Terminal Logger as proper noun in .NET CLI documentation
+  BODY: If it's a proper noun, then I don't think it should be "The Terminal Logger". It should just be "Terminal Logger". E.g. you wouldn't say "The Visual Studio".
+### W026 home-assistant/core | Add network MAC connection to Rabbit Air devices
+  BODY: Thanks for adding the MAC connection here!  One change request: the `format_mac()` call isn't needed. The device registry already normalizes `CONNECTION_NETWORK_MAC` connections through `format_mac()` itself in `_normalize_connections()` (`homeassistant/helpers/device_registry.py`), which `async_get_or_create()` runs on whatever connections an entity passes in:  ```python def _normalize_connections(connections):     """Normalize connections to ensure we can match mac addresses."""     return {  
+### W027 PaddlePaddle/Paddle | [Profiler] Export common host event gather
+  BODY: 需要先调整后再继续合入。  阻塞点：`tools/windows/run_unittests.sh` 的 Windows-Inference skip list 目前把 `^new_profiler_test$` 替换成了 `^operator_test$`。本 PR 的目标是恢复 `new_profiler_test` 覆盖并修复 profiler DLL 状态共享；新增跳过 `operator_test` 会降低无关单测覆盖，且 PR 描述没有说明它与本修复的关系。建议这里仅移除 `new_profiler_test`；如果 `operator_test` 确实需要临时 skip，请拆成独立 PR/变更并说明失败原因和恢复条件。  其余 profiler 导出入口方向看起来合理；已有线程里提到的共享声明/头文件契约问题也建议一并处理，避免后续签名或 `PADDLE_API` 属性漂移。当前 required checks 仍有失败/运行中任务，修复后还需要再看最终 CI。
+### W028 ray-project/ray | [rllib] Fix segment_tree.py edge case
+  BODY: Awesome PR @pseudo-rnd-thoughts!! Thanks for fixing this hard-to-find one.
+  [segment_tree.py] Nice! 
+  [segment_tree.py] Awesome! Simple fix for a big problem :)
+  [test_segment_tree_replay_buffer_api.py] Great! Could we maybe use the checks provided by `TestCase` itself or the rllib one used in many testcases? 
+  [test_segment_tree_replay_buffer_api.py] Again, like above. Could we use the `TestCase` checking methods or the one from us? Or is there a specific reason why you would prefer the `assert` here?
+  [test_segment_tree_replay_buffer_api.py] Very nice! Could we add a comment of why this case could cause problems on the `SumSegment`?
+### W029 home-assistant/core | Type the ios registration data with a HassKey
+  BODY: I think the HassKey can be improved.
+  [const.py] I think all keys are dicts: ```suggestion IOS_DATA: HassKey[dict[str, dict[str, Any]]] = HassKey(DOMAIN) ```
+### W030 NVIDIA/Megatron-LM | Muon CPU offload
+  BODY: Dear @pengdurice, sorry to be the bearer of bad news. We're moving toward a unification of layer- and elementwise optimizers and these changes lead to further divergence between these types of optimizers.  In order not to merge the PR by accident, I'll block it for now while we figure out how to continue with this. For now, I appreciate greatly that you took the time to address all the requests and am sorry that we cannot move forward yet.
+### W031 dotnet/docs | Add common patterns for field keyword in C# 14
+  BODY: Hi @gidadomukhtar   This is a great addition. I have a couple suggestions, and we need to fix the lint issues. Then, this is ready to merge.
+  [csharp-14.md] I try to keep the what's new pages structurally simple. Let's change this from an H3 to a short bit of prose:   ```suggestion   You can also simplify common patterns like lazy initialization, property change notifications, and structured string fields. The following code shows examples of each: ```
+### W032 backstage/backstage | frontend-dev-utils: add helper for plugin dev apps
+  BODY: nan
+  [createDevApp.test.tsx] could go for a single root `jest.setTimeout` too 
+  [createDevApp.tsx] This seems to make sense to me
+  [report.api.md] Why was the features field extracted here? Its type didn't change right? Did you just want to defer the others to look more like advanced options so to speak, so they aren't too visible upfront?
+### W033 ydb-platform/ydb | Add worklflow for compatibility tests
+  BODY: nan
+  [regression_run_compatibility.yml] Это избыточно, по дефолту и так будет `default: small,medium,large`
+### W034 getsentry/sentry | feat(search): Middle-ellipsis filter values in the query builder
+  BODY: This looks awesome in general, and I _really_ like the reasoning for the change. +1 to putting the ellipses in the middle.  But, the current implementation crops out a lot more text than the current prod behavior in some cases:  <table> <thead> <tr> <th>Case</th> <th>Before</th> <th>After</th> </tr> </thead> <tbody> <tr> <td>Single value, 1600px<br />(value fits in 373px uncropped)</td> <td><img alt="before-1600" src="https://github.com/user-attachments/assets/7a14076d-b439-4aab-a081-1161919cfc5
+  [formattedQuery.spec.tsx] [Testing] You can get away without much of the manual resize observer shenanigans by using the existing `triggerResizeObservers` test helper:  ```ts it('re-fits the filter value when an observed ancestor resizes', () => {   const path = '/api/0/organizations/{organization_id_or_slug}/events/';   render(<FormattedQuery {...defaultProps} query={`tran
+### W035 ray-project/ray | [Data] - Update pandas, modin, and pyarrow minimums
+  BODY: Can you remove the old pyarrow v9 depset? https://github.com/ray-project/ray/blob/master/python/deplocks/ci/data-pyarrow-v9-ci_depset_py3.10.lock
+### W036 getsentry/sentry | feat(dynamic-sampling): Compare EAP vs outcomes org sliding-window rate
+  BODY: nan
+  [queries.py] `DataCategory.TRANSACTION` should not have any `Sampled:` outcomes. These are reserved for the indexed category, as the indexed payload is dropped, not the "total". 
+  [queries.py] I think the right abstraction to use here would be `sentry.snuba.outcomes.QueryDefinition`.
+  [queries.py] I thought we needed 5 minutes of data?  Last 1 minute, may be off because of aggregation delays of outcomes.
+### W037 PaddlePaddle/Paddle | [Build] Ensure load nvidia libraries from `site-packages` on arm64 build
+  BODY: 已复查最新提交。之前的 formatter 和 cuSPARSELt 加载问题在当前 head 仍保持已修复；这次新提交在 ARM64 早期 preload 分支引入了一个需要新 commit 修复的回归，细节见行内评论。  <div align="right">    <sup>Powered by Nyanpasu with gpt-5.5 xhigh, please check the suggestions carefully.</sup> </div>
+  [__init__.py] ![P1](https://img.shields.io/badge/P1-high-orange) **优先级：P1**  **处理要求：请针对该评论修复并提交新的 commit。**  这次把这里改成 `builtins.int` 会让 ARM64 的早期 preload 分支失效：这个代码块在文件顶部执行，但 `builtins` 直到后面 `typing.TYPE_CHECKING` 的 `else` 分支才导入。`platform.machine() == 'aarch64'` 时会先触发 `NameError`，随后被外层 `except Exception` 吞掉，导致 `_preload_nvidia_lib()` 不会执行，PR 要修的 ARM build 下从 site-
+### W038 home-assistant/core | Add Raspberry Pi Firmware update entity
+  BODY: Small piece of feedback on the warning that we can take or leave. I think we should adjust the setup error handling a little to differentiate between Supervisor communication error and endpoint missing like we do elsewhere in this integration.  I also should note that it feels rather inconsistent to have the rpi board features handled by `hassio` when we have `homeassistant_yellow` and `homeassistant_green` for those boards. Why did we choose not to follow that established model and make a new i
+  [update.py] ```suggestion             "Power loss during the EEPROM update can permanently damage your device." ``` The term "brick your device" seems like jargon only more technical users would understand. Do we use that elsewhere? I asked claude and it agreed and came up with some options. I liked that the suggestion above best but here were the others if yo
+  [coordinator.py] It does feel odd to me that this is within the `hassio` integration when we have separate `homeassistant_yellow` and `homeassistant_green` integrations which handle those boards and provide devices for those board features. Feels inconsistent that those integrations provide a device for the led toggles but the main `hassio` integration is providing
+  [update.py] ```suggestion             try:                 rpi_firmware = await client.os.raspberry_pi_firmware_info()             except SupervisorNotFoundError as err:                 # Older supervisors (pre OS 18) don't expose the endpoint.                 rpi_firmware = None                 _LOGGER.debug("Raspberry Pi firmware info unavailable: %s", err) 
+### W039 getsentry/sentry | Refactor dynamic sampling rule ID assignment using ORM query
+  BODY: See previous comment.
+### W040 home-assistant/core | Add button platform to bosch_shc
+  BODY: nan
+  [button.py] What's a scenario? Is it the same as a scene?
+  [conftest.py] why don't you use `with patch()` and directly patch the object?
+  [conftest.py] Do we need to patch zeroconf as we have `bosch_shc_mock_async_zeroconf` as fixture?
+  [test_button.py] Why do we have this as a fixture, as we already have this as a generic one?
+  [test_button.py] I think you could consider bootstrapping the mock with devices by default, as some devices would probably yield multiple entities
+### W041 apache/airflow | [Helm]Support tpl rendering in ServiceAccount annotations, metadataConnection, and config 
+  BODY: Looks much better! Just small nits
+  [test_annotations.py] ```suggestion                 "airflowVersion": "2.11.0", ``` We support all 2.11 versions currently, so it is safer to test with the first 2.11 version.
+  [test_annotations.py] Currently, the `workers.serviceAccount` is deprecated in favour of `workers.celery.serviceAccount` (tested here) and `workers.kubernetes.serviceAccount` (tested in test_pod_template_file.py). Could you modify this test to test the celery one and add a similar test case for the Kubernetes one?
+  [test_annotations.py] ```suggestion ``` Just for consistency with other test cases, which are testing Airflow 3 renderings.
+  [test_annotations.py] ```suggestion                 "airflowVersion": "2.11.0", ```
+  [test_annotations.py] Could you separate pgbouncer to the dedicated test case to remove the conditional logic from the test (basically point 2 https://github.com/apache/airflow/pull/64763#discussion_r3046002491)?
+### W042 dotnet/docs | Update .NET 10 overview page for Preview 6
+  BODY: There are a lot of code examples in the release notes that were omitted here. I think they should be added.
+  [libraries.md] ```suggestion This article describes new features in the .NET libraries for .NET 10. It has been updated for Preview 6. ```
+  [libraries.md] ```suggestion The JSON specification doesn't specify how to handle duplicate properties when deserializing a JSON payload. This can lead to unexpected results and security vulnerabilities. .NET 10 introduces the <xref:System.Text.Json.JsonSerializerOptions.AllowDuplicateProperties?displayProperty=nameWithType> option to disallow duplicate JSON pro
+  [libraries.md] ```suggestion Duplicates are detected by checking if a value is assigned multiple times during deserialization, so it works as expected with other options like case-sensitivity and naming policy. ```
+  [libraries.md] ```suggestion The JSON serializer accepts many options to customize serialization and deserialization, but the defaults might be too relaxed for some applications. .NET 10 adds a new <xref:System.Text.Json.JsonSerializerOptions.Strict?displayProperty=nameWithType> preset that follows best practices by including the following options: ```
+  [libraries.md] These should probably end in periods and use xref links to the APIs.
+  [libraries.md] Use xref links to APIs.
+### W043 home-assistant/core | Utility Meter: capture periodically resetting state from zero
+  BODY: This fixes a real gap. On a reset we currently discard the negative delta and also lose any post-reset accumulation from zero.   Aligning with total_increasing stats is reasonable in spirit, but this PR treats any decrease as a reset and adds the full new value (100→95 would add 95), which is unsafe. The recorder already gates this with a 10% dip heuristic in [reset_detected()](homeassistant/components/sensor/recorder.py), and we shouldn’t copy that arbitrary rule into utility meter wholesale wi
+### W044 home-assistant/core | Fix hassio.backup_partial AttributeError when folders are specified
+  BODY: nan
+  [services.py] We can use `vol.Coerce(Folder)` and drop the custom validation for this part.
+### W045 NVIDIA/Megatron-LM | Add config option to set attrs in TE quantization recipe
+  BODY: nan
+  [transformer_engine.py] Can we add this recipe to the regular nvfp4 recipe as well? I assume `CustomRecipe` is a nice way to support various RL recipes, but for uniform recipes like nvfp4, it can also benefit from E5M3.
+### W046 getsentry/sentry | chore: exclude bin/ from pre-push mypy
+  BODY: shouldn't we just be ignoring bin/ instead?
+### W047 home-assistant/core | Add 100% coverage to binary_sensor for Fritz
+  BODY: tests are also failing
+  [test_binary_sensor.py] Copilot is right here in principle, but move L52&53 out of the patch and only add L55&56
+### W048 ydb-platform/ydb | [html report] highlight sanitizer issues
+  BODY: Поправь замечения, пожалуйста
+### W049 home-assistant/core | Split HDFury coordinator into separate info and config coordinators
+  BODY: Sorry for the delay, have some busy days. Commented on some small cleanups. Can you also update the PR title and description so people reviewing after me understand that we are going for a split coordinator within this PR
+  [button.py] This can be removed when assigned in the entity.py  ```suggestion  ```
+  [entity.py] ```suggestion         self.runtime_data = runtime_data         self.entity_description = entity_description ```
+  [number.py] This can be removed when assigned in the entity.py   ```suggestion  ```
+  [button.py] ```suggestion             await self.entity_description.press_fn(self.runtime_data.client) ```
+  [number.py] ```suggestion             await self.entity_description.set_value_fn(self.runtime_data.client, str(int(value))) ```
+  [select.py] This can be removed when assigned in the entity.py  ```suggestion  ```
+### W050 home-assistant/core | Limit Matter light color temperature values
+  BODY: See my latest comment. Lets please clamp to practical ranges AND matter range (whichever makes more sense for min/max)
+### W051 ray-project/ray | [Serve] Deflake test_deployment_actors: isolate kill-heavy tests
+  BODY: reverting my approval
+### W052 getsentry/sentry | fix(security): IDOR in OrganizationOnDemandRuleStatsEndpoint - scope Project by organizati
+  BODY: Going to add my changes for it
+  [organization_alert_rule_index.py] Looks like the agent didn't read AGENTS.md. Gonna change this to self.get_projects which will have some permission checks built in
+  [test_organization_ondemand_rule_stats_endpoint.py] This is good practice but we don't do this many other places. Most use of self.get_projects that results in a permission denial ends up as 403 so I'm going to flip it back to that. 
+### W053 home-assistant/core | Add Tuya Madimack Elite V3 fixture
+  BODY: Instead of force adding datapoints to a mocked Tuya device, please create a preliminary pull request with a real device fixture (and corresponding existing entities)
+### W054 home-assistant/core | Fix sonos availability
+  BODY: Once again, this was marked as ready without addressing all comments (some of which where pointed out as not being addressed already).  As already noted: you need to address previous comments before marking this as ready. Go over all the unresolved comments in this PR and make sure they are addressed.  If any comment does not make sense or is not clear, reply to the comment.
+### W055 getsentry/sentry | feat(search agent): Search agent endpoint
+  BODY: there is a very problematic security flaw -- we are not checking the permissions of the projects we're passing in, so an org could read anyone elses projects. please use `self.get_projects` instead of pulling off the query string directly, which will validate the projects belong to the requesting org
+### W056 ydb-platform/ydb | Preserve original error messages in muted test results
+  BODY: nan
+  [upload_tests_results.py] Можешь взять за основу то как мы получаем ошибку у failure
+  [upload_tests_results.py] тут некорректный термин skipped, т.к. тут мы работаем с muted, а skipped это другое
+### W057 ydb-platform/ydb | Github alert: check job status + use GH token
+  BODY: see comments
+### W058 home-assistant/core | Add preview feature validation to async_subscribe_preview_feature
+  BODY: nan
+  [test_init.py] Move this test below `test_async_subscribe_preview_feature_helper`.
+### W059 home-assistant/core | Add the air outlet, DHW and indoor unit sensors to WeHeat
+  BODY: nan
+  [sensor.py] If it's only for the supported function, we can just return an inline `bool`. Something like `bool(entity_description.value_fn`. Then I wonder why this is needed, since the supported_fn is generally used if there's logic or capabilities needed checking, before creating the sensors. What's the rationale here? :)
+### W060 backstage/backstage | fix(catalog): fix flaky entity page test
+  BODY: nan
+  [renderInTestApp.tsx] Hmm, I don't think it's right to mount the content on each of these paths. They're not meant for the test subject, but rather abstract route targets that the subject would be linking to.  I'm thinking we might simply need to add a `mountPath?: string` option? 🤔, which ends up being the path that the content is rendered at, with `/` being the defaul
+### W061 dotnet/runtime | Add XML documentation for 29 undocumented .NET 7.0 APIs
+  BODY: Use <see cref="{API}" /> tags throughout when referencing APIs, and <see langword="{langword}" /> tags for C# language keywords.  More documentation on recommended tags can be found at: https://learn.microsoft.com/dotnet/csharp/language-reference/xmldoc/recommended-tags
+### W062 dotnet/runtime | Adding push2/pop2
+  BODY: Added some comments.  > Superpmi result with/without PPX feature  Did you get a chance to check if all the perfscore is coming just from prolog and epilog? Also, is it because we have not setup the perf latency/throughput numbers accurately (I see a TODO there and added a comment about it) and hence perfscore is just because of reduced in number of instructions?
+### W063 home-assistant/core | fix totalconnect integration bypass functionality by adding async coordinator refresh
+  BODY: The title and PR description doesn't describe what this does though
+  [button.py] ```suggestion         await self.hass.async_add_executor_job(self._zone.bypass) ``` and then remove the `press`
+### W064 grafana/grafana | Dashboards: Remove unused v2alpha0 schema and kindsv2 generator
+  BODY: looks good... ~~but don't merge yet~~
+### W065 dotnet/runtime | [Wasm RyuJit] local stores
+  BODY: I was too hasty to approve here, apologies. I was forgetting that the `emitIns_S` encoding will not work for stores. As SingleAccretion pointed out, the stack must be: ``` <target> <value> <- top ``` and the store itself (I believe) should just be encoded as a single opcode. @SingleAccretion could you potentially explain a bit more how RA will handle the placement of `store` arguments on the stack?
+### W066 home-assistant/core | [Overseerr] feat: implement searching and request media
+  BODY: I like the proposal and think you did a good job overall.  There are a few inconsistencies when it comes to the `season` attribute in `_async_search_and_request` and `_async_request_media` - try to unify it. I would argue that if the user provides a `season` attribute, but the `media_type` is movie, then it should fail, as it is unclear what the user wanted.
+  [services.py] ```quote(query)``` should probably be implemented within `python_overseerr`, instead of here. This seems more like a quick fix, instead of a permanent solution.
+  [services.py] ```suggestion async def _request_media( ```
+  [services.py] ```suggestion async def _search_media( ``` Generally, double underscore prefixes only make sense for methods within classes that are part of inheritance hierarchies where you want to prevent accidental overriding by subclasses. For your case with module-level helper functions, there's no inheritance involved, so a single underscore is the approp
+  [services.py] This is very hard to read.  ```suggestion              "title": first_result.title if hasattr(first_result, "title") else getattr(first_result, "name", "Unknown") ```
+  [services.yaml] `_request_media` only accepts the types `int`, `list[int]` and the string `all`. Reading this description, I would assume `1,2` is also valid, but I don't see a mechnism to turn this string into a list of numbers within `services.py`. Is this intended? I'm also not a huge fan of the text selector - I think `none` = all, or list of ints to select on
+  [services.yaml] There shouldn't be a single `description` key in this file, as pointed out by the failing pipeline. They will be sourced by HomeAssistant from `strings.json`. Additionally, hassfest expects a `target` key for every service specified. It doesn't seem to make sense here to specify the target, so I am a bit unsure how to make the pipeline happy. I wo
+### W067 home-assistant/core | Add fans and battery sensor to systemmonitor
+  BODY: nan
+  [sensor.py] There are some unrelated formatting changes, can you please either revert (if not intentional) or move to a separate PR? If moving to a separate PR, I'd suggest to also move the alphabetization of the coordinator to that PR.
+### W068 getsentry/sentry | fix(typing): Remove sentry.db.postgres.base from problem list
+  BODY: yeah this module is special actually -- I have a fix for it so you can skip this one
+### W069 backstage/backstage | feat(notifications): add unread notifications home card and NFS widget
+  BODY: Thanks for the follow up @ciiay, couple of Copilot comments to address and a couple of small I items I spotted during my latest review. We are pretty close, if we can get these sorted then we should be good to approve. Then I'll pull in the Home and Notificaiton Maintainers 👍
+  [setupTests.ts] ```suggestion  * Copyright 2026 The Backstage Authors ```  New files should use the current year, we have this in our AGENTS.md file so make sure your AI tool is using that. ESLint will always add the correct year 👍 
+  [NotificationsPage.tsx] Can we follow up on this one?
+  [NotificationsPage.tsx] Can we follow up on this?
+  [unreadNotificationsHomeWidget.tsx] Can we avoid this? If you look at some of the new widgets we added it should be possible: https://github.com/backstage/backstage/blob/6035e6f536d9eb8fce8e1b69e2da51fb328e4658/plugins/home/src/alpha.tsx#L258
+  [NotificationIcon.tsx] Thanks for the background on this, that works for me, we can leave this in 👍 
+### W070 ydb-platform/ydb | Codestyle for agents
+  BODY: Меня смущает, когда в промпт сотне разработчиков YDB будет подставляться, как писать код для топиков. С аналогичным недавно приходили из SDK - как писать под SDK и по поводу документации - в каждый промпт подставим, как писать документацию.  Это и контекст размывает (отвлекает модель) и просто токены тратит. Модель не сразу может понять, причем тут топики, SDK или документация.
+### W071 dotnet/runtime | Clean up CompositeMLDsaAlgorithm and add comprehensive tests
+  BODY: nan
+  [CompositeMLDsaAlgorithm.cs] Add `value` xmldoc for `MaxSignatureSizeInBytes`
+  [CompositeMLDsaAlgorithmTests.cs] The signature size is equal to the sum of the component signatures. Update this assert (and other similar ones) to assert equality based on known signature sizes:  Ed25519: 2516 bytes Ed448: 4773 bytes  RSA-X is X bits and ML-DSA can be found using MLDsaAlgorithm. ECDsa doesn't have a fixed size, but it is DER encoded and has a max size which 
+  [CompositeMLDsaAlgorithm.cs] These are the algorithms that this class represents:  MLDSA44-RSA2048-PSS-SHA256 MLDSA44-RSA2048-PKCS15-SHA256 MLDSA44-Ed25519-SHA512 MLDSA44-ECDSA-P256-SHA256 MLDSA65-RSA3072-PSS-SHA512 MLDSA65-RSA4096-PSS-SHA512 MLDSA65-RSA4096-PKCS15-SHA512 MLDSA65-ECDSA-P256-SHA512 MLDSA65-ECDSA-P384-SHA512 MLDSA65-ECDSA-brainpoolP256r1-SHA512 MLDSA
+  [CompositeMLDsaAlgorithmTests.cs] Add a new line to the end of the file to follow the style convention.
+### W072 dotnet/runtime | Delete VersionsWithType check from embedClassHandle
+  BODY: @jkotas, yes this is needed for PGO scenarios. Notably, there is a problem where we can identify via PGO that a particular path is most desireable, and devirtualize, but if the devirtualization target isn't within the current version bubble, we cannot safely do a devirtualize. If we make this change(which I think makes sense, we need to adjust the devirtualization logic to explicitly check that it is only devirtualizing types which are safe to do so.  We don't have good coverage for this sort 
+### W073 pytorch/pytorch | Copilot/fix bc linter failure
+  BODY: No. This is completely unreviewable and needs to be split into reviewable chunks.
+### W074 home-assistant/core | Add cleaning type select to SmartThings
+  BODY: there are merge conflicts
+### W075 home-assistant/core | Discover new Monzo accounts and pots
+  BODY: This sounds more like a new feature than a simple bugfix. Could you fix the merge conflicts? Thank you!
+### W076 ray-project/ray | Fix symmetric-run teardown errors on Slurm when processes exit as zombies
+  BODY: I just tested it on my computer using the “slurm-docker-cluster” project: https://github.com/machichima/slurm-docker-cluster/tree/ray-on-slurm  I found that this does not resolve the original issue. Please make sure to verify that the problem is actually fixed before pinging us next time. Thanks. Here is the log from my test.  [slurm-6.txt](https://github.com/user-attachments/files/27432807/slurm-6.txt)
+### W077 backstage/backstage | feat(home): add pre-configured Home page to create-app template
+  BODY: Nice, I like it!! Couple of comments
+  [app-config.yaml.hbs] ```suggestion     # Configure the home index page to be the root page, this is normally mounted on /home     - page:home:         config:           path: / ``` I think we just rip it no? 🚀 
+  [dataRefs.ts] Should we pull out these updates to their own PR? To keep this one just focused on updating the default.
+### W078 home-assistant/core | Add Matter Thermostat presets feature
+  BODY: nan
+  [climate.py] ```suggestion     _matter_presets: list[clusters.Thermostat.Structs.PresetStruct] | None = None ```
+  [climate.py] ```suggestion         self._matter_presets = self.get_matter_attribute_value( ```
+  [climate.py] Consider defaulting this attribute to an empty list instead of `None`.
+  [climate.py] ```suggestion         if self._matter_presets: ```
+  [climate.py] ```suggestion             for i, preset in enumerate(self._matter_presets, start=1): ```
+  [climate.py] Why do we both fill a list and a dict. I'd just fill the dict and then copy the keys to a list if that is needed later somewhere.
+### W079 ydb-platform/ydb | Resource dashboard in CI + CPU REQUIREMENTS tuning (run 28785429087)
+  BODY: nan
+  [ya.make] ```suggestion REQUIREMENTS(ram:32 cpu:2) ``` 1 точно мало для тестов с ребутами.
+  [ya.make] ```suggestion REQUIREMENTS(cpu:2) ```
+  [ya.make] ```suggestion REQUIREMENTS(cpu:2) ```
+  [ya.make] ```suggestion REQUIREMENTS(cpu:2) ```
+  [ya.make] ```suggestion REQUIREMENTS(ram:32 cpu:2) ```
+### W080 ray-project/ray | [Doc] Add map_batches shuffle section to shuffling data guide
+  BODY: changes to slim down the PR
+### W081 dotnet/docs | Add documentation for compiler error CS9036
+  BODY: Just one thing to fix.
+  [cs9036.md] This is required for a copilot generated article.  ```suggestion ai-usage: ai-generated f1_keywords: ```
+### W082 ydb-platform/ydb | Fix excessive whiteboard info for PDisk in error state
+  BODY: revert blobstorage_pdisk_actor.cpp
+### W083 dotnet/docs | Clarify global.json paths feature limitations for SDK-only scenarios
+  BODY: nan
+  [global-json.md] ```suggestion > The "paths" feature only works when using commands that engage the .NET SDK, such as `dotnet run`. It does NOT affect scenarios such as running the native apphost launcher (`app.exe`), running with `dotnet app.dll`, or running with `dotnet exec app.dll`. To use the "paths" feature, you must use SDK commands like `dotnet run`. ```
+  [.gitignore] Remove these changes
+### W084 home-assistant/core | Add config flow for OPNsense
+  BODY: While the work this PR has done is great, I feel like the priorities could have been set better. I get that migrating a legacy integration to an entry config flow can be orthogonal to fixing other underlying issues, but you also added features here, like the reconfigure flow. I would like a second opinion on this, as the thread so far hasn't mentioned the broken library. The last version supporting the current library is 25.1 which has been [end-of-life since July 2025 (6 months)](https://endofl
+  [__init__.py] This line is missing ```suggestion  await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)  ```  https://developers.home-assistant.io/docs/config_entries_index/#for-platforms
+  [config_flow.py] Version of config flow is missing ```suggestion VERSION = 1 MINOR_VERSION = 1 ```  https://developers.home-assistant.io/docs/data_entry_flow_index#flow-handler
+  [config_flow.py]  ```suggestion         self, import_data: dict[str, Any] ```
+  [config_flow.py] Why is does this need to be 'gathered'? ```suggestion         await self._async_get_available_interfaces(api_data) ```
+### W085 ydb-platform/ydb | [html report] Redesign sanitizer pattern detection from scratch for better maintainability
+  BODY: nan
+  [generate-summary.py] @copilot не надо соблюдать обратную совместимость, представь что с нуля пишешь эти паттерны
+### W086 grafana/grafana | Transformations: Allow setting static refIDs per transformation
+  BODY: I tested the changing-input-frame case with some synthetic data. The main idea works: a static transformation `refId` keeps a downstream filter stable when the number of input frames changes. Nice!  However, I found a few gaps around saving and using that `refId`:
+  [dashboard_spec.cue] I think we are missing part of the conversion work here.  A v1 dashboard passes through `v2alpha1` when it is converted to `v2beta1`. The `v2alpha1` transformation type does not have this new `refId` field, so the value is lost along the way. I confirmed this with a conversion test.  Can we add the field to `v2alpha1`, copy it in both conversion di
+  [TransformationOperationRowHeader.tsx] I think this duplicate check also needs to include query refIds and the refIds from earlier transformation results.  Right now, a query and a transformation output can have the same `refId`. A downstream filter then selects both, even if the user intended to select only the transformation result. In my test, this caused an unrelated input frame to 
+  [transformDataFrame.ts] This currently sends the static `refId` through template-variable interpolation. If the `refId` contains a dashboard variable, then its value changes when the variable changes. A downstream filter can then remain pointed at the previous value, which makes the chain unstable again.  Can we add `config.refId` after `deepIterate` instead? That would k
+  [TransformationOperationRow.tsx] I found this confusing...every transformation gets an editable `refId`, but only the five transformations marked with `usesDynamicRefId` use it.  I confirmed that setting a `refId` on another transformation saves the value but does not change its output `refId`. Can we show the `refId` editor only when `usesDynamicRefId` is `true`? Otherwise the UI
+### W087 home-assistant/core | Skip unsupported_firmware issue for first-gen SMLIGHT hardware
+  BODY: Redirecting users to the web flasher is the expected behaviour here.
+  [test_init.py] `sw_version="v0.9.9"` is completely unsupported by the SMLIGHT integration. It does not provide any of the required API at all.
+  [coordinator.py] esp32-s3 models can not ever run the legacy_api 2 firmware
+### W088 home-assistant/core | Add timeout parameter to Squeezebox call_query action
+  BODY: As discussed on discord, the timeout should be increased instead of making it an option, since the user should not have to think about it.
+### W089 dotnet/docs | Update create .NET console app tutorial series to include file-based apps with Codespaces
+  BODY: Really cool to see Codepsaces covered now! Here's a bunch of feedback for you 😺
+  [with-visual-studio-code.md] A screenshot would probably help a lot here especially for people unfamiliar with GitHub. Additionally, more descriptive instructions would help new users:  1. Open a browser and navigate to ..... 1. Select the green **Code** button. (The button is located on right-side of the center pane, near the top) 1. Select the '+' sign or the **Create codesp
+  [with-visual-studio-code.md] I would check with Bill on if we still want this statement here, and if we should be moving towards top-level statements. It's been the default for a few years now.
+  [with-visual-studio-code.md] Screenshots about the UI and pointing things out like the windows on the left or the Solution Explorer panel really prevent users from getting stuck, especially if the target audience is new coders or new users to VS Code and .NET.  For example, see https://learn.microsoft.com/en-us/dotnet/desktop/winforms/get-started/create-app-visual-studio#impor
+  [with-visual-studio-code.md] zone's break numbering, so you can't change zones in the middle of a procedure. It actually ends the procedure at that point and renders the content outside of the list  > <img width="1029" height="342" alt="Image" src="https://github.com/user-attachments/assets/ab12aad2-d4ce-4ed3-b01f-a509fc90c280" />  You'll have to put each ending in its respect
+  [with-visual-studio-code.md] Is opening the code space really a prerequisite? Should you move this to the intro step of `## Create the app`? The VSCode version has `1. Start Visual Studio Code` which I liken to this same step.
+  [with-visual-studio-code.md] How do I do this as a new user?
+### W090 ray-project/ray | [Serve] Configurable status code and Retry-After header for backpressure rejections
+  BODY: Great job on the PR, just have a few suggestions:
+  [http_util.py] We should explicitly handle the case where retry_after_s is set to 'inf' in the config so that this function doesn't throw unexpectedly during runtime. Explicitly setting `allow_inf_nan` to `false` (defaults to `true`) in `_private/config.py` and `schema.py` should work.
+  [test_config.py] To add e2e coverage for the user visible HTTP behavior change, you can parametrize the three tests in `tests/test_backpressure.py`.
+  [http_util.py] We should explicitly handle the case where retry_after_s is set to 'inf' in the config so that this function doesn't throw unexpectedly during runtime. Explicitly setting `allow_inf_nan` to `false` (defaults to `true`) in `_private/config.py` and `schema.py` should work.
+  [best-practices.md] The previous 503 walkthrough's console output currently renders after this new "Customizing the load shedding response" heading. Append this section to the end of the file instead. [Rendered.](https://anyscale-ray--65193.com.readthedocs.build/en/65193/serve/production-guide/best-practices.html#customizing-the-load-shedding-response)
+  [config.py] Pre existing statements now contradict the new section: the max_queued_requests docstrings in `_private/config.py:135`, `api.py:595`, and `schema.py:345`, plus text in `best-practices.md:53` and `:63` and the line at `configure-serve-deployment.md:26`. Something like "returns an HTTP 503 status code by default (configurable via backpressure_status_
+  [schema.py] We could use a nested backpressure_config sub model instead of two flat options. Similar to autoscaling_config / logging_config / request_router_config.
+### W091 backstage/backstage | feat(events): add HTTP webhook ingress for Azure DevOps events
+  BODY: Nice! check the copilot comments too.  The new files say copyright 2022 instead of 2026 but it doesn't matter all that much honestly.
+  [eventsModuleAzureDevOpsWebhook.ts] +1 on this one - this is pretty important. All of the other ones just do not register anything ([example](https://github.com/backstage/backstage/blob/494c0e58f8bddca0ca324cadab2d79aefc60f37b/plugins/events-backend-module-github/src/service/eventsModuleGithubWebhook.ts#L47)) if the secret is not set.
+  [eventsModuleAzureDevOpsEventRouter.ts] This seems unnecessary - calling it default all the way up here, just to make it default out in the index file. You could probably delete these lines and just export the const above.
+### W092 home-assistant/core | Add reset buttons for dock strainer and maintenance brush consumables in Roborock
+  BODY: nan
+  [button.py] I am actively trying to move all the setup code away from checking if a value is `None` so that we can support dynamic devices that can be added without having necessarily collected data from all traits on startup. (e.g. right now we need to fetch /all traits/ successfully for /all devices/ before the integration can even start)  I think alternativ
+### W093 ray-project/ray | [data] PR 1: Introduce TableDatasink + TableAdapter abstraction
+  BODY: nan
+  [__init__.py] let's not use relative imports 
+  [adapter.py] Same here no relative imports
+  [file_writer.py] Make this a `Literal[str]` with the options from valid_compressions
+  [file_writer.py] Let's use typevars here
+  [file_writer.py] isn't partition_table guaranteed to be an arrow table? I assume we should be able to access `nbytes`
+  [file_writer.py] Where is this format coming from?
+### W094 ydb-platform/ydb | Reduce local-ydb Docker healthcheck overhead
+  BODY: Скрипт health_check вызывается внутри entrypoint, нигде не нашел того, что эти изменения безопасны. Пока стоп
+### W095 home-assistant/core | Add app discovery to Model Context Protocol
+  BODY: I set up a small throwaway app that announces `discovery: [mcp]` and ran this against it. The flow works nicely, and the entry ends up with the Supervisor uuid as unique ID and the app slug in its data, as intended.  Two things I would like to see addressed before this lands, both in `async_step_hassio` — see the inline comment below and my reply in the existing thread on line 212.
+  [config_flow.py] One case I'd like us to handle: `discovery.json` is Supervisor-internal state and isn't part of a backup — backups cover `homeassistant`, `share`, `addons/local`, `ssl` and `media`. So restoring onto a new system gives the app a fresh discovery uuid while the restored config entry still holds the old one. The URL is unchanged, so the flow aborts on
+### W096 backstage/backstage | feat(k8s): add actions to get clusters and resources
+  BODY: 🎉
+  [createGetKubernetesResourcesForEntityAction.ts] These aren't necessarily true, it depends on what locators are installed in the plugin backend. Think it's likely best to leave out, and simply always allow the attempt to get resources for an entity, but it might fail
+### W097 NVIDIA/Megatron-LM | Increase CG cover from max_requests to max_tokens
+  BODY: nan
+  [dynamic_context.py] Do we not need the num spec tokens multiplier here? @santhnm2 can you double check?
+### W098 ray-project/ray | [RLlib] Preserve Torch optimizer param-group scalar types on restore
+  BODY: nan
+  [torch_learner.py] Remove this change
+  [test_torch_learner_optimizer_restore.py] Can we have a single test with a real agent that is restored to show in a real use case that this works
+### W099 dotnet/runtime | Fix buffer slicing in (U)Int128 property name serialization
+  BODY: nan
+  [Value.WriteTests.cs] There should be some validation of `json`. It looks like `Assert.Equal` can't be used since ordering is not guaranteed, so `Contains` for each of the keys and `NotContains` for some representative junk value(s) (like `(char)0`) is fine.
+### W100 dotnet/docs | Update DebugType documentation to clarify default behavior and show how to disable PDB gen
+  BODY: nan
+  [code-generation.md] ```suggestion ### Disable PDB generation for Release builds ```
+  [code-generation.md] ```suggestion To suppress PDB file generation for Release builds while keeping them for Debug builds, add the following property to your project file: ```
+  [code-generation.md] ```suggestion > In .NET 8 and later versions, setting `DebugSymbols` to `false` should suppress PDB generation according to the [breaking change documentation](../../../core/compatibility/sdk/8.0/debugsymbols.md). However, the most reliable way to disable PDB generation is to explicitly set `DebugType` to `none`. ```
+### W101 dotnet/runtime | Remove leading plus sign validation from Version JSON deserialization
+  BODY: Rather than making checks stricter, this should make the reader more permissive allowing inputs that `Version.Parse` permits. Please update the PR title and description to reflect that.
+### W102 apache/airflow | Add run_after to TriggerDagRunOperator
+  BODY: Mark as request changes in case of further regression on main CI.
+  [uv.lock] Even though the CI passed, I'm still concerned about the `uv.lock` change. Would it be possible to revert the `uv.lock` change before we merge?
+### W103 dotnet/docs | [WIP] Update F1 keywords for tokens with multiple uses
+  BODY: This is a good start but it needs changes.  An `f1_keyword` can only have one target file. Where a keyword (like `in`) has multiple uses, the file for that keyword (for example "in.md") should have the appropriate f1 keyword tag. The text of that file should link to articles on all the different uses of that keyword.
+  [ref-struct.md] This line should be removed. There's a different target for `ref`. Check the file "ref.md" to see if it's got a link to this file.
+  [extension.md] This should be removed. The `this` keyword targets "this.md". Check that file to see if it links to this file.
+  [from-clause.md] Remove this. The `in` keyword already targets "in.md". Make sure there's a link in that file to this one.
+  [in-generic-modifier.md] Same comment about `in_CSharpKeyword`
+  [join-clause.md] Same comment.
+### W104 pytorch/pytorch | Fix ONNX type promotion for scalar-first tensor operations
+  BODY: Address automated feedback from claude
+### W105 backstage/backstage | fix: use persistent slot counter for scheduled PR sync
+  BODY: Couldn't we just save the last successful batch execution start time and diff against that? I've seen these delayed by 12 hours 💀
+### W106 home-assistant/core | Add event color support to Google Calendar integration
+  BODY: Hello, (1) See https://github.com/home-assistant/architecture/discussions/883 where a spec was approved for calendar color.  (2) See https://github.com/home-assistant/core/pull/145606#issuecomment-3449860457 for an existing PR that was attempting color for another calendar integration, but more importantly the discussion on the next level of detail on how to implement the approach in the architecture discussion (3) This PR is not following appearing to follow current coding standards (e.g. wo
+### W107 home-assistant/core | Add templatable price multiplier to Nord Pool actions
+  BODY: I would prefer to keep the service as simple as possible, every user will have their own case and add to the price so it seems to not be logical to me to add this into here.
+### W108 ray-project/ray | [Train] Allow `contextlib.redirect_stdout()` to bypass print redirect to logs
+  BODY: Thanks for the PR, overall looks good. Could you just merge the two if statements and add to the test
+  [patch_print.py] Update to  ```python if (    file is None    or (file is sys.stdout and sys.stdout is not sys.__stdout__)    or (file is sys.stderr and sys.stderr is not sys.__stderr__) ): ```
+  [test_logging.py] add `redirect_stderr` case as well   Also if we are missing a test that checks that logs eats the print by default could you add to this test 
+### W109 ray-project/ray | [Data] Don't push limit past `map_batches` by default
+  BODY: This is a breaking change
+### W110 ydb-platform/ydb | HTML report: Create issue button
+  BODY: nan
+  [summary.html] @copilot Мне кажется эта строчка избыточна. Мы заводим issue (или mute issue) и из titlte все понятно. да я же хочу чтобы эта кнопка была не только для sanitize error, но для всех muted и failed
+### W111 dotnet/runtime | Unify documentation for ML-DSA and SLH-DSA
+  BODY: see comments
+### W112 dotnet/docs | Update .NET 10 documentation with comprehensive feature integration and address review fee
+  BODY: nan
+  [libraries.md] Nothing should be preview-specific in these files.
+  [libraries.md] This is so long it should go in a separate code file.
+  [libraries.md] Separate code file?
+  [libraries.md] Don't use we/our/us.
+  [libraries.md] Separate code file?
+  [libraries.md] Separate code file?
+### W113 home-assistant/core | Add quality scale for speedtestdotnet integration
+  BODY: Hey, thanks for your contribution!  We should make sure that the PRs only change one thing at a time. This PR adds the `quality_scale.yaml`, but it also updates the `strings.json` to make the CI pass. These should be separate PRs.  So I would suggest the following: 1. Update this PR to only add the `quality_scale.yaml` and update `quality_scale.py`, but mark `config-flow` as `todo`. That will make the CI pass without the `strings.json` modification. 2. Create a separate follow-up PR with the `st
+### W114 dotnet/runtime | Fix Tensor.StdDev vs TensorPrimitives.StdDev differences for Complex input
+  BODY: nan
+  [Tensor.cs] @copilot This approach might have an undesired performance penalty as it leads to performing the `.Abs` call for all types even when that isn't necessary to get the correct result. In `SquaredDifferenceOperator<T>` within TensorPrimitives.StdDev.cs, there is a comment indicating the Abs call is only relevant to non-vectorizable types and the `Vecto
+### W115 home-assistant/core | Add velocity selection to Velux covers and windows
+  BODY: So we had a discussion about this in https://discord.com/channels/330944238910963714/1506300735460216832 and we don't want to use RestoreEntity to restore settings and use them as a parameter in other action calls
+### W116 dotnet/runtime | Include unboxing stubs in r2r images
+  BODY: ## Holistic Review  **Motivation**: Precompiling unboxing stubs is justified where the runtime cannot generate a usable frameless shuffle thunk, particularly on targets without runtime code generation.  **Approach**: The current dependency analysis is too broad because it emits a complete R2R method for every reachable unboxing stub, including common cases already handled by a much smaller runtime-generated shuffle thunk.  **Summary**: ⚠️ Needs Changes. Please restrict precompiled unboxing
+### W117 dotnet/runtime | [mono] Fix g_str_hash skipping the first byte and remove mono_metadata_str_hash
+  BODY: nan
+  [ghashtable.c] https://github.com/mono/mono/issues/21844#issuecomment-3172722655  I agree.
+### W118 dotnet/runtime | Fix buffer slicing in (U)Int128 property name serialization
+  BODY: nan
+  [Value.WriteTests.cs] Use `Assert.Equal` to compare `json` with the expected string instead of using `Assert.Contains`.
+  [Value.WriteTests.cs] Might as well check `Int128.MaxValue` and `Int128.MinValue` too. I think `Assert.Equal` compares `Dictionary<TKey,TValue>` in the expected way so you can use that instead.
+### W119 NVIDIA/Megatron-LM | MInf: Add hooks to preprocess and stage
+  BODY: nan
+  [handlers.py] request_metadata here is confusing. Everything in this list is request level metadata. 
+### W120 dotnet/runtime | Support IReadOnlyDictionary as JsonExtensionData
+  BODY: nan
+  [JsonTypeInfo.cs] This is the same as writing ```suggestion                 propertyType == typeof(IReadOnlyDictionary<string, object>) || ```
+  [JsonSourceGenerator.Parser.cs] Practically, this means we're extending support for only two types: IReadOnlyDictionary<> and Dictionary<> (which we already support). So we only need to check for an exact match of the former.
+### W121 ydb-platform/ydb | Add comprehensive documentation for sessions system view
+  BODY: nan
+  [system-views.md] ```suggestion | `State` | Текущее состояние сессии (например, `IDLE` или `EXECUTING`). | `Utf8` | ```
+  [system-views.md] ```suggestion | `State` | Current state of the session (e.g., `IDLE` or `EXECUTING`). | `Utf8` | ```
+  [system-views.md] a complete list of possible states would be helpful
+  [system-views.md] This column is optional/nullable, then? What's the value when there's no currently executing query?
+  [system-views.md] Security identifier -> link to concepts/glossary.md
+  [system-views.md] ```suggestion     QueryStartAt,     CurrentUtcTimestamp() - QueryStartAt AS Duration, ```
+### W122 espressif/arduino-esp32 | feat(board): Add new board variant LilyGo T-Deck
+  BODY: nan
+  [boards.txt] Please rename the board entry to match other lily boards and move it in the `boards.txt` file next to other lily boards. Thanks  ```suggestion lilygo_tdeck.name=LilyGo T-Deck ```
+### W123 ydb-platform/ydb | Ydb issue #19821 decimal final fix
+  BODY: nan
+  [abstract_scheme.cpp] Не достаточно ли просто тип подменить на fixed_size_binary раз они совместимы?
+  [rpc_load_rows.cpp] А возможно ли перемести в ConvertArrowToYdbPrimitive? Или в этом случае что-то ломается?
+  [constructor.cpp] Давай оставим файлы в которых нету изменений как есть
+  [columnshard_ut_common.h] а точно хотим тут fixed_size_binary поддерживать? Может всегда требовать на входе decimal128?
+  [decimal_ut.cpp] Все тесты в этом файле должны стать параметризованными для ScanQuery и ExecuteQuery. Также давай добавим еще тестов на другие размерности, например 12, 2
+### W124 ray-project/ray | [Data] Add support for reading ORC files
+  BODY: nan
+  [orc_datasource.py] Do we need this in `ORCDatasource`? Reads are implemented as a `BlockMapTransformFn` during planning time (`plan_read_op.py`), and the output of this map transform fn undergoes shaping into output blocks (`_shape_blocks()`, which should take into account the target max block size.  Based on my understanding, we explicitly do block output shaping in
+### W125 home-assistant/core | Add event status to calendar events
+  BODY: nan
+  [const.py] OK just to save time and be more prescriptive: I would say send separate PRs to update integrations to filter cancelled events. We won't have events in the calendar entity with a canceled status as we already agreed in the discussion.
+### W126 dotnet/runtime | Fix Tensor.StdDev vs TensorPrimitives.StdDev differences for Complex input
+  BODY: nan
+  [TensorTests.cs] @copilot As with the repro included in the issue description, have all members not needed for implementing StdDev throw a NotImplementedException so that future tests that might reuse this test class don't get inaccurate results from the methods that aren't truly implemented.
+  [TensorTests.cs] ```suggestion             // https://github.com/dotnet/runtime/issues/116133             // Tensor.StdDev vs TensorPrimitives.StdDev differences for Complex input ```
+  [TensorTests.cs] @copilot Turn this into a `[Theory]` that has test cases that exercise when the `Abs` is needed as well as when it's not.  Similarly edit the preexisting `TensorStdDevTests` test to also be a `[Theory]` with it also exercising cases when the `Abs` is meaningful and not.
+### W127 dotnet/runtime | Replace CORCOMPILE_FIXUP_BLOB_KIND with ReadyToRunFixupKind
+  BODY: need more human efforts
+### W128 ray-project/ray | [core][dashboard] Return 4xx from node and actor detail APIs
+  BODY: nan
+  [test_node.py] Could you remove `pytest.mark.parametrize` from this test and move those assertions into the test body instead? The `ray_start_with_dashboard` fixture starts a fresh Ray cluster, so using `pytest.mark.parametrize` would launch 6 clusters. I think this test only needs to launch one cluster and query it multiple times.
+  [node_head.py] Make `DataOrganizer.get_node_info` return `None` for an unknown id and branch on its result instead to avoid race condition.
+### W129 pytorch/pytorch | [Intel GPU] Enable mkdnn._linear_pointwise at XPU backend
+  BODY: Please check if the suggested change is reasonable.
+### W130 home-assistant/core | Split hassio data coordinator and add dedicated stats coordinator
+  BODY: This looks good but I'm a bit unsure on the refresh interval set. And I agree with Joost about the typing of the coordinators, since they are new and their data cache is unused it seems like we should set them up properly in that regard.
+  [sensor.py] It seems like we replaced the `SupervisorSensor` with classes prefixed with `Hassio`? This is rather backwards no? `hassio` is a legacy term like addons is now, it just never got a dedicated refactoring effort like we're doing with addons. It only got the first step - replace hassio with supervisor in all user-facing strings. The developer facing c
+  [coordinator.py] Hm I'm not understanding. What you're saying makes sense for `self.hass.data` as it is pre-existing but why not set up these new `DataUpdateCoordinator` instances correctly? After this change all data pulled from Supervisor is going to be stored in two places: 1. `hass.data` under a key with typing issues we intended to resolve later with domain ke
+  [__init__.py] Sure yea I'm good with waiting on this one so we don't store our component's runtime data in a mixture of ways and places. Then we can refactor it from one place to the other at one time.
+  [coordinator.py] `ResponseData` is now exported from `aiohasupervisor.models` in the latest version because of this code. We should change the import at the top to import it from there rather then `aiohasupervisor.models.base`.  (I know not exactly related but was reminded reading through this)
+  [const.py] Isn't this backwards? Other then stats app info changes pretty infrequently right? Does anything really change except `state` outside of an app update? And even that doesn't really change much unless you're developing or setting up a new app and bringing it up and down a lot.  One hour between stat calls also doesn't seem like it would be frequent 
+  [coordinator.py] Yea see like this for example is now going to make its way into `self.data` of this coordinator. Which is brand new and not used anywhere currently so there's no reason to pollute it with deprecated data model. I feel like it would make a lot of sense to set up these coordinators with proper typing and just have them continue to serialize the datac
+### W131 ydb-platform/ydb | OOM-resistant ya make runs
+  BODY: nan
+  [action.yml] Пофигу кмк
+  [action.yml] Какой-то монстр.. Давай заведем переменную с командой именно ya make для читаемости? 
+  [action.yml] Как будто дело говорит? Действительно ранее могли быть другие oom (даже в других wf) 
+  [action.yml] Тут есть проблема в том, что это работает только для PRов   Хотелось бы чтобы и для вне PRов такое работало (явно как-то зажигалось, что заоомилось)
+  [generate-summary.py] Регэкспы вещь опасная, в том плане что если текст будет стометровым, то оно потенциально будет долго работать (если рекэксп написан плохо). Можем ли как-то убедиться, что такой проблемы не будет?
+  [generate-summary.py] Блин, ну вот так писать имхо плохо   Смотришь на функцию, и такой "ему можно None передавать"  Мне кажется правильнее всегда требовать строку и лист   Может я что-то не понял 
+### W132 ray-project/ray | [Data] Add random() and uuid() expression
+  BODY: Thanks @wingkitlee0 for the contribution. Left a few comments
+### W133 NVIDIA/Megatron-LM | feat(optim): support --fp8-param-gather for muon + mxfp8 in LayerWise
+  BODY: nan
+  [arguments.py] @kunlunl to also comment.  My rough understanding is fp8-gather and reuse flags are recommended to be used together even before any muon changes for mxfp8? and at least for mxfp8 there is no reason to use only fp8-gather without reuse Maybe let's take the opportunity to finally clean up these flag that doesn't quite show what they do as name sugges
+  [test_muon_mxfp8_fp8_param_gather.py] I think we should also test the overlapping path since that's more important
+  [layer_wise_optimizer.py] I have a hunch that this is all over-complicated because we originally designed layerwise optimizer to 'replace' dist-opt, so it inherited chainedoptimizer, while distopt inherited mixprecision optimizer since now we already made up our mind to get layerwise/distopt work alongside each other, maybe we change that? so something like a chained optimi
+### W134 getsentry/sentry | chore(api) Add metric to apigw to track which routes are getting requests
+  BODY: @markstory I don't get the purpose of this. You can already get that number by filtering the existing metrics, eg: https://app.datadoghq.com/metric/explorer?fromUser=false&graph_layout=stacked&start=1784725679469&end=1784729279469&paused=false#N4Ig7glgJg5gpgFxALlAGwIYE8D2BXJVEADxQEYAaELcqyKBAC1pEbghkcLIF8qo4AMwgA7CAgg4RKUAiwAHOChASAtnADOcAE4RNIKtrgBHPJoQaUAbVBGN8qVoD6gnNtUZCKiOq279VKY6epbINiAiGOrKQdpYZAYgUJ4YThr42gDGSsgg6gi6mZaBZnHKGniqyBjyHGAAdHCq+QhORkEarZn4Igj13Xi9wNr4CHDI8iPEWPWTONNO2WhoTmhw
+### W135 home-assistant/core | Resolve colliding orphans through the orphan indexes
+  BODY: nan
+  [device_registry.py] This change is incorrect, we can still have overlap in deleted devices due to prior bugs, so the code was written that way on purpose to handle that. There was an underlying assumption that the size of the registry remains reasonable.
+### W136 dotnet/docs | Everyday C#: Null safety tutorials
+  BODY: nan
+  [nullable-reference-types.md] This could be slightly clearer for the new coder   ```suggestion The compiler combines these signals to produce diagnostics. Warnings on a non-nullable variable mean the variable might receive `null`. Warnings on a nullable variable mean the code might *dereference* it without a null check. *Dereference* means to use the value the variable refers t
+  [nullable-reference-types.md] I wouldn't say this. .NET ships with a lot of templates and there is no guarantee that the code a user is looking at has this in the project. Further, projects migrated from .NET Framework won't have this enabled.  I would just say that if they're working with a newly created project, it's more than likely that nullable context is enabled in the pr
+  [nullable-reference-types.md] Nit:  ```suggestion When the feature is enabled, every reference type variable is *non-nullable* by default. Append `?` to declare a *nullable* reference type: ```
+  [nullable-reference-types.md] Nit:  This code could be improved to show a second person without a middle name. Further, the output of the ToString should be printed as a comment at the end. That will really drive home the concept of how the null check changed the code path. Although that might not really be the focus of the code... So, total nit 😁 
+  [nullable-reference-types.md] For a "simple" rule, I find this entire paragraph very complex and verbose. I iterated with copilot to simplify the wording. How's this?  ```suggestion A local variable's null-state is updated as the compiler analyzes your code. Two things change it: **assignments** and **null checks**. After an assignment, the variable's null-state matches the exp
+  [nullable-reference-types.md] I have a hard time following the explanation of the code here, as well as the comments in the code. I have no idea why `_ = originalMessage` is in there.
+### W137 dotnet/runtime | Implement CONV_OVF_xxx in the Interpreter
+  BODY: nan
+  [interpexec.cpp] Calling the managed helper like this looks both complicated and slow.   Given that you are promoting the value to double first anyway, I think it would be faster and simpler to do something like this:  ``` // Generic version that works for 32-bit and smaller TResult template <typename TResult, typename TSource> static void ConvOvfFpHelper(int
+  [interpexec.cpp] I meant specifically the floating-point ones. It should be very similar to the checked ones introduced in this PR (just return 0/min/max instead of throwing an exception).  HCCALL1 macro is anti-pattern. I would like to delete it. The only two places that use it after recent HMF removal are intepreter and two methods in jithelpers.cpp that are bu
+### W138 dotnet/docs | Add wildcard pattern usage examples to F# documentation
+  BODY: nan
+  [pattern-matching.md] @copilot : unit does not fit here, it is not a wildcard, not an underscore. Eliminate.
+  [snippet4818.fs] @copilot : unit does not fit here, it is not a wildcard, not an underscore. Eliminate.
+  [snippet4818.fs] @copilot : unit does not fit here, it is not a wildcard, not an underscore. Eliminate.
+### W139 ydb-platform/ydb | HTML report: Create issue button
+  BODY: nan
+  [summary.html] @copilot report link я хочу чтобы у нас был всегда а error и остальное обрезать только если мы превышаем суммарный лимит на длинну ссылки( посмотри какой лимит на url для github) 
+### W140 home-assistant/core | Add DHCP discovery to nobo_hub
+  BODY: I like this :D
+  [test_config_flow.py] Can we patch this where we use this? `homeassistant.components.nobo_hub.config_flow...`?
+  [test_config_flow.py] I'd recommend to keep reusing `result`
+  [test_config_flow.py] ```suggestion ``` It's not a blocking operation
+  [test_config_flow.py] Can we also test - title - unique id  and use cosntants for the data keys?
+  [test_config_flow.py] So why do we need a broadcast? We already know more about the device right?
+### W141 dotnet/runtime | Fix Tensor.StdDev vs TensorPrimitives.StdDev differences for Complex input
+  BODY: nan
+  [TensorOperation.cs] These new blank lines can be removed.
+  [Tensor.cs] @copilot This approach deviates from the rest of the implementations in this class far more than the previous approach that introduced a new `TensorOperation.SumOfSquaredMagnitudeDifferences`, and it has allocations that are less desirable than the previous `.Abs()` calls. Please return to introducing `SumOfSquaredMagnitudeDifferences`.
+### W142 home-assistant/core | Add network MAC connection to AnthemAV main zone device
+  BODY: Thanks for adding the MAC connection here!  One change request: the `format_mac()` call isn't needed. The device registry already normalizes `CONNECTION_NETWORK_MAC` connections through `format_mac()` itself in `_normalize_connections()` (`homeassistant/helpers/device_registry.py`), which `async_get_or_create()` runs on whatever connections an entity passes in:  ```python def _normalize_connections(connections):     """Normalize connections to ensure we can match mac addresses."""     return {  
+### W143 getsentry/sentry | fix(integrations): Fix data race when a pending deletion integration is re-installed
+  BODY: I think it's worth avoiding unguarded writes wherever possible. We've historically tried to keep its usage very low, and should be avoidable using calls to `outboxes_for_update()`
+### W144 backstage/backstage | GitLab Discovery Provider: Add glob support for entityFilename (including .yaml/.yml)
+  BODY: Hi @totoroot ,  thank you for this PR!  Glob support for `entityFilename` fills a real gap, especially for monorepo users on CE/free GitLab who cannot rely on `useSearch`. And finally being able to match both `.yaml` and `.yml` catalog files with a single pattern like `**/catalog-info.y?(a)ml` is such a nice touch. Both of these have been long-standing pain points for the community. (I also feel the pain of having to explain that the extension is y**a**ml , especially when you have .gitlab-ci.ym
+### W145 home-assistant/core | Add Matter service actions for vacuum area
+  BODY: >When starting cleaning using vacuum.start action we should reset the selection first.  I don't see this being addressed anywhere.
+  [const.py] ```suggestion ```
+  [icons.json] ```suggestion ```
+  [services.yaml] ```suggestion       integration: matter       domain: vacuum ```
+  [strings.json] ```suggestion ```
+  [vacuum.py] ```suggestion              return None ```
+  [vacuum.py] What happens if the vacuum is already running as a result of the selection?
+### W146 home-assistant/core | Home Connect refactor OAuth exceptions
+  BODY: nan
+  [__init__.py] Combine line 77 and 79.
+### W147 backstage/backstage | feat: Instrument MCP tool calls with semantically appropriate span
+  BODY: Nice! 👍   Few more bits, but feels safer to mirror otel, even if doesn't align quite as well with our other API design style
+  [mcp-actions.md] Ah, should've mentioned this in the first round: this doesn't seem like a great pattern at scale? 🤔 Feeling that it's lacking context and would either need to be a lot more verbose at this level, or be rebased. i.e. either `backend.tracing.capture.mcpActionsToolPayloads` or `mcpActions.tracing.capture.toolPayloads` / `mcpActions.tracing.captureTool
+  [TracingService.ts] I think it's alright to use our own variant for opaque types here: `$$type: '@backstage/TracingServiceContext'`. It's more resilient and I'm a bit worried we'll run into package duplication issues or other fun errors if we end up using a symbol here.
+  [TracingService.ts] Do you feel we need `getEntry`? I'm kinda leaning towards only implementing `getAllEntries` for now to nudge towards this only being used for bridging and no other silly custom context shenanigans 😁 
+### W148 ray-project/ray | [dashboard] Configurable defaults + UI dialogs for py-spy/memray profiling params
+  BODY: Please also update your stale PR descriptions. Thanks.
+  [ray_constants.py] ```suggestion     env_integer("RAY_DASHBOARD_PROFILING_MAX_DURATION_S", 60), ```  to match the original default cap in `reporter_head.py`.
+  [reporter_head.py] Please fix all stale docstrings. For example, this won't raise `ValueError` anymore. It'll raise `aiohttp.web.HTTPBadRequest` after your PR. I think there are more stale docstrings other than this one.
+  [ray_constants.py] Can you also log a warning here when the duration is clamped?
+  [ray_constants.py] Make `profile_manager.py` to read this constant.  https://github.com/ray-project/ray/blob/1a39d47792c3db8ee703e9c955596a1f40f44359/python/ray/dashboard/modules/reporter/profile_manager.py#L156
+### W149 backstage/backstage | fix(core-components): fix Table layout when filters and title are used together
+  BODY: It's red still. You may want to ensure you are on latest master again and run the api reports. All of them - not just for the individual package - so `yarn build:api-reports` from the root
+### W150 backstage/backstage | fix(ui): make Dialog panel opaque in dark mode
+  BODY: Hi @eleonoratennyson, can you include a before and after screenshot in the Pr description, please 🙏
+### W151 grafana/grafana | Keys API: add the list-keys handler and routes
+  BODY: see in-line comments
+  [handler.go] Let's add also integration tstes. It's easy to miss coverage across so many code layers. 
+  [route.go] umm, would it possible to test also the openAPI spec generation as we do with other APIs? 
+  [route.go] where is this used? I cannot find it. 
+  [handler.go] This could happen in a separate PR. 
+  [route.go] This could happen in a separate PR. 
+  [handler.go] ok, i've noticed this in the PR description.  >This is part 2 of 3. Part 1 ([#131304](https://github.com/grafana/grafana/pull/131304)) added keys_only to the storage layer and is merged. The routes are not mounted yet - mounting and the config gate are part 3 - so nothing serves this after merging.  Let's implement that in that PR. 
+### W152 dotnet/runtime | Add markdown link checker workflow using becheran/mlc
+  BODY: @copilot please address all feedback items.
+  [markdown-link-check.yml] ```suggestion       - "**.md" ``` Also remove all other files from this list.
+  [markdown-link-check.yml] Remove scheduled runs and replace with push triggers.
+  [markdown-link-check.yml] this condition is not necessary.
+  [mlc-problem-matcher.json] Remove this file
+  [.mlc_config] Remove this file.
+  [README.md] Remove all changes from this file.
+### W153 ray-project/ray | [RLlib] Fixing the missing LayerNorm bug in RLModuleSpec
+  BODY: As you added a test file, then you need to add it to the bazel.   ``` Exception: Cannot find bazel targets for tests ['python/ray/rllib/core/models/tests/test_encoder_layernorm.py'] so they won't be run automatically by CI, please add them to BUILD files. ```  Where is the layer norm applied in the MLP? Are we doing pre-norm or post-norm?  `Input → LayerNorm → Linear (weights × input + bias) → Activation → Output` or  `Input → Linear (weights × input + bias) → Activation → LayerNorm → Output`
+  [test_encoder_layernorm.py] I believe we agreed as a team to use pytest going forward. Could you modify all the tests to use pytest rather than unittest
+  [test_encoder_layernorm.py] All of these tests look like the same test with different configs. If correct, update to use `pytest.mark.parametrize` to simplify the testing
+  [test_mlp_encoders.py] What is the difference between the hidden and output layer?  In my head, you would never use layernorm on the final (output as I understand it) layer of a network. 
+### W154 NVIDIA/Megatron-LM | Fix build_sequences_per_dataset output path arg usage
+  BODY: Can you also fix the same in [test_builder.py](https://github.com/NVIDIA/Megatron-LM/blob/6652d570cb0bf11eea877cda2d677addedf5b53b/tests/unit_tests/data/test_builder.py#L438) please?
+### W155 home-assistant/core | Clean up vizio config flow legacy import leftovers
+  BODY: Thanks for cleaning this up! Just two remarks.
+  [strings.json] Doesn't exist in the flow (also the reason why hassfest CI is failing) ```suggestion ```
+  [test_init.py] Do we still want to keep `CONF_APPS` arround inside data? Why?
+### W156 home-assistant/core | Improve exceptions handling in WLED
+  BODY: nan
+  [config_flow.py] Let's move this into the library, checking if an error string contains a substring is fragile and really nice to handle in the consumer that is Home Assistant.
+### W157 dotnet/runtime | Fix PropertyPolicies to consider both getter and setter accessibility
+  BODY: See feedback above
+### W158 dotnet/docs | Direct readers to modern .NET install and uninstall resources
+  BODY: nan
+  [troubleshoot-blocked-installations-and-uninstallations.md] The link to `uninstall-tool-overview` should be relative to the markdown file in the repo, not the published page.

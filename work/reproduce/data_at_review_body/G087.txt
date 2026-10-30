@@ -1,0 +1,57 @@
+## Changes
+
+This PR adds the ability to specify extension versions when using the "Install Extensions" action in the AzureAppServiceManageV0 task. This allows users to:
+
+1. Install a specific version of an extension
+2. Force updating an extension to the latest version (even if already installed)
+
+## Implementation Details
+
+- Added a new input field "Extension Versions" to specify versions for extensions
+- Support two different ways to specify versions:
+  - Directly in the extension ID using format `extensionId@version`
+  - Via the new Extension Versions field as a comma-separated list
+- Added support for the `latest` keyword which will always update to the latest version
+- Added fallback mechanism if the Kudu API doesn't support the version parameter
+
+## Example Usage
+
+```yaml
+- task: AzureAppServiceManage@0
+  displayName: 'Install Extensions'
+  inputs:
+    azureSubscription: '$(AzureSubscription)'
+    Action: 'Install Extensions'
+    WebAppName: '$(WebAppName)'
+    ExtensionsList: 'Microsoft.AspNetCore.AzureAppServices.SiteExtension@latest,AspNetCoreRuntime.6.0.x64@6.0.5'
+    # Alternatively, you can use:
+    # ExtensionsList: 'Microsoft.AspNetCore.AzureAppServices.SiteExtension,AspNetCoreRuntime.6.0.x64'
+    # ExtensionVersions: 'latest,6.0.5'
+```
+
+Fixes #21004.
+
+> [!WARNING]
+>
+> <details>
+> <summary>Firewall rules blocked me from connecting to one or more addresses</summary>
+>
+> #### I tried to connect to the following addresses, but was blocked by firewall rules:
+>
+> - `cdn.fwupd.org`
+>   - Triggering command: `/usr/bin/fwupdmgr refresh ` (dns block)
+> - `pkgs.dev.azure.com`
+>   - Triggering command: `npm install                     ` (dns block)
+>   - Triggering command: `npm install minimist                     ` (dns block)
+>
+> If you need me to access, download, or install something from one of these locations, you can either:
+>
+> - Configure [Actions setup steps](https://gh.io/copilot/actions-setup-steps) to set up my environment, which run before the firewall is enabled
+> - Add the appropriate URLs or hosts to my [firewall allow list](https://gh.io/copilot/firewall-config)
+>
+> </details>
+
+
+---
+
+💡 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.

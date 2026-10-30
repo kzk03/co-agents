@@ -1,0 +1,296 @@
+### S001 openstack/tacker | Fix tox4 error
+  [PATCHSET_LEVEL:None] Other projects seems to pin "tox<4" for stable branch.  https://review.opendev.org/q/topic:tox4+pin https://lists.openstack.org/pipermail/openstack-discuss/2023-January/031678.html  Doesn't Tacker need to do the same?
+### S002 openstack/neutron | [test]Unit test file ovn_l3.test_plugin can run alone
+  [PATCHSET_LEVEL:None] As commented by Oleg in [1], unit tests are executed using tox. This test can be executed fine with this command: # tox -epy36 neutron.tests.unit.services.ovn_l3.test_plugin.TestOVNL3RouterPlugin.test_schedule_unhosted_gateways   [1]https://bugs.launchpad.net/neutron/+bug/1958513/comments/2
+### S003 openstack/nova | [nova-manage]support extended resource request
+  [PATCHSET_LEVEL:None] I'm definitely not an expert in the minimum bandwidth resource requests but this looks overall reasonable and comes with a lot of test coverage. I noticed a couple of minor things.
+  [nova-manage.rst:1227] This needs to be 25.0.0 (Yoga) now?
+  [manage.py:1505] Is this supposed to be present if it's empty? I'm assuming so but I haven't seen this before.
+  [manage.py:1676] This could be a misleading exception if the failure is for any reason other than failure to communicate with the placement API ... but maybe there is some precedent for this that I don't know about.  Also, looking at the code for get_allocation_candidates, if there is a problem retrieving the allocation candidates, it will return (None, None, None)
+  [manage.py:2249] Ah, I guess this is why.
+  [test_nova_manage.py:1601] I think this must be wrong based on the code (None, None, None).
+### S004 openstack/octavia | Delete useless row
+  BODY: Please see the comment a few lines below. I can now be used as the amphora delete api is available.
+### S005 openstack/cinder | Mark RSD driver as unsupported
+  BODY: Please use the driver capability of setting SUPPORTED = False
+  [rsd.py:531] SUPPORTED = False  https://github.com/openstack/cinder/blob/master/cinder/volume/driver.py#L394-L398
+### S006 openstack/watcher-tempest-plugin | Add a scenario test with continuous audit
+  BODY: Build failed (check pipeline).  For information on how to proceed, see http://docs.openstack.org/infra/manual/developers.html#automated-testing  https://softwarefactory-project.io/zuul/t/rdoproject.org/buildset/62e18503453c484b8f1aef1cf09b1995  - openstack-meta-content-provider-master https://softwarefactory-project.io/zuul/t/rdoproject.org/build/f2b7fe000bfb4dc99e7861929a53916b : FAILURE in 13m 00s - watcher-operator-validation-master https://softwarefactory-project.io/zuul/t/rdoproject.org/bui
+### S007 openstack/blazar | Remove six
+  [types.py:100] Duplicated check here
+### S008 openstack/cinder | Hedvig: Migration to py37
+  BODY: Looks good other than the minor comments inline. No unit tests were affected by this?
+  [COMMIT_MSG:7] This needs a blank line after the summary line and the detailed description so they don't get run together. It also would be good to prepend it with "Hedvig:" or similar so when someone searches through "git log --one-line" it's easy to see what changes have gone in.
+### S009 openstack/neutron | Delete dhcp ports totally during scale down of dhcp agents
+  BODY: Maybe You can add e.g. fullstack test which will ensure that if You remove network from dhcp-agent, port is really deleted instead of updated to reserved_dhcp_port?
+  [agentschedulers_db.py:422] I don't understand this, if should_remove_dhcp_port will be True, You will just update ports to be reserved dhcp ports? So when You will really remove them?  And why should_remove_dhcp_port is set to True if there is less dhcp_ports currently than dhcp_agents_per_network (see L453)?
+  [agentschedulers_db.py:440] What this method is doing actually? Here You say that it count number of ports but later in L453 it returns bool value so it's not counting anything IMHO.
+  [agentschedulers_db.py:453] why not:      return dhcp_ports_num <= cfg.CONF.dhcp_agents_per_network  ?
+  [test_agentschedulers_db.py:649] nit: why You just not move this to L652?
+  [test_agentschedulers_db.py:669] same here
+  [test_agentschedulers_db.py:682] please align indentation of this line to the line above
+### S010 openstack/blazar | Prevent failed lease update from setting lease status to ERROR
+  BODY: I also agree we should let the update-lease to have transactional feature. For the current problem, I'm okay for Blazar to have quick fix.  IMO, it's hard to track a place each exceptions, having restore_lease_status = True, are called in the future changes.  My suggestion is lease_statues decorator has additionally one parameter that represents type of exceptions the lease status shouldn't go to ERROR.  Like following:  lease_status(..snip.., not_error=[InvalidInput, MissingParameter])  How do 
+  [exceptions.py:97] If we take this approach it's better to set the value to False because it's a base exception class.
+### S011 openstack/swift | cors: use same host for swift/s3api
+  [main.py:38] Keystone. `S3_ENDPOINT` should always match your `OS_STORAGE_URL` (if provided), though.
+  [main.py:322] Maybe we could default `S3_ENDPOINT` to `None` then update here once we know the storage url?
+### S012 openstack/glance-specs | Spec for SRBAC system-admin persona support in glance
+  [s-rbac-system-scope-support.rst:48] Even if you keep image create/update APIs project specific you can not restrict user to call these APIs with system token and if it is called it will fail with 500 error at this moment. So we need to handle all non-system admin apis to reject the request with 400 error if they are called with system token.
+  [s-rbac-system-scope-support.rst:62] None
+  [s-rbac-system-scope-support.rst:65] None
+  [s-rbac-system-scope-support.rst:72] None
+### S013 openstack/nova-specs | Allow specify user to reset password
+  [allow-specify-user-to-reset-password.rst:14] this requires the guest to be deployed with the qemu guest agent correct. with out the guest agent i dont think libvirt can reset the password.
+  [allow-specify-user-to-reset-password.rst:24] unfrotunetly yes although they should really be using ssh keys or x509 certs for powershell on windows.
+  [allow-specify-user-to-reset-password.rst:36] vms are owned by the project so if we did this it would allow any memeber of a project to reset the password of any vm in the project. is that what we want? the most comment case other then forget the password where this would come up is an employee leave but they did nto transfer the vm to another and reset the password before they left.
+  [allow-specify-user-to-reset-password.rst:77] this is the user in the vm.  this would only work if the vm supported local login by the way. i dont think we would expect this to work if the vm use kerberous or a windows domain login right?
+  [allow-specify-user-to-reset-password.rst:85] see the issue with this is if that is a shared vm it would still  allow the non admin to reset the password of any user on the vm. that said i dont see a way to prevent that and still support letting the user reset there own accrount.
+  [allow-specify-user-to-reset-password.rst:94] i think there are several security impacts to this.  as i said above vms are owned by projects not users so this api would presuable allow any user of the poject to reset an user in the vms password. that seam like a pretty big security whole if that vm is shared between users.  in a public cloud env i see a need to be able to disable this feature 
+### S014 openstack/grian-ui | Replace unnecessary override of install_command
+  [tox.ini:27] this change the behaviour of editable installs.  https://github.com/openstack/nova/commit/5e5b6751d32aa50dc372c55b5c2044d0dade51f4  which is why we do not do it here.
+### S015 openstack/nova | FUP Remove unnecessary PCI check
+  [COMMIT_MSG:30] Closes-Bug: #2103636
+  [PATCHSET_LEVEL:None] please fix the commit message, this patch not just related to the bug but actually fixing it. Then I will +2 it
+### S016 openstack/glance-tempest-plugin | Implement API protection testing for metadef tags
+  [test_tags.py:72] I think you can modify create_tags method to create multiple tags rather than having separate method for the same.  IMO there is no need to create separate namespaces for creating multiple tags.
+  [test_tags.py:78] I think this should be self.alt_project_id, ditto for line number 59
+### S017 openstack/nova-specs | Use PCPU and VCPU in one instance
+  [use-pcpu-vcpu-in-one-instance.rst:121] maybe just call it as 'pinned_cpus', I don't think we should have 'numa' prefix, since the pinned cpu isn't related to NUMA.
+  [use-pcpu-vcpu-in-one-instance.rst:178] we also required the "hw:numa_pinned_cpu" in the extra specs.
+  [use-pcpu-vcpu-in-one-instance.rst:189] This sounds like part of "Affect over emulator thread policy", since it is rule also for using "hw:" extra specs.
+  [use-pcpu-vcpu-in-one-instance.rst:269] and "hw:pinned_cpus"
+### S018 openstack/manila | Enable cephfs snapshots
+  BODY: We set some env vars in devstack-plugin-tests, either we fix them here and we remove it from there, or we just fix them there
+  [run.yaml:77] We should do this in devstack-ceph-plugin. Precisely https://github.com/openstack/devstack-plugin-ceph/blob/master/manila/post_test_hook.sh#L145
+### S019 openstack/heat | Allow setting-up heat_api_root
+  BODY: This also needs to be fixed at https://opendev.org/openstack/heat/src/branch/master/heat/api/versions.py#L55, and possibly other places.
+  [wsgi.py:97] Can't this be obtained automatically from the keystone catalog?
+### S020 openstack/horizon | Handle 403 response when update image attribute
+  BODY: I think that modifying the status code is not a good way to deal with it. Is there any other way of handling it?
+### S021 openstack/octavia | Enable octavia-tempest-plugin for grenade job
+  BODY: What about pinning the py2 job to the last py2 version of the octavia-tempest-plugin?
+### S022 openstack/swift | wsgi: bad request syntax response missing txn-id
+  [PATCHSET_LEVEL:None] test failures look legit  E       AssertionError: "ERROR WSGI: code 400, message Invalid PROXY line 'GET /someurl HTTP/1.0\\r\\n', transaction_id test-bad-req-trans-id" != "ERROR WSGI: code 400, message Invalid PROXY line 'GET /someurl HTTP/1.0\\r\\n', (txn_id: test-bad-req-trans-id)"  And the pep8 errors too
+### S023 openstack/masakari | Search in nova services instead of hypervisors
+  BODY: I think this patch is the way to go. Some comments in need of addressing though.
+  [COMMIT_MSG:10] nit: ways
+  [COMMIT_MSG:12] nit: during
+  [hosts.inc:92] host, not binary
+  [hosts.inc:92] nit: from
+  [nova.py:247] find
+  [nova.py:256] when can it happen? (is find from nova case-insensitive? I'd doubt but never checked)
+### S024 openstack/manila-specs | share transfer between project
+  [PATCHSET_LEVEL:None] Hi Haixin, thanks for proposing this transfer spec! I added some points, please, review them.
+  [share_transfer_between_project.rst:20] This
+  [share_transfer_between_project.rst:38] would the admin be able to configure this timeout ?   Having the configuration option can be useful for tempest test.
+  [share_transfer_between_project.rst:61] for audits purpose or even debugging, the fields: "created_at", "updated_at" and "deleted_at" should be also added, right ?
+  [share_transfer_between_project.rst:71] this spec just supports
+  [share_transfer_between_project.rst:77] only "per_share_gigabytes" ?!  All quotas resources must be validated, right ? With share transfer the snapshots and replicas also come, so those quotas must be checked.
+### S025 openstack/horizon | Explicitly set force=False in nova.live_migrate when microversion supports it
+  [nova.py:606] I think horizon should specify a microversion we want to use instead of checking the API version. Specifying microversion is the responsibility of an API caller.
+### S026 openstack/neutron-tempest-plugin | zuul: remove obsolete job definitions
+  BODY: Build failed (check pipeline).  For information on how to proceed, see http://docs.openstack.org/infra/manual/developers.html#automated-testing  https://softwarefactory-project.io/zuul/t/rdoproject.org/buildset/5907da3bf0d442fe89ca6a8451db4eee  - openstack-meta-content-provider https://softwarefactory-project.io/zuul/t/rdoproject.org/build/dccbf493753842978db0fdd0949dc983 : SUCCESS in 7h 35m 02s - whitebox-neutron-tempest-plugin-podified-multinode-edpm-deployment-crc-2comp https://softwarefactor
+### S027 openstack/ironic-prometheus-exporter | Add release notes jobs
+  [.zuul.yaml:89] what?
+### S028 openstack/masakari | [Part7]Remove all usage of six library
+  [nova.py:31] oh no, I miss it.
+### S029 openstack/heat | Add OS::Neutron::QoSMinimumPacketRateRule resource
+  [COMMIT_MSG:13] python-neutronclient should be released with this change and then heat can use it after the requirement[1] has been bumped to the new release.  [1] https://github.com/openstack/heat/blob/master/requirements.txt#L49  Also good to create a story in https://storyboard.openstack.org/#!/project/989 for proper tracking in heat.  Otherwise lgtm.
+### S030 openstack/tacker | Fix status check of k8s resources
+  [PATCHSET_LEVEL:None] Thanks for your patch, please kindly find my comments.
+  [kubernetes_resource.py:312] Don't you need the same fix for the v1 API [1]? Or does same problem not occur in v1 API?  [1] https://opendev.org/openstack/tacker/src/branch/master/tacker/vnfm/infra_drivers/kubernetes/kubernetes_driver.py#L378
+  [kubernetes_resource.py:470] ditto.  https://opendev.org/openstack/tacker/src/branch/master/tacker/vnfm/infra_drivers/kubernetes/kubernetes_driver.py#L339-L341
+### S031 openstack/python-keystoneclient | Add doc/requirements.txt to releasenotes tox environment
+  [COMMIT_MSG:10] What doesn't work? We've been building releasenotes this way for a long time now
+### S032 openstack/cyborg | Delete trait from placement
+  BODY: LGTM, please add a releasenote for this bug fix.  One important thing is we need to add some unittests for reporting data to placement, but you can splite it by a new patach, because there is need to start from zero.
+  [COMMIT_MSG:7] from
+  [placement_client.py:316] right.
+### S033 openstack/python-ironicclient | Remove direct dependency on requests
+  BODY: We're importing requests directly in ironicclient.common.http and unit tests, so I think it has to stay.
+### S034 openstack/ironic | Add support to manage certificates in iLO
+  [common.py:548] if p_boot_mode is empty should it just be set to DEFAULT_BOOT_MODE?
+  [common.py:947] If the configured file path doesn't exist this should at least log an error, and maybe even raise an exception
+  [common.py:953] I don't think this is needed, you could always raise InvalidParameterValue at the start of this function if cert_file_list is not a list or None
+  [common.py:958] function arguments should not be mutable types like lists. Better to make None the default, and if you need to assume a list in the function, initialize cert_file_list with [] below
+### S035 openstack/glance_store | Update lower-constraints versions
+  BODY: Hi Sean,  Did you just copy this over from the root project or something? I don't think any of the added dependencies are actually required by glance_store. Should we really be adding these?
+### S036 openstack/neutron-vpnaas | Adapt execute method usage with recent change
+  [PATCHSET_LEVEL:None] thanks, please wait I tend to believe that this return with tuple (anyway ugly) thing is not necessary as I started to fix the recent issue (https://bugs.launchpad.net/neutron/+bug/2131801 )
+### S037 openstack/manila | Ignore replicas in error state during allow/deny access.
+  [PATCHSET_LEVEL:None] Thanks Kiran! Please take a look at the comment inline
+  [api.py:2225] This change doesn't make sense --  Imagine a replicated share that's going through a revert to share operation, the revert status is recorded only on the primary/"active" share instance.. with this change, we'll allow access rules changes while that operation is ongoing. That might not be supported by backends.   Also, if any of the instances isn't
+### S038 openstack/designate-dashboard | Update Designate dashboard for Angular 1.8.2.2
+  [PATCHSET_LEVEL:None] Thanks, LGTM. Could you also change [1],[2] like done in horizon https://review.opendev.org/c/openstack/horizon/+/843346/3/openstack_dashboard/static/app/core/images/actions/delete-image.service.js#79  [1] https://opendev.org/openstack/designate-dashboard/src/branch/master/designatedashboard/static/designatedashboard/resources/os-designate-recordse
+### S039 openstack/ironic | Follow-up to RBAC allocation changes
+  [allocation.py:309] test leftovers? all the 'print' statements here and below :)
+### S040 openstack/neutron-tempest-plugin | Add job definitions for 2023.2 (Bobcat) branch
+  [project.yaml:182] We did remove it in previous cycle - see in the template for master branch. So it shouldn't be here anymore. Just in the experimental queue
+### S041 openstack/ironic-specs | Add hardware properties API to management interface
+  BODY: Couple of commetns/suggestions inline.
+  [ironic-management-limits.rst:67] Does it make sense to introduce different endpoints for power and thermal limits? i.e. /v1/nodes/<UUID>/management/limits/power /v1/nodes/<UUID>/management/limits/(thermal or temperature)
+  [ironic-management-limits.rst:76] IIRC this section should also include possible http response codes.
+  [ironic-management-limits.rst:85] Should it also include type?
+  [ironic-management-limits.rst:131] Also might be good to return these required fields to user somehow, maybe in get_supported_limits return not only True/False but also parameter names with descriptions, so that user would know what to set? Or add support for GET at /v1/nodes/<UUID>/management/limits/(power, thermal) that will return those.
+### S042 openstack/bifrost | dib: modify if-statement for debootstrap inclusion
+  [main.yml:21] This won't catch debian-minimal, ubuntu-minimal, etc.
+### S043 openstack/magnum | Remove support for in-place upgrades with the Heat driver.
+  [PATCHSET_LEVEL:None] looks good! we also need a reno please. (-1 for visibility)
+### S044 openstack/trove-dashboard | Refactor error messages
+  [COMMIT_MSG:9] Coud you add space between the words?
+### S045 openstack/aodh | modify document to better
+  [COMMIT_MSG:7] ???
+  [README.rst:5] these are not the release notes
+### S046 openstack/keystone | remove unicode from code
+  BODY: Is this meant to be part of a larger change to include the rest of the occurrences in keystone?  If we do this, I think we should do it consistently.  https://opendev.org/openstack/keystone/src/branch/master/keystone/identity/backends/ldap/common.py#L1506-L1508
+  [COMMIT_MSG:8] This may be obvious to some people who are familiar with the status of python3 support and testing, but it's nice to include some additional details in the commit message.  For example, we're removing explicit unicode because it's the default in python3.
+### S047 openstack/cyborg | bugs fix for compatibility issues between Py2 and Py3
+  BODY: Needs UT.
+### S048 openstack/ironic-python-agent | Link to configuration options
+  BODY: It's not so easy for IPA: we don't have a configuration reference rendered now. Could you maybe look into that?
+  [how_it_works.rst:69] This is not an IPA option. Unfortunately, we cannot link to external options like this.
+### S049 openstack/manila-specs | Add spec for subnet force deletion
+  [PATCHSET_LEVEL:None] saw carloss' callout about force-delete being an admin-only action, maybe specify that in the spec as well
+  [allow-force-deletion-of-used-subnets.rst:8] unused subnets?
+  [allow-force-deletion-of-used-subnets.rst:13] there should likely by a response code or exception thrown here to account for this.
+  [allow-force-deletion-of-used-subnets.rst:113] force delete share subnet API
+### S050 openstack/magnum-capi-helm | Add support for proxy
+  [PATCHSET_LEVEL:None] This looks functional and my comments are largely cosmetic code style.  We should consider how magnum-capi-helm approaches the release notes for this, given it's not implemented in the capo helm charts.
+  [driver.py:902] This should probably be an early return if `network_id` or `subnet_id` are None, rather than if the subnet lookup gave no results.
+  [driver.py:907] Could we simplify the responsibility and improve readability of this function by removing `network_id`, `subnet_id` and `fixed_subnet_cidr` parameters and replacing them with already calculated `subnet_cidrs`?
+  [driver.py:918] Would it be reasonable to just split this by `,` and then you are only manipulating a list (or set), then use a single `join` at the end?
+### S051 openstack/keystone-tempest-plugin | OAuth 2.0 Mutual-TLS Support
+  [PATCHSET_LEVEL:None] need to resolve merge conflict
+### S052 openstack/ironic-python-agent-builder | Extend the DIB_CHECKSUM variable usage
+  [PATCHSET_LEVEL:None] I don't believe we can/should backport the updated support for DIB_CHECKSUM unless DIB has support backported and released. DIB is branchless and this is only designed to run on the release of DIB associated with stable/2023.1
+### S053 openstack/tap-as-a-service | Adds policy in code to Tap-as-a-Service
+  [base.py:16] These variable are now provided by neutron-lib 1.25 or later. Could you consume variables from neutron-lib?
+  [tap_flow.py:36] ID is missing in the path.
+  [tap_flow.py:41] get_xxx is assumed in the neutron API layer. show_tap_flow means this policy is never referred.
+  [tap_flow.py:47] ID is missing.
+  [tap_flow.py:52] See comment at L.41.
+  [tap_flow.py:69] ID is missing.
+### S054 openstack/bifrost | Allow inserting SSH public key for dynamic-login
+  BODY: Otherwise looks good
+  [ssh_public_key_path.yaml:1] This copyright header should be corrected
+### S055 openstack/zaqar-tempest-plugin | Optimize the tempest job for zaqar-tempest-plugin
+  [.zuul.yaml:7] I think you can use `zaqar-tempest-base` as the parent here directly.
+### S056 openstack/tap-as-a-service | Modifications of the API to support ERSPAN
+  BODY: sorry I left out the vote
+  [COMMIT_MSG:7] If I understand well this is a Cisco proprietary feature, but the thing to mirror traffic to some remote monitoring device can be general. Should it be something more general like remote monitoring device?
+  [taas_init_ops.py:37] This should be in a new expand script
+  [taas_init_ops.py:51] ditto
+### S057 openstack/ironic-specs | Fix a typo of "parameter"
+  BODY: there have other errors should be  fixed at the same time
+### S058 openstack/designate | Replace license classifier
+  [PATCHSET_LEVEL:None] I won't do any further detailed reviews until you address the fundamental issue that the install guide doesn't deploy TLS
+### S059 openstack/watcher-tempest-plugin | Add tests for disable migration in host maintenance
+  [PATCHSET_LEVEL:None] ++ tests looks good, and increase the coverage for all scenarios in the new feature. -1: i think that we should double check the action and see if is really a cold migration instead of a live one, otherwise the test isn't really validating the code, wdyt? Other comments are more nits, thanks for proposing this patch!
+  [test_execute_host_maintenance.py:121] nit: in the end, you could just create one instance in a host, and work with that host as the maintenance_node.
+  [test_execute_host_maintenance.py:145] you can't tell that was a cold migrate instead of a live migrate, just checking that it migrated. Is it possible to check that info in the action details?
+  [test_execute_host_maintenance.py:183] Same thing as previous test.
+  [test_execute_host_maintenance.py:222] this looks fine :)
+  [test_execute_host_maintenance.py:278] it is really nice that you are covering all scenarios, I was just thinking if we can reduce the number of tests here, but not the scenarios, since each test will take some time to finish, increasing the total time to complete the CI job. e.g, if instead of creating one instance per host, you could create 2 instance in a single host, which will be t
+### S060 openstack/networking-bgpvpn | Handle network/router delete
+  [plugin.py:104] Deepthi, what if the database transaction write failed after precommit at the Neutron level?  In this case, we will be sending disassociation to the external entity while the association will come back intact into the neutron db..
+### S061 openstack/blazar-nova | Stop testing with py2
+  BODY: let's remove the py2 requirement also from test-requirements.txt by Depends-On https://review.opendev.org/#/c/693631/  https://github.com/openstack/blazar-nova/blob/4856c7209f5e227828073b2da1fd07c44137b373/test-requirements.txt#L9
+  [.zuul.yaml:15] you need to remove this also
+  [.zuul.yaml:32] ditto
+### S062 openstack/magnum-specs | Improve driver discovery
+  [PATCHSET_LEVEL:None] I like the overall idea here. Thank you for writing this up.  I would however, prefer not to keep using os_distro in this way (although we can keep it for backwards compatibility reasons)
+  [improve-driver-discovery.rst:89] FWIW, I like the idea of this working with just the magnum_driver specified.  It is worth stating that these values for os_distro are invalid, and will trigger warning messages in Nova for badly formatted os_distro values (ubuntu22.04 would be a valid value, but it likely has unexpected side effects that are best avoided) https://specs.openstack.or
+### S063 openstack/glance-tempest-plugin | Bump hacking
+  [PATCHSET_LEVEL:None] One minor issue after all :)
+  [requirements.txt:3] How is this related to the hacking bump?
+### S064 openstack/keystone | Add manager and base interface for fernet key store
+  BODY: Is this something we want to continue? The idea seems interesting, but perhaps we need a new champion? Does this need more discussion?
+### S065 openstack/ovsdbapp | [NB] Add "if_exists" flag to ACL and Port_Group deletion commands
+  [commands.py:213] It seems a little confusing to have acl_del(if_exists=True) mean "Delete this ACL if the underlying port group or logical switch exists" as opposed to "delete this ACL if it exists".  I guess we can assume that if the port group or switch doesn't exist, the ACL also doesn't exist, and the existing behavior with respect to ACLs on these entities alr
+### S066 openstack/ceilometer | Uses oslo.service for ceilometer-polling on Windows
+  BODY: Well why not fixes your issue on Cotyledon instead of reintroducing technical debt in Ceilometer.
+### S067 openstack/os-brick | Add  NVMe-FC support in NVMeOF connector
+  [PATCHSET_LEVEL:None] Forgot to add vote on last comment
+  [PATCHSET_LEVEL:None] I feel that this patch is actually coping out of a real NVMe-FC integration. Most FC based drivers, support the Fibre Channel Zone Manager, but for some reason the Dell PowerStore driver does not and this is what is driving this patch. These changes take no account of FCZM required items like initiator_target_maps which makes it very difficult, if 
+### S068 openstack/cinder-specs | Update 2023.1 placeholder
+  [PATCHSET_LEVEL:None] See comment inline.
+  [index.rst:32] This is causing the docs job to fail (because you're removing the only rst file in the directory).  I guess the best thing here is to replace lines 28-32 with some text, something like "No specs were approved for this cycle."
+### S069 openstack/ovn-bgp-agent | Make the local chassis ID configurable
+  [PATCHSET_LEVEL:None] We usually don't allow backporting new configuration options (although we can also consider exceptions).
+### S070 openstack/magnum-ui | Do not convert label values to lowercase
+  [PATCHSET_LEVEL:None] Please add release notes
+### S071 openstack/manila-ui | add metadata create textbox to Create Snapshot Form
+  [PATCHSET_LEVEL:None] Thanks for implementing the suggested changes. Some jobs are still failing (i.e. unit tests one). Could you please take a look at the tests and fix them?
+### S072 openstack/keystonemiddleware | Catch more keystoneauth exceptions
+  [__init__.py:767] An SSL error is often the result of a misconfiguration of the client (here, the openstack service), so I wouldn't catch it here and imply that this is a problem with the keystone service.
+### S073 openstack/aodh | Migrate CentOS Stream 8 job to CentOS Stream 9
+  [PATCHSET_LEVEL:None] Thank you. IMHO this should be a cherry-pick of the relevant patch from master, see https://github.com/openstack/aodh/commit/0b0c0aff8b8ec61a20615d34b006593ef8010fe5
+### S074 openstack/networking-baremetal | Stop using eventlet for notification listener
+  [PATCHSET_LEVEL:None] This is review feedback from the PTG review jam and reflects feedback from multiple cores.  The code that's written looks good, but there are a few things we'd like done as well before this lands: - Ensure all the requirements.txt entires do not require eventlet where possible (at a minimum, this will require you to raise minimum supported oslo.* l
+### S075 openstack/glance | Remove bandit.yaml in favor of default config
+  BODY: Eric, let's fix the bandit failures first, make this change dependent on the cleanups.
+### S076 openstack/os-brick | storpool.py: Use StorPool's API for Attach/Detach
+  [PATCHSET_LEVEL:None] stable/2024.1 (Caracal) is being deleted ... if this patch is still relevant, you can repropose it to unmaintained/2024.1, which will be created at that time
+### S077 openstack/python-zaqarclient | Switch to Ussuri jobs
+  BODY: instead of doing all in bit and piece, we need to do all together in single patch - https://review.opendev.org/#/c/692011/
+### S078 openstack/heat-templates | Sample template using SoftwareDeployments
+  BODY: I'm still of the opinion that the python snippet is confusing, and the eval usage is concerning.  FWIW, I see template examples as best to contain the minimum to demonstrate the functionality, and in this case we have a config with group "script" which then has a python script exposing internal interface details of some stuff normally only considered by the hook scripts (which, confusingly, are python scripts).  So all things considered, I'd rather replace it with one line of bash.  You can use 
+  [example-deployments.yaml:38] Why eval?  This seems simultaneously confusing and unsafe to me.
+### S079 openstack/sushy | advertise Python 3.12 support
+  [PATCHSET_LEVEL:None] I guess this https://review.opendev.org/c/openstack/sushy/+/931321 has priority and includes this change After sushy release we can just merge that one
+### S080 openstack/masakari-monitors | Prevents the wrong notification when only own node is offline
+  BODY: Sorry, I cannot accept this patch. I replied inline and in the bug report.
+  [handle_host.py:111] This breaks valid deployments.
+  [handle_host.py:374] This cannot happen on remote by definition of remote.
+  [handle_host.py:447] this is the proper safeguard; hostmonitor should be treated as pacemaker proxy so should run on pacemaker nodes (not remotes)
+  [handle_host.py:447] I have replied on the bug report now.
+### S081 openstack/python-glanceclient | Update the documentation links for doc migration
+  [README.rst:37] "https"
+### S082 openstack/trove | Cinder Support For Boot Volume
+  [PATCHSET_LEVEL:None] Great! All CI jobs passed.
+  [PATCHSET_LEVEL:None] need a small docs fix. thanks
+  [add-support-create-instance-with-rootdisk-cinder.yaml:4] s/config/the configuration/
+  [add-support-create-instance-with-rootdisk-cinder.yaml:5] created ?
+  [add-support-create-instance-with-rootdisk-cinder.yaml:10] When creating Nova instances with a root disk in the Cinder backend, it will allow live migration of Nova instances and features when using Cinder as the storage backend.
+### S083 openstack/pyeclib | Add job to build wheels
+  [PATCHSET_LEVEL:None] Nice, makes sense and the ansible is doing what we were doing manually.  Hmm, however when I try and pull in one from an artifact and attempt to install it:  ``` # pip install pyeclib-1.6.1-cp35-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_12_x86_64.manylinux2010_x86_64.whl  Processing /pyeclib-1.6.1-cp35-abi3-manylinux_2_5_x86_64.manyli
+  [main.yaml:2] So this is just defaulting it to something. As the run playbook always specifies a version.  Belts and brances is good.
+### S084 openstack/magnum | [k8s] Support post install manifest URL
+  [kubernetes.py:25] Based on the description and implementation, it's better we name it 'post_manifest_url' or something else, 'post_install_file' is a little bit confused for me, because I thought it's a local file path on the magnum controller host.
+  [kube-apiserver-to-kubelet-role.sh:378] Space between the bracket and quote is missing.
+### S085 openstack/tacker-specs | Tacker Studio to design TOSCA templates spec
+  [tacker-studio.rst:102] Trinh, heat-dashboard stores things locally?
+### S086 openstack/neutron-fwaas | Don't bind FWG on vm port if no firewall_l2_driver.
+  [COMMIT_MSG:14] Let me correct one thing: |4 |openvswitch        | others         | False|--> it should be change to  |4 |openvswitch        | others         | True| if security_group driver is not iptables_hybrid.
+### S087 openstack/cinder-specs | Add multiple volume groups - Yoga
+  [PATCHSET_LEVEL:None] Needed you to have a depends on in the commit message to that PS. By adding your own test-requirements to the patch you would force this to merge on approval.  This is not what we want to do. We are working on a larger fix. Just add the depends on in the commit message
+### S088 openstack/heat-translator | Removed older version of python added 3.5
+  BODY: I am seeing this little late, and noticed we already have merged patch for 3.6 so seems like this is now obsolete and should be closed. Thanks!
+### S089 openstack/barbican | Bump the openstackdocstheme extension to 1.20
+  BODY: Update releasenotes/source/conf.py and api*/source/conf.py the same way if those exist.  Do not uncomment variables, just remove those.
+### S090 openstack/networking-generic-switch | Support multiple links in link_local_information dict of portgroups
+  BODY: Hi Gaetan, thanks for your patch. Please see [1] from Zachary Ma, which aims to add support for port groups.  I expect that this patch is for supporting statically defined port groups. In my experience, the VLAN association is normally added to the master interface on the switch, rather than the slave links as you are doing here. Perhaps there is a switch where this is done differently?  [1] https://review.openstack.org/#/c/551922/
+### S091 openstack/heat-specs | Add a solution to support server health monitoring, both including Ceilometer and Monasca
+  BODY: I agree with the other folks here - I don't think Heat is the place to do this, because I don't think a predefined list of actions will ever be sufficient. Mistral is right service to handle this because it allows users to customise the actions.  Here's an example Heat template that allows us to do what you're talking about (using a Mistral workflow for recovery) using alarms from Aodh:  http://git.openstack.org/cgit/openstack/heat-templates/tree/hot/autohealing  In principle the same could work
+### S092 openstack/glance | Use OS::Nova::HostAggregate instead of OS::Nova::Aggregate
+  BODY: this will need a release note similar to [0].  also will you be looking at the horizon aspect of the bug?  https://review.openstack.org/#/c/272271/4/releasenotes/notes/bug-1537903-54b2822eac6cfc09.yaml
+### S093 openstack/designate-tempest-plugin | New test cases for unicode type TLD
+  BODY: Using unicode for domain+TLD names isn't allowed.
+### S094 openstack/keystone-specs | Role Check on Body Key
+  BODY: As of pike-2 keystone has entered specification freeze [0]. If you'd like to apply for an exception, please submit a request to the openstack-dev mailing list tagged with [keystone] and propose a discussion during keystone's weekly team meeting [1].  Placing a procedural -2 until Queens opens for development or an exception is granted.   [0] https://releases.openstack.org/pike/schedule.html [1] https://etherpad.openstack.org/p/keystone-weekly-meeting
+### S095 openstack/keystone-specs | Allow admin to specify project id on creation
+  BODY: This cannot be a "general use" part of the API imo. I'm going to stick by my concerns. I really want, if this is going to be implemented, it being an ADMIN only action [meaning in the system-scope kind of world, it is a cloud-admin action].  I think we have a lot of issues with this proposal outlined here:  What occurs when an ID is in conflict? UUID4 is effectively unique, but with this system it is possible that someone can squat on an ID or could select an ID that could be UUID (e.g., "deadbe
+  [admin-to-create-project-with-id.rst:101] If the plan is to support (explicitly) the use of fernet issued from one keystone in another, I'm a hard -2 on this.  I can't stop folks from trying to implement this. This should not be an explicit goal. Each keystone should *always* be explicitly authoritative for it's own auth. IF you want this setup, use keystone-to-keystone. This is exposing l
+  [admin-to-create-project-with-id.rst:112] Names are also not globally unique. This means that users cannot rely on this without also relying on domain_name/domain_id.
+### S096 openstack/trove | Fix error create backup in PostgreSQL
+  [PATCHSET_LEVEL:None] CI still failed: https://zuul.opendev.org/t/openstack/build/76cfe733c4f2497284d5216fbebced14/log/controller/logs/guest-agent-logs/e87a4d3e-ffa7-480c-bd26-28113dc6209a/containers/d8a8a101f8725ec997a728cd5cbb04565b9ceed9445e62c4de550881174a2bcc/d8a8a101f8725ec997a728cd5cbb04565b9ceed9445e62c4de550881174a2bcc-json_log.txt
+  [PATCHSET_LEVEL:None] Hi, Bo, Do not +w directly, you need another core +2 first.
+### S097 openstack/python-glanceclient | Fix functional tests and docs generation
+  [PATCHSET_LEVEL:None] I'm pretty sure that's the intended behaviour how the tox.ini has been built. The doc/requirements has only requirements to build the docs from the sources, not install the package itself. Is there any reason why we should be installing the client to build it's docs?
+### S098 openstack/octavia-tempest-plugin | Update branch regex to adapt to unmaintained branches
+  [PATCHSET_LEVEL:None] We agreed in the upstream meeting that we don't want to test unmaintained branches. I will work on a new patch.
+### S099 openstack/python-venusclient | setup.cfg: Replace dashes with underscores
+  BODY: repeat with https://review.opendev.org/c/inspur/python-venusclient/+/788209
+### S100 openstack/ceilometer | Uses oslo.service for ceilometer-polling on Windows
+  BODY: What about not passing the oslo.config object to each children instead ?

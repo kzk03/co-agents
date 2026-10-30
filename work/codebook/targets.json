@@ -1,0 +1,702 @@
+[
+ {
+  "set": "aidev",
+  "sid": "G002",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "C1",
+  "inf": "no",
+  "text": "### G002 dotnet/msbuild agent=Copilot | Track subclasses of MSBuild tasks for telemetry\n  BODY: nan\n  [ProjectTelemetry.cs] @copilot you need to check the entire inheritance heirarchy, not just the first level\n  [ProjectTelemetry.cs] @copilot rename this event - it's not about 'microsoft tasks' per se - it's about MSBuild tasks specifically. And I want to change the shape of the data we're collecting.  I want to track the usage of non-sealed Microsoft-owned Tasks specifically. So let's keep a dictionary of Microsoft Task Names to counts of their non-sealed usage. We should insp"
+ },
+ {
+  "set": "aidev",
+  "sid": "G006",
+  "v0": "NOAGREE",
+  "me": "H2",
+  "son": "C3",
+  "hai": "C1",
+  "inf": "partial",
+  "text": "### G006 microsoft/genaiscript agent=Copilot | Add streamlined GenAIScript cheat sheet focusing on core functionality\n  BODY: nan\n  [cheat-sheet.mdx] Not correct, you don't access environment variables through env.vars @copilot\n  [cheat-sheet.mdx] Remove section @copilot\n  [cheat-sheet.mdx] Move this section much earlier, super important @copilot"
+ },
+ {
+  "set": "aidev",
+  "sid": "G007",
+  "v0": "NOAGREE",
+  "me": "H1",
+  "son": "C1",
+  "hai": "H2",
+  "inf": "no",
+  "text": "### G007 awesome-opencode/awesome-opencode agent=Copilot | [WIP] the starter repo for what will become an awesome-list for opencode\n\n  BODY: you are not completing the correct task. this is an awesome-list for opencode.ai the codeing agent cli"
+ },
+ {
+  "set": "aidev",
+  "sid": "G011",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "H2",
+  "inf": "partial",
+  "text": "### G011 joshuadavidthomas/django-language-server agent=Copilot | Setup server logging to file using standard XDG directory\n  BODY: nan\n  [logging.rs] @copilot should have read more files before asking for the const change. All logic for the log dir should be in the conf crate, including checking its existence. So a function is needed again, returning an anyhow result. The only thing in this server crate file should be let log_dir = log_dir()? Everything else in the conf crate."
+ },
+ {
+  "set": "aidev",
+  "sid": "G016",
+  "v0": "NOAGREE",
+  "me": "C2",
+  "son": "H3",
+  "hai": "M",
+  "inf": "NOAGREE",
+  "text": "### G016 compas-dev/compas agent=Copilot | Add optional units and uncertainties support with comprehensive geometry integration\n  BODY: @copilot the ironpython tests are still failing. Just ignore them but not with the `skipif`, instead do `if not compas.IPY:` to ignore"
+ },
+ {
+  "set": "aidev",
+  "sid": "G020",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "C1",
+  "inf": "NOAGREE",
+  "text": "### G020 doodlum/skyrim-community-shaders agent=Copilot | perf: cache GetRuntimeData usage for improved performance\n  BODY: Please handle other similar examples you identified.  Is this something that should be implemented in our commonlib dependency or is this a client application issue?  Also, is this approach developer friendly?"
+ },
+ {
+  "set": "aidev",
+  "sid": "G024",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "H2",
+  "inf": "partial",
+  "text": "### G024 collinbarrett/FilterLists agent=Copilot | Split GameIndustry hosts into separate FilterList entries for each template variant\n  BODY: @copilot , multiple FilterListViewUrls for a single FilterList are intended to be used if there are multiple mirrors of the same list or if the same list is broken into multiple parts per this wiki: https://github.com/collinbarrett/FilterLists/wiki/FilterListViewUrl  In this case, these are different \"flavors\" of the same list, so let's give each one their own entry in FilterList.json and all the related entities/.json files as well.  Capture this design in copilot-instructions.md as well so you"
+ },
+ {
+  "set": "aidev",
+  "sid": "G026",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "H2",
+  "inf": "partial",
+  "text": "### G026 mgechev/revive agent=Copilot | Add support for disabling specific struct-tag checkers\n  BODY: The configuration approach avoids configuring `disabled` as a custom option for a tag."
+ },
+ {
+  "set": "aidev",
+  "sid": "G027",
+  "v0": "H1",
+  "me": "H1",
+  "son": "H4",
+  "hai": "H1",
+  "inf": "no",
+  "text": "### G027 rsyslog/rsyslog agent=Cursor | Fix rsyslog issue 5957\n  BODY: we should keep omhttp in contrib for the time being. I intend to assign kind of tags to modules (possibly via readme), and potentially merge contrib & plugins later."
+ },
+ {
+  "set": "aidev",
+  "sid": "G029",
+  "v0": "H2",
+  "me": "H2",
+  "son": "C1",
+  "hai": "H2",
+  "inf": "partial",
+  "text": "### G029 firecrawl/firecrawl agent=Devin | fix: replace hardcoded search billing with calculateCreditsToBeBilled\n  BODY: nan\n  [search.ts] rework so that scrapeSearchResult returns a costTracking for each document, and each separate costTracking is utilized to calculate a separate price for each document, which is then summed"
+ },
+ {
+  "set": "aidev",
+  "sid": "G033",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "H2",
+  "inf": "partial",
+  "text": "### G033 hi-ogawa/vite-plugins agent=Copilot | feat(fullstack): add virtual:fullstack/no-split-css module for simplified CSS collection\n  BODY: @copilot It should not be dev only. Explore what this means for build to work to simplify server css integration."
+ },
+ {
+  "set": "aidev",
+  "sid": "G036",
+  "v0": "NOAGREE",
+  "me": "C2",
+  "son": "H2",
+  "hai": "H1",
+  "inf": "partial",
+  "text": "### G036 neondatabase/website agent=Devin | docs: remove references to 'SQL from the frontend' from RLS documentation\n  BODY: nan\n  [neon-rls-auth0.md] This was fine as just SQL before\n  [neon-rls-clerk.md] undo\n  [neon-rls-descope.md] undo\n  [neon-rls-propelauth.md] undo\n  [neon-rls-stytch.md] undo\n  [neon-rls-workos.md] undo"
+ },
+ {
+  "set": "aidev",
+  "sid": "G037",
+  "v0": "NOAGREE",
+  "me": "H3",
+  "son": "H2",
+  "hai": "C2",
+  "inf": "partial",
+  "text": "### G037 DGP-Studio/Snap.Hutao agent=Copilot | Add comprehensive GitHub Copilot instructions with detailed project structure, coding stan\n  BODY: nan\n  [copilot-instructions.md] not required, the build validation will be performed by actions\n  [copilot-instructions.md] always targets to latest .NET SDK\n  [copilot-instructions.md] Never introducing code behind pattern."
+ },
+ {
+  "set": "aidev",
+  "sid": "G045",
+  "v0": "H4",
+  "me": "H4",
+  "son": "H4",
+  "hai": "UNK",
+  "inf": "no",
+  "text": "### G045 microsoft/vscode-azurefunctions agent=Copilot | Upgrade TypeScript devDependency to ^5.9.2\n  BODY: Abandoning this pending review as requested."
+ },
+ {
+  "set": "aidev",
+  "sid": "G046",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "H2",
+  "inf": "partial",
+  "text": "### G046 dotnet/sdk agent=Copilot | Suppress CS8002 warning for modern .NET TFMs\n  BODY: @copilot redo this work. you expanded the scope beyond what was requested - only on _modern .NET_ (so TargetFramework values that are `netx.y` and compatible) should the CS8002 NoWarn value be added."
+ },
+ {
+  "set": "aidev",
+  "sid": "G055",
+  "v0": "NOAGREE",
+  "me": "H5",
+  "son": "C1",
+  "hai": "H2",
+  "inf": "partial",
+  "text": "### G055 microsoft/vscode-pull-request-github agent=Copilot | Fix wrong commit checkout when local branch exists with same name as PR\n  BODY: nan\n  [pullRequestGitHelper.ts] @copilot This is dangerous. We shouldn't just delete the user's local branch. Instead, we should create a local branch with a different, available, name, and point the branch's remote to the correct upstream branch."
+ },
+ {
+  "set": "aidev",
+  "sid": "G062",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "H2",
+  "inf": "partial",
+  "text": "### G062 milkshakesoftware/PreMailer.Net agent=Devin | Fix #171: Preserve empty HTML tags during serialization\n  BODY: `PreserveEntitiesHtmlMarkupFormatter` should be removed, and the new EmailHtml markup formatter should be opt-in based on the options given to premailer - the option flag right now is preserveEntities - it should be something to indicate use of the opnionated html email formatter."
+ },
+ {
+  "set": "aidev",
+  "sid": "G071",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "C2",
+  "inf": "partial",
+  "text": "### G071 bugsink/bugsink agent=Copilot | Add remote_addr field to Event model to log client IP addresses\n  BODY: nan\n  [models.py] Overly verbose; drop the whole comment\n  [tests.py] that's a lot of testing for very little functionality, which gives me a \"bad feeling\" generally and esp. since it was done by a bot.\n \n could we not have a \"tighter fit\" around what's actually happening?"
+ },
+ {
+  "set": "aidev",
+  "sid": "G075",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "H2",
+  "inf": "partial",
+  "text": "### G075 codeceptjs/CodeceptJS agent=Copilot | Extend CodeceptJS CLI to run failed tests with --save-failed-tests and --failed-tests opti\n  BODY: This implementation is very ugly. Everything should be handled via plugin:\n \n - auto-saving of fialned runs (by listening to failed event) to file inside output folder\n - re-running the last saved file from output folder using the same plugin\n  [plugins.md] bad naming\n  [codecept.js] bad defaults, this should be enabled for all runs if a plugin is turned on\n  [codecept.js] we need a plugin for that, not a new option"
+ },
+ {
+  "set": "aidev",
+  "sid": "G079",
+  "v0": "NOAGREE",
+  "me": "H1",
+  "son": "H3",
+  "hai": "C1",
+  "inf": "partial",
+  "text": "### G079 deepmodeling/deepmd-kit agent=OpenAI_Codex | chore: Clarify CPU-specific thread warning\n  BODY: #1284 shows that setting `OMP_NUM_THREADS` is still meaningful in the GPU training. I am wondering why we dismiss the warning.\n  [env.py] ```suggestion\n     if use_cpu and (\n ```\n  [env.py] I don't think this environment variable is used in the TensorFlow backend."
+ },
+ {
+  "set": "aidev",
+  "sid": "G083",
+  "v0": "H3",
+  "me": "H3",
+  "son": "H3",
+  "hai": "C1",
+  "inf": "partial",
+  "text": "### G083 dotnet/sdk agent=Copilot | Suppress CS8002 warning for modern .NET TFMs\n  BODY: nan\n  [Microsoft.NET.Sdk.CSharp.targets] CS8002 must not be automatically suppressed when targeting .NET Standard 2.0 or lower.  Assemblies that were built targeting those frameworks can be run on .NET Framework, which still checks strong names, so the warnings are justified.  When targeting .NET Standard 2.1, CS8002 could in principle be suppressed because no version of .NET Framework su"
+ },
+ {
+  "set": "aidev",
+  "sid": "G087",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "H2",
+  "inf": "partial",
+  "text": "### G087 microsoft/azure-pipelines-tasks agent=Copilot | Add extension version support to Azure App Service Manage task\n  BODY: nan\n  [azureappservicemanage.ts] @copilot Let's not add ExtensionVersions and extend ExtensionsList instead by supporting version suffix in brackets.\n Like this: ExtensionsList: 'Microsoft.AspNetCore.AzureAppServices.SiteExtension(latest),AspNetCoreRuntime.6.0.x64(6.0.5)'. Also make suffix optional and keep old logic to be executed in that case.\n  [KuduServiceUtils.ts] Add telemetry log here in case of an error.\n  [KuduServiceUtils.ts] Cover all changes with feature flag named \"AzureAppServiceManageV0.ExtensionVersionSupport\""
+ },
+ {
+  "set": "aidev",
+  "sid": "G093",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "H2",
+  "inf": "partial",
+  "text": "### G093 OrchardCMS/OrchardCore agent=Copilot | Migrate IContentDefinitionEventHandler to unified IContentDefinitionHandler interface\n  BODY: nan\n  [global.json] Don't make changes to this file\n  [IContentDefinitionManager.cs] this change is not needed\n  [ContentDefinitionManager.cs] this should not be injected or used by the manager."
+ },
+ {
+  "set": "aidev",
+  "sid": "G094",
+  "v0": "H4",
+  "me": "H4",
+  "son": "H4",
+  "hai": "H2",
+  "inf": "partial",
+  "text": "### G094 Azure/azure-sdk-for-rust agent=Copilot | Add tests to demonstrate etag deserialization issue in BlobPropertiesInternal struct\n  BODY: @copilot you must not change files under the \"generated\" folder. These changes must be made in the TypeSpec.  @vincenttran-msft @seanmck are these changes queued up for your TypeSpec?"
+ },
+ {
+  "set": "aidev",
+  "sid": "G098",
+  "v0": "NOAGREE",
+  "me": "C1",
+  "son": "M",
+  "hai": "H3",
+  "inf": "NOAGREE",
+  "text": "### G098 Dart-Code/Dart-Code agent=Copilot | Support running individual test files from Dart-Code's test suite\n  BODY: nan\n  [test_all.ts] This doesn't sem to work on Windows. The bot failed with:\n \n ```\n Running grammar tests...\n Failed to run grammar tests: Error: spawn npm ENOENT\n     at ChildProcess._handle.onexit (node:internal/child_process:285:19)\n     at onErrorNT (node:internal/child_process:483:16)\n     at process.processTicksAndRejections (node:internal/process/task_queues:"
+ },
+ {
+  "set": "aidev",
+  "sid": "G100",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "H2",
+  "inf": "partial",
+  "text": "### G100 Metta-AI/metta agent=OpenAI_Codex | feat: add MCP server\n  BODY: mcp server seems like a great idea\n \n this has ~500k lines changed -- i figure some of that's unintentional?\n \n right now you've got custom definition of a bunch of abilities. i think that the interface for it should be a thin wrapper around the Tool interface we now have, so i dont think we should have all that many things in `src/metta/mcp_server/*.py`. the exception is stuff that queries observatory\n \n I also think we probably dont need to commit usage examples\n \n I think there may be changes"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H003",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "H2",
+  "inf": "partial",
+  "text": "### H003 apache/airflow author=human | New google dataflow operator to fetch job metrics\n  BODY: I do support having such an operator, which will be an equivalent for existing sensor & trigger. However, the current implementation gives it too much responsibilities. Please refactor so it would have only one (fetching from Dataflow, without PubSub or BQ).  Also, please note that there are signals of using AI, which you did not declare in the PR. If you used AI to generate parts or the entire PR, please declare so in the PR with the required details according to the AI policy usage.\n  [dataflow.py] I'm a bit concerned of mixing up fetching metrics **and** inserting them to PubSub or BQ altogether - it's a lot of actions for a single operator, that could be utilized by other existing operators. Please refactor so after fetching metrics - it just returns them into an XCom (and later they could be routed to PubSub/BQ using the appropriate operat\n  [dataflow.py] ```suggestion class DataflowJobMetricsOperator(GoogleCloudBaseOperator): ```  Rename to be consistent with existing sensor & trigger"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H004",
+  "v0": "H4",
+  "me": "H4",
+  "son": "H4",
+  "hai": "H4",
+  "inf": "no",
+  "text": "### H004 home-assistant/core author=human | Refresh the calendar entity when the current event ends\n  BODY: Thanks for the PR! This change touches our entity model, which needs approval in a discussion on the architecture repository before we can review it. Since that discussion typically takes time, we're closing this PR for now. Please reopen it once the proposal has been accepted.  - [Architecture discussions](https://github.com/home-assistant/architecture/discussions) - [Changing the entity model](https://developers.home-assistant.io/docs/core/entity#changing-the-entity-model)"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H005",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "H2",
+  "inf": "partial",
+  "text": "### H005 cilium/cilium author=human | pkg/maps: migrate to slog\n  BODY: Oof, I'm not a fan of adding a `Logger` to bpf.Map and ebpf.Map. As far as I can see, they're only used to log the map removal warnings in OpenOrCreate, which is behaviour we want/need to get rid of anyway.\n \n Can we keep using the default logger for those? Passing a logger to all functions returning a map really causes a ton of churn."
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H007",
+  "v0": "H1",
+  "me": "H1",
+  "son": "H1",
+  "hai": "H2",
+  "inf": "no",
+  "text": "### H007 backstage/backstage author=human | fix(auth): improve SignInResolverFactory Zod schema usage\n  BODY: @Teo-ShaoWei I've ended up exploring this area myself the last few days, and the direction we want to head in is likely to move towards https://standardschema.dev/. Initial move towards that and example for the frontend system in https://github.com/backstage/backstage/pull/33836.  Is this something you'd want to explore for this case as well? That means moving to standard schema rather than zod v4, which should achieve the original goal."
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H010",
+  "v0": "NOAGREE",
+  "me": "C1",
+  "son": "H2",
+  "hai": "C3",
+  "inf": "partial",
+  "text": "### H010 espressif/arduino-esp32 author=human | fix(logging): Add wrapper when using wifi without esp_diagnostics\n  BODY: @lucasssvaz - I think that it would be good to add `DIAG_USE_EXTERNAL_LOG_WRAP` to the KConfig file (https://github.com/espressif/arduino-esp32/blob/master/Kconfig.projbuild).\n \n Not sure which would be the best default value for it.\n Please evalutate it.\n \n In case its default value is `y`, you may just remove it from `sdkconfig.defaults` file"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H020",
+  "v0": "H3",
+  "me": "H2",
+  "son": "H3",
+  "hai": "H3",
+  "inf": "partial",
+  "text": "### H020 ceph/ceph author=human | mgr/dashboard: Tiering form -  Placement Target in Advanced Section\n  BODY: nan\n  [rgw-storage-class-form.component.html] Also @dnyanee1997 can we always have default placement only selected. Lets not provide an option to de-select if only one, then choose one only.\n \n Currently it makes no sense because anyways backend will add default placement even if we pass no placement group.\n (you can cross verify that and let know if thats not the case.)"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H022",
+  "v0": "H1",
+  "me": "H1",
+  "son": "H1",
+  "hai": "H4",
+  "inf": "no",
+  "text": "### H022 apache/airflow author=human | Add option to override Celery worker images\n  BODY: Overall, this is a nice change that aligns with the Workers Sets feature. Let's wait a bit and revisit it in the next round after some discussions on the Helm Chart releases (the images section and design of it are one of the action items) are finished.\n  [_helpers.yaml] Most of this function copies logic from `airflow_image`. Maybe there is some nice way to not duplicate code here?\n  [values.yaml] ```suggestion ``` Not sure if needed. Every section can be overwritten by sets and direct message for one field could lead to `this has this information and other field do not, so I can overwrite this one but this one not?` understanding.\n  [test_worker_image.py] This added test complexity, which can lead to not-so-straightforward debugging in case of failure. Maybe we could simplify the test cases a little?\n  [test_worker_image.py] Not sure where the `images` section tests are stored, but I think we should move them there to have all `images` test in one place.\n  [test_worker_image.py] All of the tests regarding `celery` overwrite `workers` are in the general worker test file. Could we move those tests there?\n  [test_worker_image.py] All of the tests for `sets` overwrite of `celery`, and the `workers` section is in the workers sets dedicated test file. Could we move these tests there?"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H024",
+  "v0": "NOAGREE",
+  "me": "C1",
+  "son": "H2",
+  "hai": "H4",
+  "inf": "partial",
+  "text": "### H024 pytorch/pytorch author=human | [torchgen] Refactor and simplify `gen_pyi.py` to use Generic TypeAlias (PEP 585) and Union\n  BODY: Unfortunately PEP604 is python 3.10+ and we have to support python 3.9 - so we can't convert to it yet."
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H028",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "H2",
+  "inf": "partial",
+  "text": "### H028 open-telemetry/opentelemetry-collector-contrib author=human | [processor/schema] Add cache_ttl configuration option for in-memory schema cache\n  BODY: I am going to say that having a ttl cache is overkill here considering that schemas are immutable, and invalidating the cache here is going to cause either another disk read, or http request would can be costly when multiplied by several thousand deployed instances."
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H033",
+  "v0": "NOAGREE",
+  "me": "H3",
+  "son": "H4",
+  "hai": "H1",
+  "inf": "no",
+  "text": "### H033 cilium/cilium author=human | ci: draft renovate PRs until ciliumbot auto-approval\n  BODY: nan\n  [auto-approve.yaml] We still need this because when the base images are changed there are reviews requested to people and we need to remove them as reviewers because ciliumbot approved it."
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H034",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "H2",
+  "inf": "no",
+  "text": "### H034 ydb-platform/ydb author=human | Remove obsolete roadmap\n  BODY: Я предлагаю не удалять Roadmap. Скорее поправить. Видимо, я поправлю"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H036",
+  "v0": "H3",
+  "me": "H3",
+  "son": "H3",
+  "hai": "H3",
+  "inf": "no",
+  "text": "### H036 istio/istio author=human | feat: represent revision tags using services\n  BODY: What is the backwards compatibility story here? If we have new code depending on the new service, and a user creates a tag, the old Istio's will not understand it, no?"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H044",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "H1",
+  "inf": "partial",
+  "text": "### H044 juspay/hyperswitch author=human | feat(business-profile): add payment_method_blocking configuration\n  BODY: nan\n  [openapi_spec_v2.json] Is it required for V2s ?\n  [admin.rs] is this required for v2 ?"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H047",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "H2",
+  "inf": "no",
+  "text": "### H047 tgstation/tgstation author=human | The Torment Nexus: The future of Security brigging and prisoner rehabilitation! FEAT. Bato\n  BODY: nan\n  [loot_crate.dm] Let me get this straight:\n \n 1. Security now has a way to infinity farm frag grenades and laser guns for themselves, at no cost or interaction with cargo, in their down time\n \n and\n \n 2. Initially this started as an alternative to brigging with no incentive, meaning it was ultimately up to the security officer (and the prisoner, to a lesser degree)"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H051",
+  "v0": "H1",
+  "me": "H1",
+  "son": "H1",
+  "hai": "H4",
+  "inf": "no",
+  "text": "### H051 ghostty-org/ghostty author=human | fix(tmux): viewer correctness for end-to-end control mode\n  BODY: Need to review dependent first, so just putting a block merge on it."
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H052",
+  "v0": "H4",
+  "me": "H4",
+  "son": "H4",
+  "hai": "H4",
+  "inf": "partial",
+  "text": "### H052 ghostty-org/ghostty author=human | fix: use flush instead of end on stdout in code generators for Windows compatibility\n  BODY: AI disclosure, please. The issue makes sense and the fix is *okay* but we do require human-written interactions incl. proper disclosure and handwritten PR metadata (title/description)"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H059",
+  "v0": "H1",
+  "me": "H1",
+  "son": "H1",
+  "hai": "H1",
+  "inf": "no",
+  "text": "### H059 istio/istio author=human | pilot agent: unify the timeout and make it configurable\n  BODY: We used to have this configuration and removed it. let me investigate"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H062",
+  "v0": "H3",
+  "me": "H3",
+  "son": "H3",
+  "hai": "H2",
+  "inf": "partial",
+  "text": "### H062 home-assistant/core author=human | Fix Homevolt exception translation placeholders\n  BODY: nan\n  [strings.json] Adding a translation placeholder to an existing string will cause issues for existing translations. May be it is better to use a new translation key?\n  [strings.json] Same here"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H064",
+  "v0": "H3",
+  "me": "H3",
+  "son": "H3",
+  "hai": "H3",
+  "inf": "partial",
+  "text": "### H064 getsentry/sentry author=human | feat(spans-buffer): add Redis slowlog logger for debugging\n  BODY: I am not sure I understand what you would use the SLOWLOG response for.  SLOWLOG tells you the  list of commands that took the longest in the previous period of time.  If you want to use this to validate that the flusher is the cause of the CPU spikes, why not record the cumulative time  spent and amount of data extracted by each queue like we do for the cumulative time spent per trace ?\n  [buffer.py] They would not. SLOWLOG is per Redis host (which means per shard). Actually I don't think calling it from the client will serve any purpose as the host you hit from the client may not be the one that serves the request. redis node can forward requests to other nodes if they do not own the shard that executes the command.   So you would have to conn\n  [buffer_logger.py] I don't think this will do what you want. SLOWLOG is per node on the cluster, not per cluster. It would give different results depending which node you run it onto."
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H065",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "H2",
+  "inf": "no",
+  "text": "### H065 backstage/backstage author=human | fix(ui): Hide browser-specific password field controls in PasswordField\n  BODY: Keeping browser specific password manager controls intact seems like a useful feature, to allow users to use these tools for creating and managing the passwords."
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H068",
+  "v0": "H1",
+  "me": "H1",
+  "son": "H1",
+  "hai": "H4",
+  "inf": "no",
+  "text": "### H068 grafana/grafana author=human | Plugins: Load externalized Canvas plugin via config (backend)\n  BODY: Sorry but at the moment we don't accept new plugin aliases since it's not fully supported yet (see more context about this in this [thread](https://raintank-corp.slack.com/archives/C01C4K8DETW/p1784204910460199?thread_ts=1784202386.725059&cid=C01C4K8DETW)). You will need to keep using `canvas` as the plugin ID."
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H069",
+  "v0": "NOAGREE",
+  "me": "H3",
+  "son": "H2",
+  "hai": "C1",
+  "inf": "partial",
+  "text": "### H069 ceph/ceph author=human | Add pre-upgrade validation for health/OSDs/PGs\n  BODY: We cannot merge upgrade-breaking regressions, even temporarily.\n  [upgrade.py] I appreciate the capabilities this PR adds, but as @JoshuaGabriel noted, requiring all OSDs be up+in is a mega-regression. (For one thing, if an osd is down due to a bug, you can’t upgrade to fix it!) I don’t believe we can merge this PR as it stands."
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H070",
+  "v0": "H1",
+  "me": "H1",
+  "son": "H1",
+  "hai": "H1",
+  "inf": "no",
+  "text": "### H070 apache/airflow author=human | Google: Fix false success in Cloud Composer DAG run sensor\n  BODY: This PR looks similar to this one https://github.com/apache/airflow/pull/61046 which was reverted because this code broke `CloudComposerDAGRunSensor`. Could you run the existing System Test for this operator and shared the screenshot for the latest run?"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H071",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "H2",
+  "inf": "partial",
+  "text": "### H071 llvm/llvm-project author=human | [libc][math] Implement sqrti\n  BODY: Question: This is not a refactoring PR, this introduces a new internal function and exported to shared folder.  And this internal function is not used anywhere internally or to implement any entrypoint.  There is also question about its accuracy + performance.  But  first, why are we adding this new internal function?"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H072",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "H2",
+  "inf": "partial",
+  "text": "### H072 SigNoz/signoz author=human | feat: handle conflicting attributes with data type and context-based resolution\n  BODY: Logic introduced to differentiate options based on keys has complications which could have been avoided. Since this has a huge blast radius we should not go ahead with this solution.\n  [utils.tsx] This is getting calculated for every columnName which is expensive and can be avoided."
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H073",
+  "v0": "H2",
+  "me": "C2",
+  "son": "H2",
+  "hai": "H2",
+  "inf": "partial",
+  "text": "### H073 gradle/gradle author=human | Add new deprecation API using the problems API\n  BODY: The general shape of the API makes sense, though I have a lot of targeted questions\n  [GradleReportSource.java] ❌\n  [Problems.java] 💅 \"Returns\"\n  [Problems.java] 💅 \"Returns\"\n  [PluginDeprecationSpec.java] ❓ Should it be together with other specs in the `deprecation` package?\n  [GradleReportSource.java] ❓ What is the need for this type to be public?\n  [BaseDeprecationSpec.java] ❓ Why an extra layer of abstraction on top of `DeprecationSpec` ?"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H074",
+  "v0": "H4",
+  "me": "C3",
+  "son": "H4",
+  "hai": "H4",
+  "inf": "NOAGREE",
+  "text": "### H074 python/cpython author=human | gh-146475: Block Apple LLVM 21 from passing JIT tool version check\n  BODY: Based on earlier convos, I think this is mergeable with the amendment to the blurb and the regex.   @ashutoshk314 Friendly reminder to sign the CLA when you get a chance as we can't merge without it.\n  [2026-03-26-23-40-21.gh-issue-146475.F9KMLP.rst] ```suggestion Block Apple Clang from being used to build the JIT as it ships without  required LLVM tools. ``` While the CFI directives are an issue, let's make this fix more about the underlying toolchain incompatibility (i.e. users have to install llvm-readobj still)"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H075",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "H2",
+  "inf": "partial",
+  "text": "### H075 dotnet/runtime author=human | Handle BadImageFormatException in OpenAssociatedSymbolFile\n  BODY: Why do we want to mask this error? It does not look right to me. Our general strategy in AOT compilers is to fail the compilation when the input is malformed. It is expected that the malformed input can and will cause the compiler to crash or fail\n \n The error in the issue is either a race condition in the build where the build is overwriting the compiler inputs, or it is a memory corruption (e.g. GC hole) leading to intermittent crash.\n \n We need to get a crash dump of the failure to tell. It i"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H076",
+  "v0": "H4",
+  "me": "H4",
+  "son": "H4",
+  "hai": "H4",
+  "inf": "no",
+  "text": "### H076 ghostty-org/ghostty author=human | fix(vt): forward UTF-8 bytes through DCS passthrough\n  BODY: I still approve this but going to put a block on merge until 1.3 is out the door, I don't want to risk something in the core parse table for 1.3."
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H079",
+  "v0": "NOAGREE",
+  "me": "C1",
+  "son": "H2",
+  "hai": "C2",
+  "inf": "partial",
+  "text": "### H079 cilium/cilium author=human | ipsec,route: Ignore ESRCH errors on delete operations\n  BODY: Overall LGTM but should we add a forbidigo rule to golangci.yaml that makes sure people don't keep using the functions that we now wrap with safenetlink?\n  [check-xfrmstate.sh] I think the purpose of this script, IIUC, is to discourage direct calls to certain `netlink.Xfrm*` functions in pkg/datapath that would circumvent the cache. The added wrappers in safenetlink violate this, so need exclusion."
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H080",
+  "v0": "H3",
+  "me": "H2",
+  "son": "H3",
+  "hai": "H3",
+  "inf": "no",
+  "text": "### H080 ydb-platform/ydb author=human | Enhance S3 sync process in CI: add error handling\n  BODY: Я кажется не готов к зеленым чекам без логов. Без рабочего s3 с моей точки мы не можем корректно выполнять проверки"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H081",
+  "v0": "H4",
+  "me": "UNK",
+  "son": "H4",
+  "hai": "H4",
+  "inf": "NOAGREE",
+  "text": "### H081 DefinitelyTyped/DefinitelyTyped author=human | toastify-js, add the ESM module\n  BODY: Requesting changes so the bot understands the current state."
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H083",
+  "v0": "H1",
+  "me": "H2",
+  "son": "H1",
+  "hai": "H1",
+  "inf": "no",
+  "text": "### H083 home-assistant/core author=human | MQTT Vacuum: Get Segments from separate MQTT Topic\n  BODY: As discussed available segements are reported via the state topic. As this is a state vacuum, we do not want different state topics."
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H085",
+  "v0": "H1",
+  "me": "H1",
+  "son": "H1",
+  "hai": "H2",
+  "inf": "no",
+  "text": "### H085 backstage/backstage author=human | feat(catalog): allow clearing kind filter when allFilterEnabled is trued\n  BODY: Hi @NETIZEN-11, we are still coming to an agreement on a path forward: https://github.com/backstage/backstage/issues/33052"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H086",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "H2",
+  "inf": "partial",
+  "text": "### H086 pytorch/pytorch author=human | [aten][autograd] Add narrow_scatter operator with autograd and torch.compile support\n  BODY: narrow is compositeimplicitautograd, we only want view_scatter / view_copy operations for views that are not compositeimplicitautograd. Please let me know if you disagree with my assessment, if not, let's close this PR."
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H087",
+  "v0": "H3",
+  "me": "H3",
+  "son": "H1",
+  "hai": "H3",
+  "inf": "no",
+  "text": "### H087 ray-project/ray author=human | [data.llm] Add release test to capture memory leak\n  BODY: the customer face memory issues with using 4 nodes with each node has a single gpu, so we should use that in the compute config as the test"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H088",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "C1",
+  "inf": "partial",
+  "text": "### H088 grafana/grafana author=human | Frontend Logging: Remove unused trace handling from JS agent receiver\n  BODY: There is some dead code related to traces in this file. Currently, if you send traces to `/log-grafana-javascript-agent` they will not be logged in the server logs. So I suppose we could just remove it instead?  If you'd want traces you'd be better off sending it to Alloy, rather than having it fill up the server logs."
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H090",
+  "v0": "H4",
+  "me": "C3",
+  "son": "H4",
+  "hai": "H4",
+  "inf": "partial",
+  "text": "### H090 apache/airflow author=human | Don't provide default values for PDBs in chart.\n  BODY: For me it seems more like a bug, so should we make sure that it works for previous versions where it was a bug? I would say, not necessarily, but I would ask for a second opinion - @jscheffl, @jedcunningham WDYT?\n \n \\+ @simi I think we should add newsfragment for it\n  [test_pdb_apiserver.py] According to the Helm Chart docs we support k8s >= 1.30, so I guess we can delete that test"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H093",
+  "v0": "H1",
+  "me": "M",
+  "son": "H1",
+  "hai": "H1",
+  "inf": "NOAGREE",
+  "text": "### H093 llvm/llvm-project author=human | [libc][math] Implement sqrti\n  BODY: Hello @0bVdnt  I need your PR to comply with these new changes https://github.com/llvm/llvm-project/commit/823e3e001724ca2e93ce410a675f3b538f8a74b3  Please rebase your code onto main and modify your code accordingly, there are breaking (signature) changes which I need you to reflect and replicate in your PR.  Thank you!"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H094",
+  "v0": "H1",
+  "me": "H1",
+  "son": "H1",
+  "hai": "H1",
+  "inf": "no",
+  "text": "### H094 open-telemetry/opentelemetry-collector-contrib author=human | [pkg/stanza] Fix writer error propagation and add helper tests\n  BODY: This change looks like AI slop to me.  The behavior of `ProcessBatch` mirrors the behavior of `Process`. The decision to only return the error from the last operator was made deliberately in https://github.com/open-telemetry/opentelemetry-collector-contrib/pull/34342.  If you think it's incorrect, please create an issue describing the failure scenario in detail, including a minimal reproduction configuration, expected and actual result."
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H095",
+  "v0": "H3",
+  "me": "H3",
+  "son": "H3",
+  "hai": "C1",
+  "inf": "NOAGREE",
+  "text": "### H095 python/cpython author=human | gh-146475: Block Apple LLVM 21 from passing JIT tool version check\n  BODY: nan\n  [_llvm.py] On my mac I had to add LLVM and clang to match the string. Can you please check?  ```suggestion     _llvm_version_pattern = re.compile(rf\"(?<!Apple )(LLVM|clang) version\\s+{llvm_version}\\.\\d+\\.\\d+\\S*\\s+\") ```\n  [_llvm.py] ``` $ /Library/Developer/CommandLineTools/usr/bin/llvm-objdump --version Apple LLVM version 21.0.0   Optimized build. ...  $ /Library/Developer/CommandLineTools/usr/bin/clang --version Apple clang version 21.0.0 (clang-2100.0.123.102) Target: arm64-apple-darwin25.4.0 ... ```"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H096",
+  "v0": "NOAGREE",
+  "me": "C2",
+  "son": "H2",
+  "hai": "C1",
+  "inf": "NOAGREE",
+  "text": "### H096 tgstation/tgstation author=human | The Torment Nexus: The future of Security brigging and prisoner rehabilitation! FEAT. Bato\n  BODY: lots of programmer art that should probably be ironed away before this is fully merged, the most obvious ones that come to mind being the \"plunger\" and \"scanner\" icons, though I'm sure you were aware of all of that."
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H097",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H1",
+  "hai": "H2",
+  "inf": "no",
+  "text": "### H097 dotnet/runtime author=human | [wasm] Generate the native-entry-point-to-interpreter thunk table\n  BODY: None of this should be needed.  I would like to understand why the system is not working as expected: https://github.com/dotnet/runtime/pull/132965#issuecomment-5495527493"
+ },
+ {
+  "set": "ghhuman",
+  "sid": "H099",
+  "v0": "H2",
+  "me": "H2",
+  "son": "H2",
+  "hai": "H4",
+  "inf": "NOAGREE",
+  "text": "### H099 DefinitelyTyped/DefinitelyTyped author=human | [hotwired__turbo] Align types with the v8.0.23 implementation\n  BODY: can you break these changes up to make it easier to review? it feels like you've got a few different types of changes in this  fwiw I also purposely have been taking a \"just-in-time\" approach w/ filling out these types to make it easier to maintain and confirm what types should be based on the real world behaviours, and so far that seems to be going ok based on how few PRs and issues we've had - I'm not against attempting to backfill types like this, but I'm not sure how valuable it is to be goi"
+ }
+]

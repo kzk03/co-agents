@@ -1,0 +1,41 @@
+{
+ "text": "1. `ContentDefinitionManager.cs` (Store/DeleteTypeDefinitionAsync, Store/DeletePartDefinitionAsync) — Likely double-firing of events. The PR description says `ContentDefinitionService` was updated to trigger events through `ContentDefinitionManager`, but no change to `ContentDefinitionService.cs` is included in this diff. If `ContentDefinitionService` still invokes `IContentDefinitionEventHandler` directly (its prior behavior) while `ContentDefinitionManager` now *also* invokes `_eventHandlers` on every Store/Delete call, every existing `IContentDefinitionEventHandler` implementation will receive each event twice. Fix: either include and verify the `ContentDefinitionService` change removing its direct event invocation, or add a regression test that exercises the real `ContentDefinitionService` + `ContentDefinitionManager` call path end-to-end to prove no double invocation.\n\n2. `ContentDefinitionManager.cs` constructor — Adding a new required `IEnumerable<IContentDefinitionEventHandler> eventHandlers` parameter is a breaking change to a public class's public constructor. Any downstream code or test that does `new ContentDefinitionManager(...)` will fail to compile/resolve. Fix: this needs to go through the same deprecation/compat path as everything else in the PR, or be justified explicitly as an accepted breaking change for 3.0.\n\n3. `IContentDefinitionHandler.cs` / `ContentDefinitionManager.cs` — The migration is incomplete: only `ContentType{Created,Updated,Removed}` and `ContentPart{Created,Updated,Removed}` trigger methods were added to `ContentDefinitionManager`. `ContentPartAttached/Detached`, `ContentFieldAttached/Detached`, `ContentTypePartUpdated`, `ContentFieldUpdated`, `ContentPartFieldUpdated`, and the `Importing/Imported` events are declared on the extended `IContentDefinitionHandler` but are never invoked anywhere in this diff. This contradicts the PR's claim (\"Added event trigger methods ... for all content definition events\") and leaves a silent functional gap — new `IContentDefinitionHandler` implementers will believe these events fire and won't, unless they're still wired up elsewhere that wasn't shown. Needs to be completed or the PR description corrected and scope reduced accordingly.\n\n4. `ContentDefinitionManager.cs` — Injecting the `[Obsolete]`-marked `IContentDefinitionEventHandler` directly into new, non-obsolete code (`_eventHandlers` field/ctor param) will produce CS0618 obsolete-usage warnings, which OrchardCore's CI typically treats as build errors. Needs `#pragma warning disable/restore CS0618` around the specific usages (or an explicit justification) so the build doesn't break.\n\n5. `test/OrchardCore.Tests/ContentDefinition/ContentDefinitionEventMigrationTests.cs` — The test exercises a hand-rolled `MockContentDefinitionManager` that reimplements its own `Trigger*` methods, not the real `ContentDefinitionManager`. It therefore cannot catch the double-firing/incomplete-wiring issues above — it only proves the mock's own logic is self-consistent. This test should instantiate the real `ContentDefinitionManager` (with fakes for `IContentDefinitionStore`) and assert on it, or it provides false confidence and should not be cited as validating the migration.\n\n6. `global.json` — Entire file rewritten (CRLF→LF and/or whitespace normalization, final newline removed) with no content change. This is unrelated churn that doesn't belong in this PR; revert to avoid noisy diffs/line-ending flip-flops.\n\n7. `src/docs/guides/content-definition-handler-migration/README.md` — A new top-level `guides/` doc folder is introduced whose content is ~90% duplicated verbatim in `src/docs/releases/3.0.0.md` added in the same PR. This is redundant and doesn't match the project's existing documentation convention (migration guidance for breaking changes normally lives in the release notes / module docs, not a new freestanding guide tree). Consolidate into one location, and if a new doc folder convention is intended, confirm it with maintainers first — this is a repo-structure/policy decision, not something to introduce unilaterally.\n\n8. `IContentDefinitionManager.cs` — Adds `using OrchardCore.ContentTypes.Events;` but the diff shows no actual usage of that namespace in the file. Verify it's needed; if not, drop it to avoid an unused-using warning (again relevant if warnings are errors in CI).",
+ "cost": 0.14804879999999998,
+ "sec": 63.8,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 20981,
+  "cache_read_input_tokens": 26504,
+  "output_tokens": 5882,
+  "output_tokens_details": {
+   "thinking_tokens": 4274
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 20981,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 5882,
+    "cache_read_input_tokens": 26504,
+    "cache_creation_input_tokens": 20981,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 20981
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G093",
+ "cond": "A"
+}

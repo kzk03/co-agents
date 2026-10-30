@@ -1,0 +1,41 @@
+{
+ "text": "1. **`src/Tasks/Microsoft.NET.Build.Tasks/targets/Microsoft.NET.Sdk.CSharp.targets`, new `PropertyGroup` condition** — The code gates on `'$(_IsNETCoreOrNETStandard)' == 'true'`, but this property is never defined anywhere in the diff or shown base files, and the PR description says detection is done via `TargetFrameworkIdentifier`. If `_IsNETCoreOrNETStandard` doesn't exist elsewhere in the SDK, it evaluates to empty string, the condition is always false, and CS8002 is never actually suppressed — contradicting the claimed test results. Fix: use the documented approach directly, e.g. `Condition=\"'$(TargetFrameworkIdentifier)' == '.NETCoreApp'\"` (matching the pattern already used a few lines above for hot-reload), not an unverified helper property.\n\n2. **Same condition, semantic scope** — Whatever this property resolves to, its name (`...OrNETStandard`) and the accompanying comment (\"for .NET Core and .NET Standard TFMs\") indicate .NET Standard targets are included in the suppression. That's wrong: a `netstandard2.x` library can be consumed by a .NET Framework application, where strong-name/assembly-load validation still applies, so silently suppressing CS8002 there can hide a real problem for those consumers. The issue and the PR's own prose explicitly scope this to .NETCoreApp/modern .NET only — .NET Standard should be excluded.\n\n3. **`test/.../GivenThatWeWantToSuppressCS8002Warning.cs`, `CS8002_is_suppressed_for_modern_net_tfms`** — This theory asserts CS8002 **is** suppressed for `netstandard2.0`/`netstandard2.1`, directly contradicting the PR description's claim that \".NET Standard are unaffected and will continue to receive CS8002 warnings.\" The description, the implementation's implied scope, and the tests all disagree with each other — this must be reconciled (and per point 2, the tests for netstandard should assert non-suppression) before merge.\n\n4. **User-visible behavior change not flagged/documented** — Per this repo's own `.github/copilot-instructions.md`, \"User-visible changes to behavior should be considered carefully before committing. They should always be flagged.\" Silently suppressing a previously-visible compiler warning for all net6.0+ projects is exactly such a change (some consumers may rely on CS8002 to catch unsigned dependencies for mixed-runtime scenarios). This should come with a release note / breaking-change doc entry, not just an SDK targets edit.\n\n5. **No escape hatch called out** — Because `NoWarn` is a plain MSBuild property (not an item), once the SDK unconditionally appends `CS8002` to it, a user who still wants the warning has no simple way to re-enable it short of overriding the whole `NoWarn` value (clobbering other suppressions) or using `WarningsNotAsErrors`/custom target tricks. Worth either documenting the workaround or gating behind a settable property (e.g. `$(SuppressCS8002)` defaulting to true) so it's overridable cleanly.",
+ "cost": 0.20207999999999998,
+ "sec": 52.9,
+ "is_error": false,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 39554,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 4386,
+  "output_tokens_details": {
+   "thinking_tokens": 3303
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 39554,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 4386,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 39554,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 39554
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "sid": "G046",
+ "cond": "C"
+}
