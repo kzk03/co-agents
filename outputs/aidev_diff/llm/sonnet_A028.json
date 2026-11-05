@@ -1,0 +1,30 @@
+{
+ "decisions": [
+  {
+   "kind": "user_facing",
+   "what": "attach-threads(スレッド情報の添付)を有効にするとイベントのペイロードサイズが増加する可能性がある、という注意書きをドキュメントに追加することを決めた",
+   "alternatives": "注意書きを入れない、別の形(例:パフォーマンスへの影響や料金への影響に言及)で警告する、など他の書き方もあり得た",
+   "evidence": "+Note that enabling this option may increase the payload size of events sent to Sentry.",
+   "file": "docs/platforms/android/configuration/options.mdx",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  },
+  {
+   "kind": "api_contract",
+   "what": "これまで未文書化だった attach-threads オプションのデフォルト値を「オフ」であると公式ドキュメントに明記することを決めた",
+   "alternatives": "デフォルト値の記載を省略する、あるいはプラットフォームやバージョンによって異なる可能性に言及する、など別の記述もあり得た",
+   "evidence": "+This option is turned off by default.",
+   "file": "docs/platforms/android/configuration/options.mdx",
+   "stage": 2,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  }
+ ],
+ "note": "本PRはドキュメントのみの変更で、人間のレビューは『LGTM』のみであり個別の記述内容には言及していない。挙げた2件は、既存コードの挙動を公開ドキュメントとして確定させる編集判断であり、誤りがあれば利用者に誤解を与えるリスクがある。",
+ "sid": "A028",
+ "truncated": false,
+ "n_human_text": 1
+}

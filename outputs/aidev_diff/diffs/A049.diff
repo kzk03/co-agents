@@ -1,0 +1,32 @@
+diff --git a/.github/workflows/release.yml b/.github/workflows/release.yml
+index f2b95ad..b4702ce 100644
+--- a/.github/workflows/release.yml
++++ b/.github/workflows/release.yml
+@@ -35,6 +35,9 @@ jobs:
+       - name: Install dependencies
+         run: pnpm install --frozen-lockfile
+ 
++      - name: Build project
++        run: pnpm build
++
+       - name: Create Release and Publish
+         run: pnpm release
+         env:
+diff --git a/.release-it.json b/.release-it.json
+index 1a0fe84..0a752bf 100644
+--- a/.release-it.json
++++ b/.release-it.json
+@@ -12,8 +12,7 @@
+     "releaseName": "Release v${version}"
+   },
+   "hooks": {
+-    "before:init": "pnpm test",
+-    "after:bump": "pnpm build"
++    "before:init": "pnpm test"
+   },
+   "plugins": {
+     "release-it-pnpm": {
+diff --git a/validations-br-1.4.0.tgz b/validations-br-1.4.0.tgz
+new file mode 100644
+index 0000000..de0d476
+Binary files /dev/null and b/validations-br-1.4.0.tgz differ

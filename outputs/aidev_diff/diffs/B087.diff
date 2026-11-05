@@ -1,0 +1,262 @@
+diff --git a/Tasks/AzureAppServiceManageV0/README.md b/Tasks/AzureAppServiceManageV0/README.md
+index a1a70247f786..af4a9f9e2ab0 100644
+--- a/Tasks/AzureAppServiceManageV0/README.md
++++ b/Tasks/AzureAppServiceManageV0/README.md
+@@ -51,7 +51,15 @@ The task is used to manage an existing Azure App Service. The mandatory fields a
+ 
+ * **Application Insights Resource Name:** This parameter is visible when "Enable Continuous Monitoring" action is selected. Select the name of Application Insights resource where continuous monitoring data will be recorded. If your application insights resource is not listed here and you want to create a new resource, click on +new button. Once the resource is created on Azure Portal, come back here and click on refresh button.
+ 
+-* **Install Extensions:** The task can also be used to [install site extensions](https://www.siteextensions.net/packages) on the App Service. Site Extensions run on Microsoft Azure App Service. You can install set of tools as site extension such as [PHP Composer](https://www.siteextensions.net/packages/ComposerExtension/) or the right version of [Python](https://www.siteextensions.net/packages?q=Python). The App Service will be restarted to make sure latest changes take effect. Please note that extensions are only supported only for Web App on Windows.
++* **Install Extensions:** The task can also be used to [install site extensions](https://www.siteextensions.net/packages) on the App Service. Site Extensions run on Microsoft Azure App Service. You can install set of tools as site extension such as [PHP Composer](https://www.siteextensions.net/packages/ComposerExtension/) or the right version of [Python](https://www.siteextensions.net/packages?q=Python). 
++
++  To specify a specific version of an extension, use the format `extensionId(version)`. For example, `AspNetCoreRuntime.6.0.x64(6.0.5)` will install version 6.0.5 of the AspNetCore Runtime extension. If an extension with a different version is already installed, it will be updated to the specified version.
++
++  To always update an extension to the latest version (even if it's already installed), use `extensionId(latest)`. For example, `Microsoft.AspNetCore.AzureAppServices.SiteExtension(latest)` will always update to the latest version.
++
++  If no version is specified, the extension will only be installed if it's not already present.
++
++  The App Service will be restarted to make sure latest changes take effect. Please note that extensions are only supported only for Web App on Windows.
+ 
+ ## Output variable
+ When provided a variable name, the variable will be populated with the the local installation path of the selected extension. In case of multiple extensions selected for installation, provide comma separated list of variables that saves the local path for each of the selected extension in the order it appears in the Install Extension field. Example: outputVariable1, outputVariable2
+diff --git a/Tasks/AzureAppServiceManageV0/Tests/L0.ts b/Tasks/AzureAppServiceManageV0/Tests/L0.ts
+index b59a2b5890c3..783537e7b8f1 100644
+--- a/Tasks/AzureAppServiceManageV0/Tests/L0.ts
++++ b/Tasks/AzureAppServiceManageV0/Tests/L0.ts
+@@ -33,4 +33,7 @@ describe('Azure App Service Manage Suite', function() {
+     KuduServiceTests.KuduServiceTests();
+     AppInsightsWebTests.ApplicationInsightsTests();
+     ResourcesTests.ResourcesTests();
++    
++    // Extension Version Support Tests
++    require('./L0ExtensionVersionSupport/L0ExtensionVersionSupport');
+ });
+\ No newline at end of file
+diff --git a/Tasks/AzureAppServiceManageV0/Tests/L0ExtensionVersionSupport/L0ExtensionVersionSupport.ts b/Tasks/AzureAppServiceManageV0/Tests/L0ExtensionVersionSupport/L0ExtensionVersionSupport.ts
+new file mode 100644
+index 000000000000..69b3e31cb83f
+--- /dev/null
++++ b/Tasks/AzureAppServiceManageV0/Tests/L0ExtensionVersionSupport/L0ExtensionVersionSupport.ts
+@@ -0,0 +1,22 @@
++import * as path from 'path';
++import * as assert from 'assert';
++import * as ttm from 'azure-pipelines-task-lib/mock-test';
++
++describe('AzureAppServiceManageV0 Extension Version Support Suite', function() {
++    this.timeout(60000);
++
++    it('Test extension version parsing with brackets format', async function() {
++        let tp = path.join(__dirname, 'L0ExtensionVersionSupportTest.js');
++        let tr : ttm.MockTestRunner = new ttm.MockTestRunner(tp);
++        await tr.runAsync();
++
++        assert(tr.succeeded, 'task should have succeeded');
++        assert(tr.stdout.indexOf('Parsing extension: TestExtension(1.2.3)') !== -1, "Should parse extension with version in brackets");
++        assert(tr.stdout.indexOf('Extension ID: TestExtension, Version: 1.2.3') !== -1, "Should extract correct ID and version");
++        assert(tr.stdout.indexOf('Parsing extension: TestLatestExtension(latest)') !== -1, "Should parse extension with latest version");
++        assert(tr.stdout.indexOf('Extension ID: TestLatestExtension, Version: latest') !== -1, "Should extract correct ID and latest version");
++        assert(tr.stdout.indexOf('Force update for TestLatestExtension: true') !== -1, "Should set force update for latest version");
++        assert(tr.stdout.indexOf('Parsing extension: TestNoVersion') !== -1, "Should handle extension without version");
++        assert(tr.stdout.indexOf('Extension ID: TestNoVersion, Version: ') !== -1, "Should extract ID with empty version");
++    });
++});
+\ No newline at end of file
+diff --git a/Tasks/AzureAppServiceManageV0/Tests/L0ExtensionVersionSupport/L0ExtensionVersionSupportTest.ts b/Tasks/AzureAppServiceManageV0/Tests/L0ExtensionVersionSupport/L0ExtensionVersionSupportTest.ts
+new file mode 100644
+index 000000000000..8d7822b59768
+--- /dev/null
++++ b/Tasks/AzureAppServiceManageV0/Tests/L0ExtensionVersionSupport/L0ExtensionVersionSupportTest.ts
+@@ -0,0 +1,66 @@
++import ma = require('azure-pipelines-task-lib/mock-answer');
++import tmrm = require('azure-pipelines-task-lib/mock-run');
++import path = require('path');
++
++let taskPath = path.join(__dirname, '..', '..', 'operations', 'KuduServiceUtils.js');
++let tr: tmrm.TaskMockRunner = new tmrm.TaskMockRunner(taskPath);
++
++// Mock getBoolFeatureFlag to enable extension version support
++tr.registerMock('azure-pipelines-task-lib/task', {
++    getBoolFeatureFlag: function(name: string) {
++        if (name === 'AzureAppServiceManageV0.ExtensionVersionSupport') {
++            return true;
++        }
++        return false;
++    },
++    debug: function(message: string) {
++        console.log(`[DEBUG] ${message}`);
++    },
++    loc: function(message: string, ...params: any[]) {
++        return message;
++    },
++    warning: function(message: string) {
++        console.log(`[WARNING] ${message}`);
++    },
++    setVariable: function(name: string, value: string) {
++        console.log(`Setting variable ${name} to ${value}`);
++    }
++});
++
++// Test function to simulate the version parsing logic
++function testVersionParsing() {
++    const extensionList = [
++        'TestExtension(1.2.3)',
++        'TestLatestExtension(latest)',
++        'TestNoVersion'
++    ];
++    
++    for (let i = 0; i < extensionList.length; i++) {
++        let extensionID = extensionList[i];
++        let version = "";
++        let forceUpdate = false;
++        
++        console.log(`Parsing extension: ${extensionID}`);
++        
++        // Check if extensionID contains version information in format extensionID(version)
++        const parenthesesRegex = /^(.*)\(([^)]*)\)$/;
++        const parenthesesMatch = extensionID.match(parenthesesRegex);
++        if (parenthesesMatch && parenthesesMatch.length >= 3) {
++            extensionID = parenthesesMatch[1]; // Extension ID
++            version = parenthesesMatch[2] || ""; // Version
++        }
++        
++        // If version is 'latest', we force an update even if extension is already installed
++        if (version === 'latest') {
++            forceUpdate = true;
++        }
++        
++        console.log(`Extension ID: ${extensionID}, Version: ${version}`);
++        console.log(`Force update for ${extensionID}: ${forceUpdate}`);
++    }
++}
++
++// Call the test function
++testVersionParsing();
++
++tr.run();
+\ No newline at end of file
+diff --git a/Tasks/AzureAppServiceManageV0/operations/KuduServiceUtils.ts b/Tasks/AzureAppServiceManageV0/operations/KuduServiceUtils.ts
+index abdb2484eb28..ace4874981b2 100644
+--- a/Tasks/AzureAppServiceManageV0/operations/KuduServiceUtils.ts
++++ b/Tasks/AzureAppServiceManageV0/operations/KuduServiceUtils.ts
+@@ -3,6 +3,7 @@ import Q = require('q');
+ import { Kudu } from 'azure-pipelines-tasks-azure-arm-rest/azure-arm-app-service-kudu';
+ import webClient = require('azure-pipelines-tasks-azure-arm-rest/webClient');
+ const pythonExtensionPrefix: string = "azureappservice-";
++const extensionVersionSupportEnabled = tl.getBoolFeatureFlag('AzureAppServiceManageV0.ExtensionVersionSupport');
+ 
+ export class KuduServiceUtils {
+     private _appServiceKuduService: Kudu;
+@@ -58,18 +59,95 @@ export class KuduServiceUtils {
+             allSiteExtensionMap[siteExtension.title] = siteExtension;
+         }
+ 
+-        for(var extensionID of extensionList) {
++        for(var i = 0; i < extensionList.length; i++) {
++            var extensionID = extensionList[i];
++            var version = "";
++            var forceUpdate = false;
++            
++            if (extensionVersionSupportEnabled) {
++                // Parse extensionID to extract version information from format: extensionID(version)
++                const parenthesesRegex = /^(.*)\(([^)]*)\)$/;
++                const parenthesesMatch = extensionID.match(parenthesesRegex);
++                if (parenthesesMatch && parenthesesMatch.length >= 3) {
++                    extensionID = parenthesesMatch[1]; // Extension ID
++                    version = parenthesesMatch[2] || ""; // Version
++                    
++                    // Log telemetry for extension version usage
++                    console.log("##vso[telemetry.publish area=TaskInternal;feature=AzureAppServiceManageV0]" + 
++                        JSON.stringify({ extensionVersionSpecified: true, extensionId: extensionID, version: version }));
++                }
++                
++                // If version is 'latest', we force an update even if extension is already installed
++                if (version === 'latest') {
++                    forceUpdate = true;
++                    version = '';
++                }
++            }
++            
+             var siteExtensionDetails = null;
+             if(allSiteExtensionMap[extensionID] && allSiteExtensionMap[extensionID].title == extensionID) {
+                 extensionID = allSiteExtensionMap[extensionID].id;
+             }
+-            // Python extensions are moved to Nuget and the extensions IDs are changed. The belo check ensures that old extensions are mapped to new extension ID.
+-            if(siteExtensionMap[extensionID] || (extensionID.startsWith('python') && siteExtensionMap[pythonExtensionPrefix + extensionID])) {
++            
++            // Python extensions are moved to Nuget and the extensions IDs are changed. The below check ensures that old extensions are mapped to new extension ID.
++            if(!forceUpdate && (siteExtensionMap[extensionID] || (extensionID.startsWith('python') && siteExtensionMap[pythonExtensionPrefix + extensionID]))) {
+                 siteExtensionDetails = siteExtensionMap[extensionID] || siteExtensionMap[pythonExtensionPrefix + extensionID];
+-                console.log(tl.loc('ExtensionAlreadyInstalled', extensionID));
++                
++                // If extension is installed but a specific version is requested and it's different from the installed version
++                if (extensionVersionSupportEnabled && version && siteExtensionDetails.version !== version) {
++                    console.log(tl.loc('InstallingSiteExtension', extensionID));
++                    if (version) {
++                        console.log(`Installing version: ${version}`);
++                    }
++                    
++                    try {
++                        // Try to install the specific version
++                        siteExtensionDetails = await this._appServiceKuduService.installSiteExtension(extensionID, version);
++                        console.log("##vso[telemetry.publish area=TaskInternal;feature=AzureAppServiceManageV0]" + 
++                            JSON.stringify({ extensionVersionInstallSuccess: true, extensionId: extensionID, version: version }));
++                    } catch (error) {
++                        // If version parameter is not supported, try without it
++                        tl.warning(`Failed to install extension ${extensionID} with version ${version}. Error: ${error.message || JSON.stringify(error)}`);
++                        console.log("##vso[telemetry.publish area=TaskInternal;feature=AzureAppServiceManageV0]" + 
++                            JSON.stringify({ extensionVersionInstallFailed: true, extensionId: extensionID, version: version }));
++                        
++                        // Try installing without version specification
++                        siteExtensionDetails = await this._appServiceKuduService.installSiteExtension(extensionID);
++                    }
++                    anyExtensionInstalled = true;
++                } else {
++                    console.log(tl.loc('ExtensionAlreadyInstalled', extensionID));
++                    if (siteExtensionDetails.version) {
++                        console.log(`Installed version: ${siteExtensionDetails.version}`);
++                    }
++                }
+             }
+             else {
+-                siteExtensionDetails = await this._appServiceKuduService.installSiteExtension(extensionID);
++                console.log(tl.loc('InstallingSiteExtension', extensionID));
++                if (extensionVersionSupportEnabled && version) {
++                    console.log(`Installing version: ${version}`);
++                }
++                
++                try {
++                    // Try to install with version if specified and feature flag is enabled
++                    siteExtensionDetails = await this._appServiceKuduService.installSiteExtension(extensionID, extensionVersionSupportEnabled ? version : undefined);
++                    if (extensionVersionSupportEnabled && version) {
++                        console.log("##vso[telemetry.publish area=TaskInternal;feature=AzureAppServiceManageV0]" + 
++                            JSON.stringify({ extensionVersionInstallSuccess: true, extensionId: extensionID, version: version }));
++                    }
++                } catch (error) {
++                    // If version parameter is not supported, try without it
++                    if (extensionVersionSupportEnabled && version) {
++                        tl.warning(`Failed to install extension ${extensionID} with version ${version}. Error: ${error.message || JSON.stringify(error)}`);
++                        console.log("##vso[telemetry.publish area=TaskInternal;feature=AzureAppServiceManageV0]" + 
++                            JSON.stringify({ extensionVersionInstallFailed: true, extensionId: extensionID, version: version }));
++                        
++                        // Try installing without version specification
++                        siteExtensionDetails = await this._appServiceKuduService.installSiteExtension(extensionID);
++                    } else {
++                        throw error;
++                    }
++                }
+                 anyExtensionInstalled = true;
+             }
+             
+diff --git a/Tasks/AzureAppServiceManageV0/task.json b/Tasks/AzureAppServiceManageV0/task.json
+index 3934c8573490..bc740c2bb5c2 100644
+--- a/Tasks/AzureAppServiceManageV0/task.json
++++ b/Tasks/AzureAppServiceManageV0/task.json
+@@ -163,7 +163,7 @@
+       },
+       "required": "True",
+       "visibleRule": "Action = Install Extensions",
+-      "helpMarkDown": "Site Extensions run on Microsoft Azure App Service. You can install set of tools as site extension and better manage your Azure App Service. The  App Service will be restarted to make sure latest changes take effect."
++      "helpMarkDown": "Site Extensions run on Microsoft Azure App Service. You can install set of tools as site extension and better manage your Azure App Service. The App Service will be restarted to make sure latest changes take effect. To specify a version, use the format 'extensionId(version)'. To always install the latest version (even if already installed), use 'extensionId(latest)'."
+     },
+     {
+       "name": "OutputVariable",

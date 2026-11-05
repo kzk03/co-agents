@@ -1,0 +1,129 @@
+{
+ "decisions": [
+  {
+   "kind": "security_policy",
+   "what": "ファイル名秘匿のためのハッシュアルゴリズムとしてSHA256をソルトなしで採用し、同じシークレット名は常に同じハッシュ値になる設計にした。",
+   "alternatives": "HMACやソルト付きハッシュ(ユーザー固有の鍵を使う等)にして辞書攻撃・名称推測耐性を上げる、あるいはランダムなファイル名+暗号化メタデータのみで紐付ける",
+   "evidence": "+\th := sha256.New()",
+   "file": "internal/backend/storage/cryptfs/crypt.go",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "agent_only",
+   "trace_quote": "This backend encrypts the filenames of secrets by hashing them and storing the mapping in an encrypted file."
+  },
+  {
+   "kind": "security_policy",
+   "what": "マッピングファイル(シークレット名↔ハッシュの対応表)の暗号化に、ユーザーが選択している既存のcryptoバックエンド(gpg等)ではなく常にageを固定で使う設計にした。",
+   "alternatives": "設定済みのcrypto backendを使う、またはユーザーに暗号方式を選択させる",
+   "evidence": "+\ta, err := age.New(ctx, \"\")",
+   "file": "internal/backend/storage/cryptfs/crypt.go",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "agent_only",
+   "trace_quote": "storing the mapping in an encrypted file"
+  },
+  {
+   "kind": "api_contract",
+   "what": "新設定項目 `cryptfs.substorage` の既定値を `gitfs` とした。",
+   "alternatives": "既定値なしで必須設定にする、他のバックエンド(fs等)を既定にする",
+   "evidence": "+\t\tsubStoreName = \"gitfs\"",
+   "file": "internal/backend/storage/cryptfs/loader.go",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": "The filesystem backing this storage backend is flexible, but by default uses `gitfs`."
+  },
+  {
+   "kind": "error_policy",
+   "what": "Fsck実行時、マッピングに存在しない(孤児)ファイルを確認なしに自動削除する仕様にした。",
+   "alternatives": "削除せず警告のみ出す、隔離ディレクトリに退避する、ユーザーに確認を求める",
+   "evidence": "+\t\t\tif err := c.sub.Delete(ctx, file); err != nil {",
+   "file": "internal/backend/storage/cryptfs/crypt.go",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "error_policy",
+   "what": "マッピングファイルの復号に失敗した場合でも警告ログのみを出して処理を継続し、空のマッピングのまま動作を続ける仕様にした(その後の保存操作で既存の暗号化マッピングを上書きしうる)。",
+   "alternatives": "復号失敗時はエラーとして初期化処理を中断する、バックアップを取ってから進める",
+   "evidence": "+\t\tout.Warningf(ctx, \"Failed to load mappings: %s\", err)",
+   "file": "internal/backend/storage/cryptfs/crypt.go",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "scope",
+   "what": "依頼されたcryptfs追加に加えて、既存のfossilfs/gitfs/jjfsバックエンドの自動検出優先度(Priority)の値を変更した(fossilfs: 2→12, gitfs: 1→11, jjfs: 50→10)。",
+   "alternatives": "既存バックエンドの優先度は変更せず、cryptfsだけに新しい優先度値を割り当てる",
+   "evidence": "+\treturn 12",
+   "file": "internal/backend/storage/fossilfs/loader.go",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "user_facing",
+   "what": "新バックエンドを「PREVIEW」「Highly experimental, likely broken」「開発に貢献する目的以外では使用しないこと」という強い警告付きでドキュメント公開した。",
+   "alternatives": "機能が安定するまで非公開のままにする、警告なしで通常機能として案内する",
+   "evidence": "+**WARNING**: Do not use unless you want to contribute to the development of this backend!",
+   "file": "docs/backends/cryptfs.md",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  },
+  {
+   "kind": "error_policy",
+   "what": "Move()でコピー作成後に旧ファイルの削除が失敗した場合、エラーにはせず警告のみ出し、重複ファイルが残る不整合状態をFsckに検出させる方針にした。",
+   "alternatives": "削除失敗時はMove全体をロールバックしてエラーを返す、リトライする",
+   "evidence": "+\t\tout.Warningf(ctx, \"Failed to delete old file %s after move: %s\", fromH, err)",
+   "file": "internal/backend/storage/cryptfs/crypt.go",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "error_policy",
+   "what": "設定されているcryptoバックエンドの取得に失敗した場合、暗黙にgpgの拡張子(.gpg)にフォールバックする仕様にした。",
+   "alternatives": "エラーを返して処理を中断する、既定の拡張子を設定可能にする",
+   "evidence": "+\t\treturn \".gpg\"",
+   "file": "internal/backend/storage/cryptfs/crypt.go",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "architecture",
+   "what": "Link()(シンボリックリンク相当の操作)を、同一ハッシュを指す別名マッピングを追加するだけの実装にした(実体を複製せず、内容は常に同期する一方で下位ストレージ上の実ファイルとしては別エントリにならない)。",
+   "alternatives": "本当のファイルシステムシンボリックリンクとして下位ストレージに委譲する、リンクを未対応機能としてエラーにする",
+   "evidence": "+\tc.mappings[to] = h",
+   "file": "internal/backend/storage/cryptfs/crypt.go",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "security_policy",
+   "what": "パスワードをデバッグログに出力するコード行をコメントアウトのまま残した(有効化されれば平文パスワードがログに出る)。",
+   "alternatives": "該当行を完全に削除する、マスク済みの情報のみログ出力する",
+   "evidence": "+\t// debug.Log(\"deriving scrypt identity from password: %q\", out.Secret(pw))",
+   "file": "internal/backend/crypto/age/decrypt.go",
+   "stage": 2,
+   "confidence": "low",
+   "human_trace": "none",
+   "trace_quote": ""
+  }
+ ],
+ "note": "人間が書いたテキストは提供されておらず(Issue/レビューなし)、PR本文もエージェント自身の要約のみのため、ほぼ全ての決定が human_trace=agent_only または none。特にハッシュ化方式・age固定・Fsckの孤児ファイル自動削除・復号失敗時の継続挙動・既存バックエンド優先度の変更は、タスク依頼文からは一意に決まらない設計・ポリシー上の選択で、セキュリティやデータ損失に関わりうる。",
+ "sid": "A046",
+ "truncated": false,
+ "n_human_text": 0
+}

@@ -1,0 +1,7 @@
+{
+ "decisions": [],
+ "note": "このdiffは1箇所の単語レベルのスペル修正('cancelled'→'canceled')であり、変更内容はPRタイトル自体('change \"cancelled\" to \"canceled\"')によって一意に指定されている。複数の妥当な選択肢が残る余地がなく、人間が別途判断すべき論点は見当たらない。",
+ "sid": "A040",
+ "truncated": false,
+ "n_human_text": 0
+}

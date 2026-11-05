@@ -1,0 +1,85 @@
+{
+ "decisions": [
+  {
+   "kind": "api_contract",
+   "what": "applyDiff の戻り値を単純な string から {success, text, failures} というオブジェクトに変更し、呼び出し側すべてに影響する破壊的な API 変更を行った。",
+   "alternatives": "例外を投げる、null/undefined を返す、コールバックで失敗を通知する、など他の失敗伝達方式もあり得た。",
+   "evidence": "-    async applyDiff(originalText: string, diffText: string): Promise<string> {",
+   "file": "packages/ai/src/coder/block.ts",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "agent_only",
+   "trace_quote": "Improve applyDiffs to handle failures robustly"
+  },
+  {
+   "kind": "scope",
+   "what": "複数diffを順に適用するための applyDiffs メソッド自体を削除し、置き換えの代替実装を提供しなかった。",
+   "alternatives": "applyDiffs を残して新しい失敗情報(success/failures)を蓄積・集約する形に更新する選択もあり得た。",
+   "evidence": "-    async applyDiffs(originalText: string, diffs: string[]): Promise<string> {",
+   "file": "packages/ai/src/coder/block.ts",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "error_policy",
+   "what": "個々の search/replace が(フレキシブル戦略・単純replace共に)失敗しても処理を中断せず、残りのdiffの適用を継続し、失敗はfailures配列に記録するだけにとどめた。",
+   "alternatives": "最初の失敗で処理を中断する、失敗したdiffだけスキップせず全体を失敗として元のテキストに戻す、などの方式もあり得た。",
+   "evidence": "+                        failures.push({ search, error: 'No changes made' });",
+   "file": "packages/ai/src/coder/block.ts",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "agent_only",
+   "trace_quote": "Improve applyDiffs to handle failures robustly"
+  },
+  {
+   "kind": "error_policy",
+   "what": "コードブロックの適用が失敗(result.success=false)した場合でもループを継続し、失敗ブロックを含む部分的に変更された content をそのままファイルへの書き込み対象として使い続けることにした。",
+   "alternatives": "失敗したブロックが出た時点で書き込みを中止する、元のoriginalContentに戻して書き込まない、ユーザーに確認を求める、などの方式もあり得た。",
+   "evidence": "+                content = result.text;",
+   "file": "apps/studio/src/lib/editor/engine/chat/code.ts",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  },
+  {
+   "kind": "user_facing",
+   "what": "コードブロックの適用失敗時にユーザー向けの破壊的(destructive)トーストを表示し、その文言を「Failed to apply code block」「Please try again or prompt the AI to fix it.」と決定した。",
+   "alternatives": "トーストを出さずログのみにする、エラー詳細(failures の内容)をユーザーに表示する、別のUI(インラインエラー表示など)で知らせる、といった選択もあり得た。",
+   "evidence": "+                    toast({",
+   "file": "apps/studio/src/lib/editor/engine/chat/code.ts",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  },
+  {
+   "kind": "scope",
+   "what": "依頼内容(applyDiffsの失敗耐性向上)とは無関係な、CodeModalダイアログへのアクセシビリティ対応(DialogTitleのsr-only追加)をこのPRに含めた。",
+   "alternatives": "別PRとして分離する、あるいはこのPRのスコープに含めないという選択もあり得た。",
+   "evidence": "+                <DialogTitle className=\"sr-only\">{fileName}</DialogTitle>",
+   "file": "apps/studio/src/routes/editor/EditPanel/ChatTab/CodeChangeDisplay/CodeModal.tsx",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "scope",
+   "what": "同様に、共有UIコンポーネントの command.tsx にも依頼外のアクセシビリティ対応(DialogTitleのsr-only追加)をこのPRに含めた。",
+   "alternatives": "別PRとして分離する、あるいはこのPRのスコープに含めないという選択もあり得た。",
+   "evidence": "+                <DialogTitle className=\"sr-only\">Command</DialogTitle>",
+   "file": "packages/ui/src/components/command.tsx",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  }
+ ],
+ "note": "人間が書いたテキスト(Issue/レビュー)は提供されておらず、PR本文には実際の依頼文の引用がないため、ほぼ全ての決定は human_trace=agent_only または none としている。",
+ "sid": "A031",
+ "truncated": false,
+ "n_human_text": 0
+}

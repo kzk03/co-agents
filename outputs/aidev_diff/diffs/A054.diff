@@ -1,0 +1,3084 @@
+diff --git a/.gitignore b/.gitignore
+index 3f3139b..ba67913 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -24,12 +24,7 @@ yarn-error.log*
+ .pnpm-debug.log*
+ 
+ # env files
+-.env.local
+-.env.development.local
+-.env.test.local
+-.env.production.local
+ .env.*
+-
+ !.env.example
+ 
+ # turbo
+@@ -39,7 +34,7 @@ yarn-error.log*
+ .env
+ .vercel
+ .vscode
+-.env*.local
++.cursor
+ 
+ # tsc
+ tsconfig.tsbuildinfo
+diff --git a/app/api/assistants/threads/messages/route.ts b/app/api/assistants/threads/messages/route.ts
+index 88738ed..b27f1fb 100644
+--- a/app/api/assistants/threads/messages/route.ts
++++ b/app/api/assistants/threads/messages/route.ts
+@@ -5,7 +5,7 @@ import type { BadRequestError } from "openai/error"
+ 
+ import { auth } from "@/auth"
+ import { resolveAddress, resolveDomain } from "@/lib/actions/unstoppable-domains"
+-import { DEFAULT_COMPILER_VERSION, DEPLOYMENT_URL, supportedChains } from "@/lib/config"
++import { DEFAULT_COMPILER_VERSION, DEPLOYMENT_URL, SUPPORTED_CHAINS } from "@/lib/config"
+ import { storeChat } from "@/lib/data/kv"
+ import { createAgent, openai } from "@/lib/data/openai"
+ import { deployContract, deployTokenScript } from "@/lib/solidity/deploy"
+@@ -13,8 +13,6 @@ import { ToolName } from "@/lib/tools"
+ import type { DbChat } from "@/lib/types"
+ import type { FunctionToolCall } from "openai/resources/beta/threads/runs/index"
+ 
+-export const runtime = "nodejs"
+-
+ export async function POST(request: NextRequest) {
+   const session = await auth()
+   const { id: userId, image: avatarUrl } = session?.user || {}
+@@ -80,7 +78,7 @@ export async function POST(request: NextRequest) {
+       additional_instructions: JSON.stringify({
+         latestSettings: {
+           compilerVersion: DEFAULT_COMPILER_VERSION,
+-          availableChains: supportedChains.map((chain) => {
++          availableChains: SUPPORTED_CHAINS.map((chain) => {
+             return {
+               name: chain.name,
+               id: chain.id,
+diff --git a/app/api/cron/route.ts b/app/api/cron/route.ts
+index b485886..40f8405 100644
+--- a/app/api/cron/route.ts
++++ b/app/api/cron/route.ts
+@@ -22,13 +22,11 @@ export const GET = async (req: NextRequest) => {
+     try {
+       const { result: guid } = await verifyContract(verificationData)
+       if (ALREADY_VERIFIED_MESSAGES.includes(guid)) {
+-        console.log(`${verificationData.viemChain.name} ${verificationData.contractAddress}`)
+         await deleteVerification(verificationData.deployHash)
+         continue
+       }
+       const verificationStatus = await checkVerifyStatus(guid, verificationData.viemChain)
+       if (verificationStatus.result === PASS_MESSAGE) {
+-        console.log(`${verificationData.viemChain.name} ${verificationData.contractAddress}`)
+         await deleteVerification(verificationData.deployHash)
+       }
+     } catch (error) {
+diff --git a/app/api/v1/completions/route.ts b/app/api/v1/completions/route.ts
+index 6dc3075..d96429c 100644
+--- a/app/api/v1/completions/route.ts
++++ b/app/api/v1/completions/route.ts
+@@ -39,10 +39,7 @@ export const POST = withUnkey(
+       }
+ 
+       const { keyId = "unknown_key", remaining = 0, ownerId = "unknown_owner" } = req.unkey
+-      console.log("keyId", keyId)
+-      console.log("remaining", remaining)
+-      console.log("ownerId", ownerId)
+-      // Track analytics
++
+       track("completions_request", {
+         apiId: UNKEY_COMPLETIONS_API_ID,
+         keyId,
+@@ -82,8 +79,7 @@ export const POST = withUnkey(
+     }
+   },
+   {
+-    handleInvalidKey(req, result) {
+-      console.log("handleInvalidKey", req, result)
++    handleInvalidKey(_req, _result) {
+       return new NextResponse("Unauthorized get api key at https://t.me/w3gptai", {
+         status: 403,
+       })
+diff --git a/app/api/v1/contracts/deploy/route.ts b/app/api/v1/contracts/deploy/route.ts
+index b86817a..c654b54 100644
+--- a/app/api/v1/contracts/deploy/route.ts
++++ b/app/api/v1/contracts/deploy/route.ts
+@@ -4,11 +4,11 @@ import { track } from "@vercel/analytics/server"
+ import { generateObject, generateText } from "ai"
+ import { NextResponse } from "next/server"
+ import type { Abi, Hex } from "viem"
++import { metisSepolia } from "viem/chains"
+ import { z } from "zod"
+ 
+ import { compileContract } from "@/lib/actions/deploy-contract"
+ import { deployContract } from "@/lib/solidity/deploy"
+-import { metisSepolia } from "viem/chains"
+ 
+ const UNKEY_CONTRACTS_API_ID = process.env.UNKEY_CONTRACTS_API_ID
+ 
+@@ -143,7 +143,7 @@ export const POST = withUnkey(
+           const errorMessage = error instanceof Error ? error.message : "Unknown error"
+           const fixPrompt = `Fix this Solidity contract that has the following error: ${errorMessage}`
+ 
+-          const { text: fixedCode, providerMetadata } = await generateText({
++          const { text: fixedCode } = await generateText({
+             system:
+               "You are an expert Solidity smart contract developer. Fix the contract and return only the fixed code without any explanations. DO NOT include markdown code blocks or code fence markers (```) in your response. The output must be pure, valid Solidity code only. Current version is 0.8.29.",
+             prompt: fixPrompt,
+@@ -160,8 +160,6 @@ export const POST = withUnkey(
+             },
+           })
+ 
+-          console.log(`Fix attempt ${retryCount + 1} - OpenAI response ID: ${providerMetadata?.openai?.responseId}`)
+-
+           // Clean the fixed code to ensure no markdown or code fence markers remain
+           let cleanedFixedCode = fixedCode.trim()
+           if (cleanedFixedCode.startsWith("```solidity")) {
+@@ -189,7 +187,7 @@ export const POST = withUnkey(
+       }
+ 
+       const { explorerUrl, ipfsUrl } = await deployContract({
+-        chainId: chainId.toString(),
++        chainId,
+         contractName,
+         sourceCode,
+         constructorArgs: [],
+@@ -214,8 +212,7 @@ export const POST = withUnkey(
+     }
+   },
+   {
+-    handleInvalidKey(req, result) {
+-      console.log("handleInvalidKey", req, result)
++    handleInvalidKey() {
+       return new NextResponse("Unauthorized get api key at https://t.me/w3gptai", {
+         status: 403,
+       })
+diff --git a/app/contracts/page.tsx b/app/contracts/page.tsx
+new file mode 100644
+index 0000000..cdca250
+--- /dev/null
++++ b/app/contracts/page.tsx
+@@ -0,0 +1,15 @@
++import { auth } from "@/auth"
++import { ContractsDashboard } from "@/components/contracts-dashboard"
++import { getAllDeployments, getUserDeployments } from "@/lib/data/kv"
++import { redirect } from "next/navigation"
++
++export default async function ContractsPage() {
++  const session = await auth()
++  if (!session?.user?.id) {
++    redirect("/sign-in?next=/contracts")
++  }
++
++  const [userDeployments, allDeployments] = await Promise.all([getUserDeployments(), getAllDeployments()])
++
++  return <ContractsDashboard userDeployments={userDeployments || []} allDeployments={allDeployments || []} />
++}
+diff --git a/app/globals.css b/app/globals.css
+index 210a840..f734946 100644
+--- a/app/globals.css
++++ b/app/globals.css
+@@ -27,24 +27,24 @@
+   }
+ 
+   .dark {
+-    --background: 0 0% 0%;
+-    --foreground: 0 0% 95%;
+-    --card: 0 0% 0%;
+-    --card-foreground: 0 0% 95%;
+-    --popover: 0 0% 9%;
+-    --popover-foreground: 0 0% 95%;
++    --background: 0 0% 12%;
++    --foreground: 0 0% 88%;
++    --card: 0 0% 12%;
++    --card-foreground: 0 0% 88%;
++    --popover: 0 0% 14%;
++    --popover-foreground: 0 0% 88%;
+     --primary: 142.1 70.6% 45.3%;
+     --primary-foreground: 144.9 80.4% 10%;
+-    --secondary: 240 3.7% 15.9%;
+-    --secondary-foreground: 0 0% 98%;
+-    --muted: 0 0% 15%;
+-    --muted-foreground: 240 5% 64.9%;
+-    --accent: 12 6.5% 15.1%;
+-    --accent-foreground: 0 0% 98%;
++    --secondary: 0 0% 18%;
++    --secondary-foreground: 0 0% 88%;
++    --muted: 0 0% 18%;
++    --muted-foreground: 0 0% 58%;
++    --accent: 0 0% 20%;
++    --accent-foreground: 0 0% 88%;
+     --destructive: 0 62.8% 30.6%;
+     --destructive-foreground: 0 85.7% 97.3%;
+-    --border: 240 3.7% 15.9%;
+-    --input: 240 3.7% 15.9%;
++    --border: 0 0% 20%;
++    --input: 0 0% 20%;
+     --ring: 142.4 71.8% 29.2%;
+   }
+ }
+diff --git a/app/layout.tsx b/app/layout.tsx
+index 1a91207..5b9dd69 100644
+--- a/app/layout.tsx
++++ b/app/layout.tsx
+@@ -1,16 +1,18 @@
++import { Analytics } from "@vercel/analytics/react"
+ import type { Metadata, Viewport } from "next"
++import { ThemeProvider } from "next-themes"
+ import { JetBrains_Mono as FontMono, Inter as FontSans } from "next/font/google"
+ import { headers } from "next/headers"
+ import Script from "next/script"
+ import type { ReactNode } from "react"
+-
+-import { Analytics } from "@vercel/analytics/react"
+-import { ThemeProvider } from "next-themes"
+ import { cookieToInitialState } from "wagmi"
+ 
+ import "@/app/globals.css"
++import { auth } from "@/auth"
+ import { Header } from "@/components/header/header"
+ import { Web3Provider } from "@/components/providers/web3-provider"
++import { PermanentSidebar } from "@/components/sidebar/permanent-sidebar"
++import { SidebarContent } from "@/components/sidebar/sidebar-content"
+ import { Toaster } from "@/components/ui/sonner"
+ import { TooltipProvider } from "@/components/ui/tooltip"
+ import { DEPLOYMENT_URL, getWagmiConfig } from "@/lib/config"
+@@ -45,7 +47,7 @@ export const metadata: Metadata = {
+     },
+   },
+   icons: {
+-    icon: "/logo.svg",
++    icon: "/assets/web3gpt.png",
+     shortcut: "/favicon-16x16.png",
+     apple: "/apple-touch-icon.png",
+   },
+@@ -59,7 +61,7 @@ export const metadata: Metadata = {
+     siteName: "Web3GPT",
+     images: [
+       {
+-        url: `${DEPLOYMENT_URL}/og-image.png`,
++        url: `${DEPLOYMENT_URL}/opengraph-image.png`,
+         width: 1200,
+         height: 630,
+         alt: "Web3GPT",
+@@ -83,15 +85,16 @@ export const viewport: Viewport = {
+   ],
+ }
+ 
+-export default function Layout({ children }: { children: ReactNode }) {
++export default async function Layout({ children }: { children: ReactNode }) {
+   const initialState = cookieToInitialState(getWagmiConfig(), headers().get("cookie"))
++  const session = await auth()
+ 
+   return (
+     <html lang="en" suppressHydrationWarning>
+       <body className={cn("font-sans antialiased", fontSans.variable, fontMono.variable)}>
+         <ThemeProvider
+           attribute="class"
+-          defaultTheme="system"
++          defaultTheme="dark"
+           enableSystem
+           disableTransitionOnChange
+           enableColorScheme
+@@ -99,11 +102,14 @@ export default function Layout({ children }: { children: ReactNode }) {
+         >
+           <TooltipProvider>
+             <Web3Provider initialState={initialState}>
+-              <div className="flex min-h-screen flex-col">
+-                <main className="flex flex-1 flex-col bg-muted/50">
++              <div className="flex h-screen overflow-hidden">
++                <PermanentSidebar user={session?.user}>
++                  <SidebarContent />
++                </PermanentSidebar>
++                <div className="flex flex-1 flex-col min-w-0">
+                   <Header />
+-                  {children}
+-                </main>
++                  <main className="flex-1 bg-muted/50 overflow-auto">{children}</main>
++                </div>
+               </div>
+               <Toaster
+                 toastOptions={{
+diff --git a/app/manifest.ts b/app/manifest.ts
+index b95489c..88f3111 100644
+--- a/app/manifest.ts
++++ b/app/manifest.ts
+@@ -11,7 +11,7 @@ export default function manifest(): MetadataRoute.Manifest {
+     theme_color: "#22DA00",
+     icons: [
+       {
+-        src: "/logo.svg",
++        src: "/assets/web3gpt.png",
+         sizes: "any",
+         type: "image/x-icon",
+       },
+diff --git a/bun.lock b/bun.lock
+index 3ec96d0..d596bea 100644
+--- a/bun.lock
++++ b/bun.lock
+@@ -25,6 +25,7 @@
+         "ai": "^4.1.61",
+         "class-variance-authority": "^0.7.0",
+         "clsx": "^2.1.1",
++        "lucide-react": "^0.523.0",
+         "next": "^14.2.25",
+         "next-auth": "5.0.0-beta.19",
+         "next-themes": "^0.4.3",
+@@ -50,6 +51,7 @@
+       "devDependencies": {
+         "@biomejs/biome": "1.9.4",
+         "@tailwindcss/typography": "^0.5.15",
++        "@types/bun": "^1.2.17",
+         "@types/node": "^20.17.10",
+         "@types/react": "^18.3.18",
+         "@types/react-dom": "^18.3.5",
+@@ -381,6 +383,8 @@
+ 
+     "@tanstack/react-query": ["@tanstack/react-query@5.72.2", "", { "dependencies": { "@tanstack/query-core": "5.72.2" }, "peerDependencies": { "react": "^18 || ^19" } }, "sha512-SVNHzyBUYiis+XiCl+8yiPZmMYei2AKYY94wM/zpvB5l1jxqOo82FQTziSJ4pBi96jtYqvYrTMxWynmbQh3XKw=="],
+ 
++    "@types/bun": ["@types/bun@1.2.17", "", { "dependencies": { "bun-types": "1.2.17" } }, "sha512-l/BYs/JYt+cXA/0+wUhulYJB6a6p//GTPiJ7nV+QHa8iiId4HZmnu/3J/SowP5g0rTiERY2kfGKXEK5Ehltx4Q=="],
++
+     "@types/cookie": ["@types/cookie@0.6.0", "", {}, "sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA=="],
+ 
+     "@types/debug": ["@types/debug@4.1.12", "", { "dependencies": { "@types/ms": "*" } }, "sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ=="],
+@@ -561,6 +565,8 @@
+ 
+     "bufferutil": ["bufferutil@4.0.9", "", { "dependencies": { "node-gyp-build": "^4.3.0" } }, "sha512-WDtdLmJvAuNNPzByAYpRo2rF1Mmradw6gvWsQKf63476DDXmomT9zUiGypLcG4ibIM67vhAj8jJRdbmEws2Aqw=="],
+ 
++    "bun-types": ["bun-types@1.2.17", "", { "dependencies": { "@types/node": "*" } }, "sha512-ElC7ItwT3SCQwYZDYoAH+q6KT4Fxjl8DtZ6qDulUFBmXA8YB4xo+l54J9ZJN+k2pphfn9vk7kfubeSd5QfTVJQ=="],
++
+     "busboy": ["busboy@1.6.0", "", { "dependencies": { "streamsearch": "^1.1.0" } }, "sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA=="],
+ 
+     "call-bind": ["call-bind@1.0.8", "", { "dependencies": { "call-bind-apply-helpers": "^1.0.0", "es-define-property": "^1.0.0", "get-intrinsic": "^1.2.4", "set-function-length": "^1.2.2" } }, "sha512-oKlSFMcMwpUg2ednkhQ454wfWiU/ul3CkJe/PEHcTKuiX6RpbehUiFMXu13HalGZxfUwCQzZG747YXBn1im9ww=="],
+@@ -969,6 +975,8 @@
+ 
+     "lru-cache": ["lru-cache@10.4.3", "", {}, "sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ=="],
+ 
++    "lucide-react": ["lucide-react@0.523.0", "", { "peerDependencies": { "react": "^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0" } }, "sha512-rUjQoy7egZT9XYVXBK1je9ckBnNp7qzRZOhLQx5RcEp2dCGlXo+mv6vf7Am4LimEcFBJIIZzSGfgTqc9QCrPSw=="],
++
+     "markdown-table": ["markdown-table@3.0.4", "", {}, "sha512-wiYz4+JrLyb/DqW2hkFJxP7Vd7JuTDm77fvbM8VfEQdmSMqcImWeeRbHwZjBjIFki/VaMK2BhFi7oUUZeM5bqw=="],
+ 
+     "math-intrinsics": ["math-intrinsics@1.1.0", "", {}, "sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g=="],
+diff --git a/components/agent-card.tsx b/components/agent-card.tsx
+index cfe3b29..0da0c6f 100644
+--- a/components/agent-card.tsx
++++ b/components/agent-card.tsx
+@@ -4,7 +4,7 @@ import Image from "next/image"
+ import { useRouter } from "next/navigation"
+ 
+ import { Button } from "@/components/ui/button"
+-import { IconCheck, IconCopy, IconRefresh, IconSpinner } from "@/components/ui/icons"
++import { IconCheck, IconCopy, IconPlus, IconSpinner } from "@/components/ui/icons"
+ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+ import { DEPLOYMENT_URL } from "@/lib/config"
+ import { useCopyToClipboard } from "@/lib/hooks/use-copy-to-clipboard"
+@@ -24,69 +24,67 @@ export const AgentCard = ({ agent, setThreadId, className }: AgentCardProps) =>
+   const [isPending, startTransition] = useTransition()
+ 
+   return (
+-    <>
+-      <div
+-        className={cn(
+-          "flex flex-col mx-auto max-w-2xl h-96 text-center items-center justify-center bg-background border-gray-600/25 dark:border-gray-600/50 md:border rounded-2xl mb-8 md:mb-12 px-4 pt-8 pb-4",
+-          className,
+-        )}
+-      >
+-        <div className="relative size-48">
+-          <Image
+-            src={agent.imageUrl}
+-            className="object-contain"
+-            alt={`${agent.name} image`}
+-            priority={true}
+-            fill
+-            sizes="(max-width: 768px) 60vw, 20vw"
+-          />
+-        </div>
+-        <div className="flex flex-col items-center justify-center w-full space-y-2">
+-          <p className="text-md font-bold tracking-tight lg:text-2xl lg:font-normal">{agent.name}</p>
+-          <p className="text-md font-normal tracking-tight lg:text-lg lg:font-normal">{agent.description}</p>
+-          <p className="text-sm font-normal tracking-tight lg:text-md lg:font-normal">created by {agent.creator} </p>
+-
+-          <div className="flex flex-row gap-2">
+-            {setThreadId ? (
+-              <Tooltip delayDuration={500}>
+-                <TooltipTrigger asChild>
+-                  <Button
+-                    type="reset"
+-                    variant="ghost"
+-                    size="icon"
+-                    onClick={() => {
+-                      startTransition(() => {
+-                        setThreadId(undefined)
+-                        router.push(`/?a=${agent.id}`)
+-                      })
+-                    }}
+-                    disabled={isPending}
+-                    className={cn("flex size-8 p-0 sm:right-4")}
+-                  >
+-                    {isPending ? <IconSpinner className="size-8 animate-spin text-gray-500" /> : <IconRefresh />}
+-                    <span className="sr-only">New Chat</span>
+-                  </Button>
+-                </TooltipTrigger>
+-                <TooltipContent>New Chat</TooltipContent>
+-              </Tooltip>
+-            ) : null}
+-            <Tooltip delayDuration={500}>
+-              <TooltipTrigger asChild>
+-                <Button
+-                  type="button"
+-                  variant="ghost"
+-                  size="icon"
+-                  onClick={() => copyToClipboard(`${DEPLOYMENT_URL}?a=${agent.id}`)}
+-                >
+-                  {isCopied ? <IconCheck /> : <IconCopy />}
+-                  <span className="sr-only">Agent URL</span>
+-                </Button>
+-              </TooltipTrigger>
+-              <TooltipContent>Agent URL</TooltipContent>
+-            </Tooltip>
+-          </div>
+-        </div>
++    <div
++      className={cn(
++        "flex items-center gap-4 mx-auto max-w-2xl p-4 bg-background/50 border-gray-600/20 dark:border-gray-600/30 border rounded-lg mb-8",
++        className,
++      )}
++    >
++      <div className="relative size-16 flex-shrink-0">
++        <Image
++          src={agent.imageUrl}
++          className="object-contain rounded-lg"
++          alt={`${agent.name} image`}
++          priority={true}
++          fill
++          sizes="64px"
++        />
++      </div>
++      <div className="flex-1 min-w-0">
++        <h3 className="font-semibold text-lg truncate">{agent.name}</h3>
++        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{agent.description}</p>
++        <p className="text-xs text-gray-500 mt-1">by {agent.creator}</p>
++      </div>
++      <div className="flex gap-1 flex-shrink-0">
++        {setThreadId ? (
++          <Tooltip delayDuration={500}>
++            <TooltipTrigger asChild>
++              <Button
++                type="reset"
++                variant="ghost"
++                size="sm"
++                onClick={() => {
++                  startTransition(() => {
++                    setThreadId(undefined)
++                    router.push(`/?a=${agent.id}`)
++                  })
++                }}
++                disabled={isPending}
++                className="h-8 w-8 p-0"
++              >
++                {isPending ? <IconSpinner className="size-4 animate-spin" /> : <IconPlus className="size-4" />}
++                <span className="sr-only">New Chat</span>
++              </Button>
++            </TooltipTrigger>
++            <TooltipContent>New Chat</TooltipContent>
++          </Tooltip>
++        ) : null}
++        <Tooltip delayDuration={500}>
++          <TooltipTrigger asChild>
++            <Button
++              type="button"
++              variant="ghost"
++              size="sm"
++              onClick={() => copyToClipboard(`${DEPLOYMENT_URL}?a=${agent.id}`)}
++              className="h-8 w-8 p-0"
++            >
++              {isCopied ? <IconCheck className="size-4" /> : <IconCopy className="size-4" />}
++              <span className="sr-only">Agent URL</span>
++            </Button>
++          </TooltipTrigger>
++          <TooltipContent>Agent URL</TooltipContent>
++        </Tooltip>
+       </div>
+-    </>
++    </div>
+   )
+ }
+diff --git a/components/chat/chat-list.tsx b/components/chat/chat-list.tsx
+index 65f74e1..59bf31d 100644
+--- a/components/chat/chat-list.tsx
++++ b/components/chat/chat-list.tsx
+@@ -14,7 +14,7 @@ export const ChatList = ({ messages, avatarUrl, status }: ChatList) => {
+     return null
+   }
+   return (
+-    <div className="relative flex flex-col mx-auto max-md:max-w-2xl max-w-3xl w-full p-2 md:translate-x-[10%]">
++    <div className="relative flex flex-col mx-auto max-md:max-w-2xl max-w-4xl w-full p-2 md:translate-x-[8%]">
+       {messages
+         .filter((unfilteredMessage) => unfilteredMessage.role !== "system")
+         .map((message, index) => (
+diff --git a/components/chat/chat-panel.tsx b/components/chat/chat-panel.tsx
+index 7ecc2b5..f0248d4 100644
+--- a/components/chat/chat-panel.tsx
++++ b/components/chat/chat-panel.tsx
+@@ -9,18 +9,18 @@ export type ChatPanelProps = Pick<UseAssistantHelpers, "status" | "append" | "st
+ 
+ export function ChatPanel({ status, append, stop, setThreadId }: ChatPanelProps) {
+   return (
+-    <div className="fixed inset-x-0 bottom-0 bg-gradient-to-b from-muted/0 from-0% to-muted/30 to-50%">
+-      <ButtonScrollToBottom />
+-      <div className="mx-auto sm:max-w-2xl sm:px-4">
+-        <div className="flex h-10 items-center justify-center">
++    <div className="fixed bottom-0 left-0 lg:left-80 lg:[html[data-sidebar-collapsed='true']_&]:left-16 right-0 p-3 sm:p-4 z-50 pointer-events-none transition-all duration-300 ease-in-out">
++      <div className="max-w-4xl mx-auto pointer-events-auto">
++        <ButtonScrollToBottom />
++        <div className="flex h-10 items-center justify-center mb-2">
+           {status === "in_progress" ? (
+-            <Button variant="outline" onClick={() => stop()} className="bg-background">
++            <Button variant="outline" onClick={() => stop()} className="bg-background shadow-md">
+               <IconSpinner className="mr-2 animate-spin" />
+               Stop generating
+             </Button>
+           ) : null}
+         </div>
+-        <div className="space-y-4 border-t bg-background px-4 py-2 shadow-lg sm:rounded-t-xl sm:border md:py-4">
++        <div className="rounded-2xl border shadow-xl px-4 py-3 backdrop-blur-sm bg-background/95">
+           <PromptForm setThreadId={setThreadId} append={append} status={status} />
+         </div>
+       </div>
+diff --git a/components/chat/chat.tsx b/components/chat/chat.tsx
+index c958d1a..24775e5 100644
+--- a/components/chat/chat.tsx
++++ b/components/chat/chat.tsx
+@@ -117,7 +117,7 @@ export const Chat = ({ initialThreadId, initialMessages = [], agent, className,
+ 
+   return (
+     <>
+-      <div ref={chatRef} className={cn("px-4 pb-[200px] pt-4 md:pt-10", className)}>
++      <div ref={chatRef} className={cn("px-3 pb-32 pt-4 sm:px-4 md:pt-10", className)}>
+         {showLanding ? <Landing userId={userId} /> : <AgentCard setThreadId={setThreadId} agent={agent} />}
+         <ChatList messages={messages} avatarUrl={avatarUrl} status={status} />
+         <ChatScrollAnchor trackVisibility={isInProgress} />
+diff --git a/components/chat/prompt-form.tsx b/components/chat/prompt-form.tsx
+index 84f7841..acd741b 100644
+--- a/components/chat/prompt-form.tsx
++++ b/components/chat/prompt-form.tsx
+@@ -5,11 +5,12 @@ import type { UseAssistantHelpers } from "@ai-sdk/react"
+ import Textarea from "react-textarea-autosize"
+ 
+ import { Button, buttonVariants } from "@/components/ui/button"
+-import { IconArrowElbow, IconHome, IconSpinner } from "@/components/ui/icons"
++import { IconPlus, IconSpinner } from "@/components/ui/icons"
+ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+ import { useEnterSubmit } from "@/lib/hooks/use-enter-submit"
+ import { useScrollToBottom } from "@/lib/hooks/use-scroll-to-bottom"
+ import { cn } from "@/lib/utils"
++import { ArrowUp } from "lucide-react"
+ 
+ type PromptProps = Pick<UseAssistantHelpers, "append" | "status" | "setThreadId">
+ 
+@@ -48,7 +49,7 @@ export const PromptForm = ({ append, status, setThreadId }: PromptProps) => {
+         await append({ role: "user", content: value })
+       }}
+     >
+-      <div className="relative flex w-full grow flex-col overflow-hidden px-8 sm:rounded-md sm:border sm:px-12">
++      <div className="relative flex w-full grow flex-col overflow-hidden px-4 sm:px-6">
+         <Tooltip delayDuration={500}>
+           <TooltipTrigger asChild>
+             <Button
+@@ -62,10 +63,10 @@ export const PromptForm = ({ append, status, setThreadId }: PromptProps) => {
+               }}
+               className={cn(
+                 buttonVariants({ size: "sm", variant: "secondary" }),
+-                "absolute left-0 top-4 size-8 rounded-full border p-0 sm:left-4",
++                "absolute left-0 top-4 size-8 rounded-full border p-0 sm:left-2 hover:bg-secondary/80",
+               )}
+             >
+-              {isPendingTransition ? <IconSpinner /> : <IconHome />}
++              {isPendingTransition ? <IconSpinner /> : <IconPlus />}
+               <span className="sr-only">New Chat</span>
+             </Button>
+           </TooltipTrigger>
+@@ -86,13 +87,13 @@ export const PromptForm = ({ append, status, setThreadId }: PromptProps) => {
+           spellCheck={false}
+           autoComplete="off"
+           autoCorrect="off"
+-          className="min-h-[60px] w-full resize-none bg-transparent px-4 py-[1.3rem] focus-within:outline-none sm:text-sm"
++          className="min-h-[60px] md:min-h-[72px] max-h-[200px] w-full resize-none bg-transparent px-8 py-[1.3rem] md:py-[1.5rem] focus-within:outline-none sm:text-sm overflow-y-auto"
+         />
+-        <div className="absolute right-0 top-4 sm:right-4">
++        <div className="absolute right-0 top-4 sm:right-2">
+           <Tooltip>
+             <TooltipTrigger asChild>
+               <Button type="submit" size="icon" disabled={input === "" || isInProgress}>
+-                <IconArrowElbow className="fill-white" />
++                <ArrowUp className="size-5" />
+                 <span className="sr-only">Send message</span>
+               </Button>
+             </TooltipTrigger>
+diff --git a/components/contracts-dashboard.tsx b/components/contracts-dashboard.tsx
+new file mode 100644
+index 0000000..b3797eb
+--- /dev/null
++++ b/components/contracts-dashboard.tsx
+@@ -0,0 +1,799 @@
++"use client"
++
++import {
++  Award,
++  ChevronLeft,
++  ChevronRight,
++  Crown,
++  ExternalLink,
++  FileCode,
++  Filter,
++  FolderGit,
++  Gift,
++  Hash as HashIcon,
++  Layers,
++  MapPin,
++  Medal,
++  Sparkles,
++  Trophy,
++  Users,
++  X,
++} from "lucide-react"
++import Image from "next/image"
++import Link from "next/link"
++import React, { useCallback, useEffect, useMemo, useState } from "react"
++
++import { Badge } from "@/components/ui/badge"
++import { Button } from "@/components/ui/button"
++import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
++import { SUPPORTED_CHAINS, getChainById } from "@/lib/config"
++import type { DeploymentRecordBase } from "@/lib/types"
++import { cn, getExplorerUrl, getIpfsUrl } from "@/lib/utils"
++import { polygonAmoy } from "viem/chains"
++
++type CategoryFilter = "my-contracts" | "all-contracts" | "leaderboard" | "rewards"
++
++const ACTIVE_REWARDS_CHAIN_ID = polygonAmoy.id
++const ITEMS_PER_PAGE = 9
++const LEADERBOARD_LIMIT = 10
++
++interface PaginationState {
++  currentPage: number
++  totalPages: number
++  totalItems: number
++}
++
++interface FilterState {
++  selectedChain: number | null
++  activeCategory: CategoryFilter
++}
++
++export function ContractsDashboard({
++  userDeployments,
++  allDeployments,
++}: {
++  userDeployments: DeploymentRecordBase[]
++  allDeployments: DeploymentRecordBase[]
++}) {
++  const [filters, setFilters] = useState<FilterState>({
++    selectedChain: null,
++    activeCategory: "my-contracts",
++  })
++
++  const [pagination, setPagination] = useState<PaginationState>({
++    currentPage: 1,
++    totalPages: 1,
++    totalItems: 0,
++  })
++
++  // Generate unique keys for deployments to avoid duplication
++  const generateUniqueKey = useCallback((deployment: DeploymentRecordBase, index: number): string => {
++    return `${deployment.chainId}-${deployment.contractAddress}-${deployment.deployHash}-${index}`
++  }, [])
++
++  // Deduplicate deployments based on contract address and chain ID
++  const deduplicatedUserDeployments = useMemo(() => {
++    const seen = new Set<string>()
++    return userDeployments.filter((deployment) => {
++      const key = `${deployment.chainId}-${deployment.deployHash}-${deployment.cid}`
++      if (seen.has(key)) return false
++      seen.add(key)
++      return true
++    })
++  }, [userDeployments])
++
++  const deduplicatedAllDeployments = useMemo(() => {
++    const seen = new Set<string>()
++    return allDeployments.filter((deployment) => {
++      const key = `${deployment.chainId}-${deployment.deployHash}-${deployment.cid}`
++      if (seen.has(key)) return false
++      seen.add(key)
++      return true
++    })
++  }, [allDeployments])
++
++  const currentDeployments = useMemo(() => {
++    return filters.activeCategory === "my-contracts" ? deduplicatedUserDeployments : deduplicatedAllDeployments
++  }, [filters.activeCategory, deduplicatedUserDeployments, deduplicatedAllDeployments])
++
++  const filteredDeployments = useMemo(() => {
++    return currentDeployments.filter((deployment) => {
++      const matchesChain = filters.selectedChain === null || deployment.chainId === filters.selectedChain
++      return matchesChain
++    })
++  }, [currentDeployments, filters.selectedChain])
++
++  const deploymentsByChain = useMemo(() => {
++    const grouped = currentDeployments.reduce<Record<number, number>>((acc, deployment) => {
++      const chainId = deployment.chainId
++      if (!acc[chainId]) acc[chainId] = 0
++      acc[chainId]++
++      return acc
++    }, {})
++    return grouped
++  }, [currentDeployments])
++
++  // Pagination logic
++  const paginatedDeployments = useMemo(() => {
++    if (filters.activeCategory === "leaderboard" || filters.activeCategory === "rewards") {
++      return filteredDeployments
++    }
++
++    const startIndex = (pagination.currentPage - 1) * ITEMS_PER_PAGE
++    const endIndex = startIndex + ITEMS_PER_PAGE
++    return filteredDeployments.slice(startIndex, endIndex)
++  }, [filteredDeployments, pagination.currentPage, filters.activeCategory])
++
++  // Update pagination when filtered deployments change
++  useEffect(() => {
++    const totalItems =
++      filters.activeCategory === "leaderboard"
++        ? Math.min(filteredDeployments.length, LEADERBOARD_LIMIT)
++        : filteredDeployments.length
++
++    const totalPages =
++      filters.activeCategory === "leaderboard" || filters.activeCategory === "rewards"
++        ? 1
++        : Math.max(1, Math.ceil(totalItems / ITEMS_PER_PAGE))
++
++    setPagination((prev) => ({
++      currentPage: prev.currentPage > totalPages ? 1 : prev.currentPage,
++      totalPages,
++      totalItems,
++    }))
++  }, [filteredDeployments.length, filters.activeCategory])
++
++  const selectChainFilter = useCallback((chainId: number) => {
++    setFilters((prev) => ({
++      ...prev,
++      selectedChain: prev.selectedChain === chainId ? null : chainId,
++    }))
++    setPagination((prev) => ({ ...prev, currentPage: 1 }))
++  }, [])
++
++  const clearFilters = useCallback(() => {
++    setFilters((prev) => ({ ...prev, selectedChain: null }))
++    setPagination((prev) => ({ ...prev, currentPage: 1 }))
++  }, [])
++
++  const setActiveCategory = useCallback((category: CategoryFilter) => {
++    setFilters((prev) => ({
++      ...prev,
++      activeCategory: category,
++      selectedChain: null, // Reset chain filter when changing category
++    }))
++    setPagination({ currentPage: 1, totalPages: 1, totalItems: 0 })
++  }, [])
++
++  const goToPage = useCallback(
++    (page: number) => {
++      if (page >= 1 && page <= pagination.totalPages) {
++        setPagination((prev) => ({ ...prev, currentPage: page }))
++      }
++    },
++    [pagination.totalPages],
++  )
++
++  const categoryButtons = [
++    {
++      id: "my-contracts" as const,
++      label: "My Contracts",
++      icon: Users,
++      count: deduplicatedUserDeployments.length,
++      description: "View and manage your deployed smart contracts",
++    },
++    {
++      id: "all-contracts" as const,
++      label: "All Contracts",
++      icon: Layers,
++      count: deduplicatedAllDeployments.length,
++      description: "Explore deployed smart contracts",
++    },
++    {
++      id: "leaderboard" as const,
++      label: "Leaderboard",
++      icon: Trophy,
++      count: null,
++      description: "Track rankings and compete with other builders",
++    },
++    {
++      id: "rewards" as const,
++      label: "Rewards",
++      icon: Gift,
++      count: null,
++      description: "Earn rewards for completing deployment challenges",
++    },
++  ]
++
++  const activeDescription = categoryButtons.find((cat) => cat.id === filters.activeCategory)?.description
++
++  // Filter leaderboard deployments by chain
++  const leaderboardDeployments = useMemo(() => {
++    const deployments = deduplicatedAllDeployments.filter((deployment) => {
++      const matchesChain = filters.selectedChain === null || deployment.chainId === filters.selectedChain
++      return matchesChain
++    })
++    return deployments.slice(0, LEADERBOARD_LIMIT)
++  }, [deduplicatedAllDeployments, filters.selectedChain])
++
++  // Get filtered chains for rewards
++  const rewardChains = useMemo(() => {
++    return filters.selectedChain
++      ? SUPPORTED_CHAINS.filter((chain) => chain.id === filters.selectedChain)
++      : SUPPORTED_CHAINS
++  }, [filters.selectedChain])
++
++  // Pagination component
++  const PaginationControls = () => {
++    if (
++      filters.activeCategory === "leaderboard" ||
++      filters.activeCategory === "rewards" ||
++      pagination.totalPages <= 1
++    ) {
++      return null
++    }
++
++    return (
++      <div className="flex items-center justify-between mt-6">
++        <div className="hidden md:block text-sm text-muted-foreground">
++          Showing {(pagination.currentPage - 1) * ITEMS_PER_PAGE + 1} to{" "}
++          {Math.min(pagination.currentPage * ITEMS_PER_PAGE, pagination.totalItems)} of {pagination.totalItems}{" "}
++          deployments
++        </div>
++        <div className="max-sm:w-full max-sm:justify-center flex items-center gap-2">
++          <Button
++            variant="outline"
++            size="sm"
++            onClick={() => goToPage(pagination.currentPage - 1)}
++            disabled={pagination.currentPage === 1}
++          >
++            <ChevronLeft className="h-4 w-4" />
++            <span className="hidden md:block">Previous</span>
++          </Button>
++          <div className="flex items-center gap-1">
++            {Array.from({ length: Math.min(2, pagination.totalPages) }, (_, i) => {
++              const page = i + 1
++              return (
++                <Button
++                  key={page}
++                  variant={pagination.currentPage === page ? "default" : "outline"}
++                  size="sm"
++                  onClick={() => goToPage(page)}
++                  className="w-8 h-8 p-0"
++                >
++                  {page}
++                </Button>
++              )
++            })}
++            {pagination.totalPages > 2 && (
++              <>
++                {pagination.currentPage > 2 && pagination.currentPage < pagination.totalPages - 1 ? (
++                  <Button variant={"default"} size="sm" className="w-8 h-8 p-0">
++                    {pagination.currentPage}
++                  </Button>
++                ) : (
++                  <Button variant={"outline"} size="sm" className="w-8 h-8 p-0">
++                    ...
++                  </Button>
++                )}
++                {Array.from({ length: Math.min(2, pagination.totalPages) }, (_, i) => {
++                  const page = pagination.totalPages + i - 1
++                  return (
++                    <Button
++                      key={page}
++                      variant={pagination.currentPage === page ? "default" : "outline"}
++                      size="sm"
++                      onClick={() => goToPage(page)}
++                      className="w-8 h-8 p-0"
++                    >
++                      {page}
++                    </Button>
++                  )
++                })}
++              </>
++            )}
++          </div>
++          <Button
++            variant="outline"
++            size="sm"
++            onClick={() => goToPage(pagination.currentPage + 1)}
++            disabled={pagination.currentPage === pagination.totalPages}
++          >
++            <span className="hidden md:block">Next</span>
++            <ChevronRight className="h-4 w-4" />
++          </Button>
++        </div>
++      </div>
++    )
++  }
++
++  return (
++    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
++      <div className="container mx-auto px-4 py-8 max-w-7xl">
++        {/* Header */}
++        <div className="mb-8">
++          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
++            <div>
++              <h1 className="text-3xl font-bold tracking-tight">Contract Deployments</h1>
++              <p className="text-muted-foreground mt-1">{activeDescription}</p>
++            </div>
++            <div className="flex items-center gap-2 text-sm text-muted-foreground">
++              <Layers className="h-4 w-4" />
++              <span>
++                {filters.activeCategory === "leaderboard"
++                  ? `${leaderboardDeployments.length} recent deployments`
++                  : filters.activeCategory === "rewards"
++                    ? `${rewardChains.length} chains`
++                    : `${filteredDeployments.length} deployments`}
++                {filters.selectedChain && ` on ${getChainById(filters.selectedChain)?.name}`}
++              </span>
++            </div>
++          </div>
++        </div>
++
++        {/* Stats Cards */}
++        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
++          <Card className="group hover:shadow-md transition-all duration-200">
++            <CardContent className="p-4">
++              <div className="flex items-center gap-3">
++                <div className="p-2.5 bg-primary/10 rounded-lg group-hover:bg-primary/15 transition-colors">
++                  <Layers className="h-4 w-4 text-primary" />
++                </div>
++                <div>
++                  <p className="text-sm text-muted-foreground">Active Chain</p>
++                  <p className="text-2xl font-bold">
++                    {filters.selectedChain ? getChainById(filters.selectedChain)?.name : "All"}
++                  </p>
++                </div>
++              </div>
++            </CardContent>
++          </Card>
++
++          <Card className="group hover:shadow-md transition-all duration-200">
++            <CardContent className="p-4">
++              <div className="flex items-center gap-3">
++                <div className="p-2.5 bg-primary/10 rounded-lg group-hover:bg-primary/15 transition-colors">
++                  <FolderGit className="h-4 w-4 text-primary" />
++                </div>
++                <div>
++                  <p className="text-sm text-muted-foreground">
++                    {filters.activeCategory === "my-contracts" ? "Your" : "Total"} Contracts
++                  </p>
++                  <p className="text-2xl font-bold">
++                    {filters.activeCategory === "my-contracts"
++                      ? deduplicatedUserDeployments.length
++                      : deduplicatedAllDeployments.length}
++                  </p>
++                </div>
++              </div>
++            </CardContent>
++          </Card>
++
++          <Card className="group hover:shadow-md transition-all duration-200">
++            <CardContent className="p-4">
++              <div className="flex items-center gap-3">
++                <div className="p-2.5 bg-primary/10 rounded-lg group-hover:bg-primary/15 transition-colors">
++                  <HashIcon className="h-4 w-4 text-primary" />
++                </div>
++                <div>
++                  <p className="text-sm text-muted-foreground">Active Chains</p>
++                  <p className="text-2xl font-bold">
++                    {filters.activeCategory === "rewards" ? 1 : Object.keys(deploymentsByChain).length}
++                  </p>
++                </div>
++              </div>
++            </CardContent>
++          </Card>
++        </div>
++
++        {/* Unified Filters */}
++        <Card className="mb-6 overflow-hidden">
++          <CardContent className="p-0">
++            {/* Category Buttons */}
++            <div className="p-4 pb-0">
++              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
++                {categoryButtons.map((category) => {
++                  const isActive = filters.activeCategory === category.id
++                  const Icon = category.icon
++
++                  return (
++                    <Button
++                      key={category.id}
++                      variant={isActive ? "default" : "outline"}
++                      size="sm"
++                      onClick={() => setActiveCategory(category.id)}
++                      className={cn(
++                        "h-10 px-3 text-xs font-medium transition-all justify-start group",
++                        isActive && "shadow-sm",
++                      )}
++                    >
++                      <Icon
++                        className={cn(
++                          "h-3.5 w-3.5 mr-2 flex-shrink-0 transition-transform",
++                          isActive && "scale-110",
++                          !isActive && "group-hover:scale-110",
++                        )}
++                      />
++                      <span className="truncate">{category.label}</span>
++                      {category.count !== null && (
++                        <Badge
++                          variant={isActive ? "secondary" : "outline"}
++                          className="ml-auto h-4 px-1 text-xs min-w-[1.25rem] flex items-center justify-center"
++                        >
++                          {category.count}
++                        </Badge>
++                      )}
++                    </Button>
++                  )
++                })}
++              </div>
++            </div>
++
++            {/* Divider */}
++            <div className="h-px bg-border mx-4 mt-4" />
++
++            {/* Chain Filters */}
++            <div className="p-4">
++              <div className="space-y-3">
++                {/* Filter Header */}
++                <div className="flex items-center justify-between">
++                  <div className="flex items-center gap-2">
++                    <Filter className="h-4 w-4 text-muted-foreground" />
++                    <span className="text-sm font-medium text-muted-foreground">Chain Filters</span>
++                  </div>
++                  {filters.selectedChain !== null && (
++                    <Button
++                      variant="ghost"
++                      size="sm"
++                      onClick={clearFilters}
++                      className="h-5 px-2 text-xs hover:bg-destructive/10 hover:text-destructive transition-all group"
++                    >
++                      <X className="h-3 w-3 mr-1 group-hover:rotate-90 transition-transform" />
++                      Clear
++                    </Button>
++                  )}
++                </div>
++
++                {/* Chain Buttons */}
++                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
++                  {SUPPORTED_CHAINS.map((chainInfo) => {
++                    const deploymentCount = deploymentsByChain[chainInfo.id] || 0
++                    const isSelected = filters.selectedChain === chainInfo.id
++
++                    return (
++                      <Button
++                        key={`button-${chainInfo.id}`}
++                        variant={isSelected ? "default" : "outline"}
++                        size="sm"
++                        onClick={() => selectChainFilter(chainInfo.id)}
++                        className={cn(
++                          "h-9 px-3 text-xs font-medium transition-all justify-start group",
++                          isSelected && "shadow-sm",
++                          isSelected && chainInfo.iconBackground,
++                          !isSelected && "hover:border-primary/50",
++                        )}
++                      >
++                        <Image
++                          src={chainInfo.iconUrl}
++                          alt={chainInfo.name}
++                          width={16}
++                          height={16}
++                          className={cn(
++                            "mr-2 flex-shrink-0 transition-transform",
++                            !isSelected && "group-hover:scale-110",
++                          )}
++                        />
++                        <span className="truncate">{chainInfo.name}</span>
++                        {(filters.activeCategory === "my-contracts" || filters.activeCategory === "all-contracts") && (
++                          <Badge
++                            variant={isSelected ? "secondary" : "outline"}
++                            className="ml-auto h-4 px-1 text-xs min-w-[1.25rem] flex items-center justify-center"
++                          >
++                            {deploymentCount}
++                          </Badge>
++                        )}
++                      </Button>
++                    )
++                  })}
++                </div>
++              </div>
++            </div>
++          </CardContent>
++        </Card>
++
++        {/* Content Area */}
++        {filters.activeCategory === "leaderboard" ? (
++          <Card>
++            <CardHeader className="pb-4">
++              <div className="flex items-center justify-between">
++                <CardTitle className="flex items-center gap-2">
++                  <Trophy className="h-5 w-5 text-yellow-500" />
++                  Contracts Leaderboard
++                </CardTitle>
++                <Badge variant="outline" className="text-xs">
++                  <Sparkles className="h-3 w-3 mr-1" />
++                  Top Deployments
++                </Badge>
++              </div>
++            </CardHeader>
++            <CardContent>
++              <div className="space-y-2">
++                {leaderboardDeployments.length > 0 ? (
++                  leaderboardDeployments.map((deployment, index) => {
++                    const chain = getChainById(deployment.chainId)
++                    const isTop3 = index < 3
++                    const icon = index === 0 ? Crown : index === 1 ? Medal : index === 2 ? Award : Trophy
++                    const iconColor =
++                      index === 0
++                        ? "text-yellow-500 dark:text-yellow-400"
++                        : index === 1
++                          ? "text-zinc-400 dark:text-zinc-500"
++                          : index === 2
++                            ? "text-amber-600 dark:text-amber-500"
++                            : "text-muted-foreground"
++
++                    return (
++                      <div
++                        key={generateUniqueKey(deployment, index)}
++                        className={cn(
++                          "flex items-center justify-between p-4 rounded-lg group",
++                          "bg-muted/30",
++                          isTop3 && "ring-1",
++                          index === 0 &&
++                            "ring-yellow-400 dark:ring-yellow-500/80 bg-yellow-50/90 dark:bg-yellow-400/20",
++                          index === 1 && "ring-gray-300 dark:ring-gray-400/70 bg-gray-100/40 dark:bg-gray-400/20",
++                          index === 2 && "ring-yellow-500 dark:ring-amber-500/60 bg-yellow-600/30 dark:bg-amber-700/15",
++                        )}
++                      >
++                        <div className="flex items-center gap-3 min-w-0">
++                          <div className="flex items-center gap-2">
++                            <span className="text-sm font-mono text-muted-foreground w-7 text-center font-semibold">
++                              #{index + 1}
++                            </span>
++                            {React.createElement(icon, { className: cn("h-4 w-4", iconColor) })}
++                          </div>
++                          <div className="flex-1 min-w-0">
++                            <div className="flex items-center gap-2">
++                              <p className="font-medium font-mono text-sm truncate">{deployment.contractAddress}</p>
++                              {chain && (
++                                <Link
++                                  href={getExplorerUrl({
++                                    viemChain: chain,
++                                    hash: deployment.contractAddress,
++                                    type: "address",
++                                  })}
++                                  target="_blank"
++                                  rel="noopener noreferrer"
++                                  className="opacity-0 group-hover:opacity-100 transition-opacity"
++                                >
++                                  <ExternalLink className="h-3 w-3 text-muted-foreground hover:text-primary" />
++                                </Link>
++                              )}
++                            </div>
++                            {chain && (
++                              <div className="flex items-center gap-1.5 mt-1">
++                                <Image src={chain.iconUrl} alt={chain.name} width={14} height={14} />
++                                <p className="text-xs text-muted-foreground">{chain.name}</p>
++                              </div>
++                            )}
++                          </div>
++                        </div>
++                        <div className="text-right">
++                          <Badge variant={isTop3 ? "default" : "secondary"} className="text-xs">
++                            {isTop3 ? "Bonus" : "Earning"}
++                          </Badge>
++                        </div>
++                      </div>
++                    )
++                  })
++                ) : (
++                  <div className="text-center py-12 text-muted-foreground">
++                    <Trophy className="h-8 w-8 mx-auto mb-3 opacity-50" />
++                    <p className="font-medium">No deployments found</p>
++                    <p className="text-sm mt-1">
++                      {filters.selectedChain ? "Try selecting a different chain" : "Deploy contracts to appear here"}
++                    </p>
++                  </div>
++                )}
++              </div>
++            </CardContent>
++          </Card>
++        ) : filters.activeCategory === "rewards" ? (
++          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
++            {rewardChains.map((chain) => {
++              const deploymentCount = deploymentsByChain[chain.id] || 0
++              const hasDeployments = deploymentCount > 0
++
++              return (
++                <Card
++                  key={`card-${chain.id}`}
++                  className={cn(
++                    "group relative overflow-hidden transition-all duration-300",
++                    "hover:shadow-lg hover:-translate-y-1",
++                    !hasDeployments && "opacity-75",
++                  )}
++                >
++                  <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-primary/5" />
++                  <CardHeader className="relative pb-4">
++                    <div className="flex items-start justify-between">
++                      <div className="flex items-center gap-3">
++                        <div className={cn("p-2 rounded-lg", chain.iconBackground)}>
++                          <Image src={chain.iconUrl} alt={chain.name} width={24} height={24} />
++                        </div>
++                        <div>
++                          <CardTitle className="text-lg">{chain.name}</CardTitle>
++                          <p className="text-xs text-muted-foreground mt-0.5">
++                            {hasDeployments ? `${deploymentCount} deployments` : "No deployments yet"}
++                          </p>
++                        </div>
++                      </div>
++                      <Gift className="h-5 w-5 text-muted-foreground/50" />
++                    </div>
++                  </CardHeader>
++                  <CardContent className="relative space-y-3">
++                    <div className="space-y-2">
++                      <div className="flex items-center justify-between text-sm">
++                        <span className="text-muted-foreground">Status</span>
++                        <Badge variant="outline" className="text-xs">
++                          {chain.id === ACTIVE_REWARDS_CHAIN_ID ? (
++                            <>
++                              <Sparkles className="h-3 w-3 mr-1" />
++                              <span>Tracking Active</span>
++                            </>
++                          ) : (
++                            "Coming Soon"
++                          )}
++                        </Badge>
++                      </div>
++                      <div className="flex items-center justify-between text-sm">
++                        <span className="text-muted-foreground">Rewards</span>
++                        <span className="font-medium">TBA</span>
++                      </div>
++                    </div>
++                    <div className="pt-2 border-t">
++                      <p className="text-xs text-muted-foreground">
++                        Complete deployment challenges on {chain.name} to earn exclusive rewards and climb the
++                        leaderboard!
++                      </p>
++                    </div>
++                  </CardContent>
++                </Card>
++              )
++            })}
++          </div>
++        ) : // Contracts Grid
++        paginatedDeployments.length > 0 ? (
++          <>
++            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
++              {paginatedDeployments.map((deployment, index) => {
++                const chain = getChainById(deployment.chainId)
++
++                return (
++                  <Card
++                    key={generateUniqueKey(deployment, index)}
++                    className="group hover:shadow-lg transition-all duration-200 border-0 shadow-sm bg-card"
++                  >
++                    <CardHeader className="pb-3">
++                      <div className="flex items-start justify-between">
++                        <div className="flex-1 min-w-0">
++                          <CardTitle className="text-lg font-semibold truncate">{deployment.contractAddress}</CardTitle>
++                          <div className="flex items-center gap-2 mt-2">
++                            {chain && (
++                              <Badge variant="secondary" className="text-xs">
++                                <Image src={chain.iconUrl} alt={chain.name} width={16} height={16} className="mr-1" />
++                                {chain?.name || deployment.chainId}
++                              </Badge>
++                            )}
++                          </div>
++                        </div>
++                      </div>
++                    </CardHeader>
++
++                    <CardContent className="space-y-4">
++                      {/* Contract Address */}
++                      <div className="space-y-1">
++                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
++                          <MapPin className="h-3 w-3" />
++                          <span>Contract Address</span>
++                        </div>
++                        {chain ? (
++                          <Link
++                            href={getExplorerUrl({
++                              viemChain: chain,
++                              hash: deployment.contractAddress,
++                              type: "address",
++                            })}
++                            target="_blank"
++                            rel="noopener noreferrer"
++                            className="flex items-center gap-2 p-2 bg-muted/50 rounded-lg hover:bg-muted/80 transition-colors group"
++                          >
++                            <code className="text-xs font-mono truncate flex-1">{deployment.contractAddress}</code>
++                            <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-primary flex-shrink-0" />
++                          </Link>
++                        ) : (
++                          <code className="block p-2 bg-muted/50 rounded-lg text-xs font-mono truncate">
++                            {deployment.contractAddress}
++                          </code>
++                        )}
++                      </div>
++
++                      {/* Transaction Hash */}
++                      <div className="space-y-1">
++                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
++                          <HashIcon className="h-3 w-3" />
++                          <span>Transaction Hash</span>
++                        </div>
++                        {chain ? (
++                          <Link
++                            href={getExplorerUrl({
++                              viemChain: chain,
++                              hash: deployment.deployHash,
++                              type: "tx",
++                            })}
++                            target="_blank"
++                            rel="noopener noreferrer"
++                            className="flex items-center gap-2 p-2 bg-muted/50 rounded-lg hover:bg-muted/80 transition-colors group"
++                          >
++                            <code className="text-xs font-mono truncate flex-1">{deployment.deployHash}</code>
++                            <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-primary flex-shrink-0" />
++                          </Link>
++                        ) : (
++                          <code className="block p-2 bg-muted/50 rounded-lg text-xs font-mono truncate">
++                            {deployment.deployHash}
++                          </code>
++                        )}
++                      </div>
++
++                      {/* IPFS Source */}
++                      <div className="space-y-1">
++                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
++                          <FileCode className="h-3 w-3" />
++                          <span>IPFS Source Code</span>
++                        </div>
++                        <Link
++                          href={getIpfsUrl(deployment.cid)}
++                          target="_blank"
++                          rel="noopener noreferrer"
++                          className="flex items-center gap-2 p-2 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg hover:from-purple-100 hover:to-pink-100 dark:hover:from-purple-900/30 dark:hover:to-pink-900/30 transition-colors group"
++                        >
++                          <code className="text-xs font-mono text-purple-700 dark:text-purple-300 truncate flex-1">
++                            {deployment.cid}
++                          </code>
++                          <ExternalLink className="h-3 w-3 text-purple-500 group-hover:text-purple-600 dark:group-hover:text-purple-400 flex-shrink-0" />
++                        </Link>
++                      </div>
++                    </CardContent>
++                  </Card>
++                )
++              })}
++            </div>
++            <PaginationControls />
++          </>
++        ) : (
++          <Card>
++            <CardContent className="p-12 text-center">
++              <div className="mx-auto w-24 h-24 bg-muted/20 rounded-full flex items-center justify-center mb-4">
++                <FolderGit className="h-8 w-8 text-muted-foreground/50" />
++              </div>
++              <h3 className="text-lg font-semibold mb-2">
++                {filteredDeployments.length === 0 ? "No deployments yet" : "No matching deployments"}
++              </h3>
++              <p className="text-muted-foreground mb-4">
++                {filteredDeployments.length === 0
++                  ? filters.activeCategory === "my-contracts"
++                    ? "Deploy your first smart contract to get started."
++                    : "No contracts have been deployed yet."
++                  : "Try adjusting your filter criteria."}
++              </p>
++              {filters.selectedChain !== null && (
++                <Button onClick={clearFilters} variant="outline">
++                  Clear Filters
++                </Button>
++              )}
++            </CardContent>
++          </Card>
++        )}
++      </div>
++    </div>
++  )
++}
+diff --git a/components/deploy-contract-button.tsx b/components/deploy-contract-button.tsx
+index 98c4010..cfdd0fa 100644
+--- a/components/deploy-contract-button.tsx
++++ b/components/deploy-contract-button.tsx
+@@ -141,7 +141,7 @@ export const DeployContractButton = ({ getSourceCode }: DeployContractButtonProp
+               setSourceCode(getSourceCode())
+               setIsDialogOpen(true)
+             }}
+-            className="mr-2 text-primary-foreground"
++            className="mr-2 text-primary-foreground bg-primary/80 hover:bg-primary"
+             variant="default"
+             disabled={!isSupportedChain}
+             size="sm"
+diff --git a/components/header/clear-history.tsx b/components/header/clear-history.tsx
+deleted file mode 100644
+index 291f791..0000000
+--- a/components/header/clear-history.tsx
++++ /dev/null
+@@ -1,59 +0,0 @@
+-"use client"
+-
+-import { useState, useTransition } from "react"
+-
+-import {
+-  AlertDialog,
+-  AlertDialogAction,
+-  AlertDialogCancel,
+-  AlertDialogContent,
+-  AlertDialogDescription,
+-  AlertDialogFooter,
+-  AlertDialogHeader,
+-  AlertDialogTitle,
+-  AlertDialogTrigger,
+-} from "@/components/ui/alert-dialog"
+-import { Button } from "@/components/ui/button"
+-import { IconClear, IconSpinner } from "@/components/ui/icons"
+-import { clearChatsAction } from "@/lib/actions/chat"
+-
+-export function ClearHistory() {
+-  const [open, setOpen] = useState(false)
+-  const [isPending, startTransition] = useTransition()
+-
+-  return (
+-    <AlertDialog open={open} onOpenChange={setOpen}>
+-      <AlertDialogTrigger asChild>
+-        <Button variant="ghost" disabled={isPending}>
+-          {isPending && <IconSpinner className="mr-2" />}
+-          <IconClear />
+-          &nbsp;Clear History
+-        </Button>
+-      </AlertDialogTrigger>
+-      <AlertDialogContent>
+-        <AlertDialogHeader>
+-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+-          <AlertDialogDescription>
+-            This will permanently delete your chat history and remove your data from our servers.
+-          </AlertDialogDescription>
+-        </AlertDialogHeader>
+-        <AlertDialogFooter>
+-          <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+-          <AlertDialogAction
+-            disabled={isPending}
+-            onClick={(event) => {
+-              event.preventDefault()
+-              startTransition(async () => {
+-                await clearChatsAction()
+-                setOpen(false)
+-              })
+-            }}
+-          >
+-            {isPending ? <IconSpinner className="mr-2 animate-spin" /> : null}
+-            Delete
+-          </AlertDialogAction>
+-        </AlertDialogFooter>
+-      </AlertDialogContent>
+-    </AlertDialog>
+-  )
+-}
+diff --git a/components/header/header.tsx b/components/header/header.tsx
+index f3045ec..470e825 100644
+--- a/components/header/header.tsx
++++ b/components/header/header.tsx
+@@ -1,108 +1,27 @@
+-import Link from "next/link"
+-
+-import { auth } from "@/auth"
+ import { ConnectButton } from "@/components/connect-button"
+-import { ClearHistory } from "@/components/header/clear-history"
+-import { LoginButton } from "@/components/header/login-button"
+-import { SettingsDropDown } from "@/components/header/settings-drop-down"
+-import { UserMenu } from "@/components/header/user-menu"
+ import { MetisTeaser } from "@/components/metis-teaser"
+ import { Sidebar } from "@/components/sidebar/sidebar"
+-import { SidebarAgents } from "@/components/sidebar/sidebar-agents"
+-import { SidebarFooter } from "@/components/sidebar/sidebar-footer"
+-import { SidebarList } from "@/components/sidebar/sidebar-list"
+-import { Badge } from "@/components/ui/badge"
+-import { Button } from "@/components/ui/button"
+-import { IconExternalLink, IconSeparator } from "@/components/ui/icons"
+-import { SheetHeader, SheetTitle } from "@/components/ui/sheet"
+-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+-import { getChatList } from "@/lib/data/kv"
+-import { cn } from "@/lib/utils"
+-
+-export const Header = async () => {
+-  const chatList = await getChatList()
+-  const session = await auth()
+-
+-  const user = session?.user
++import { SidebarContent } from "@/components/sidebar/sidebar-content"
+ 
++export const Header = () => {
+   return (
+-    <header className="sticky top-0 z-50 flex h-16 w-full shrink-0 items-center justify-between border-b bg-background px-4">
+-      <div className="flex items-center">
+-        <Sidebar>
+-          <div className="flex flex-col">
+-            <SheetHeader className="flex flex-row space-x-4 items-baseline p-4">
+-              <SheetTitle className="text-md">Agents</SheetTitle>
+-              {/* Mobile-only links section */}
+-
+-              <Link
+-                href="https://docs.w3gpt.ai"
+-                target="_blank"
+-                className="md:hidden flex items-center gap-1 text-foreground hover:underline"
+-              >
+-                Docs
+-                <IconExternalLink className="size-3.5" />
+-              </Link>
+-              <Link
+-                href="https://d.w3gpt.ai/gg23"
+-                target="_blank"
+-                className="md:hidden flex items-center gap-1 text-foreground hover:underline"
+-              >
+-                GG23
+-                <IconExternalLink className="size-3.5" />
+-              </Link>
+-            </SheetHeader>
+-            <SidebarAgents />
+-          </div>
+-          <div className="border-t border-muted px-8 mt-4" />
+-          <SheetHeader className="p-4">
+-            <SheetTitle className="text-md">Chat History</SheetTitle>
+-          </SheetHeader>
+-          {chatList ? (
+-            <>
+-              <SidebarList chatList={chatList} />
+-              <SidebarFooter className="justify-end">
+-                <ClearHistory />
+-              </SidebarFooter>
+-            </>
+-          ) : null}
+-        </Sidebar>
+-        <div className="flex items-center ">
+-          <IconSeparator className="size-6 text-muted-foreground/50" />
+-          {user ? (
+-            <UserMenu user={user} />
+-          ) : (
+-            <LoginButton variant="link" showGithubIcon={true} text="Login" className="-ml-2" />
+-          )}
+-          <div className="hidden md:block ml-32">
+-            <Button variant="link" asChild>
+-              <Link href="https://docs.w3gpt.ai" target="_blank" className="flex items-center gap-1">
+-                Docs
+-                <IconExternalLink className="size-3.5" />
+-              </Link>
+-            </Button>
+-            {/* <Button variant="link" asChild>
+-              <Link href="https://d.w3gpt.ai/gg23" target="_blank" className="flex items-center gap-1">
+-                <span>Support us on Gitcoin 23</span>
+-                <IconExternalLink className="size-3.5" />
+-              </Link>
+-            </Button> */}
+-          </div>
+-          <MetisTeaser />
+-        </div>
+-      </div>
+-      <div className="invisible absolute inset-0 -z-10 flex items-center justify-center md:visible">
+-        <div className="flex items-center justify-center space-x-4 translate-x-1/2">
+-          <Tooltip>
+-            <TooltipTrigger asChild>
+-              <Badge className={cn("text-xs text-slate-800 bg-yellow-300 pointer-events-none")}>gpt-4o</Badge>
+-            </TooltipTrigger>
+-            <TooltipContent>Using GPT-4o</TooltipContent>
+-          </Tooltip>
++    <header className="sticky top-0 z-50 flex h-16 w-full shrink-0 items-center justify-between border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4">
++      <div className="flex items-center gap-4">
++        {/* Mobile Sidebar */}
++        <div className="lg:hidden">
++          <Sidebar>
++            <SidebarContent />
++          </Sidebar>
+         </div>
++
++        {/* Empty left space for desktop - sidebar handles everything */}
++        <div className="hidden lg:block">{/* This space intentionally left empty - sidebar handles navigation */}</div>
+       </div>
++
++      {/* Right Actions */}
+       <div className="flex items-center justify-end space-x-2">
++        <MetisTeaser />
+         <ConnectButton />
+-        <SettingsDropDown />
+       </div>
+     </header>
+   )
+diff --git a/components/header/logo.tsx b/components/header/logo.tsx
+new file mode 100644
+index 0000000..ee23f82
+--- /dev/null
++++ b/components/header/logo.tsx
+@@ -0,0 +1,47 @@
++import { cn } from "@/lib/utils"
++import Link from "next/link"
++
++interface LogoProps {
++  className?: string
++  variant?: "default" | "mobile" | "large" | "xl"
++}
++
++type LogoTextProps = LogoProps & {
++  children: React.ReactNode
++}
++
++// custom text with logo font not link
++export const CustomLogoText = ({ className, variant = "default", children }: LogoTextProps) => {
++  return (
++    <span
++      className={cn(
++        "font-normal text-sm tracking-tight text-gray-600 dark:text-gray-400",
++        variant === "mobile" && "text-base",
++        variant === "large" && "text-xl",
++        variant === "xl" && "text-2xl",
++        className,
++      )}
++    >
++      {children}
++    </span>
++  )
++}
++
++export function W3GPTLogo({ className, variant = "default" }: LogoProps) {
++  return (
++    <Link
++      href="/"
++      className={cn(
++        "flex items-center gap-2 font-bold text-lg tracking-tight hover:opacity-80 transition-opacity",
++        variant === "mobile" && "text-xl",
++        variant === "large" && "text-2xl",
++        variant === "xl" && "text-3xl",
++        className,
++      )}
++    >
++      <span className="text-foreground">
++        Web3<span className="text-primary">GPT</span>
++      </span>
++    </Link>
++  )
++}
+diff --git a/components/header/navigation.tsx b/components/header/navigation.tsx
+new file mode 100644
+index 0000000..3e45c6a
+--- /dev/null
++++ b/components/header/navigation.tsx
+@@ -0,0 +1,88 @@
++"use client"
++
++import { NAVIGATION_ITEMS } from "@/components/sidebar/constants"
++import { Button } from "@/components/ui/button"
++import { cn } from "@/lib/utils"
++import { ExternalLink } from "lucide-react"
++import Link from "next/link"
++import { usePathname } from "next/navigation"
++
++interface NavigationProps {
++  className?: string
++  variant?: "desktop" | "mobile"
++}
++
++export function Navigation({ className, variant = "desktop" }: NavigationProps) {
++  const pathname = usePathname()
++
++  if (variant === "mobile") {
++    return (
++      <nav className={cn("flex flex-col space-y-2", className)}>
++        {NAVIGATION_ITEMS.map((item) => {
++          const Icon = item.icon
++          const isActive = !item.external && pathname === item.href
++          const isExternal = item.external
++
++          return (
++            <Link
++              key={item.name}
++              href={item.href}
++              target={isExternal ? "_blank" : undefined}
++              rel={isExternal ? "noopener noreferrer" : undefined}
++              className={cn(
++                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
++                isActive
++                  ? "bg-primary text-primary-foreground"
++                  : "text-muted-foreground hover:text-foreground hover:bg-muted",
++              )}
++            >
++              <Icon className="h-4 w-4" />
++              <span>{item.name}</span>
++              {item.badge && (
++                <span className="ml-auto bg-primary/20 text-primary px-1.5 py-0.5 rounded text-xs font-semibold">
++                  {item.badge}
++                </span>
++              )}
++              {isExternal && <ExternalLink className="h-3 w-3 ml-auto" />}
++            </Link>
++          )
++        })}
++      </nav>
++    )
++  }
++
++  return (
++    <nav className={cn("flex items-center space-x-1", className)}>
++      {NAVIGATION_ITEMS.map((item) => {
++        const Icon = item.icon
++        const isActive = !item.external && pathname === item.href
++        const isExternal = item.external
++
++        return (
++          <Button
++            key={item.name}
++            variant={isActive ? "secondary" : "ghost"}
++            size="sm"
++            asChild
++            className={cn("relative", isActive && "bg-muted hover:bg-muted/80")}
++          >
++            <Link
++              href={item.href}
++              target={isExternal ? "_blank" : undefined}
++              rel={isExternal ? "noopener noreferrer" : undefined}
++              className="flex items-center gap-2"
++            >
++              <Icon className="h-4 w-4" />
++              <span>{item.name}</span>
++              {item.badge && (
++                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full text-xs font-semibold">
++                  {item.badge}
++                </span>
++              )}
++            </Link>
++          </Button>
++        )
++      })}
++    </nav>
++  )
++}
+diff --git a/components/header/user-menu.tsx b/components/header/user-menu.tsx
+index 8d8ce9b..548f9ea 100644
+--- a/components/header/user-menu.tsx
++++ b/components/header/user-menu.tsx
+@@ -1,10 +1,46 @@
++"use client"
++
+ import Image from "next/image"
++import Link from "next/link"
++import { useState, useTransition } from "react"
+ 
+ import type { Session } from "next-auth"
++import { useTheme } from "next-themes"
+ 
+ import { SignOutButton } from "@/components/sign-out-button"
+-import { Button } from "@/components/ui/button"
+-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
++import {
++  AlertDialog,
++  AlertDialogAction,
++  AlertDialogCancel,
++  AlertDialogContent,
++  AlertDialogDescription,
++  AlertDialogFooter,
++  AlertDialogHeader,
++  AlertDialogTitle,
++  AlertDialogTrigger,
++} from "@/components/ui/alert-dialog"
++import { Button, buttonVariants } from "@/components/ui/button"
++import {
++  DropdownMenu,
++  DropdownMenuContent,
++  DropdownMenuItem,
++  DropdownMenuSeparator,
++  DropdownMenuTrigger,
++} from "@/components/ui/dropdown-menu"
++import {
++  IconClear,
++  IconCog,
++  IconGitHub,
++  IconMoon,
++  IconPC,
++  IconSpinner,
++  IconSun,
++  IconTelegram,
++  IconTwitter,
++} from "@/components/ui/icons"
++import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
++import { clearChatsAction } from "@/lib/actions/chat"
++import { cn } from "@/lib/utils"
+ 
+ function getUserInitials(name: string) {
+   const [firstName, lastName] = name.split(" ")
+@@ -12,7 +48,246 @@ function getUserInitials(name: string) {
+   return lastName ? `${firstName[0]}${lastName[0]}` : firstName.slice(0, 2)
+ }
+ 
+-export const UserMenu = ({ user }: { user: Session["user"] }) => {
++interface UserMenuProps {
++  user: Session["user"]
++  variant?: "header" | "sidebar" | "collapsed"
++  showClearHistory?: boolean
++}
++
++export const UserMenu = ({ user, variant = "header", showClearHistory = false }: UserMenuProps) => {
++  const { setTheme, theme } = useTheme()
++  const [_, startTransition] = useTransition()
++  const [clearHistoryOpen, setClearHistoryOpen] = useState(false)
++  const [isClearPending, startClearTransition] = useTransition()
++
++  const renderClearHistory = () => {
++    if (!showClearHistory) return null
++
++    return (
++      <>
++        <DropdownMenuSeparator />
++        <DropdownMenuItem asChild>
++          <AlertDialog open={clearHistoryOpen} onOpenChange={setClearHistoryOpen}>
++            <AlertDialogTrigger asChild>
++              <Button variant="ghost" className="w-full justify-start p-0 h-auto font-normal" disabled={isClearPending}>
++                {isClearPending && <IconSpinner className="mr-2" />}
++                <IconClear className="mr-2 h-4 w-4" />
++                Clear History
++              </Button>
++            </AlertDialogTrigger>
++            <AlertDialogContent>
++              <AlertDialogHeader>
++                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
++                <AlertDialogDescription>
++                  This will permanently delete your chat history and remove your data from our servers.
++                </AlertDialogDescription>
++              </AlertDialogHeader>
++              <AlertDialogFooter>
++                <AlertDialogCancel disabled={isClearPending}>Cancel</AlertDialogCancel>
++                <AlertDialogAction
++                  disabled={isClearPending}
++                  onClick={(event) => {
++                    event.preventDefault()
++                    startClearTransition(async () => {
++                      await clearChatsAction()
++                      setClearHistoryOpen(false)
++                    })
++                  }}
++                >
++                  {isClearPending ? <IconSpinner className="mr-2 animate-spin" /> : null}
++                  Delete
++                </AlertDialogAction>
++              </AlertDialogFooter>
++            </AlertDialogContent>
++          </AlertDialog>
++        </DropdownMenuItem>
++      </>
++    )
++  }
++
++  const renderSettingsItems = () => (
++    <>
++      <DropdownMenuSeparator />
++      <div className="mx-1 flex flex-row justify-between py-1 px-6">
++        <Tooltip>
++          <TooltipTrigger asChild>
++            <Button
++              variant={theme === "light" ? "default" : "ghost"}
++              size="icon"
++              className="h-8 w-8"
++              onClick={() => {
++                startTransition(() => {
++                  setTheme("light")
++                })
++              }}
++            >
++              <IconSun className="h-4 w-4" />
++              <span className="sr-only">Light theme</span>
++            </Button>
++          </TooltipTrigger>
++          <TooltipContent>Light theme</TooltipContent>
++        </Tooltip>
++        <Tooltip>
++          <TooltipTrigger asChild>
++            <Button
++              variant={theme === "dark" ? "default" : "ghost"}
++              size="icon"
++              className="h-8 w-8"
++              onClick={() => {
++                startTransition(() => {
++                  setTheme("dark")
++                })
++              }}
++            >
++              <IconMoon className="h-4 w-4" />
++              <span className="sr-only">Dark theme</span>
++            </Button>
++          </TooltipTrigger>
++          <TooltipContent>Dark theme</TooltipContent>
++        </Tooltip>
++        <Tooltip>
++          <TooltipTrigger asChild>
++            <Button
++              variant={theme === "system" ? "default" : "ghost"}
++              size="icon"
++              className="h-8 w-8"
++              onClick={() => {
++                startTransition(() => {
++                  setTheme("system")
++                })
++              }}
++            >
++              <IconPC className="h-4 w-4" />
++              <span className="sr-only">System theme</span>
++            </Button>
++          </TooltipTrigger>
++          <TooltipContent>System theme</TooltipContent>
++        </Tooltip>
++      </div>
++      <DropdownMenuSeparator />
++      <div className="mx-1 flex flex-row justify-between py-1 px-4">
++        <Tooltip>
++          <TooltipTrigger asChild>
++            <Link
++              className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-8 w-8")}
++              href="https://x.com/w3gptai"
++              target="_blank"
++              rel="noopener noreferrer"
++            >
++              <IconTwitter className="h-4 w-4" />
++              <span className="sr-only">X</span>
++            </Link>
++          </TooltipTrigger>
++          <TooltipContent>Twitter</TooltipContent>
++        </Tooltip>
++        <Tooltip>
++          <TooltipTrigger asChild>
++            <Link
++              className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-8 w-8")}
++              href="https://t.me/w3gptai"
++              target="_blank"
++              rel="noopener noreferrer"
++            >
++              <IconTelegram className="h-4 w-4" />
++              <span className="sr-only">Telegram</span>
++            </Link>
++          </TooltipTrigger>
++          <TooltipContent>Telegram</TooltipContent>
++        </Tooltip>
++        <Tooltip>
++          <TooltipTrigger asChild>
++            <Link
++              className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-8 w-8")}
++              href="https://github.com/markeljan/web3gpt"
++              target="_blank"
++              rel="noopener noreferrer"
++            >
++              <IconGitHub className="h-4 w-4" />
++              <span className="sr-only">Github</span>
++            </Link>
++          </TooltipTrigger>
++          <TooltipContent>Github</TooltipContent>
++        </Tooltip>
++      </div>
++    </>
++  )
++  if (variant === "collapsed") {
++    return (
++      <DropdownMenu>
++        <DropdownMenuTrigger asChild>
++          <Button variant="ghost" className="w-10 h-10 p-0 rounded-full">
++            {user?.image ? (
++              <Image
++                className="w-8 h-8 select-none rounded-full ring-1 ring-zinc-100/10 transition-opacity duration-300 hover:opacity-80"
++                src={`${user.image}&s=60`}
++                alt="User profile image"
++                width={32}
++                height={32}
++              />
++            ) : (
++              <div className="flex w-8 h-8 shrink-0 select-none items-center justify-center rounded-full bg-muted/50 text-xs font-medium uppercase text-muted-foreground">
++                {user?.name ? getUserInitials(user?.name) : null}
++              </div>
++            )}
++          </Button>
++        </DropdownMenuTrigger>
++        <DropdownMenuContent side="right" sideOffset={8} align="end" className="w-[220px]">
++          <DropdownMenuItem className="flex-col items-start">
++            <div className="text-xs font-medium">{user?.name}</div>
++            <div className="text-xs text-zinc-500">{user?.email}</div>
++          </DropdownMenuItem>
++          <DropdownMenuItem>
++            <SignOutButton />
++          </DropdownMenuItem>
++          {renderClearHistory()}
++          {renderSettingsItems()}
++        </DropdownMenuContent>
++      </DropdownMenu>
++    )
++  }
++
++  if (variant === "sidebar") {
++    return (
++      <DropdownMenu>
++        <DropdownMenuTrigger asChild>
++          <Button variant="ghost" className="w-full justify-start p-3 h-auto hover:bg-accent/50">
++            <div className="flex items-center gap-3 w-full">
++              {user?.image ? (
++                <Image
++                  className="size-8 select-none rounded-full ring-1 ring-zinc-100/10 transition-opacity duration-300 hover:opacity-80"
++                  src={`${user.image}&s=60`}
++                  alt="User profile image"
++                  width={32}
++                  height={32}
++                />
++              ) : (
++                <div className="flex size-8 shrink-0 select-none items-center justify-center rounded-full bg-muted/50 text-xs font-medium uppercase text-muted-foreground">
++                  {user?.name ? getUserInitials(user?.name) : null}
++                </div>
++              )}
++              <div className="flex-1 text-left min-w-0">
++                <div className="text-sm font-medium truncate">{user?.name}</div>
++                <div className="text-xs text-muted-foreground truncate">{user?.email}</div>
++              </div>
++              <IconCog className="size-4 text-muted-foreground mr-2" />
++            </div>
++          </Button>
++        </DropdownMenuTrigger>
++        <DropdownMenuContent sideOffset={8} align="start" className="w-[220px]">
++          <DropdownMenuItem className="flex-col items-start">
++            <div className="text-xs font-medium">{user?.name}</div>
++            <div className="text-xs text-zinc-500">{user?.email}</div>
++          </DropdownMenuItem>
++          <DropdownMenuItem>
++            <SignOutButton />
++          </DropdownMenuItem>
++          {renderClearHistory()}
++          {renderSettingsItems()}
++        </DropdownMenuContent>
++      </DropdownMenu>
++    )
++  }
++
+   return (
+     <div className="flex items-center justify-between">
+       <DropdownMenu>
+@@ -34,7 +309,7 @@ export const UserMenu = ({ user }: { user: Session["user"] }) => {
+             <span className="ml-2 hidden lg:flex">{user?.name && user?.name}</span>
+           </Button>
+         </DropdownMenuTrigger>
+-        <DropdownMenuContent sideOffset={8} align="start" className="w-[180px]">
++        <DropdownMenuContent sideOffset={8} align="start" className="w-[220px]">
+           <DropdownMenuItem className="flex-col items-start">
+             <div className="text-xs font-medium">{user?.name}</div>
+             <div className="text-xs text-zinc-500">{user?.email}</div>
+@@ -42,6 +317,8 @@ export const UserMenu = ({ user }: { user: Session["user"] }) => {
+           <DropdownMenuItem>
+             <SignOutButton />
+           </DropdownMenuItem>
++          {renderClearHistory()}
++          {renderSettingsItems()}
+         </DropdownMenuContent>
+       </DropdownMenu>
+     </div>
+diff --git a/components/landing.tsx b/components/landing.tsx
+index 0a467c1..945c98f 100644
+--- a/components/landing.tsx
++++ b/components/landing.tsx
+@@ -1,18 +1,17 @@
+ "use client"
+ 
+-import Image from "next/image"
+ import { useEffect, useState } from "react"
+ 
+ import Player from "react-lottie-player"
+ import { toast } from "sonner"
+ 
++import { CustomLogoText, W3GPTLogo } from "@/components/header/logo"
+ import { Button } from "@/components/ui/button"
+ import { Input } from "@/components/ui/input"
+ import { getUserFieldAction, storeEmailAction } from "@/lib/actions/chat"
+ import { useIsClient } from "@/lib/hooks/use-is-client"
+ import { useLocalStorage } from "@/lib/hooks/use-local-storage"
+ import { isValidEmail } from "@/lib/utils"
+-import web3GPTLogo from "@/public/web3gpt-logo-beta.svg"
+ 
+ type LandingProps = {
+   userId?: string
+@@ -53,99 +52,80 @@ export function Landing({ userId, disableAnimations }: LandingProps) {
+ 
+   return (
+     <>
+-      <div className="flex flex-col mx-auto max-w-2xl h-full md:h-96 bg-background border-gray-600/25 text-center dark:border-gray-600/50 border rounded-2xl md:mb-12 px-4 md:pt-8 md:pb-4">
+-        <div className="relative mx-auto size-48 md:mb-4 h-24">
+-          <Image
+-            src={web3GPTLogo}
+-            className="object-contain"
+-            alt="web3gpt logo"
+-            priority={true}
+-            fill
+-            sizes="(max-width: 768px) 70vw, 50vw"
+-          />
++      <div className="flex flex-col mx-auto max-w-2xl text-center  mb-4 p-4 py-8 pointer-events-none select-none">
++        <div className="max-sm:flex-col flex items-center justify-center gap-3 mb-6">
++          <W3GPTLogo variant="xl" />
++          <CustomLogoText variant="xl">Ready, Set, Deploy</CustomLogoText>
+         </div>
+-        <p className="max-sm:hidden text-lg font-bold tracking-tight lg:text-2xl lg:font-normal">
+-          Deploy smart contracts with AI
+-        </p>
+ 
+-        <div className="grid-row-3 grid grid-flow-row gap-1 md:grid-flow-col pb-4 md:pt-4 md:gap-4">
+-          <div className="mx-3 grid grid-cols-3 content-center gap-1 md:grid-cols-1 md:gap-4">
++        <div className="max-sm:w-full max-sm:flex max-sm:mx-auto  max-sm:justify-center grid grid-cols-1 md:grid-cols-3 gap-3">
++          <div className="flex items-center gap-3">
+             <Player
+               play={!disableAnimations}
+               loop={false}
+               speed={0.5}
+               direction={-1}
+               path="/lotties/puzzle.json"
+-              className="size-24  w-full"
++              className="size-8 flex-shrink-0"
+             />
+-            <div className="col-span-2 mt-4 text-left md:col-span-1 md:mt-0 md:text-center">
+-              <h3 className="font-bold md:mb-2">Generate</h3>
+-              <p className="text-sm text-gray-600 dark:text-gray-400">Generate smart contracts using prompts.</p>
++            <div className="text-left">
++              <h3 className="font-medium text-sm">Generate</h3>
++              <p className="text-xs text-gray-600 dark:text-gray-400">Prompt smart contracts</p>
+             </div>
+           </div>
+ 
+-          <div className="mx-3 grid grid-cols-3 content-center md:grid-cols-1 gap-4">
++          <div className="flex items-center gap-3">
+             <Player
+               play={!disableAnimations}
+               loop={false}
+               speed={0.5}
+-              direction={1}
+-              path="/lotties/globe.json"
+-              className="size-24  w-full"
++              path="/lotties/clock.json"
++              className="size-8 flex-shrink-0"
+             />
+-            <div className="col-span-2 mt-4 text-left md:col-span-1 md:mt-0 md:text-center">
+-              <h3 className="font-bold md:mb-2">Deploy</h3>
+-              <p className="text-sm text-gray-600 dark:text-gray-400">Deploy from chat with Agent deploy or wallet.</p>
++            <div className="text-left">
++              <h3 className="font-medium text-sm">Speed up</h3>
++              <p className="text-xs text-gray-600 dark:text-gray-400">Skip the boilerplate</p>
+             </div>
+           </div>
+-          <div className="mx-3 grid grid-cols-3 content-center gap-1 md:grid-cols-1 md:gap-4">
++
++          <div className="flex items-center gap-3">
+             <Player
+               play={!disableAnimations}
+               loop={false}
+               speed={0.5}
+-              path="/lotties/clock.json"
+-              className="size-24  w-full"
++              direction={1}
++              path="/lotties/globe.json"
++              className="size-8 flex-shrink-0"
+             />
+-
+-            <div className="col-span-2 mt-4 text-left md:col-span-1 md:mt-0 md:text-center">
+-              <h3 className="font-bold md:mb-2">Speed Up</h3>
+-              <p className="text-sm text-gray-600 dark:text-gray-400">Skip the boilerplate, deploy in seconds.</p>
++            <div className="text-left">
++              <h3 className="font-medium text-sm">Deploy</h3>
++              <p className="text-xs text-gray-600 dark:text-gray-400">Directly from chat</p>
+             </div>
+           </div>
+         </div>
+       </div>
+ 
+-      <hr className="mb-4 md:hidden" />
+-
+       {isClient && localIsSubscribed === false ? (
+-        <div className="mx-auto mb-16 max-w-2xl rounded-2xl border-gray-600/25 px-4 text-center dark:border-gray-600/50 md:border">
+-          <div className="my-5 flex flex-col gap-4">
+-            <p className="mt-8 scroll-m-20 text-2xl tracking-tight">Early Access</p>
+-
+-            <p className="px-4 text-sm text-gray-600 dark:text-gray-400">
+-              Sign up for development updates and early access to latest features
+-            </p>
+-
+-            <div className="flex justify-center gap-2">
+-              <form className="flex justify-center gap-2" onSubmit={handleSubscribe}>
+-                <Input
+-                  className="h-11 w-64 rounded-lg p-3"
+-                  type="text"
+-                  placeholder="Your email"
+-                  value={email}
+-                  onChange={(e) => setEmail(e.target.value)}
+-                />
+-                <Button type="submit" className="h-11" size="sm">
+-                  Send
+-                </Button>
+-              </form>
+-            </div>
+-            {validationError ? (
+-              <p className="text-xs text-red-500">{validationError}</p>
+-            ) : (
+-              <p className="mb-8 text-xs text-gray-400">{"No spam, promise :)"}</p>
+-            )}
+-          </div>
++        <div className="mx-auto max-w-2xl rounded-lg border-gray-600/20 p-4 text-center dark:border-gray-600/30 border bg-background/50 mb-4">
++          <h3 className="font-medium mb-2">Early Access</h3>
++          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Get updates and early access to features</p>
++          <form className="flex gap-2 justify-center" onSubmit={handleSubscribe}>
++            <Input
++              className="h-9 w-48 text-sm"
++              type="text"
++              placeholder="Your email"
++              value={email}
++              onChange={(e) => setEmail(e.target.value)}
++            />
++            <Button type="submit" className="h-9" size="sm">
++              Send
++            </Button>
++          </form>
++          {validationError ? (
++            <p className="text-xs text-red-500 mt-2">{validationError}</p>
++          ) : (
++            <p className="text-xs text-gray-400 mt-2">No spam, promise :)</p>
++          )}
+         </div>
+       ) : null}
+     </>
+diff --git a/components/sidebar/constants.ts b/components/sidebar/constants.ts
+new file mode 100644
+index 0000000..ea57b82
+--- /dev/null
++++ b/components/sidebar/constants.ts
+@@ -0,0 +1,29 @@
++import { BookText, Code, FolderGit, MessagesSquare } from "lucide-react"
++
++interface NavigationItem {
++  name: string
++  href: string
++  icon: React.ComponentType<{ className?: string }>
++  external?: boolean
++  badge?: string
++}
++
++export const NAVIGATION_ITEMS: NavigationItem[] = [
++  {
++    name: "Chat",
++    href: "/",
++    icon: MessagesSquare,
++  },
++  {
++    name: "Contracts",
++    href: "/contracts",
++    icon: Code,
++    badge: "New",
++  },
++  {
++    name: "Docs",
++    href: "https://docs.w3gpt.ai",
++    icon: BookText,
++    external: true,
++  },
++]
+diff --git a/components/sidebar/permanent-sidebar.tsx b/components/sidebar/permanent-sidebar.tsx
+new file mode 100644
+index 0000000..f440e9e
+--- /dev/null
++++ b/components/sidebar/permanent-sidebar.tsx
+@@ -0,0 +1,47 @@
++"use client"
++
++import { Button } from "@/components/ui/button"
++import { cn } from "@/lib/utils"
++import { ChevronLeft, ChevronRight } from "lucide-react"
++import type { Session } from "next-auth"
++import { useEffect, useState } from "react"
++import { SidebarCollapsed } from "./sidebar-collapsed"
++
++interface PermanentSidebarProps {
++  children: React.ReactNode
++  className?: string
++  user?: Session["user"]
++}
++
++export function PermanentSidebar({ children, className, user }: PermanentSidebarProps) {
++  const [isCollapsed, setIsCollapsed] = useState(false)
++
++  useEffect(() => {
++    document.documentElement.setAttribute("data-sidebar-collapsed", isCollapsed.toString())
++  }, [isCollapsed])
++
++  return (
++    <div
++      className={cn(
++        "relative hidden lg:flex flex-col bg-muted/20 border-r border-border transition-all duration-300 ease-in-out h-full",
++        isCollapsed ? "w-16" : "w-80",
++        className,
++      )}
++    >
++      {/* Collapse Toggle */}
++      <Button
++        variant="ghost"
++        size="sm"
++        onClick={() => setIsCollapsed(!isCollapsed)}
++        className="absolute -right-3 top-6 z-10 h-6 w-6 rounded-full border bg-background shadow-md hover:bg-accent"
++      >
++        {isCollapsed ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
++      </Button>
++
++      {/* Sidebar Content */}
++      <div className={cn("flex flex-col h-full overflow-hidden")}>
++        {isCollapsed ? <SidebarCollapsed user={user} /> : children}
++      </div>
++    </div>
++  )
++}
+diff --git a/components/sidebar/sidebar-agents.tsx b/components/sidebar/sidebar-agents.tsx
+index a0392f4..1f3dc65 100644
+--- a/components/sidebar/sidebar-agents.tsx
++++ b/components/sidebar/sidebar-agents.tsx
+@@ -8,28 +8,28 @@ import { cn } from "@/lib/utils"
+ 
+ export const SidebarAgents = () => {
+   return (
+-    <div className="grid grid-cols-2 gap-2 mx-auto px-2">
++    <div className="space-y-1">
+       {AGENTS_ARRAY.map((assistant) => (
+         <Tooltip key={assistant.id} delayDuration={700}>
+-          <TooltipTrigger className="focus:bg-muted focus:ring-1 focus:ring-ring">
++          <TooltipTrigger className="focus:bg-muted focus:ring-1 focus:ring-ring w-full">
+             <Button
+               asChild
+               variant="link"
+               className={cn(
+-                "flex w-full items-center justify-start border hover:bg-accent hover:text-accent-foreground rounded-full h-11 hover:no-underline px-0 overflow-clip",
++                "flex w-full items-center justify-start hover:bg-accent hover:text-accent-foreground h-9 hover:no-underline p-2 overflow-clip",
+               )}
+             >
+-              <Link className="flex w-full space-x-2" href={`/?a=${assistant.id}`}>
+-                <div className="relative flex w-1/3 size-12">
++              <Link className="flex w-full items-center space-x-2" href={`/?a=${assistant.id}`}>
++                <div className="relative w-5 h-5 flex-shrink-0">
+                   <Image
+                     src={assistant.imageUrl}
+                     className="object-cover rounded-full"
+                     alt={`${assistant.name} image`}
+                     fill
+-                    sizes="(max-width: 768px) 20vw, 10vw"
++                    sizes="20px"
+                   />
+                 </div>
+-                <p className="flex w-2/3 justify-center text-xs font-semibold text-foreground p-2">{assistant.name}</p>
++                <p className="text-xs font-medium text-foreground truncate flex-1 text-left">{assistant.name}</p>
+               </Link>
+             </Button>
+           </TooltipTrigger>
+diff --git a/components/sidebar/sidebar-collapsed.tsx b/components/sidebar/sidebar-collapsed.tsx
+new file mode 100644
+index 0000000..13de5b4
+--- /dev/null
++++ b/components/sidebar/sidebar-collapsed.tsx
+@@ -0,0 +1,98 @@
++"use client"
++
++import { UserMenu } from "@/components/header/user-menu"
++import { NAVIGATION_ITEMS } from "@/components/sidebar/constants"
++import { Button } from "@/components/ui/button"
++import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
++import { cn } from "@/lib/utils"
++import { User } from "lucide-react"
++import type { Session } from "next-auth"
++import Image from "next/image"
++import Link from "next/link"
++import { usePathname } from "next/navigation"
++
++interface SidebarCollapsedProps {
++  user?: Session["user"]
++}
++
++export function SidebarCollapsed({ user }: SidebarCollapsedProps) {
++  const pathname = usePathname()
++
++  return (
++    <div className="flex flex-col h-full items-center py-4">
++      {/* Logo */}
++      <div className="mb-6">
++        <Link href="/" className="block">
++          <Tooltip>
++            <TooltipTrigger asChild>
++              <Image src="/assets/web3gpt.png" alt="Web3GPT" width={32} height={32} className="rounded-lg" />
++            </TooltipTrigger>
++            <TooltipContent side="right">Web3GPT</TooltipContent>
++          </Tooltip>
++        </Link>
++      </div>
++
++      {/* Navigation Icons */}
++      <div className="flex flex-col space-y-2 mb-6">
++        {NAVIGATION_ITEMS.map((item) => {
++          const Icon = item.icon
++          const isExternal = item.external
++          const isActive = !isExternal && pathname === item.href
++
++          return (
++            <Tooltip key={item.name}>
++              <TooltipTrigger asChild>
++                <Button
++                  variant={isActive ? "secondary" : "ghost"}
++                  size="sm"
++                  asChild
++                  className={cn("w-10 h-10 p-0", isActive && "bg-muted hover:bg-muted/80")}
++                >
++                  <Link
++                    href={item.href}
++                    target={isExternal ? "_blank" : undefined}
++                    rel={isExternal ? "noopener noreferrer" : undefined}
++                  >
++                    <Icon className="h-5 w-5" />
++                  </Link>
++                </Button>
++              </TooltipTrigger>
++              <TooltipContent side="right">{item.name}</TooltipContent>
++            </Tooltip>
++          )
++        })}
++      </div>
++
++      {/* Spacer */}
++      <div className="flex-1" />
++
++      {/* User Profile at Bottom */}
++      <div className="mt-auto">
++        {user ? (
++          <Tooltip>
++            <TooltipTrigger asChild>
++              <div className="w-10 h-10">
++                <UserMenu user={user} variant="collapsed" />
++              </div>
++            </TooltipTrigger>
++            <TooltipContent side="right">
++              <div className="text-xs">
++                <div className="font-medium">{user.name}</div>
++                <div className="text-muted-foreground">{user.email}</div>
++              </div>
++            </TooltipContent>
++          </Tooltip>
++        ) : (
++          <Tooltip>
++            <TooltipTrigger asChild>
++              <Button variant="ghost" size="sm" className="w-10 h-10 p-0">
++                <User className="h-5 w-5" />
++              </Button>
++            </TooltipTrigger>
++            <TooltipContent side="right">Sign in</TooltipContent>
++          </Tooltip>
++        )}
++      </div>
++    </div>
++  )
++}
+diff --git a/components/sidebar/sidebar-content.tsx b/components/sidebar/sidebar-content.tsx
+new file mode 100644
+index 0000000..48acab3
+--- /dev/null
++++ b/components/sidebar/sidebar-content.tsx
+@@ -0,0 +1,93 @@
++import { auth } from "@/auth"
++import { LoginButton } from "@/components/header/login-button"
++import { W3GPTLogo } from "@/components/header/logo"
++import { Navigation } from "@/components/header/navigation"
++import { UserMenu } from "@/components/header/user-menu"
++import { SidebarAgents } from "@/components/sidebar/sidebar-agents"
++import { SidebarList } from "@/components/sidebar/sidebar-list"
++import { Badge } from "@/components/ui/badge"
++import { Separator } from "@/components/ui/separator"
++import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
++import { getChatList } from "@/lib/data/kv"
++import { cn } from "@/lib/utils"
++
++export async function SidebarContent() {
++  const chatList = await getChatList()
++  const session = await auth()
++  const user = session?.user
++
++  return (
++    <div className="flex flex-col h-full">
++      {/* Header Section */}
++      <div className="p-6 pb-4 flex-shrink-0">
++        <W3GPTLogo className="mb-6" />
++
++        {/* Navigation */}
++        <div className="space-y-2">
++          <Navigation variant="mobile" />
++        </div>
++      </div>
++
++      <Separator className="flex-shrink-0" />
++
++      {/* Agents Section */}
++      <div className="p-6 py-2 flex-shrink-0">
++        <div className="flex items-center justify-between mb-2">
++          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pointer-events-none select-none">
++            Agents
++          </h3>
++          <Tooltip>
++            <TooltipTrigger asChild>
++              <Badge className={cn("text-xs text-slate-800 bg-yellow-300 pointer-events-auto")}>gpt-4o</Badge>
++            </TooltipTrigger>
++            <TooltipContent>Using GPT-4o</TooltipContent>
++          </Tooltip>
++        </div>
++        <div className="max-sm:max-h-[108px] overflow-y-auto">
++          <SidebarAgents />
++        </div>
++      </div>
++
++      <Separator className="flex-shrink-0" />
++
++      {/* Chat History Section - Scrollable */}
++      <div className="flex-1 flex flex-col px-4 py-2 min-h-0 overflow-hidden">
++        <div className="flex items-center justify-between mb-3 flex-shrink-0 px-2">
++          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pointer-events-none select-none">
++            Chats
++          </h3>
++        </div>
++
++        <div className="flex-1 min-h-0 overflow-hidden">
++          {chatList ? (
++            <SidebarList chatList={chatList} />
++          ) : (
++            <div className="flex items-center justify-center h-20">
++              <p className="text-sm text-muted-foreground">No chat history</p>
++            </div>
++          )}
++        </div>
++      </div>
++
++      <Separator className="flex-shrink-0" />
++
++      {/* User Section - Bottom */}
++      <div className="p-4 flex-shrink-0">
++        {user ? (
++          <div className="rounded-lg bg-muted/50 border overflow-hidden">
++            <UserMenu user={user} variant="sidebar" />
++          </div>
++        ) : (
++          <div className="p-3 rounded-lg bg-muted/50 border">
++            <LoginButton
++              variant="ghost"
++              showGithubIcon={true}
++              text="Sign in to continue"
++              className="w-full justify-start"
++            />
++          </div>
++        )}
++      </div>
++    </div>
++  )
++}
+diff --git a/components/sidebar/sidebar-list.tsx b/components/sidebar/sidebar-list.tsx
+index 1e957f0..4105397 100644
+--- a/components/sidebar/sidebar-list.tsx
++++ b/components/sidebar/sidebar-list.tsx
+@@ -14,9 +14,9 @@ export function SidebarList({ chatList }: SidebarListProps) {
+   const activeChatId = pathname.split("/chat/")[1]
+ 
+   return (
+-    <div className="flex-1 overflow-auto">
++    <div className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
+       {chatList?.length ? (
+-        <div className="space-y-2 px-2">
++        <div className="space-y-1 px-2 pb-2">
+           {chatList?.map((chat) => (
+             <SidebarItem key={chat.id} chat={chat} isActive={chat.id === activeChatId}>
+               <SidebarActions chat={chat} />
+diff --git a/components/ui/card.tsx b/components/ui/card.tsx
+new file mode 100644
+index 0000000..e076cfc
+--- /dev/null
++++ b/components/ui/card.tsx
+@@ -0,0 +1,43 @@
++import * as React from "react"
++
++import { cn } from "@/lib/utils"
++
++const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
++  <div ref={ref} className={cn("rounded-lg border bg-card text-card-foreground shadow-sm", className)} {...props} />
++))
++Card.displayName = "Card"
++
++const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
++  ({ className, ...props }, ref) => (
++    <div ref={ref} className={cn("flex flex-col space-y-1.5 p-6", className)} {...props} />
++  ),
++)
++CardHeader.displayName = "CardHeader"
++
++const CardTitle = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
++  ({ className, ...props }, ref) => (
++    <div ref={ref} className={cn("text-2xl font-semibold leading-none tracking-tight", className)} {...props} />
++  ),
++)
++CardTitle.displayName = "CardTitle"
++
++const CardDescription = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
++  ({ className, ...props }, ref) => (
++    <div ref={ref} className={cn("text-sm text-muted-foreground", className)} {...props} />
++  ),
++)
++CardDescription.displayName = "CardDescription"
++
++const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
++  ({ className, ...props }, ref) => <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />,
++)
++CardContent.displayName = "CardContent"
++
++const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
++  ({ className, ...props }, ref) => (
++    <div ref={ref} className={cn("flex items-center p-6 pt-0", className)} {...props} />
++  ),
++)
++CardFooter.displayName = "CardFooter"
++
++export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
+diff --git a/components/ui/code-block.tsx b/components/ui/code-block.tsx
+index f392327..7c3bbd5 100644
+--- a/components/ui/code-block.tsx
++++ b/components/ui/code-block.tsx
+@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button"
+ import { IconCheck, IconCopy, IconDownload } from "@/components/ui/icons"
+ import { useCopyToClipboard } from "@/lib/hooks/use-copy-to-clipboard"
+ import { useIsClient } from "@/lib/hooks/use-is-client"
+-import { cn } from "@/lib/utils"
+ 
+ const PROGRAMMING_LANGUAGES: Record<string, string> = {
+   javascript: ".js",
+@@ -114,19 +113,14 @@ export const CodeBlock = memo(({ language, value }: CodeBlockProps) => {
+   }, [language, value])
+ 
+   return (
+-    <div className="relative w-full font-sans dark:bg-zinc-950 bg-gray-200">
+-      <div
+-        className={cn(
+-          "flex w-full items-center justify-between px-6 py-3 pr-4",
+-          isDarkMode ? "bg-zinc-800 text-zinc-100" : "bg-gray-300 text-gray-950",
+-        )}
+-      >
+-        <span className="text-xs lowercase">{language}</span>
++    <div className="relative w-full font-sans bg-muted/95 dark:bg-muted/50">
++      <div className="flex w-full items-center justify-between px-6 py-3 pr-4 bg-secondary-foreground/40 dark:bg-secondary-foreground/10 border-b">
++        <span className="text-xs lowercase dark:text-secondary-foreground">{language}</span>
+         <div className="flex items-center space-x-1">
+           {renderDeployButton()}
+           <Button
+             variant="ghost"
+-            className="focus-visible:ring-1 focus-visible:ring-gray-700 focus-visible:ring-offset-0"
++            className="focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0"
+             onClick={downloadAsFile}
+             size="icon"
+           >
+@@ -136,7 +130,7 @@ export const CodeBlock = memo(({ language, value }: CodeBlockProps) => {
+           <Button
+             variant="ghost"
+             size="icon"
+-            className="text-xs focus-visible:ring-1 focus-visible:ring-gray-700 focus-visible:ring-offset-0"
++            className="text-xs focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0"
+             onClick={() => copyToClipboard(value)}
+           >
+             {isCopied ? <IconCheck /> : <IconCopy />}
+diff --git a/components/ui/icons.tsx b/components/ui/icons.tsx
+index 55b7a2f..0b30fde 100644
+--- a/components/ui/icons.tsx
++++ b/components/ui/icons.tsx
+@@ -539,6 +539,21 @@ function IconChevronUpDown({ className, ...props }: React.ComponentProps<"svg">)
+   )
+ }
+ 
++function IconPC({ className, ...props }: React.ComponentProps<"svg">) {
++  return (
++    <svg
++      xmlns="http://www.w3.org/2000/svg"
++      viewBox="0 0 256 256"
++      fill="currentColor"
++      className={cn("size-4", className)}
++      {...props}
++    >
++      <title id="title">PC</title>
++      <path d="M208 40H48a24 24 0 0 0-24 24v112a24 24 0 0 0 24 24h72v16H96a8 8 0 0 0 0 16h64a8 8 0 0 0 0-16h-24v-16h72a24 24 0 0 0 24-24V64a24 24 0 0 0-24-24ZM48 56h160a8 8 0 0 1 8 8v80H40V64a8 8 0 0 1 8-8Zm160 104H48a8 8 0 0 1-8-8v-16h176v16a8 8 0 0 1-8 8Z" />
++    </svg>
++  )
++}
++
+ export {
+   IconArrowDown,
+   IconArrowElbow,
+@@ -558,6 +573,7 @@ export {
+   IconMessage,
+   IconMoon,
+   IconOpenAI,
++  IconPC,
+   IconPlus,
+   IconRefresh,
+   IconSeparator,
+diff --git a/lib/actions/verification.ts b/lib/actions/verification.ts
+index e07a249..aab20c4 100644
+--- a/lib/actions/verification.ts
++++ b/lib/actions/verification.ts
+@@ -3,18 +3,13 @@
+ import { kv } from "@vercel/kv"
+ 
+ import { auth } from "@/auth"
+-import type { VerifyContractParams } from "@/lib/types"
++import type { DeploymentRecord, VerifyContractParams } from "@/lib/types"
+ 
+ export const storeVerificationAction = async (data: VerifyContractParams) => {
+   await kv.hmset(`verification:${data.deployHash}`, data)
+ }
+ 
+-export const storeDeploymentAction = async (data: {
+-  chainId: string
+-  deployHash: string
+-  contractAddress: string
+-  cid: string
+-}) => {
++export const storeDeploymentAction = async (data: DeploymentRecord) => {
+   const session = await auth()
+   const userId = session?.user?.id || "anon"
+ 
+diff --git a/lib/config.ts b/lib/config.ts
+index 158ae39..e19ee2b 100644
+--- a/lib/config.ts
++++ b/lib/config.ts
+@@ -12,7 +12,7 @@ import {
+ import { http, type CreateConnectorFn, cookieStorage, createConfig, createStorage } from "wagmi"
+ 
+ import { BLOCKSCOUT_URLS } from "@/lib/blockscout"
+-import type { ChainDetails } from "@/lib/types"
++import type { ChainDetails, ChainWithIcon } from "@/lib/types"
+ import { DEPLOYMENT_URL as VERCEL_DEPLOYMENT_URL } from "vercel-url"
+ 
+ const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY
+@@ -35,26 +35,60 @@ const metisSepoliaWithIcon = {
+     },
+   },
+   iconUrl: "/assets/metis-logo.png",
++  iconBackground: "#0099FF",
+ }
++
+ const mantleSepoliaWithIcon = {
+   ...mantleSepoliaTestnet,
+   name: "Mantle Sepolia",
+-  iconUrl: "/mantle-logo.jpeg",
++  iconUrl: "/assets/chains/mantle-logo.png",
++  iconBackground: "#000000",
+ }
+ const polygonAmoyWithIcon = {
+   ...polygonAmoy,
+-  iconUrl: "/polygon-logo.png",
++  iconUrl: "/assets/chains/polygon-logo.png",
++  iconBackground: "#8247E5",
++}
++
++const baseSepoliaWithIcon = {
++  ...baseSepolia,
++  iconUrl: "/assets/chains/base-logo.png",
++  iconBackground: "#0052FF",
++}
++
++const arbitrumSepoliaWithIcon = {
++  ...arbitrumSepolia,
++  iconUrl: "/assets/chains/arbitrum-logo.png",
++  iconBackground: "#2D374B",
++}
++
++const optimismSepoliaWithIcon = {
++  ...optimismSepolia,
++  iconUrl: "/assets/chains/optimism-logo.png",
++  iconBackground: "#FF0420",
++}
++
++const celoAlfajoresWithIcon = {
++  ...celoAlfajores,
++  iconUrl: "/assets/chains/celo-logo.png",
++  iconBackground: "#35D07F",
++}
++
++const sepoliaWithIcon = {
++  ...sepolia,
++  iconUrl: "/assets/chains/ethereum-logo.png",
++  iconBackground: "#FFFFFF10",
+ }
+ 
+-export const supportedChains: [Chain, ...Chain[]] = [
++export const SUPPORTED_CHAINS: [ChainWithIcon, ...ChainWithIcon[]] = [
+   polygonAmoyWithIcon,
+   metisSepoliaWithIcon,
+   mantleSepoliaWithIcon,
+-  baseSepolia,
+-  arbitrumSepolia,
+-  optimismSepolia,
+-  celoAlfajores,
+-  sepolia,
++  baseSepoliaWithIcon,
++  arbitrumSepoliaWithIcon,
++  optimismSepoliaWithIcon,
++  celoAlfajoresWithIcon,
++  sepoliaWithIcon,
+ ]
+ 
+ export const CHAIN_DETAILS: Record<string, ChainDetails> = {
+@@ -130,14 +164,14 @@ export const getChainDetails = (viemChain: Chain): ChainDetails => {
+   }
+ }
+ 
+-export function getChainById(chainId: number): Chain | null {
+-  return supportedChains.find((chain) => chain.id === chainId) || null
++export function getChainById(chainId: number): ChainWithIcon | null {
++  return SUPPORTED_CHAINS.find((chain) => chain.id === chainId) || null
+ }
+ 
+ export function getWagmiConfig(connectors?: CreateConnectorFn[]) {
+   return createConfig({
+-    chains: supportedChains,
+-    transports: Object.fromEntries(supportedChains.map((chain) => [[chain.id], http(CHAIN_DETAILS[chain.id].rpcUrl)])),
++    chains: SUPPORTED_CHAINS,
++    transports: Object.fromEntries(SUPPORTED_CHAINS.map((chain) => [[chain.id], http(CHAIN_DETAILS[chain.id].rpcUrl)])),
+     ssr: true,
+     storage: createStorage({
+       storage: cookieStorage,
+diff --git a/lib/constants.ts b/lib/constants.ts
+index 3b3e833..747c592 100644
+--- a/lib/constants.ts
++++ b/lib/constants.ts
+@@ -58,3 +58,5 @@ export const AGENTS_ARRAY: Agent[] = [
+     imageUrl: "/assets/tokenscript.png",
+   },
+ ]
++
++export const IPFS_W3GPT_GROUP_ID = "ded75ff6-65b1-43a2-bf95-6adc538828f9"
+diff --git a/lib/data/ipfs.ts b/lib/data/ipfs.ts
+index c964f47..7804835 100644
+--- a/lib/data/ipfs.ts
++++ b/lib/data/ipfs.ts
+@@ -1,5 +1,6 @@
+ "server-only"
+ 
++import { IPFS_W3GPT_GROUP_ID } from "@/lib/constants"
+ import { type FileObject, PinataSDK } from "pinata"
+ import type { SolcOutput } from "solc"
+ import type { Abi } from "viem"
+@@ -27,6 +28,7 @@ export async function ipfsUploadDir(
+ 
+     const { IpfsHash } = await pinata.upload.fileArray(files, {
+       cidVersion: 1,
++      groupId: IPFS_W3GPT_GROUP_ID,
+       metadata: {
+         name: "contract",
+       },
+@@ -44,6 +46,7 @@ export async function ipfsUploadFile(fileName: string, fileContent: string | Buf
+     const file = new File([fileContent], fileName)
+     const { IpfsHash } = await pinata.upload.file(file, {
+       cidVersion: 1,
++      groupId: IPFS_W3GPT_GROUP_ID,
+       metadata: {
+         name: fileName,
+       },
+diff --git a/lib/data/kv.ts b/lib/data/kv.ts
+index 2675f34..9b93733 100644
+--- a/lib/data/kv.ts
++++ b/lib/data/kv.ts
+@@ -4,7 +4,7 @@ import { kv } from "@vercel/kv"
+ import { unstable_cache as cache, revalidateTag } from "next/cache"
+ 
+ import { auth } from "@/auth"
+-import type { Agent, DbChat, DbChatListItem, VerifyContractParams } from "@/lib/types"
++import type { Agent, DbChat, DbChatListItem, DeploymentRecord, VerifyContractParams } from "@/lib/types"
+ 
+ type ActionWithUser<T, R> = (data: T, userId: string) => Promise<R>
+ 
+@@ -122,3 +122,34 @@ export const storeChat = withUser<
+ 
+   return revalidateTag("chat-list")
+ })
++
++export const getUserDeployments = withUser<void, DeploymentRecord[]>(async (_, userId) => {
++  const deploymentKeys = await kv.zrange<string[]>(`user:deployments:${userId}`, 0, -1, { rev: true })
++
++  if (!deploymentKeys.length) {
++    return []
++  }
++
++  const pipeline = kv.pipeline()
++  for (const deploymentKey of deploymentKeys) {
++    const fullKey = deploymentKey.startsWith("deployment:") ? deploymentKey : `deployment:${deploymentKey}`
++    pipeline.hgetall<DeploymentRecord>(fullKey)
++  }
++
++  const results = await pipeline.exec<DeploymentRecord[]>()
++
++  return results.filter(Boolean)
++})
++
++export const getAllDeployments = async () => {
++  const deploymentKeys = await kv.keys("deployment:*")
++  if (!deploymentKeys || deploymentKeys.length === 0) {
++    return []
++  }
++  const pipeline = kv.pipeline()
++  for (const deploymentKey of deploymentKeys) {
++    pipeline.hgetall<DeploymentRecord>(deploymentKey)
++  }
++  const results = await pipeline.exec<DeploymentRecord[]>()
++  return results.filter(Boolean)
++}
+diff --git a/lib/hooks/use-wallet-deploy.ts b/lib/hooks/use-wallet-deploy.ts
+index 51fc1c4..ec02522 100644
+--- a/lib/hooks/use-wallet-deploy.ts
++++ b/lib/hooks/use-wallet-deploy.ts
+@@ -123,10 +123,12 @@ export function useWalletDeploy() {
+ 
+         await Promise.all([
+           storeDeploymentAction({
+-            chainId: String(chainId),
++            chainId,
+             deployHash,
+             contractAddress,
+             cid,
++            contractName,
++            deployerAddress: address,
+           }),
+           storeVerificationAction(verifyContractConfig),
+           track("deployed_contract", {
+diff --git a/lib/solidity/deploy.ts b/lib/solidity/deploy.ts
+index b53993c..ce654b7 100644
+--- a/lib/solidity/deploy.ts
++++ b/lib/solidity/deploy.ts
+@@ -117,6 +117,8 @@ export const deployContract = async ({
+       deployHash,
+       contractAddress,
+       cid,
++      contractName,
++      deployerAddress,
+     }),
+     storeVerificationAction(verifyContractConfig),
+     track("deployed_contract", {
+diff --git a/lib/tools.ts b/lib/tools.ts
+index 12b3154..c2c0bbd 100644
+--- a/lib/tools.ts
++++ b/lib/tools.ts
+@@ -70,9 +70,9 @@ export const TOOL_SCHEMAS: Record<ToolName, FunctionTool> = {
+             type: "string",
+           },
+           chainId: {
+-            type: "string",
+             description:
+               "The chainId to deploy to.  A list of available chains will be made available to you at runtime.",
++            type: "number",
+           },
+           sourceCode: {
+             type: "string",
+diff --git a/lib/types.ts b/lib/types.ts
+index ea0ccaa..624dba2 100644
+--- a/lib/types.ts
++++ b/lib/types.ts
+@@ -45,7 +45,7 @@ export type CreateAgentParams = {
+ }
+ 
+ export type DeployContractParams = {
+-  chainId: string
++  chainId: number
+   contractName: string
+   sourceCode: string
+   constructorArgs: Array<string | string[]>
+@@ -96,6 +96,20 @@ export type DeployTokenScriptResult = {
+   includeBurnFunction: boolean
+ }
+ 
++export type DeploymentRecordBase = {
++  cid: string
++  chainId: number
++  contractAddress: Hash
++  deployHash: Hash
++}
++
++export type DeploymentRecord = DeploymentRecordBase & {
++  contractName: string
++  deployerAddress: Hash
++}
++
++export type ChainWithIcon = Chain & { iconUrl: string; iconBackground: string }
++
+ export type ChainDetails = {
+   rpcUrl: string
+   explorerUrl: string
+diff --git a/package.json b/package.json
+index 66fca8f..e8dc6c5 100644
+--- a/package.json
++++ b/package.json
+@@ -31,6 +31,7 @@
+     "ai": "^4.1.61",
+     "class-variance-authority": "^0.7.0",
+     "clsx": "^2.1.1",
++    "lucide-react": "^0.523.0",
+     "next": "^14.2.25",
+     "next-auth": "5.0.0-beta.19",
+     "next-themes": "^0.4.3",
+@@ -56,6 +57,7 @@
+   "devDependencies": {
+     "@biomejs/biome": "1.9.4",
+     "@tailwindcss/typography": "^0.5.15",
++    "@types/bun": "^1.2.17",
+     "@types/node": "^20.17.10",
+     "@types/react": "^18.3.18",
+     "@types/react-dom": "^18.3.5",
+diff --git a/public/assets/chains/arbitrum-logo.png b/public/assets/chains/arbitrum-logo.png
+new file mode 100644
+index 0000000..a7ee462
+Binary files /dev/null and b/public/assets/chains/arbitrum-logo.png differ
+diff --git a/public/assets/chains/base-logo.png b/public/assets/chains/base-logo.png
+new file mode 100644
+index 0000000..76fe1ab
+Binary files /dev/null and b/public/assets/chains/base-logo.png differ
+diff --git a/public/assets/chains/celo-logo.png b/public/assets/chains/celo-logo.png
+new file mode 100644
+index 0000000..7763d50
+Binary files /dev/null and b/public/assets/chains/celo-logo.png differ
+diff --git a/public/assets/chains/ethereum-logo.png b/public/assets/chains/ethereum-logo.png
+new file mode 100644
+index 0000000..c8ac5ec
+Binary files /dev/null and b/public/assets/chains/ethereum-logo.png differ
+diff --git a/public/assets/chains/mantle-logo.png b/public/assets/chains/mantle-logo.png
+new file mode 100644
+index 0000000..27e8a70
+Binary files /dev/null and b/public/assets/chains/mantle-logo.png differ
+diff --git a/public/assets/chains/optimism-logo.png b/public/assets/chains/optimism-logo.png
+new file mode 100644
+index 0000000..cb31c98
+Binary files /dev/null and b/public/assets/chains/optimism-logo.png differ
+diff --git a/public/polygon-logo.png b/public/assets/chains/polygon-logo.png
+similarity index 100%
+rename from public/polygon-logo.png
+rename to public/assets/chains/polygon-logo.png
+diff --git a/public/assets/rootstock.png b/public/assets/rootstock.png
+deleted file mode 100644
+index 962fa59..0000000
+Binary files a/public/assets/rootstock.png and /dev/null differ
+diff --git a/public/mantle-logo.jpeg b/public/mantle-logo.jpeg
+deleted file mode 100644
+index ae9a51d..0000000
+Binary files a/public/mantle-logo.jpeg and /dev/null differ

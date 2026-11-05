@@ -1,0 +1,902 @@
+[
+ {
+  "stratum": "size:<1500",
+  "repo": "RobertoMachorro/Moped",
+  "path": "AGENTS.md",
+  "sha": "8c28c0b34af707e8895495543d806af26a95415d",
+  "html_url": "https://github.com/RobertoMachorro/Moped/blob/059fb087b58810d5754b7d87c7c8e6e6f5a03dd6/AGENTS.md",
+  "file": "agents_files/RobertoMachorro__Moped__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:<1500",
+  "repo": "cjhyy/codeshell",
+  "path": "AGENTS.md",
+  "sha": "789013d1b757724cafabb5e8e8a5d5840bb65acb",
+  "html_url": "https://github.com/cjhyy/codeshell/blob/7e12937213a3637adc915be2ea74e0c626aec125/AGENTS.md",
+  "file": "agents_files/cjhyy__codeshell__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:<1500",
+  "repo": "veelkoov/fuzzrake",
+  "path": "AGENTS.md",
+  "sha": "d59d3c195765b0fe6dc2e43626aeac12a50fd142",
+  "html_url": "https://github.com/veelkoov/fuzzrake/blob/8a2c351187920a32f812a9237f7d4651b1f33253/AGENTS.md",
+  "file": "agents_files/veelkoov__fuzzrake__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:<1500",
+  "repo": "OpenRAL/openral",
+  "path": "AGENTS.md",
+  "sha": "7d43f8b04ec46764606c3758f83ab513137292a8",
+  "html_url": "https://github.com/OpenRAL/openral/blob/776abb92c01279ac79d56fe8a296eeeeaf3ecbe9/AGENTS.md",
+  "file": "agents_files/OpenRAL__openral__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:<1500",
+  "repo": "getsentry/image-mirror",
+  "path": "AGENTS.md",
+  "sha": "d9589f7b488280a2640525fe0c014cdb1fc4ff79",
+  "html_url": "https://github.com/getsentry/image-mirror/blob/f45ba42745b1d3467db930f60ec129f3a8d7c6d0/AGENTS.md",
+  "file": "agents_files/getsentry__image-mirror__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:<1500",
+  "repo": "yanyiwu/nodejieba",
+  "path": "AGENTS.md",
+  "sha": "b2d3e838e21b580018ad233f3703f990485da61b",
+  "html_url": "https://github.com/yanyiwu/nodejieba/blob/99a3e8147237b983c9068213405a8f0edb340421/AGENTS.md",
+  "file": "agents_files/yanyiwu__nodejieba__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:<1500",
+  "repo": "voedger/voedger",
+  "path": "AGENTS.md",
+  "sha": "3691b0e511f8bd5d5d7de718cb02863e702e7b18",
+  "html_url": "https://github.com/voedger/voedger/blob/5c45e847270a93a7c5c45f7f4026c9d9415aeb6d/AGENTS.md",
+  "file": "agents_files/voedger__voedger__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:<1500",
+  "repo": "discocrayon/Headroom",
+  "path": "AGENTS.md",
+  "sha": "5dcb946b7fc18b767a3e600e927e8eb2af4ff685",
+  "html_url": "https://github.com/discocrayon/Headroom/blob/7e79b9d6aabbdcd1051030df44451a842c36a882/AGENTS.md",
+  "file": "agents_files/discocrayon__Headroom__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:<1500",
+  "repo": "ThilinaTLM/inkwell",
+  "path": "AGENTS.md",
+  "sha": "6a86e5537edadce6daf2e1eeeca72cd769ded9bb",
+  "html_url": "https://github.com/ThilinaTLM/inkwell/blob/c834e5360aae1cda420432e24b7fc6a3742fbf6f/AGENTS.md",
+  "file": "agents_files/ThilinaTLM__inkwell__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:<1500",
+  "repo": "Chia-Network/pos2-chip",
+  "path": "AGENTS.md",
+  "sha": "e38287b8f93eb7351198bb0781608ac25c1904ea",
+  "html_url": "https://github.com/Chia-Network/pos2-chip/blob/ff89d3e61f4315311a7f975409a6433e67f699ff/AGENTS.md",
+  "file": "agents_files/Chia-Network__pos2-chip__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:<1500",
+  "repo": "suapapa/tools",
+  "path": "AGENTS.md",
+  "sha": "95aa4caac495edddafecbe0a1eece7c616021aa9",
+  "html_url": "https://github.com/suapapa/tools/blob/20b750eacd6b412aac1221a4429dadce9f8d3635/AGENTS.md",
+  "file": "agents_files/suapapa__tools__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:<1500",
+  "repo": "ruby-no-kai/regional.rubykaigi.org",
+  "path": "AGENTS.md",
+  "sha": "34b5fb24defc1305df369069450e7364664eb5c1",
+  "html_url": "https://github.com/ruby-no-kai/regional.rubykaigi.org/blob/c51ef590170f3570309abc2596f4d53503f9bd9b/AGENTS.md",
+  "file": "agents_files/ruby-no-kai__regional.rubykaigi.org__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:<1500",
+  "repo": "Smith42/astroPT",
+  "path": "AGENTS.md",
+  "sha": "eecb75442c75bdd5e2f21dd4cbf5fa778e712286",
+  "html_url": "https://github.com/Smith42/astroPT/blob/fa361ae5b6631c89525429755ed3fc2b2d304eca/AGENTS.md",
+  "file": "agents_files/Smith42__astroPT__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:<1500",
+  "repo": "ariya/hono-saas-starter",
+  "path": "AGENTS.md",
+  "sha": "c5ecda99fbd20840aa3e491d3b39e52f4b640aaa",
+  "html_url": "https://github.com/ariya/hono-saas-starter/blob/3dda474c5c013d4762c9d4ec87c4742324c35463/AGENTS.md",
+  "file": "agents_files/ariya__hono-saas-starter__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:<1500",
+  "repo": "GrinZero/super-looi",
+  "path": "AGENTS.md",
+  "sha": "1c63f62797160e722ffcc6dca76827f6891e5eca",
+  "html_url": "https://github.com/GrinZero/super-looi/blob/9985101d840e1ec1a6bbb022bccb1b0eb369b3d6/AGENTS.md",
+  "file": "agents_files/GrinZero__super-looi__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:<1500",
+  "repo": "erduo1998-cell/agent-motion",
+  "path": "AGENTS.md",
+  "sha": "8041ecb5b23286c878138cb40acbef7764f4281e",
+  "html_url": "https://github.com/erduo1998-cell/agent-motion/blob/e7c4271a375792da1bfb98005f1edbe9c5c44280/AGENTS.md",
+  "file": "agents_files/erduo1998-cell__agent-motion__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:<1500",
+  "repo": "outsbart/gameman",
+  "path": "AGENTS.md",
+  "sha": "2f34f75ddd0e7dcac7ea2072eb75790116e016c6",
+  "html_url": "https://github.com/outsbart/gameman/blob/dc92d0a59f5d2d3d79e4242d548270cf9d9d12dc/AGENTS.md",
+  "file": "agents_files/outsbart__gameman__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:<1500",
+  "repo": "webtv-redialed/redialed-service",
+  "path": "AGENTS.md",
+  "sha": "d2c0c941c7024821245dc95db9d5b2292b96f33c",
+  "html_url": "https://github.com/webtv-redialed/redialed-service/blob/aea0985700b7030fe00cc4067f214d58e61504b8/AGENTS.md",
+  "file": "agents_files/webtv-redialed__redialed-service__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:<1500",
+  "repo": "Eval-core/evalcore",
+  "path": "AGENTS.md",
+  "sha": "b2fcafe32b61cace05f33966242639fdc003f51e",
+  "html_url": "https://github.com/Eval-core/evalcore/blob/a7edd8eec3a9ddede77e444014255419b32b77ae/AGENTS.md",
+  "file": "agents_files/Eval-core__evalcore__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:<1500",
+  "repo": "HengXin666/HXLoLi",
+  "path": "AGENTS.md",
+  "sha": "72214a292bb1675c871a3d4bc0df8894e98276df",
+  "html_url": "https://github.com/HengXin666/HXLoLi/blob/9b6bdb7a9b7bf9775d89e625e04edecfb285ef41/AGENTS.md",
+  "file": "agents_files/HengXin666__HXLoLi__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:1500..4000",
+  "repo": "ywleeo/mark2",
+  "path": "AGENTS.md",
+  "sha": "4c2a3e456790bdefe30ab9557d81c21cdbd359e0",
+  "html_url": "https://github.com/ywleeo/mark2/blob/f1f38c3cdafd708c3af39ae580bcc7d047f023a8/AGENTS.md",
+  "file": "agents_files/ywleeo__mark2__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:1500..4000",
+  "repo": "treyhunner/dotfiles",
+  "path": "AGENTS.md",
+  "sha": "605bea0079b1aece708bf1e569e039fe2eab7552",
+  "html_url": "https://github.com/treyhunner/dotfiles/blob/b30a9bc9c8c74b5ce1c90d8fcc51abad5a6d8ee3/AGENTS.md",
+  "file": "agents_files/treyhunner__dotfiles__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:1500..4000",
+  "repo": "moonbitlang/x",
+  "path": "AGENTS.md",
+  "sha": "f77dccfb18173c07c6d3158653c42d05034b16db",
+  "html_url": "https://github.com/moonbitlang/x/blob/85c67bd73c241170b57c8f481b516d51f724a103/AGENTS.md",
+  "file": "agents_files/moonbitlang__x__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:1500..4000",
+  "repo": "pankajudhas81/pi-claude-auth",
+  "path": "AGENTS.md",
+  "sha": "b156b00df527d1f705bb7932c51d847045ee7a5f",
+  "html_url": "https://github.com/pankajudhas81/pi-claude-auth/blob/30d7a44ab2ba7538fc610f437867318a73d05e40/AGENTS.md",
+  "file": "agents_files/pankajudhas81__pi-claude-auth__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:1500..4000",
+  "repo": "bearBoy80/opsflare",
+  "path": "AGENTS.md",
+  "sha": "87520fea18b08b863910fc295513f424810dc7ae",
+  "html_url": "https://github.com/bearBoy80/opsflare/blob/c331f52c4f75293eb0422e64df1a13bc07fa2382/AGENTS.md",
+  "file": "agents_files/bearBoy80__opsflare__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:1500..4000",
+  "repo": "geneontology/gocam-py",
+  "path": "AGENTS.md",
+  "sha": "ca32f317880c30e9608cb0a0b0b42e195054e8f4",
+  "html_url": "https://github.com/geneontology/gocam-py/blob/f72723e4be5bab2bce3fc911a40f7a38199dcdb5/AGENTS.md",
+  "file": "agents_files/geneontology__gocam-py__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:1500..4000",
+  "repo": "marcomuser/conformal",
+  "path": "AGENTS.md",
+  "sha": "ed1b9160a973b917e0bd89813e7f090d4f368a18",
+  "html_url": "https://github.com/marcomuser/conformal/blob/717cdbda0f5c4139bc05e91ae115c9c616bc02e2/AGENTS.md",
+  "file": "agents_files/marcomuser__conformal__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:1500..4000",
+  "repo": "ultralytics/magellan",
+  "path": "AGENTS.md",
+  "sha": "57630b8ffdc33870a073bc4d8f713aa003c4be24",
+  "html_url": "https://github.com/ultralytics/magellan/blob/817778ee43e40aed41c38e730b037afe7518474f/AGENTS.md",
+  "file": "agents_files/ultralytics__magellan__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:1500..4000",
+  "repo": "OpenEnvision/BlogrXiv",
+  "path": "AGENTS.md",
+  "sha": "cd23a1b34f817797ffd503c498da57295164ee3e",
+  "html_url": "https://github.com/OpenEnvision/BlogrXiv/blob/ffa6c1b553ab8913073395320f39f67464286a19/AGENTS.md",
+  "file": "agents_files/OpenEnvision__BlogrXiv__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:1500..4000",
+  "repo": "d-date/google-mlkit-swiftpm",
+  "path": "AGENTS.md",
+  "sha": "308e9afcb3f9597a3f55669d6d895af6dd2d32f8",
+  "html_url": "https://github.com/d-date/google-mlkit-swiftpm/blob/1518c5f8cd3b7b5e72d1520a45b89686d51fe5dd/AGENTS.md",
+  "file": "agents_files/d-date__google-mlkit-swiftpm__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:1500..4000",
+  "repo": "Kevandrew/sophia",
+  "path": "AGENTS.md",
+  "sha": "5344052394c5222e95e9048a0bebd967f1514f1d",
+  "html_url": "https://github.com/Kevandrew/sophia/blob/34a957b63a085c83bf1e5898213702ec21822e3a/AGENTS.md",
+  "file": "agents_files/Kevandrew__sophia__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:1500..4000",
+  "repo": "Xceptance/neodymium",
+  "path": "AGENTS.md",
+  "sha": "f9fad2b943c22bcc6c35d25d9f9c656a100b3127",
+  "html_url": "https://github.com/Xceptance/neodymium/blob/cdcb1e5c1e9bca3569f9ca59fa629f5d47f73c9f/AGENTS.md",
+  "file": "agents_files/Xceptance__neodymium__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:1500..4000",
+  "repo": "vteam-com/fMoney",
+  "path": "AGENTS.md",
+  "sha": "a2659581210bd4be7c3d555cc02cf01caf9208b7",
+  "html_url": "https://github.com/vteam-com/fMoney/blob/963b55b9e0545ce49f1868fad2cb06156f9cdd1e/AGENTS.md",
+  "file": "agents_files/vteam-com__fMoney__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:1500..4000",
+  "repo": "Availity/eslint-config-availity",
+  "path": "AGENTS.md",
+  "sha": "3662b15c32f769fdfa47e21e680f88ab0db43a6f",
+  "html_url": "https://github.com/Availity/eslint-config-availity/blob/97661e1635156752921c6cd8cb1d581927f68491/AGENTS.md",
+  "file": "agents_files/Availity__eslint-config-availity__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:1500..4000",
+  "repo": "theyudhiztira/indonesia-news-scraper",
+  "path": "AGENTS.md",
+  "sha": "713d125deb842fb7d646f659105a4aa14a8a31db",
+  "html_url": "https://github.com/theyudhiztira/indonesia-news-scraper/blob/aa96d13390a115da507e55b3151bf808592ddfff/AGENTS.md",
+  "file": "agents_files/theyudhiztira__indonesia-news-scraper__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:1500..4000",
+  "repo": "abh/ntppool",
+  "path": "AGENTS.md",
+  "sha": "7bed74d2795295eedf1cd8bfc7f77cc72ffdd98b",
+  "html_url": "https://github.com/abh/ntppool/blob/dfb2e48cd9e233e539f3ba34f4d37efb5252080b/AGENTS.md",
+  "file": "agents_files/abh__ntppool__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:1500..4000",
+  "repo": "realityone/docker-image-py",
+  "path": "AGENTS.md",
+  "sha": "23a2dad5bbf1b2608f3049615daabd653a773a6f",
+  "html_url": "https://github.com/realityone/docker-image-py/blob/0485d2eba96616a4b82b2dbceb59947e0e085e2d/AGENTS.md",
+  "file": "agents_files/realityone__docker-image-py__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:1500..4000",
+  "repo": "artwist-polyakov/polyakov-claude-skills",
+  "path": "AGENTS.md",
+  "sha": "101efbebd74ffa566c5c4d5b6c53c2da6518590d",
+  "html_url": "https://github.com/artwist-polyakov/polyakov-claude-skills/blob/197190a21d51e8d3aa4d13d0e35c25d83dd1f20e/AGENTS.md",
+  "file": "agents_files/artwist-polyakov__polyakov-claude-skills__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:1500..4000",
+  "repo": "HKPC-1967/spring-ant",
+  "path": "AGENTS.md",
+  "sha": "c4641583f9c8397d53efa8a2ae6f5694c6630f0f",
+  "html_url": "https://github.com/HKPC-1967/spring-ant/blob/329d9d02e8fde7b10508fded54ca305a3f8e1590/AGENTS.md",
+  "file": "agents_files/HKPC-1967__spring-ant__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:1500..4000",
+  "repo": "tractorjuice/wardleymap_math_model",
+  "path": "AGENTS.md",
+  "sha": "0dbcfe27b15941cf8de57fc170f6fad271e82e87",
+  "html_url": "https://github.com/tractorjuice/wardleymap_math_model/blob/65f7ce56e8ab93ec7b3214414c94cd16de618903/AGENTS.md",
+  "file": "agents_files/tractorjuice__wardleymap_math_model__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:4000..8000",
+  "repo": "ppgranger/token-saver",
+  "path": "AGENTS.md",
+  "sha": "2c63d4edc1d0629d3c3418a8420d02ddf0ff722f",
+  "html_url": "https://github.com/ppgranger/token-saver/blob/19d47b2cc19457c865f2414ad78f8efa80204b43/AGENTS.md",
+  "file": "agents_files/ppgranger__token-saver__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:4000..8000",
+  "repo": "next-open-ai/openclawx",
+  "path": "AGENTS.md",
+  "sha": "0bb50a9e42268a78d85555ef1b8e777c01956574",
+  "html_url": "https://github.com/next-open-ai/openclawx/blob/da7bce121950f5fae7079f2417c80c4ecf41400a/AGENTS.md",
+  "file": "agents_files/next-open-ai__openclawx__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:4000..8000",
+  "repo": "anglee0323/agy-switch",
+  "path": "AGENTS.md",
+  "sha": "530d4eeff6add40dc1b92b2c928c9c10f0d687ac",
+  "html_url": "https://github.com/anglee0323/agy-switch/blob/dbda9b51fb3d476522ed4f0260ac4fd3bea100bc/AGENTS.md",
+  "file": "agents_files/anglee0323__agy-switch__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:4000..8000",
+  "repo": "nsg/immich-distribution",
+  "path": "AGENTS.md",
+  "sha": "fa7358ec7611ffc90e23172ca0d9e2b5ee93d8d9",
+  "html_url": "https://github.com/nsg/immich-distribution/blob/cde07327159d1b839b4aadc911631502f9d76b70/AGENTS.md",
+  "file": "agents_files/nsg__immich-distribution__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:4000..8000",
+  "repo": "shopsys/shopsys",
+  "path": "AGENTS.md",
+  "sha": "d31bacfb7f7419010a62ccce9bea7a815f5fbe96",
+  "html_url": "https://github.com/shopsys/shopsys/blob/d9b7f858e0875d08c5ca301bd51115302feb4d71/AGENTS.md",
+  "file": "agents_files/shopsys__shopsys__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:4000..8000",
+  "repo": "bitdriftlabs/blob-stream",
+  "path": "AGENTS.md",
+  "sha": "c283a52855027ad5a517ab686fc1a4b812158cef",
+  "html_url": "https://github.com/bitdriftlabs/blob-stream/blob/9b813bc31f51045b3324b1efce73a82340c5563f/AGENTS.md",
+  "file": "agents_files/bitdriftlabs__blob-stream__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:4000..8000",
+  "repo": "yjl9903/lnovel",
+  "path": "AGENTS.md",
+  "sha": "860a8280c4ba756244fa0f1957fc9e2fb3920d08",
+  "html_url": "https://github.com/yjl9903/lnovel/blob/3cfe39a80621fea4ee2ec3384ee631ec793b9a42/AGENTS.md",
+  "file": "agents_files/yjl9903__lnovel__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:4000..8000",
+  "repo": "pawcoding/astro-loader-pocketbase",
+  "path": "AGENTS.md",
+  "sha": "7c3aeb4861764776682f87608dc2b33a1740b673",
+  "html_url": "https://github.com/pawcoding/astro-loader-pocketbase/blob/91614e979dd71f36e7baf7e43ac00937e4f43bc9/AGENTS.md",
+  "file": "agents_files/pawcoding__astro-loader-pocketbase__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:4000..8000",
+  "repo": "MrFrenik/gunslinger",
+  "path": "AGENTS.md",
+  "sha": "ed8ea1902c0c636781a277206e7dbbe5e83f75dc",
+  "html_url": "https://github.com/MrFrenik/gunslinger/blob/a38d59166ec883f3295f208d58da181fc8f6ef69/AGENTS.md",
+  "file": "agents_files/MrFrenik__gunslinger__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:4000..8000",
+  "repo": "pomerium/documentation",
+  "path": "AGENTS.md",
+  "sha": "0e87fa9d4c5d14754a98678a71b38d70de607e71",
+  "html_url": "https://github.com/pomerium/documentation/blob/d81243f312c08482c98ac7ebbed9ee32151807e1/AGENTS.md",
+  "file": "agents_files/pomerium__documentation__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:4000..8000",
+  "repo": "NVIDIA/deepops",
+  "path": "AGENTS.md",
+  "sha": "245be2db723d481effa45812ff2f572d9e12a970",
+  "html_url": "https://github.com/NVIDIA/deepops/blob/e85fe321356a5155c91a9b71cd98f422a0b5391a/AGENTS.md",
+  "file": "agents_files/NVIDIA__deepops__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:4000..8000",
+  "repo": "pulumi/pulumi-dotnet",
+  "path": "AGENTS.md",
+  "sha": "92f9d1ff2d5965c0e678c6f1709df34101ac4fbf",
+  "html_url": "https://github.com/pulumi/pulumi-dotnet/blob/12f8c4f95a460f7169f13b96ace3f6d047f7d9d3/AGENTS.md",
+  "file": "agents_files/pulumi__pulumi-dotnet__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:4000..8000",
+  "repo": "BorisVSchmid/numerai-vladthestaker",
+  "path": "AGENTS.md",
+  "sha": "fd84aac185d0119e9d96f4ef34626f10baf903ad",
+  "html_url": "https://github.com/BorisVSchmid/numerai-vladthestaker/blob/fb0a570e7e09438ca878a821eaf2fc0a4308c2d3/AGENTS.md",
+  "file": "agents_files/BorisVSchmid__numerai-vladthestaker__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:4000..8000",
+  "repo": "ViewComfy/ViewComfy",
+  "path": "AGENTS.md",
+  "sha": "1f4720eda60e18bfe99d5a91d226aa255f5d29cd",
+  "html_url": "https://github.com/ViewComfy/ViewComfy/blob/fc0ba28a745231e98fd21688cdbb392800a8eb7b/AGENTS.md",
+  "file": "agents_files/ViewComfy__ViewComfy__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:4000..8000",
+  "repo": "ephes/django-cast",
+  "path": "AGENTS.md",
+  "sha": "ea46729b3ec408540ac221b49cece2ec1a7360ff",
+  "html_url": "https://github.com/ephes/django-cast/blob/ff692f90e30a9e2f43862156f80d15b8983a8a7a/AGENTS.md",
+  "file": "agents_files/ephes__django-cast__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:4000..8000",
+  "repo": "GainSec/AutoProber",
+  "path": "AGENTS.md",
+  "sha": "1d14cbab0ef5e344d67f151c6e18a93099381d32",
+  "html_url": "https://github.com/GainSec/AutoProber/blob/ff0e01fe556c7e183d46462dbc1ebce7b6a10e74/AGENTS.md",
+  "file": "agents_files/GainSec__AutoProber__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:4000..8000",
+  "repo": "britchie4/Loupe",
+  "path": "AGENTS.md",
+  "sha": "a62998032af9415f7c4800c70d09ac059aebcc3d",
+  "html_url": "https://github.com/britchie4/Loupe/blob/0fb73b5a54648930109f30f2ac29cef44525c980/AGENTS.md",
+  "file": "agents_files/britchie4__Loupe__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:4000..8000",
+  "repo": "honishi/Hakumai",
+  "path": "AGENTS.md",
+  "sha": "54303b8138af9772fa6d213c14a9b4e2dc417ca5",
+  "html_url": "https://github.com/honishi/Hakumai/blob/20cfa667d188c1611140992602025d90169f47cd/AGENTS.md",
+  "file": "agents_files/honishi__Hakumai__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:4000..8000",
+  "repo": "arncore/konvoy",
+  "path": "AGENTS.md",
+  "sha": "2bbb10173b3ec2bfbbae0338fb23dbd9db97012f",
+  "html_url": "https://github.com/arncore/konvoy/blob/a8cbc55bccfacbe2cb60d3cbd8aa6011b2f9f487/AGENTS.md",
+  "file": "agents_files/arncore__konvoy__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:4000..8000",
+  "repo": "nextdns/nextdns",
+  "path": "AGENTS.md",
+  "sha": "43a28340581aa8bee6e28e17848476c617ddd6b0",
+  "html_url": "https://github.com/nextdns/nextdns/blob/feeedce908322a541ffdaf70063c16441312f192/AGENTS.md",
+  "file": "agents_files/nextdns__nextdns__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:8000..16000",
+  "repo": "KunoLu/sbtd-plugins",
+  "path": "AGENTS.md",
+  "sha": "1a24d086c31b4086de096182df0f41d6ac764c13",
+  "html_url": "https://github.com/KunoLu/sbtd-plugins/blob/a4e711383dd33f603db2e123988a2c80f3205f05/AGENTS.md",
+  "file": "agents_files/KunoLu__sbtd-plugins__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:8000..16000",
+  "repo": "sveneisenschmidt/n8n-openai-bridge",
+  "path": "AGENTS.md",
+  "sha": "dbabfc2c2dc367608f6ae568fa27e5e3c2da5b9f",
+  "html_url": "https://github.com/sveneisenschmidt/n8n-openai-bridge/blob/98976fe041d5ca6ce4dc01cfc63a60ba3012350e/AGENTS.md",
+  "file": "agents_files/sveneisenschmidt__n8n-openai-bridge__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:8000..16000",
+  "repo": "vmDeshpande/ai-agent-automation",
+  "path": "AGENTS.md",
+  "sha": "9000eac4b1780a90e553eaaff533037d17cee681",
+  "html_url": "https://github.com/vmDeshpande/ai-agent-automation/blob/86b6072dd4c9bf6abe68c26c4265b3296a368737/AGENTS.md",
+  "file": "agents_files/vmDeshpande__ai-agent-automation__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:8000..16000",
+  "repo": "HiThink-Research/GAGE",
+  "path": "AGENTS.md",
+  "sha": "7bfe224f2e024d186ce91a163314fc6f141e20d1",
+  "html_url": "https://github.com/HiThink-Research/GAGE/blob/83cc359dbb3056ea8f4090f4c398ba2f066231a0/AGENTS.md",
+  "file": "agents_files/HiThink-Research__GAGE__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:8000..16000",
+  "repo": "qawolf/cli",
+  "path": "AGENTS.md",
+  "sha": "3f665756f7f5acbbfe7fe57d5acc89428836ea8b",
+  "html_url": "https://github.com/qawolf/cli/blob/c2a6262d4eb1850ac03dded415f7993b84c99e1d/AGENTS.md",
+  "file": "agents_files/qawolf__cli__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:8000..16000",
+  "repo": "OpenGGF/OpenGGF",
+  "path": "AGENTS.md",
+  "sha": "2e9aa6d4c7df0d6d8eb6074e8f40146ead56c877",
+  "html_url": "https://github.com/OpenGGF/OpenGGF/blob/498c51674ea8de3a84904b0eabe5afd218b9927d/AGENTS.md",
+  "file": "agents_files/OpenGGF__OpenGGF__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:8000..16000",
+  "repo": "CESNET/ndk-fpga",
+  "path": "AGENTS.md",
+  "sha": "3c59cfea7166c05b5aa53bdec443c3e720eaf521",
+  "html_url": "https://github.com/CESNET/ndk-fpga/blob/dc37bc8333047fdf063a24db259de20b91c51312/AGENTS.md",
+  "file": "agents_files/CESNET__ndk-fpga__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:8000..16000",
+  "repo": "sergebulaev/youtube-skills",
+  "path": "AGENTS.md",
+  "sha": "5095d831f6e8f55e2f3a3f166b4b9edd640ab3be",
+  "html_url": "https://github.com/sergebulaev/youtube-skills/blob/73cd16a05b589d755bf2eef3e4ee9db9e2df5494/AGENTS.md",
+  "file": "agents_files/sergebulaev__youtube-skills__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:8000..16000",
+  "repo": "Andersbakken/rtags",
+  "path": "AGENTS.md",
+  "sha": "54c805f339e94f333fbfefe86194bf4f6f945b69",
+  "html_url": "https://github.com/Andersbakken/rtags/blob/2e29b5bb8df20814335c45c158d3ee609c2d6475/AGENTS.md",
+  "file": "agents_files/Andersbakken__rtags__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:8000..16000",
+  "repo": "Radexito/tidal-dl-ng-For-DJ",
+  "path": "AGENTS.md",
+  "sha": "df119742958909df9b2e4371ed0783f08e947f69",
+  "html_url": "https://github.com/Radexito/tidal-dl-ng-For-DJ/blob/30f00f2b733083d9f404367faaad02b40d6fce46/AGENTS.md",
+  "file": "agents_files/Radexito__tidal-dl-ng-For-DJ__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:8000..16000",
+  "repo": "tphakala/birda",
+  "path": "AGENTS.md",
+  "sha": "adc7a204fc404830a0208931e1a8d185c3942bc3",
+  "html_url": "https://github.com/tphakala/birda/blob/fca281c526872c27f88762e396645863b93d7021/AGENTS.md",
+  "file": "agents_files/tphakala__birda__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:8000..16000",
+  "repo": "saubakirov/KZ-IT-telegram-list",
+  "path": "AGENTS.md",
+  "sha": "729fba1dea3e730781ae8a5c1a71d8ca96171cad",
+  "html_url": "https://github.com/saubakirov/KZ-IT-telegram-list/blob/13a88a07544e3d13617461f2aa1687df6f76125b/AGENTS.md",
+  "file": "agents_files/saubakirov__KZ-IT-telegram-list__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:8000..16000",
+  "repo": "daddodev/pimpmyrice",
+  "path": "AGENTS.md",
+  "sha": "ec0c4c39204876a7283e5f60ff7c878f3d4885f6",
+  "html_url": "https://github.com/daddodev/pimpmyrice/blob/f8ad45fa453358c1d2c52997c8e0d465281f5bfd/AGENTS.md",
+  "file": "agents_files/daddodev__pimpmyrice__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:8000..16000",
+  "repo": "arnica/depsguard",
+  "path": "AGENTS.md",
+  "sha": "c873f73835a0687133225418b6a447e6949aeed4",
+  "html_url": "https://github.com/arnica/depsguard/blob/27be4882905a04e0db6284e858902b031d42a44b/AGENTS.md",
+  "file": "agents_files/arnica__depsguard__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:8000..16000",
+  "repo": "Pioreactor/pioreactor",
+  "path": "AGENTS.md",
+  "sha": "286d337f91f7210a658773c4674914371b8a3b02",
+  "html_url": "https://github.com/Pioreactor/pioreactor/blob/a5cf36de80ba44bccd342ed7339c6847b08d6050/AGENTS.md",
+  "file": "agents_files/Pioreactor__pioreactor__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:8000..16000",
+  "repo": "superagent-ai/gateway",
+  "path": "AGENTS.md",
+  "sha": "2654a254cd01aa576caeb65cfc836d3859811510",
+  "html_url": "https://github.com/superagent-ai/gateway/blob/041b08a658ffd0ae587d7065ebb6f4d2ccfc1a18/AGENTS.md",
+  "file": "agents_files/superagent-ai__gateway__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:8000..16000",
+  "repo": "osate/osate2",
+  "path": "AGENTS.md",
+  "sha": "03245f411aec5cc26e248341c462aa98d7e87ea2",
+  "html_url": "https://github.com/osate/osate2/blob/8a3f00a7212b35542a902e486f9364480c164ab2/AGENTS.md",
+  "file": "agents_files/osate__osate2__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:8000..16000",
+  "repo": "validatedpatterns/docs",
+  "path": "AGENTS.md",
+  "sha": "1b6d7f96d5c4a35bb36cf79c75a500c28e258190",
+  "html_url": "https://github.com/validatedpatterns/docs/blob/d32ab9f10bd733fc86c03a19960d21c4fa0f58a3/AGENTS.md",
+  "file": "agents_files/validatedpatterns__docs__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:8000..16000",
+  "repo": "JKorf/OKX.Net",
+  "path": "AGENTS.md",
+  "sha": "ed2199502288c09eece8a9f7cea6691df176e6e6",
+  "html_url": "https://github.com/JKorf/OKX.Net/blob/0e02be05ced6392174f313885fd9b510d21c805c/AGENTS.md",
+  "file": "agents_files/JKorf__OKX.Net__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:8000..16000",
+  "repo": "CyberBoyAyush/zenox",
+  "path": "AGENTS.md",
+  "sha": "40e4695de00ad557a9840704755094ec517d8b6a",
+  "html_url": "https://github.com/CyberBoyAyush/zenox/blob/e6dd816755bf6134caeb6ec70e5b9d128f37b1d5/AGENTS.md",
+  "file": "agents_files/CyberBoyAyush__zenox__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:>16000",
+  "repo": "Adamant-im/adamant",
+  "path": "AGENTS.md",
+  "sha": "3ccbde9ebace303f0f0ef8143d913d22a37e3f4b",
+  "html_url": "https://github.com/Adamant-im/adamant/blob/340ef1f63058fde1aaad2997d8e39079a06cbe91/AGENTS.md",
+  "file": "agents_files/Adamant-im__adamant__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:>16000",
+  "repo": "jasp-stats/jaspMetaAnalysis",
+  "path": "AGENTS.md",
+  "sha": "36ff535f3298a9dfc93c73ec0b087d0ad4accb52",
+  "html_url": "https://github.com/jasp-stats/jaspMetaAnalysis/blob/9021cbd1f4974584a93cc8033b9939c897c3e4ae/AGENTS.md",
+  "file": "agents_files/jasp-stats__jaspMetaAnalysis__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:>16000",
+  "repo": "Niall-Young/Canvasight",
+  "path": "AGENTS.md",
+  "sha": "53ecc25d3ce5354ce4cae6ecda4a1d3c181304c1",
+  "html_url": "https://github.com/Niall-Young/Canvasight/blob/f47e0bfe60a0ab990ca66be1102f351bf7774a6b/AGENTS.md",
+  "file": "agents_files/Niall-Young__Canvasight__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:>16000",
+  "repo": "VahidTa/firewall_migration_tool",
+  "path": "AGENTS.md",
+  "sha": "c44cb016ebb8ab767eca47b8754bee3a0c097dee",
+  "html_url": "https://github.com/VahidTa/firewall_migration_tool/blob/6d8c27f693f113745a08e906330ed99c0a9c8fe9/AGENTS.md",
+  "file": "agents_files/VahidTa__firewall_migration_tool__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:>16000",
+  "repo": "RichardKnop/minisql",
+  "path": "AGENTS.md",
+  "sha": "54437e083b5433f5fd3db1f26da8bc6c0053a69a",
+  "html_url": "https://github.com/RichardKnop/minisql/blob/e707ba2ac1b04c332739b2f1fd77393f393119b7/AGENTS.md",
+  "file": "agents_files/RichardKnop__minisql__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:>16000",
+  "repo": "bit-of-a-shambles/open-tender-watch",
+  "path": "AGENTS.md",
+  "sha": "e56bfbb3ba317748a7eda9e0cea10c8b15b447a8",
+  "html_url": "https://github.com/bit-of-a-shambles/open-tender-watch/blob/fe93a4b95e56cbc401b159828c4de1bb2e91b537/AGENTS.md",
+  "file": "agents_files/bit-of-a-shambles__open-tender-watch__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:>16000",
+  "repo": "jaxparrow07/liquidglass-kde-widgets",
+  "path": "AGENTS.md",
+  "sha": "10ac52e92cb5b3b4279c0562c14993116b0cd30e",
+  "html_url": "https://github.com/jaxparrow07/liquidglass-kde-widgets/blob/0d1b9fe34ca3d21fc6f31b599990490d637ce8f8/AGENTS.md",
+  "file": "agents_files/jaxparrow07__liquidglass-kde-widgets__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:>16000",
+  "repo": "sparrowhawk-labs/pinion-ui",
+  "path": "AGENTS.md",
+  "sha": "943f224bc068168a0448030ae28e20fd41151874",
+  "html_url": "https://github.com/sparrowhawk-labs/pinion-ui/blob/677b8dc733f3709aa7f8555c7bb656cc6849d7c5/AGENTS.md",
+  "file": "agents_files/sparrowhawk-labs__pinion-ui__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:>16000",
+  "repo": "3cityRUG/TRUG",
+  "path": "AGENTS.md",
+  "sha": "dc53b3b1ddb22f684bdf8d094450ab157e784244",
+  "html_url": "https://github.com/3cityRUG/TRUG/blob/f2e807b177d29523021f8ccc21c5146a50195792/AGENTS.md",
+  "file": "agents_files/3cityRUG__TRUG__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:>16000",
+  "repo": "Flowscape-UI/core-sdk",
+  "path": "AGENTS.md",
+  "sha": "606adc5bd9e8389bd6c768821c2deaf4918a966e",
+  "html_url": "https://github.com/Flowscape-UI/core-sdk/blob/2d65f839129755027a87bfb051d9863669b607fc/AGENTS.md",
+  "file": "agents_files/Flowscape-UI__core-sdk__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:>16000",
+  "repo": "codrops/OnScrollColumnsRows",
+  "path": "AGENTS.md",
+  "sha": "02a4978c68ef5bc628795604ef8dcebd0a92c308",
+  "html_url": "https://github.com/codrops/OnScrollColumnsRows/blob/33001fa32bbc04443f9eb8e325d6ef13136fc16f/AGENTS.md",
+  "file": "agents_files/codrops__OnScrollColumnsRows__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:>16000",
+  "repo": "503133214/SurviveXMUM",
+  "path": "AGENTS.md",
+  "sha": "9b7945c54f86a9fdcff19ba5f4890647295114bf",
+  "html_url": "https://github.com/503133214/SurviveXMUM/blob/77a16bf35a97ba00bbd29661ae2ff158ec030ddd/AGENTS.md",
+  "file": "agents_files/503133214__SurviveXMUM__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:>16000",
+  "repo": "Valid-Systems/SolidKG",
+  "path": "AGENTS.md",
+  "sha": "5227c1a1f5022f4207161d484049ea51691e0734",
+  "html_url": "https://github.com/Valid-Systems/SolidKG/blob/d8aa8f9068295387bdcc66b3e979f8987a8d0050/AGENTS.md",
+  "file": "agents_files/Valid-Systems__SolidKG__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:>16000",
+  "repo": "hakari-bench/hakari-bench",
+  "path": "AGENTS.md",
+  "sha": "0ede43d0d103e49038ea939fdf5c154aef591ef2",
+  "html_url": "https://github.com/hakari-bench/hakari-bench/blob/9b98cbc00bfbc7fd5d604a96497311bcbf95b608/AGENTS.md",
+  "file": "agents_files/hakari-bench__hakari-bench__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:>16000",
+  "repo": "mouse-lin/finesse-brief",
+  "path": "AGENTS.md",
+  "sha": "6ec8efcc21a29a598f92938d940f766cfa949096",
+  "html_url": "https://github.com/mouse-lin/finesse-brief/blob/d1f45618b605587b882a20d72eb0d8ec666990bd/AGENTS.md",
+  "file": "agents_files/mouse-lin__finesse-brief__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:>16000",
+  "repo": "tagorr/ltsc-clean",
+  "path": "AGENTS.md",
+  "sha": "2c54568f1201736e6b354bff07d8dd86a812a322",
+  "html_url": "https://github.com/tagorr/ltsc-clean/blob/0c1d6df88732d2d00edae69d33cfd3b9a795b3b7/AGENTS.md",
+  "file": "agents_files/tagorr__ltsc-clean__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:>16000",
+  "repo": "jdevalk/seo-graph",
+  "path": "AGENTS.md",
+  "sha": "04c0b98931685fff78c8dcc440804ce9c7d42aa9",
+  "html_url": "https://github.com/jdevalk/seo-graph/blob/c33eb1e120c620970042e28f1332fc90c30125e6/AGENTS.md",
+  "file": "agents_files/jdevalk__seo-graph__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:>16000",
+  "repo": "sandros94/comark-tiptap",
+  "path": "AGENTS.md",
+  "sha": "abfadeddc5267514281a4a539cf37c71cf4bb27a",
+  "html_url": "https://github.com/sandros94/comark-tiptap/blob/eadc63bbec6dc83f3f140545a4f37bccc1733823/AGENTS.md",
+  "file": "agents_files/sandros94__comark-tiptap__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:>16000",
+  "repo": "koaning/wigglystuff",
+  "path": "AGENTS.md",
+  "sha": "4800b33b531dbaf8f261ba1b229349339cbfbdc6",
+  "html_url": "https://github.com/koaning/wigglystuff/blob/5c2f3fb6e0586ca06b6a851cd2e41d16e0387c82/AGENTS.md",
+  "file": "agents_files/koaning__wigglystuff__AGENTS.md",
+  "fetched": true
+ },
+ {
+  "stratum": "size:>16000",
+  "repo": "manusa/podman-mcp-server",
+  "path": "AGENTS.md",
+  "sha": "04b976d3d2b3e0d779af13b809f243fd5ae0ab66",
+  "html_url": "https://github.com/manusa/podman-mcp-server/blob/5fd49dbb496f74216c8c464d7c0cf84c9a9bd848/AGENTS.md",
+  "file": "agents_files/manusa__podman-mcp-server__AGENTS.md",
+  "fetched": true
+ }
+]

@@ -1,0 +1,96 @@
+diff --git a/apps/dashboard/src/components/translations/hooks/use-translation-list-logic.ts b/apps/dashboard/src/components/translations/hooks/use-translation-list-logic.ts
+index 4813e973102f..4a64ad26c17d 100644
+--- a/apps/dashboard/src/components/translations/hooks/use-translation-list-logic.ts
++++ b/apps/dashboard/src/components/translations/hooks/use-translation-list-logic.ts
+@@ -1,12 +1,18 @@
+ import { useFetchTranslationList } from '@/hooks/use-fetch-translation-list';
+ import { useTranslationsUrlState } from './use-translations-url-state';
+ 
+-export function useTranslationListLogic() {
++interface UseTranslationListLogicOptions {
++  enabled?: boolean;
++}
++
++export function useTranslationListLogic(options: UseTranslationListLogicOptions = {}) {
++  const { enabled = true } = options;
++  
+   const { filterValues, handleFiltersChange, resetFilters } = useTranslationsUrlState({
+     total: 0,
+   });
+ 
+-  const { data, isPending, isFetching, refetch } = useFetchTranslationList(filterValues);
++  const { data, isPending, isFetching, refetch } = useFetchTranslationList(filterValues, { enabled });
+ 
+   const areFiltersApplied = filterValues.query !== '';
+ 
+diff --git a/apps/dashboard/src/components/translations/translation-list.tsx b/apps/dashboard/src/components/translations/translation-list.tsx
+index 376ec09e8896..6f4967c39f7b 100644
+--- a/apps/dashboard/src/components/translations/translation-list.tsx
++++ b/apps/dashboard/src/components/translations/translation-list.tsx
+@@ -184,12 +184,21 @@ function TranslationListContainer({
+ type TranslationListProps = HTMLAttributes<HTMLDivElement>;
+ 
+ export function TranslationList(props: TranslationListProps) {
+-  const { filterValues, handleFiltersChange, resetFilters, data, isPending, isFetching, areFiltersApplied } =
+-    useTranslationListLogic();
+-
+   const navigate = useNavigate();
+   const { currentEnvironment } = useEnvironment();
+   const { data: organizationSettings } = useFetchOrganizationSettings();
++  const { subscription } = useFetchSubscription();
++
++  const canUseTranslationFeature =
++    getFeatureForTierAsBoolean(
++      FeatureNameEnum.AUTO_TRANSLATIONS,
++      subscription?.apiServiceLevel || ApiServiceLevelEnum.FREE
++    ) &&
++    (!IS_SELF_HOSTED || IS_ENTERPRISE);
++
++  // Only make API call if user has proper tier
++  const { filterValues, handleFiltersChange, resetFilters, data, isPending, isFetching, areFiltersApplied } =
++    useTranslationListLogic({ enabled: canUseTranslationFeature });
+ 
+   const handleTranslationClick = (translation: TranslationGroup) => {
+     if (currentEnvironment?.slug) {
+@@ -210,15 +219,6 @@ export function TranslationList(props: TranslationListProps) {
+   const { deleteModalTranslation, isDeletePending, handleDeleteClick, handleDeleteConfirm, handleDeleteCancel } =
+     useDeleteTranslationModal();
+ 
+-  const { subscription } = useFetchSubscription();
+-
+-  const canUseTranslationFeature =
+-    getFeatureForTierAsBoolean(
+-      FeatureNameEnum.AUTO_TRANSLATIONS,
+-      subscription?.apiServiceLevel || ApiServiceLevelEnum.FREE
+-    ) &&
+-    (!IS_SELF_HOSTED || IS_ENTERPRISE);
+-
+   const limit = data?.limit || DEFAULT_TRANSLATIONS_LIMIT;
+ 
+   if (!canUseTranslationFeature) {
+diff --git a/apps/dashboard/src/hooks/use-fetch-translation-list.ts b/apps/dashboard/src/hooks/use-fetch-translation-list.ts
+index b7c365470cb5..830848c737e6 100644
+--- a/apps/dashboard/src/hooks/use-fetch-translation-list.ts
++++ b/apps/dashboard/src/hooks/use-fetch-translation-list.ts
+@@ -3,7 +3,12 @@ import { getTranslationsList, TranslationsFilter } from '@/api/translations';
+ import { useEnvironment } from '@/context/environment/hooks';
+ import { QueryKeys } from '@/utils/query-keys';
+ 
+-export const useFetchTranslationList = (filterValues: TranslationsFilter) => {
++interface UseFetchTranslationListOptions {
++  enabled?: boolean;
++}
++
++export const useFetchTranslationList = (filterValues: TranslationsFilter, options: UseFetchTranslationListOptions = {}) => {
++  const { enabled = true } = options;
+   const { currentEnvironment } = useEnvironment();
+ 
+   return useQuery({
+@@ -18,6 +23,6 @@ export const useFetchTranslationList = (filterValues: TranslationsFilter) => {
+         ...filterValues,
+       });
+     },
+-    enabled: !!currentEnvironment,
++    enabled: !!currentEnvironment && enabled,
+   });
+ };

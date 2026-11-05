@@ -1,0 +1,107 @@
+{
+ "decisions": [
+  {
+   "kind": "security_policy",
+   "what": "SSL/TLS証明書の検証に失敗した場合、ユーザーに確認せず自動的に検証なし(--insecure / --no-check-certificate)でダウンロードを再試行するフォールバックを採用した。",
+   "alternatives": "検証失敗時はエラーで停止する、別のCA束を使う、ユーザーに確認を求める等。",
+   "evidence": "+            curl -fSL --retry $retries -H \"User-Agent: $USER_AGENT\" --insecure --connect-timeout \"$timeout\" --max-time \"$timeout\" \"$url\" -o \"$output\"",
+   "file": "install.sh",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  },
+  {
+   "kind": "security_policy",
+   "what": "GitHub直結に加え、hub.gitmirror.com・proxy.gitwarp.com・gh.200112.xyzという特定の第三者ミラーをバイナリ配布元として自動フォールバック対象に採用した。",
+   "alternatives": "ミラーを使わない、ユーザーに明示指定を必須にする、チェックサム検証と併用する等。",
+   "evidence": "+PROXY_CANDIDATES=\"https://hub.gitmirror.com/ https://proxy.gitwarp.com/ https://gh.200112.xyz/\"",
+   "file": "install.sh",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "discussed",
+   "trace_quote": "api should also proxiable"
+  },
+  {
+   "kind": "error_policy",
+   "what": "ダウンロードの既定タイムアウトを90秒(プロキシ探索時は8秒)とし、人間が明示指定した「10秒」とは異なる値を実装した。",
+   "alternatives": "要求通り全箇所で10秒に統一する。",
+   "evidence": "+DOWNLOAD_DEFAULT_TIMEOUT=\"${DOWNLOAD_TIMEOUT:-90}\"",
+   "file": "install.sh",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "requested",
+   "trace_quote": "timeout 10"
+  },
+  {
+   "kind": "security_policy",
+   "what": "インストール/アンインストール時に権限不足を検知すると、ユーザー確認なしに自動でsudoコマンドを実行する仕様とした。",
+   "alternatives": "sudoを自動実行せず、権限不足時はユーザーに再実行を促すだけにする。",
+   "evidence": "+                if sudo mv \"$temp_file\" \"$target_path\"; then",
+   "file": "install.sh",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "requested",
+   "trace_quote": "check permission and auto try sudo"
+  },
+  {
+   "kind": "security_policy",
+   "what": "ダウンロードしたバイナリのチェックサムや署名検証を一切行わず、実行権限を付与してそのままシステムディレクトリに配置する設計とした。",
+   "alternatives": "SHA256チェックサムやGPG署名を検証してから配置する。",
+   "evidence": "+    if ! mv \"$temp_file\" \"$target_path\" 2>/dev/null; then",
+   "file": "install.sh",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  },
+  {
+   "kind": "architecture",
+   "what": "プロキシ/ミラーの疎通確認に、インストール対象バージョンとは無関係な固定リリース(v4.0.0のcreate-task.sh)を毎回プローブ対象として使う実装にした。",
+   "alternatives": "疎通確認専用の軽量エンドポイントを使う、要求バージョンのアセットで確認する。",
+   "evidence": "+        test_url=\"${mirror}https://github.com/NewFuture/DDNS/releases/download/v4.0.0/create-task.sh\"",
+   "file": "install.sh",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  },
+  {
+   "kind": "api_contract",
+   "what": "バージョンを明示指定した場合は既存インストールがあっても --force なしで上書きするという新しいCLI挙動を定義した。",
+   "alternatives": "バージョン指定の有無に関わらず既存インストール時は常に --force を要求する。",
+   "evidence": "+        if [ \"$USER_VERSION_SPECIFIED\" = true ]; then",
+   "file": "install.sh",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  },
+  {
+   "kind": "scope",
+   "what": "依頼されていたインストール機能に加えて、sudoでのファイル削除を伴う --uninstall アンインストール機能を新たに追加した。",
+   "alternatives": "アンインストールはドキュメントでの手動rm案内のみに留める。",
+   "evidence": "+            --uninstall          Uninstall the ddns executable",
+   "file": "install.sh",
+   "stage": 3,
+   "confidence": "low",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "user_facing",
+   "what": "READMEのインストール方法の推奨順序を変更し、Dockerを「(推奨)」として先頭に据え、二進制版の一键安装スクリプトの利用を新たに推奨する記述を追加した。",
+   "alternatives": "既存の推奨順序(二進制・pip・源码・Docker)を維持する、スクリプト利用を推奨としない。",
+   "evidence": "+- #### Docker（推荐）",
+   "file": "README.md",
+   "stage": 2,
+   "confidence": "low",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  }
+ ],
+ "note": "複数の空の '@copilot' インラインコメントがあり、実際の指示内容は本diffに含まれていないため、その内容に紐づく可能性のある決定(例: --uninstall機能、--install-dir/--proxyオプションの追加)はhuman_trace=noneとした。timeout関連は人間が『timeout 10』と明示したにもかかわらず実装が90秒/8秒になっている点が目立つ差異。",
+ "sid": "A014",
+ "truncated": false,
+ "n_human_text": 19
+}

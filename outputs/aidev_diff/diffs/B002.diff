@@ -1,0 +1,374 @@
+diff --git a/src/Build.UnitTests/BackEnd/ProjectTelemetry_Tests.cs b/src/Build.UnitTests/BackEnd/ProjectTelemetry_Tests.cs
+new file mode 100644
+index 00000000000..51d20a9b041
+--- /dev/null
++++ b/src/Build.UnitTests/BackEnd/ProjectTelemetry_Tests.cs
+@@ -0,0 +1,184 @@
++// Licensed to the .NET Foundation under one or more agreements.
++// The .NET Foundation licenses this file to you under the MIT license.
++
++using System;
++using Microsoft.Build.BackEnd.Logging;
++using Microsoft.Build.Evaluation;
++using Microsoft.Build.Framework;
++using Microsoft.Build.Utilities;
++using Shouldly;
++using Xunit;
++
++namespace Microsoft.Build.UnitTests.BackEnd
++{
++    /// <summary>
++    /// Tests for ProjectTelemetry class
++    /// </summary>
++    public class ProjectTelemetry_Tests
++    {
++        /// <summary>
++        /// Test that TrackTaskSubclassing tracks sealed tasks that derive from Microsoft tasks
++        /// </summary>
++        [Fact]
++        public void TrackTaskSubclassing_TracksSealedTasks()
++        {
++            var telemetry = new ProjectTelemetry();
++            
++            // Sealed task should be tracked if it derives from Microsoft task
++            telemetry.TrackTaskSubclassing(typeof(TestSealedTask), isMicrosoftOwned: false);
++            
++            var properties = GetMSBuildTaskSubclassProperties(telemetry);
++            
++            // Should track sealed tasks that inherit from Microsoft tasks
++            properties.Count.ShouldBe(1);
++            properties.ShouldContainKey("Microsoft_Build_Utilities_Task");
++            properties["Microsoft_Build_Utilities_Task"].ShouldBe("1");
++        }
++
++        /// <summary>
++        /// Test that TrackTaskSubclassing tracks subclasses of Microsoft tasks
++        /// </summary>
++        [Fact]
++        public void TrackTaskSubclassing_TracksSubclass()
++        {
++            var telemetry = new ProjectTelemetry();
++            
++            // User task inheriting from Microsoft.Build.Utilities.Task
++            telemetry.TrackTaskSubclassing(typeof(UserTask), isMicrosoftOwned: false);
++            
++            var properties = GetMSBuildTaskSubclassProperties(telemetry);
++            
++            // Should track the Microsoft.Build.Utilities.Task base class
++            properties.Count.ShouldBe(1);
++            properties.ShouldContainKey("Microsoft_Build_Utilities_Task");
++            properties["Microsoft_Build_Utilities_Task"].ShouldBe("1");
++        }
++
++        /// <summary>
++        /// Test that TrackTaskSubclassing does not track Microsoft-owned tasks
++        /// </summary>
++        [Fact]
++        public void TrackTaskSubclassing_IgnoresMicrosoftOwnedTasks()
++        {
++            var telemetry = new ProjectTelemetry();
++            
++            // Microsoft-owned task should not be tracked even if non-sealed
++            telemetry.TrackTaskSubclassing(typeof(UserTask), isMicrosoftOwned: true);
++            
++            var properties = GetMSBuildTaskSubclassProperties(telemetry);
++            
++            // Should not track Microsoft-owned tasks
++            properties.Count.ShouldBe(0);
++        }
++
++        /// <summary>
++        /// Test that TrackTaskSubclassing tracks multiple subclasses
++        /// </summary>
++        [Fact]
++        public void TrackTaskSubclassing_TracksMultipleSubclasses()
++        {
++            var telemetry = new ProjectTelemetry();
++            
++            // Track multiple user tasks
++            telemetry.TrackTaskSubclassing(typeof(UserTask), isMicrosoftOwned: false);
++            telemetry.TrackTaskSubclassing(typeof(AnotherUserTask), isMicrosoftOwned: false);
++            
++            var properties = GetMSBuildTaskSubclassProperties(telemetry);
++            
++            // Should aggregate counts for the same base class
++            properties.Count.ShouldBe(1);
++            properties["Microsoft_Build_Utilities_Task"].ShouldBe("2");
++        }
++
++        /// <summary>
++        /// Test that TrackTaskSubclassing handles null gracefully
++        /// </summary>
++        [Fact]
++        public void TrackTaskSubclassing_HandlesNull()
++        {
++            var telemetry = new ProjectTelemetry();
++            
++#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type
++            telemetry.TrackTaskSubclassing(null, isMicrosoftOwned: false);
++#pragma warning restore CS8625
++            
++            var properties = GetMSBuildTaskSubclassProperties(telemetry);
++            
++            properties.Count.ShouldBe(0);
++        }
++
++        /// <summary>
++        /// Helper method to get MSBuild task subclass properties from telemetry using reflection
++        /// </summary>
++        private System.Collections.Generic.Dictionary<string, string> GetMSBuildTaskSubclassProperties(ProjectTelemetry telemetry)
++        {
++            var method = typeof(ProjectTelemetry).GetMethod("GetMSBuildTaskSubclassProperties", 
++                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
++            return (System.Collections.Generic.Dictionary<string, string>)method!.Invoke(telemetry, null)!;
++        }
++
++        /// <summary>
++        /// Non-sealed user task that inherits from Microsoft.Build.Utilities.Task
++        /// </summary>
++#pragma warning disable CA1852 // Type can be sealed
++        private class UserTask : Task
++#pragma warning restore CA1852
++        {
++            public override bool Execute()
++            {
++                return true;
++            }
++        }
++
++        /// <summary>
++        /// Another non-sealed user task that inherits from Microsoft.Build.Utilities.Task
++        /// </summary>
++#pragma warning disable CA1852 // Type can be sealed
++        private class AnotherUserTask : Task
++#pragma warning restore CA1852
++        {
++            public override bool Execute()
++            {
++                return true;
++            }
++        }
++
++        /// <summary>
++        /// Sealed task that inherits from Microsoft.Build.Utilities.Task
++        /// </summary>
++        private sealed class TestSealedTask : Task
++        {
++            public override bool Execute()
++            {
++                return true;
++            }
++        }
++
++        /// <summary>
++        /// Integration test that verifies telemetry is logged during a build with Microsoft tasks
++        /// </summary>
++        [Fact]
++        public void MSBuildTaskTelemetry_IsLoggedDuringBuild()
++        {
++            string projectContent = @"
++                <Project>
++                    <Target Name='Build'>
++                        <Message Text='Hello World' Importance='High' />
++                    </Target>
++                </Project>";
++
++            var events = new System.Collections.Generic.List<BuildEventArgs>();
++            var logger = new Microsoft.Build.Logging.ConsoleLogger(LoggerVerbosity.Diagnostic);
++            
++            using var projectCollection = new ProjectCollection();
++            using var stringReader = new System.IO.StringReader(projectContent);
++            using var xmlReader = System.Xml.XmlReader.Create(stringReader);
++            var project = new Project(xmlReader, null, null, projectCollection);
++
++            // Build the project
++            var result = project.Build();
++            
++            result.ShouldBeTrue();
++        }
++    }
++}
+diff --git a/src/Build/BackEnd/Components/Logging/ProjectTelemetry.cs b/src/Build/BackEnd/Components/Logging/ProjectTelemetry.cs
+index b0087eff762..89984c15b9d 100644
+--- a/src/Build/BackEnd/Components/Logging/ProjectTelemetry.cs
++++ b/src/Build/BackEnd/Components/Logging/ProjectTelemetry.cs
+@@ -1,6 +1,7 @@
+ // Licensed to the .NET Foundation under one or more agreements.
+ // The .NET Foundation licenses this file to you under the MIT license.
+ 
++using System;
+ using System.Collections.Generic;
+ using System.Globalization;
+ using Microsoft.Build.Framework;
+@@ -25,6 +26,7 @@ internal class ProjectTelemetry
+         // This means that if we ever add logging non-integer properties for these events, they will not be included in the telemetry.
+         private const string TaskFactoryEventName = "build/tasks/taskfactory";
+         private const string TasksEventName = "build/tasks";
++        private const string MSBuildTaskSubclassedEventName = "build/tasks/msbuild-subclassed";
+ 
+         private int _assemblyTaskFactoryTasksExecutedCount = 0;
+         private int _intrinsicTaskFactoryTasksExecutedCount = 0;
+@@ -35,6 +37,10 @@ internal class ProjectTelemetry
+ 
+         private int _taskHostTasksExecutedCount = 0;
+ 
++        // Telemetry for non-sealed subclasses of Microsoft-owned MSBuild tasks
++        // Maps Microsoft task names to counts of their non-sealed usage
++        private readonly Dictionary<string, int> _msbuildTaskSubclassUsage = new();
++
+         /// <summary>
+         /// Adds a task execution to the telemetry data.
+         /// </summary>
+@@ -73,6 +79,47 @@ public void AddTaskExecution(string taskFactoryTypeName, bool isTaskHost)
+             }
+         }
+ 
++        /// <summary>
++        /// Tracks subclasses of Microsoft-owned MSBuild tasks.
++        /// If the task is a subclass of a Microsoft-owned task, increments the usage count for that base task.
++        /// </summary>
++        /// <param name="taskType">The type of the task being loaded.</param>
++        /// <param name="isMicrosoftOwned">Whether the task itself is Microsoft-owned.</param>
++        public void TrackTaskSubclassing(Type taskType, bool isMicrosoftOwned)
++        {
++            if (taskType == null)
++            {
++                return;
++            }
++
++            // Walk the inheritance hierarchy to find Microsoft-owned base tasks
++            Type? baseType = taskType.BaseType;
++            while (baseType != null)
++            {
++                // Check if this base type is a Microsoft-owned task
++                // We identify Microsoft tasks by checking if they're in the Microsoft.Build namespace
++                string? baseTypeName = baseType.FullName;
++                if (!string.IsNullOrEmpty(baseTypeName) && 
++                    (baseTypeName.StartsWith("Microsoft.Build.Tasks.") || 
++                     baseTypeName.StartsWith("Microsoft.Build.Utilities.")))
++                {
++                    // This is a subclass of a Microsoft-owned task
++                    // Track it only if it's NOT itself Microsoft-owned (i.e., user-authored subclass)
++                    if (!isMicrosoftOwned)
++                    {
++                        if (!_msbuildTaskSubclassUsage.ContainsKey(baseTypeName))
++                        {
++                            _msbuildTaskSubclassUsage[baseTypeName] = 0;
++                        }
++                        _msbuildTaskSubclassUsage[baseTypeName]++;
++                    }
++                    // Stop at the first Microsoft-owned base class we find
++                    break;
++                }
++                baseType = baseType.BaseType;
++            }
++        }
++
+         /// <summary>
+         /// Logs telemetry data for a project
+         /// </summary>
+@@ -96,6 +143,12 @@ public void LogProjectTelemetry(ILoggingService loggingService, BuildEventContex
+                 {
+                     loggingService.LogTelemetry(buildEventContext, TasksEventName, taskTotalProperties);
+                 }
++
++                Dictionary<string, string> msbuildTaskSubclassProperties = GetMSBuildTaskSubclassProperties();
++                if (msbuildTaskSubclassProperties.Count > 0)
++                {
++                    loggingService.LogTelemetry(buildEventContext, MSBuildTaskSubclassedEventName, msbuildTaskSubclassProperties);
++                }
+             }
+             catch
+             {
+@@ -120,6 +173,8 @@ private void Clean()
+             _customTaskFactoryTasksExecutedCount = 0;
+ 
+             _taskHostTasksExecutedCount = 0;
++
++            _msbuildTaskSubclassUsage.Clear();
+         }
+ 
+         private Dictionary<string, string> GetTaskFactoryProperties()
+@@ -182,5 +237,20 @@ private Dictionary<string, string> GetTaskProperties()
+ 
+             return properties;
+         }
++
++        private Dictionary<string, string> GetMSBuildTaskSubclassProperties()
++        {
++            Dictionary<string, string> properties = new();
++
++            // Add each Microsoft task name with its non-sealed subclass usage count
++            foreach (var kvp in _msbuildTaskSubclassUsage)
++            {
++                // Use a sanitized property name (replace dots with underscores for telemetry)
++                string propertyName = kvp.Key.Replace(".", "_");
++                properties[propertyName] = kvp.Value.ToString(CultureInfo.InvariantCulture);
++            }
++
++            return properties;
++        }
+     }
+ }
+diff --git a/src/Build/Instance/TaskFactories/AssemblyTaskFactory.cs b/src/Build/Instance/TaskFactories/AssemblyTaskFactory.cs
+index 47b49b00e75..b02f17b639b 100644
+--- a/src/Build/Instance/TaskFactories/AssemblyTaskFactory.cs
++++ b/src/Build/Instance/TaskFactories/AssemblyTaskFactory.cs
+@@ -439,6 +439,13 @@ internal ITask CreateTaskInstance(
+                 }
+ #endif
+ 
++                // Track non-sealed subclasses of Microsoft-owned MSBuild tasks
++                if (taskInstance != null)
++                {
++                    bool isMicrosoftOwned = IsMicrosoftAuthoredTask();
++                    _taskLoggingContext?.TargetLoggingContext?.ProjectLoggingContext?.ProjectTelemetry?.TrackTaskSubclassing(_loadedType.Type, isMicrosoftOwned);
++                }
++
+                 return taskInstance;
+             }
+         }
+@@ -691,6 +698,43 @@ private static bool TaskHostParametersMatchCurrentProcess(IDictionary<string, st
+             return true;
+         }
+ 
++        /// <summary>
++        /// Determines whether the current task is Microsoft-authored based on the assembly location and name.
++        /// </summary>
++        private bool IsMicrosoftAuthoredTask()
++        {
++            if (_loadedType?.Type == null)
++            {
++                return false;
++            }
++
++            // Check if the assembly is a Microsoft assembly by name
++            string assemblyName = _loadedType.Assembly.AssemblyName;
++            if (!string.IsNullOrEmpty(assemblyName) && Framework.FileClassifier.IsMicrosoftAssembly(assemblyName))
++            {
++                return true;
++            }
++
++            // Check if the assembly is from a Microsoft-controlled location
++            string assemblyFile = _loadedType.Assembly.AssemblyFile;
++            if (!string.IsNullOrEmpty(assemblyFile))
++            {
++                // Check if it's built-in MSBuild logic (e.g., from MSBuild installation)
++                if (Framework.FileClassifier.Shared.IsBuiltInLogic(assemblyFile))
++                {
++                    return true;
++                }
++
++                // Check if it's a Microsoft package from NuGet cache
++                if (Framework.FileClassifier.Shared.IsMicrosoftPackageInNugetCache(assemblyFile))
++                {
++                    return true;
++                }
++            }
++
++            return false;
++        }
++
+         /// <summary>
+         /// Log errors from TaskLoader.
+         /// </summary>

@@ -1,0 +1,19 @@
+{
+ "decisions": [
+  {
+   "kind": "user_facing",
+   "what": "NoInit の docstring に、不整合な初期値での使用は失敗や誤った結果を招く可能性が高いとする強い警告文言を追加することを選んだ(警告の強さ・内容はエージェントの判断)",
+   "alternatives": "警告を付けない、より穏当な表現にする、具体的な失敗モードを挙げずに注意喚起のみにする、など",
+   "evidence": "+⚠️ **Warning**: Using `NoInit()` with inconsistent initial conditions will likely cause",
+   "file": "src/SciMLBase.jl",
+   "stage": 2,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": "**`NoInit`**: Includes strong warning about usage risks"
+  }
+ ],
+ "note": "本PRはドキュメント(docstring)追加のみで、コードロジックの変更はない。依頼・レビューなど人間のテキストが一切存在しないため、警告文の強さや用例の選定など文言上の判断はすべてエージェント単独の判断(agent_only)であり、実質的なAPI/挙動変更を伴う決定は見当たらない。",
+ "sid": "A009",
+ "truncated": false,
+ "n_human_text": 0
+}

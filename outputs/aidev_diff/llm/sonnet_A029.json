@@ -1,0 +1,96 @@
+{
+ "decisions": [
+  {
+   "kind": "test_policy",
+   "what": "docker-compose の起動確認テストでは、ARM64 イメージではなく AMD64 イメージのみを使ってサービス起動を検証する方針にした(ARM64 側は docker image inspect による存在確認のみ)。",
+   "alternatives": "マトリクスで ARM64 イメージも実際に起動させて機能的に検証する。",
+   "evidence": "+          # Tag for docker-compose (use AMD64 for testing)",
+   "file": ".github/workflows/docker.yml",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "architecture",
+   "what": "docker-compose.yml の各サービスをローカル Dockerfile からビルドする方式から、GHCR 上のビルド済みイメージ(タグ `${IMAGE_TAG-latest}`)を参照する方式に変更した。",
+   "alternatives": "従来通り build: でローカルソースからビルドする方式を維持する、または build と image を両立させる。",
+   "evidence": "+    image: ghcr.io/llama-farm/llamafarm/server:${IMAGE_TAG-latest}",
+   "file": "deployment/docker_compose/docker-compose.yml",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "test_policy",
+   "what": "CI の test-compose ジョブから `docker compose build` によるローカルビルドのステップを削除し、アーティファクトからロードした事前ビルド済みイメージのみをテストに使う方針にした。",
+   "alternatives": "従来通り CI 内で再ビルドしてテストする(ビルド済みアーティファクトとは別経路の検証を残す)。",
+   "evidence": "-      - name: Build services with docker compose",
+   "file": ".github/workflows/docker.yml",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "security_policy",
+   "what": "Trivy スキャン結果のアップロード条件を `always()`(前のステップの成否に関わらず常に実行)から PR 以外のイベント限定の条件に変更し、スキャンステップ自体が失敗した場合は結果をアップロードしないようにした。",
+   "alternatives": "元の always() を維持し、スキャン失敗時でも部分的な結果を GitHub Security タブにアップロードし続ける。",
+   "evidence": "+        if: github.event_name != 'pull_request'",
+   "file": ".github/workflows/docker.yml",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "architecture",
+   "what": "ARM64 ネイティブビルド用のランナーとして具体的に `ubuntu-24.04-arm` を採用した(PR 本文では `ubuntu-latest-arm64` と説明されている)。",
+   "alternatives": "QEMU エミュレーションを継続する、セルフホスト ARM64 ランナーを使う、あるいは `ubuntu-latest-arm64` ラベルを使う。",
+   "evidence": "+    runs-on: ubuntu-24.04-arm",
+   "file": ".github/workflows/docker.yml",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": "This PR refactors the Docker CI workflow to use dedicated `ubuntu-latest-arm64` runners for native ARM64 builds, significantly speeding up the process."
+  },
+  {
+   "kind": "api_contract",
+   "what": "統合マルチアーキテクチャタグに加えて、`-amd64`/`-arm64` サフィックス付きの個別アーキテクチャタグ(例: latest-amd64)もレジストリに公開する方式にした。",
+   "alternatives": "中間イメージはタグ付けせず digest 参照のみで manifest 作成に使い、公開タグは統合タグだけにする。",
+   "evidence": "+            type=raw,value=latest-amd64,enable={{is_default_branch}}",
+   "file": ".github/workflows/docker.yml",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "user_facing",
+   "what": "rag サービスの OCI イメージ説明ラベルを「LlamaFarm RAG」から「LlamaFarm RAG - Celery worker for RAG processing」に変更した。",
+   "alternatives": "元の説明文を維持する、または別の文言にする。",
+   "evidence": "+            description: \"LlamaFarm RAG - Celery worker for RAG processing\"",
+   "file": ".github/workflows/docker.yml",
+   "stage": 3,
+   "confidence": "low",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "other",
+   "what": "PR 用にアップロードするアーキテクチャ別イメージアーティファクトの保持期間を1日に設定した。",
+   "alternatives": "デフォルトの保持期間(例: 90日)を使う、または別の期間に設定する。",
+   "evidence": "+          retention-days: 1",
+   "file": ".github/workflows/docker.yml",
+   "stage": 3,
+   "confidence": "low",
+   "human_trace": "none",
+   "trace_quote": ""
+  }
+ ],
+ "note": "元の Issue #280 の本文が与えられていないため、PR 本文(エージェント作成)以外に人間のテキストは確認できず、ほとんどの決定は human_trace=none/agent_only となった。また PR 本文は runtime サービスのビルド対象化や release-docker ワークフローの更新を主張しているが、本 diff のマトリクスには runtime が含まれておらず release-docker の変更も含まれていない(本文と diff の不一致の可能性)。",
+ "sid": "A029",
+ "truncated": false,
+ "n_human_text": 0
+}

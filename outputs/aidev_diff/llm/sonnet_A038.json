@@ -1,0 +1,30 @@
+{
+ "decisions": [
+  {
+   "kind": "user_facing",
+   "what": "「レシピを使う」メニューに「Add file uploads」という新しい選択肢を追加し、挿入されるテンプレート文言を「Add file uploads to [...]」とした",
+   "alternatives": "文言を別の表現にする、既存メニューへの追加ではなく別の導線(例:設定画面やドキュメントリンク)にする、テンプレート内容をより具体的にする",
+   "evidence": "+              <MenuItemComponent action={() => insertTemplate('Add file uploads to [...]')}>",
+   "file": "app/components/chat/MessageInput.tsx",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  },
+  {
+   "kind": "scope",
+   "what": "3番目のメニュー項目として追加する位置(既存の2項目の直後)とアイコン(DocumentArrowUpIcon)を選定した",
+   "alternatives": "別の並び順にする、別のアイコンを使う、サブメニューとして分離する",
+   "evidence": "+import { ChatBubbleLeftIcon, DocumentArrowUpIcon } from '@heroicons/react/24/outline';",
+   "file": "app/components/chat/MessageInput.tsx",
+   "stage": 2,
+   "confidence": "low",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  }
+ ],
+ "note": "依頼内容(ikhare@convex.deからの依頼)の原文は提供されておらず、PR本文の要約のみが確認できるため、具体的な文言・アイコン選定の経緯はhuman_traceをagent_onlyとした。",
+ "sid": "A038",
+ "truncated": false,
+ "n_human_text": 0
+}

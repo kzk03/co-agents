@@ -1,0 +1,52 @@
+{
+ "decisions": [
+  {
+   "kind": "scope",
+   "what": "BYOK(自前APIキー利用)を新たにProプランでのみ使える機能として制限し、以前はプラン無関係に誰でも使えていたprovider-keyステップへのアクセスをアップグレード誘導(ダイアログ)でブロックするようにした。",
+   "alternatives": "BYOKを引き続き全プランに開放する/別の方法(利用量制限など)で差別化する",
+   "evidence": "+\t\t\t\t\t\t\t\t\tBYOK requires a Pro plan subscription to access advanced",
+   "file": "apps/ui/src/components/onboarding/plan-choice-step.tsx",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "agent_only",
+   "trace_quote": "clarifying BYOK requires a Pro plan"
+  },
+  {
+   "kind": "scope",
+   "what": "クレジット購入オプションを従来Proプランユーザーには提示していなかったが、今回は全プラン(hosted環境であれば)のユーザーに選択可能にした。",
+   "alternatives": "Proプランユーザーにはクレジット購入を見せない従来方針を維持する",
+   "evidence": "-\t...(isProPlan",
+   "file": "apps/ui/src/components/onboarding/onboarding-wizard.tsx",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": "allow users to choose between buying credits or bringing their own keys (BYOK)"
+  },
+  {
+   "kind": "user_facing",
+   "what": "従来provider-key/creditsステップに付いていた optional(スキップ可能)フラグを撤廃し、オンボーディングのプラン選択後のステップを必須(スキップ不可)にした。",
+   "alternatives": "新フローでも選択後のステップをoptionalのまま残し、ユーザーが後で設定できるようにする",
+   "evidence": "-\t\toptional: true,",
+   "file": "apps/ui/src/components/onboarding/onboarding-wizard.tsx",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "scope",
+   "what": "クレジット購入をhosted版(llmgateway.io)限定とし、セルフホスト環境のユーザーはクレジットを購入できないようにボタンを無効化した。",
+   "alternatives": "セルフホスト環境でも何らかの形でクレジット相当の機能を提供する/別の決済手段を用意する",
+   "evidence": "+\t\t\t\t\t\t\t\tdisabled={!config.hosted}",
+   "file": "apps/ui/src/components/onboarding/plan-choice-step.tsx",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  }
+ ],
+ "note": "人間が書いたテキストが提供されていないため、human_traceはPR本文からの引用のみで判定した(agent_only)。特にBYOKをProプラン限定にする変更は、従来provider-keyステップが全プランに対しoptionalで開放されていた点からの重要な方針反転であり、注意が必要。",
+ "sid": "A027",
+ "truncated": false,
+ "n_human_text": 0
+}

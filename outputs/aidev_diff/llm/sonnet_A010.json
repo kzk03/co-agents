@@ -1,0 +1,63 @@
+{
+ "decisions": [
+  {
+   "kind": "user_facing",
+   "what": "重大エラーの通知方法をトースト通知からモーダルダイアログに変更する範囲を、レート制限(429)・401・403に限定し、それ以外の一般エラーは従来通りトースト通知のままにするというUX方針を決定した(PR本文は「General Errors」もモーダルで扱うと説明しているが、実装はトーストのまま)。",
+   "alternatives": "全エラー種別をモーダルに統一する、または全てトーストのままにする",
+   "evidence": "+        toast.error(`Error in chat: ${error.message}`)",
+   "file": "components/chat.tsx",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  },
+  {
+   "kind": "error_policy",
+   "what": "レート制限エラーかどうかの判定を、HTTPステータスコードやレスポンスヘッダーではなく、error.messageの文字列に'429'や'rate limit'などの語が含まれるかという文字列マッチングのヒューリスティックで行うことにした。",
+   "alternatives": "APIレスポンスのステータスコードやレスポンスボディの構造化フィールドを見て判定する、サーバー側でエラー種別を明示的に返す",
+   "evidence": "+        error.message?.includes('429') ||",
+   "file": "components/chat.tsx",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  },
+  {
+   "kind": "error_policy",
+   "what": "レート制限エラーの場合のみ「リトライ」操作を提供せず「Understood」で閉じるだけにし、認証エラー・403・一般エラーでは再送信によるリトライを許可するという、エラー種別ごとのリトライ可否方針を決定した。",
+   "alternatives": "レート制限時も待機後に自動リトライを許可する、全エラーでリトライを無効化する、全エラーでリトライを許可する",
+   "evidence": "+          errorModal.type !== 'rate-limit'",
+   "file": "components/chat.tsx",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  },
+  {
+   "kind": "architecture",
+   "what": "401/403エラー時に、既存のAuthModalコンポーネント(サインイン導線)を再利用せず、新規のErrorModalで「サインインが必要」というメッセージと再送信ボタンだけを表示する設計にした(実際のサインインフローへの誘導は行わない)。",
+   "alternatives": "401発生時に既存のshowAuthModalをtrueにしてサインインモーダルを表示する、ErrorModalからAuthModalへの遷移ボタンを設ける",
+   "evidence": "+          type: 'auth',",
+   "file": "components/chat.tsx",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "error_policy",
+   "what": "エラー後の「リトライ」操作を、直前の会話状態をそのまま再送するのではなく、ユーザーが送った最後のメッセージのみを再構築して再送信する、という再試行の仕様にした。",
+   "alternatives": "元のストリーム/リクエストをそのまま再実行する、エラー発生箇所から再開する、ユーザーに編集してから再送させる",
+   "evidence": "+                    .filter(m => m.role === 'user')",
+   "file": "components/chat.tsx",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  }
+ ],
+ "note": "Issue・レビューなど「人間が書いたテキスト」が提供されていないため、全決定はPR本文(エージェント記述)のみに基づくagent_only/noneであり、人間による明示的な依頼・承認は確認できない。特に『一般エラーもモーダルで扱う』というPR本文の記述と実装(トーストのまま)が食い違っている点は要確認。",
+ "sid": "A010",
+ "truncated": false,
+ "n_human_text": 0
+}

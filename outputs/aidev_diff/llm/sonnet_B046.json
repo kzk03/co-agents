@@ -1,0 +1,52 @@
+{
+ "decisions": [
+  {
+   "kind": "user_facing",
+   "what": "モダンな .NET TFM (netx.y) をターゲットとする全プロジェクトで CS8002 警告をデフォルトで自動抑制する(ユーザーが追加設定なしで警告が出なくなる)という挙動変更を採用した",
+   "alternatives": "警告を抑制せず従来通り出す/オプトイン的な MSBuild プロパティで利用者が明示的に有効化する方式にする",
+   "evidence": "+    <NoWarn>$(NoWarn);CS8002</NoWarn>",
+   "file": "src/Tasks/Microsoft.NET.Build.Tasks/targets/Microsoft.NET.Sdk.CSharp.targets",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "requested",
+   "trace_quote": "The SDK should detect when C# is the project language and the TFM is a .NET Core TFM and append CS8002 to the existing NoWarn list if able in its MSBuild Targets."
+  },
+  {
+   "kind": "scope",
+   "what": "抑制対象を「モダン .NET (netx.y 相当)」のみに限定し、.NET Standard 2.0/2.1 や .NET Framework は対象外とする(当初の実装はスコープを広げすぎていたためレビューで縮小された)",
+   "alternatives": ".NET Standard 2.1 も .NET Framework では動作しないため抑制対象に含める/全ターゲットで一律抑制する",
+   "evidence": "+  <PropertyGroup Condition=\"'$(TargetFrameworkIdentifier)' == '.NETCoreApp'\">",
+   "file": "src/Tasks/Microsoft.NET.Build.Tasks/targets/Microsoft.NET.Sdk.CSharp.targets",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "discussed",
+   "trace_quote": "@copilot redo this work. you expanded the scope beyond what was requested - only on _modern .NET_ (so TargetFramework values that are `netx.y` and compatible) should the CS8002 NoWarn value be added."
+  },
+  {
+   "kind": "architecture",
+   "what": "CS8002 抑制ロジックを dotnet/sdk の Microsoft.NET.Sdk.CSharp.targets に実装する(roslyn 側の Microsoft.CSharp.Core.targets の既存プラットフォーム別 NoWarn 群に合わせて実装する案は採用されていない)という配置を選んだ",
+   "alternatives": "roslyn リポジトリの Microsoft.CSharp.Core.targets に既存の platform specific NoWarn 抑制と並べて実装する",
+   "evidence": "+  <PropertyGroup Condition=\"'$(TargetFrameworkIdentifier)' == '.NETCoreApp'\">",
+   "file": "src/Tasks/Microsoft.NET.Build.Tasks/targets/Microsoft.NET.Sdk.CSharp.targets",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "discussed",
+   "trace_quote": "I do not think this work should happen in the sdk but instead directly in `Microsoft.CSharp.Core.targets`. There are already platform specific `NoWarn` suppressions there and this would fit in with them."
+  },
+  {
+   "kind": "api_contract",
+   "what": "「モダン .NET かどうか」の判定条件として TargetFramework の文字列パターン(netx.y)ではなく $(TargetFrameworkIdentifier) == '.NETCoreApp' プロパティを使う方式を選んだ(カスタム TargetFramework エイリアスでも動作させる意図)",
+   "alternatives": "TargetFramework 文字列を正規表現等で netx.y 形式かどうか判定する実装にする",
+   "evidence": "+  <PropertyGroup Condition=\"'$(TargetFrameworkIdentifier)' == '.NETCoreApp'\">",
+   "file": "src/Tasks/Microsoft.NET.Build.Tasks/targets/Microsoft.NET.Sdk.CSharp.targets",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "discussed",
+   "trace_quote": "Use $(TargetFrameworkIdentifier) if possible, so that it works properly with custom TargetFramework aliases. However I don't know whether the TargetFrameworkIdentifier property has already been set by the time this code is evaluated."
+  }
+ ],
+ "note": "このPRはレビューで二転三転しており、baronfelのスコープ縮小要求とjaredparの実装場所変更要求が示す対立がdiffの最終形(SDK側にスコープを絞って実装)に反映されているが、jaredparの提案(roslyn側への移動)は本diffでは採用されていない。",
+ "sid": "B046",
+ "truncated": false,
+ "n_human_text": 4
+}

@@ -1,0 +1,155 @@
+diff --git a/packages/common/__tests__/helper.test.ts b/packages/common/__tests__/helper.test.ts
+index 17ba4fb8d..d1ccaaaf6 100644
+--- a/packages/common/__tests__/helper.test.ts
++++ b/packages/common/__tests__/helper.test.ts
+@@ -273,6 +273,7 @@ describe('checkPlugins test', () => {
+         schema: {},
+         defaultSchema: {
+           type: 'myText',
++          name: 'myText',
+           content: '',
+           position: { x: 0, y: 0 },
+           width: 100,
+@@ -287,6 +288,7 @@ describe('checkPlugins test', () => {
+         schema: {},
+         defaultSchema: {
+           type: 'myImage',
++          name: 'myImage',
+           content: '',
+           position: { x: 0, y: 0 },
+           width: 100,
+diff --git a/packages/common/src/dynamicTemplate.ts b/packages/common/src/dynamicTemplate.ts
+index 1d07f3eff..7d99c83ec 100644
+--- a/packages/common/src/dynamicTemplate.ts
++++ b/packages/common/src/dynamicTemplate.ts
+@@ -4,11 +4,11 @@ import { cloneDeep, isBlankPdf } from './helper.js';
+ interface ModifyTemplateForDynamicTableArg {
+   template: Template;
+   input: Record<string, string>;
+-  _cache: Map<any, any>;
++  _cache: Map<string, unknown>;
+   options: CommonOptions;
+   getDynamicHeights: (
+     value: string,
+-    args: { schema: Schema; basePdf: BasePdf; options: CommonOptions; _cache: Map<any, any> },
++    args: { schema: Schema; basePdf: BasePdf; options: CommonOptions; _cache: Map<string, unknown> },
+   ) => Promise<number[]>;
+ }
+ 
+@@ -90,8 +90,8 @@ function createNode(arg: {
+ function resortChildren(page: LayoutNode, orderMap: Map<string, number>): void {
+   page.children = page.children
+     .sort((a, b) => {
+-      const orderA = orderMap.get(a.schema?.name!);
+-      const orderB = orderMap.get(b.schema?.name!);
++      const orderA = orderMap.get(a.schema?.name ?? '');
++      const orderB = orderMap.get(b.schema?.name ?? '');
+       if (orderA === undefined || orderB === undefined) {
+         throw new Error('[@pdfme/common] order is not defined');
+       }
+@@ -263,7 +263,7 @@ export const getDynamicTemplate = async (
+     return template;
+   }
+ 
+-  const basePdf = template.basePdf as BlankPdf;
++  const basePdf = template.basePdf;
+   const pages: LayoutNode[] = [];
+ 
+   for (const schemaPage of template.schemas) {
+diff --git a/packages/common/src/expression.ts b/packages/common/src/expression.ts
+index 5aee0e5b3..46d3e4b1f 100644
+--- a/packages/common/src/expression.ts
++++ b/packages/common/src/expression.ts
+@@ -259,7 +259,8 @@ const evaluateAST = (node: AcornNode, context: Record<string, unknown>): unknown
+             throw new Error('Invalid object in member function call');
+           }
+         } else {
+-          return callee(...args);
++          // Use a type assertion to tell TypeScript this is a safe function call
++          return (callee as (...args: unknown[]) => unknown)(...args);
+         }
+       } else {
+         throw new Error('Attempted to call a non-function');
+@@ -371,7 +372,7 @@ const evaluatePlaceholders = (arg: {
+ 
+ export const replacePlaceholders = (arg: {
+   content: string;
+-  variables: Record<string, any>;
++  variables: Record<string, unknown>;
+   schemas: SchemaPageArray;
+ }): string => {
+   const { content, variables, schemas } = arg;
+diff --git a/packages/common/src/types.ts b/packages/common/src/types.ts
+index ba9071d62..57fa48e91 100644
+--- a/packages/common/src/types.ts
++++ b/packages/common/src/types.ts
+@@ -28,7 +28,7 @@ import {
+ export type PropPanelSchema = _PropPanelSchema;
+ export type ChangeSchemaItem = {
+   key: string;
+-  value: any;
++  value: unknown;
+   schemaId: string;
+ };
+ export type ChangeSchemas = (objs: ChangeSchemaItem[]) => void;
+@@ -83,11 +83,11 @@ export type UIRenderProps<T extends Schema> = {
+   placeholder?: string;
+   stopEditing?: () => void;
+   value: string;
+-  onChange?: (arg: { key: string; value: any } | { key: string; value: any }[]) => void;
++  onChange?: (arg: { key: string; value: unknown } | { key: string; value: unknown }[]) => void;
+   rootElement: HTMLDivElement;
+   options: UIOptions;
+   theme: GlobalToken;
+-  i18n: (key: keyof Dict | string) => string;
++  i18n: (key: string) => string;
+   _cache: Map<any, any>;
+ };
+ 
+@@ -112,7 +112,7 @@ type PropPanelProps = {
+   schemas: SchemaForUI[];
+   options: UIOptions;
+   theme: GlobalToken;
+-  i18n: (key: keyof Dict | string) => string;
++  i18n: (key: string) => string;
+ };
+ 
+ export type PropPanelWidgetProps = _PropPanelWidgetProps & PropPanelProps;
+@@ -144,7 +144,7 @@ export interface PropPanel<T extends Schema> {
+  * @property {string} [icon] Icon SVG for the plugin.
+  * @property {boolean} [uninterruptedEditMode] When editing in the UI, should the field avoid re-rendering while in edit mode?
+  */
+-export type Plugin<T extends Schema & { [key: string]: any }> = {
++export type Plugin<T extends Schema & { [key: string]: unknown }> = {
+   pdf: (arg: PDFRenderProps<T>) => Promise<void> | void;
+   ui: (arg: UIRenderProps<T>) => Promise<void> | void;
+   propPanel: PropPanel<T>;
+diff --git a/packages/schemas/src/multiVariableText/uiRender.ts b/packages/schemas/src/multiVariableText/uiRender.ts
+index 59dfc10c1..6fa18e61b 100644
+--- a/packages/schemas/src/multiVariableText/uiRender.ts
++++ b/packages/schemas/src/multiVariableText/uiRender.ts
+@@ -25,9 +25,9 @@ export const uiRender = async (arg: UIRenderProps<MultiVariableTextSchema>) => {
+     schema,
+     mode: mode === 'form' ? 'viewer' : mode, // if no variables for form it's just a viewer
+     rootElement,
+-    onChange: (arg: { key: string; value: string } | { key: string; value: string }[]) => {
++    onChange: (arg: { key: string; value: unknown } | { key: string; value: unknown }[]) => {
+       if (!Array.isArray(arg)) {
+-        const numVariables = countUniqueVariableNames(arg.value);
++        const numVariables = countUniqueVariableNames(arg.value as string);
+         if (onChange) {
+           onChange([
+             { key: 'text', value: arg.value },
+diff --git a/packages/schemas/src/text/pdfRender.ts b/packages/schemas/src/text/pdfRender.ts
+index eb7d65115..dc6ade40e 100644
+--- a/packages/schemas/src/text/pdfRender.ts
++++ b/packages/schemas/src/text/pdfRender.ts
+@@ -94,7 +94,7 @@ export const pdfRender = async (arg: PDFRenderProps<TextSchema>) => {
+   const { font = getDefaultFont(), colorType } = options;
+ 
+   const [pdfFontObj, fontKitFont] = await Promise.all([
+-    embedAndGetFontObj({ pdfDoc, font, _cache: _cache as Map<PDFDocument, { [key: string]: PDFFont }> }),
++    embedAndGetFontObj({ pdfDoc, font, _cache: _cache as unknown as Map<PDFDocument, { [key: string]: PDFFont }> }),
+     getFontKitFont(schema.fontName, font, _cache as Map<string, FontKitFont>),
+   ]);
+   const fontProp = getFontProp({ value, fontKitFont, schema, colorType });

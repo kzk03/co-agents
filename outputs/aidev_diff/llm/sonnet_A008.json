@@ -1,0 +1,74 @@
+{
+ "decisions": [
+  {
+   "kind": "api_contract",
+   "what": "既存の CloneRequest.UseLSH(直接の true/false 指定)フィールドを実質無効化し、新しい断片数ベースの自動判定(LSHEnabled)に完全に差し替えた。Go API 経由で UseLSH を直接 true に設定していた既存の呼び出し元の挙動が、設定なしに上書きされる。",
+   "alternatives": "UseLSH が明示的に true/false の場合はそれを優先し、未設定の場合のみ auto ロジックにフォールバックする、など後方互換を保つ設計も可能だった。",
+   "evidence": "+\t\tUseLSH:                 false, // Will be overridden after fragment extraction",
+   "file": "service/clone_service.go",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "data_schema",
+   "what": "既存の設定項目 lsh_auto_threshold の意味を「ファイル数」から「フラグメント数」に変更しつつ、キー名とデフォルト値(500)はそのまま維持した。",
+   "alternatives": "意味が変わるなら新しいキー名(例: lsh_auto_threshold_fragments)を導入する、またはフラグメント数ベースに合わせてデフォルト値自体を再調整する、という選択もあった。",
+   "evidence": "+lsh_auto_threshold = 500         # Auto-enable LSH for projects with >500 fragments",
+   "file": ".pyscn.toml",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": "\"auto\": Enable LSH when fragments ≥ threshold (default: 500)"
+  },
+  {
+   "kind": "architecture",
+   "what": "新しいフラットな [clones] セクションを設定の優先ソースとし、既存の個別セクション([lsh] など)は「後方互換のためのフォールバック」として残す、という設定スキーマの優先順位を決定した。",
+   "alternatives": "個別セクションと [clones] の両方が存在する場合にエラー/警告を出す、あるいは個別セクションを完全に廃止して移行を強制する、という選択肢もあった。",
+   "evidence": "+// Priority: [clones] section > individual sections (for backward compatibility)",
+   "file": "internal/config/toml_loader.go",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "api_contract",
+   "what": "CloneRequest.UseLSH(bool)を非推奨とし、新しい三値文字列フィールド LSHEnabled(\"auto\"/\"true\"/\"false\")に役割を移したが、旧フィールドは削除せずコメントのみで残した。",
+   "alternatives": "旧フィールドを削除して破壊的変更として明示する、もしくは旧フィールドの値を新フィールドに自動変換するアダプタを用意する、という選択もあった。",
+   "evidence": "+\tUseLSH                 bool    `json:\"use_lsh\"`            // Deprecated: use LSHEnabled instead",
+   "file": "domain/clone.go",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "user_facing",
+   "what": "LSH の自動判定理由(フラグメント数・閾値・有効/無効)を、verbose フラグ等で制御せず常に標準エラー出力に表示するようにした。",
+   "alternatives": "既存のログ/verboseレベルの仕組みに統合する、またはデバッグフラグ有効時のみ出力する、という選択もあった。",
+   "evidence": "+\t\tfmt.Fprintf(os.Stderr, \"LSH: Auto-detection - %d fragments, threshold=%d, enabled=%v\\n\",",
+   "file": "service/clone_service.go",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": "Shows exactly why LSH was enabled or disabled."
+  },
+  {
+   "kind": "error_policy",
+   "what": "LSHAutoThreshold が 0(未設定)の場合、ドメイン側のデフォルト定義とは別にサービス層でも 500 をハードコードしてフォールバックする、というデフォルト値の扱いを決定した。",
+   "alternatives": "デフォルト値の決定はドメイン層(DefaultCloneRequest)のみに一元化し、サービス層では0をそのまま使う/エラーにする、という選択もあった。",
+   "evidence": "+\t\t\tthreshold = 500 // Default threshold",
+   "file": "service/clone_service.go",
+   "stage": 2,
+   "confidence": "low",
+   "human_trace": "none",
+   "trace_quote": ""
+  }
+ ],
+ "note": "Issue/レビュー等の人間テキストは提供されておらず、PR本文もエージェント(Claude Code)自身が書いたものであるため、human_trace は agent_only か none のみとなる。",
+ "sid": "A008",
+ "truncated": false,
+ "n_human_text": 0
+}

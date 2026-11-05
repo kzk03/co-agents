@@ -1,0 +1,74 @@
+{
+ "decisions": [
+  {
+   "kind": "architecture",
+   "what": "ログディレクトリ決定ロジックをすべて djls-server から djls-conf クレートに移し、公開関数として export する構成に決めた",
+   "alternatives": "djls-server 内にロジックを残す／djls-conf から単なるパスだけ返す薄い関数にして存在チェックは server 側に残す",
+   "evidence": "+    let (non_blocking, guard) = match djls_conf::log_dir() {",
+   "file": "crates/djls-server/src/logging.rs",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "requested",
+   "trace_quote": "@copilot logic for the location of the logging dir should be in the conf crate and exported from it and used in the server crate."
+  },
+  {
+   "kind": "api_contract",
+   "what": "log_dir を const ではなく anyhow::Result<Utf8PathBuf> を返す関数として公開する API 形にした",
+   "alternatives": "const として固定値を公開する／Option を返す／パニックする実装にする",
+   "evidence": "+pub fn log_dir() -> anyhow::Result<Utf8PathBuf> {",
+   "file": "crates/djls-conf/src/lib.rs",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "discussed",
+   "trace_quote": "should have read more files before asking for the const change. All logic for the log dir should be in the conf crate, including checking its existence. So a function is needed again, returning an anyhow result."
+  },
+  {
+   "kind": "error_policy",
+   "what": "XDG キャッシュディレクトリが取得できない・UTF-8 パスに変換できない場合はパニックせず /tmp にフォールバックする方針にした",
+   "alternatives": "エラーを呼び出し元に伝播させて起動を失敗させる／unwrap してパニックする",
+   "evidence": "+        .unwrap_or_else(|| Utf8PathBuf::from(\"/tmp\"));",
+   "file": "crates/djls-conf/src/lib.rs",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "requested",
+   "trace_quote": "Let's not unwrap and panic here, instead just return the tmp fallback."
+  },
+  {
+   "kind": "scope",
+   "what": "log_dir() 関数の責務にディレクトリの存在確認・作成(fs::create_dir_all)まで含めることにした(単にパスを返すだけでなく副作用として作成まで行う)",
+   "alternatives": "パス解決とディレクトリ作成を分離し、作成は呼び出し側(server クレート)の責務にする",
+   "evidence": "+    fs::create_dir_all(&dir).with_context(|| format!(\"Failed to create log directory: {dir}\"))?;",
+   "file": "crates/djls-conf/src/lib.rs",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "requested",
+   "trace_quote": "All logic for the log dir should be in the conf crate, including checking its existence."
+  },
+  {
+   "kind": "error_policy",
+   "what": "ファイルロギングの初期化自体が失敗した場合(ディレクトリ作成失敗など)は起動を中断せず stderr ロギングにフォールバックする方針にした",
+   "alternatives": "初期化失敗時にサーバー起動自体を失敗させる／ロギングを完全に無効化する／LSP クライアント通知のみに切り替える",
+   "evidence": "+            tracing_appender::non_blocking(std::io::stderr())",
+   "file": "crates/djls-server/src/logging.rs",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  },
+  {
+   "kind": "user_facing",
+   "what": "ログファイルの既定の出力先を /tmp/djls.log から XDG キャッシュディレクトリ(例: ~/.cache/djls)に変更し、利用者向けドキュメント(CHANGELOG)にも明記した",
+   "alternatives": "既存の /tmp をデフォルトのまま維持し設定で上書き可能にする／環境変数での指定のみ許可する",
+   "evidence": "+- Changed log directory to use XDG cache directories (e.g., `~/.cache/djls` on Linux) with `/tmp` fallback",
+   "file": "CHANGELOG.md",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "requested",
+   "trace_quote": "right now we're just logging to /tmp but we should really use the XDG standard dir for this -- especially because we have the directories crate right there."
+  }
+ ],
+ "note": "主な決定は djls-conf への責務集約・関数シグネチャ(const→Result返却関数)・パニック回避のフォールバック方針で、いずれも human のインラインコメントで明示的にやり取りされている。stderr フォールバックのみエージェント単独の判断。",
+ "sid": "B011",
+ "truncated": false,
+ "n_human_text": 4
+}

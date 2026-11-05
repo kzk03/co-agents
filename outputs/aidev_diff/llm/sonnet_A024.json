@@ -1,0 +1,30 @@
+{
+ "decisions": [
+  {
+   "kind": "dependency",
+   "what": "SHA256計算に使うライブラリを create-hash から @noble/hashes/sha256 へコードベース全体で切り替えた(暗号プリミティブの実装ライブラリの変更)",
+   "alternatives": "create-hash を維持する、Node標準の crypto モジュールを使う、他の監査済みライブラリに置き換える",
+   "evidence": "+import { sha256 } from '@noble/hashes/sha256';",
+   "file": "blue_modules/checksumWords.ts",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "agent_only",
+   "trace_quote": "Replace `create-hash` library with `@noble/hashes/sha256` for SHA256 operations, excluding `class/lnurl.ts`."
+  },
+  {
+   "kind": "dependency",
+   "what": "package-lock.json 内の @noble/hashes の許容バージョン範囲(キャレット指定 ^1.3.3)を厳密な固定バージョン 1.3.3 に変更した",
+   "alternatives": "キャレット範囲を維持してマイナー/パッチの自動更新(セキュリティ修正含む)を許容する",
+   "evidence": "-        \"@noble/hashes\": \"^1.3.3\",",
+   "file": "package-lock.json",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  }
+ ],
+ "note": "PR本文には『class/lnurl.ts を除外する』という明示的なスコープ決定があるが、lnurl.ts はdiffに含まれないため該当する diff 行を引用できず、決定として正式には挙げていない。この除外により同じコードベース内で create-hash と @noble/hashes が混在する状態になる点は留意が必要。また与えられた『人間が書いたテキスト』は GladosBlueWallet というボットの無関係な煽り文のみで、本PRの技術的決定に言及する人間のレビュー・依頼は確認できなかった。",
+ "sid": "A024",
+ "truncated": false,
+ "n_human_text": 2
+}

@@ -1,0 +1,66 @@
+diff --git a/.github/workflows/autoformat.js b/.github/workflows/autoformat.js
+index b4bff6f7fdaf5..812cf255c48a4 100644
+--- a/.github/workflows/autoformat.js
++++ b/.github/workflows/autoformat.js
+@@ -109,6 +109,36 @@ const approveWorkflowRuns = async (context, github, head_sha) => {
+   }
+ };
+ 
++const checkMaintainerAccess = async (context, github) => {
++  const { owner, repo } = context.repo;
++  const pull_number = context.issue.number;
++  const { runId } = context;
++  const pr = await github.rest.pulls.get({ owner, repo, pull_number });
++
++  if (!pr.data.maintainer_can_modify) {
++    const workflowRunUrl = `https://github.com/${owner}/${repo}/actions/runs/${runId}`;
++
++    await github.rest.issues.createComment({
++      owner,
++      repo,
++      issue_number: pull_number,
++      body: `❌ **Autoformat failed**: The "Allow edits and access to secrets by maintainers" checkbox must be checked for autoformat to work properly.
++
++Please:
++1. Check the "Allow edits and access to secrets by maintainers" checkbox on this pull request
++2. Comment \`/autoformat\` again
++
++This permission is required for the autoformat bot to push changes to your branch.
++
++**Details:** [View workflow run](${workflowRunUrl})`,
++    });
++
++    throw new Error(
++      'The "Allow edits and access to secrets by maintainers" checkbox must be checked for autoformat to work properly.'
++    );
++  }
++};
++
+ module.exports = {
+   shouldAutoformat,
+   getPullInfo,
+@@ -116,4 +146,5 @@ module.exports = {
+   createStatus,
+   updateStatus,
+   approveWorkflowRuns,
++  checkMaintainerAccess,
+ };
+diff --git a/.github/workflows/autoformat.yml b/.github/workflows/autoformat.yml
+index 7b7e7072fb26c..54bf98f834034 100644
+--- a/.github/workflows/autoformat.yml
++++ b/.github/workflows/autoformat.yml
+@@ -48,6 +48,14 @@ jobs:
+             const pullInfo = await autoformat.getPullInfo(context, github);
+             return { ...pullInfo, shouldAutoformat };
+ 
++      - name: Check maintainer access
++        if: ${{ fromJSON(steps.judge.outputs.result).shouldAutoformat }}
++        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
++        with:
++          script: |
++            const autoformat = require('./.github/workflows/autoformat.js');
++            await autoformat.checkMaintainerAccess(context, github);
++
+   format:
+     runs-on: ubuntu-latest
+     timeout-minutes: 30

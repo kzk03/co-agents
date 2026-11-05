@@ -1,0 +1,41 @@
+{
+ "decisions": [
+  {
+   "kind": "user_facing",
+   "what": "外部リンク一覧の表示方式を、折り返し式の FlowRow から、2個ずつ組にして行を作る固定2列のグリッド状レイアウトに変更した",
+   "alternatives": "FlowRow のまま折り返し表示を維持する、3列以上にする、画面幅に応じて列数を可変にする(LazyVerticalGrid 等)といった選択もあり得た",
+   "evidence": "+                externalLinks.chunked(2).forEach {",
+   "file": "app/src/main/java/org/nekomanga/presentation/components/sheets/ExternalLinksSheet.kt",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "agent_only",
+   "trace_quote": "This change refactors the `ExternalLinksSheet` to display a centered, two-column list of external link buttons."
+  },
+  {
+   "kind": "user_facing",
+   "what": "リンクカード群の水平配置を左揃えから画面中央揃えに変更した",
+   "alternatives": "既存の左揃え(Alignment.Start)を維持する、または右揃えにするなどの選択もあり得た",
+   "evidence": "+                horizontalAlignment = Alignment.CenterHorizontally,",
+   "file": "app/src/main/java/org/nekomanga/presentation/components/sheets/ExternalLinksSheet.kt",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": "This change refactors the `ExternalLinksSheet` to display a centered, two-column list of external link buttons."
+  },
+  {
+   "kind": "user_facing",
+   "what": "外部リンクの個数が奇数の場合、最後の1枚のカードは他のカードと幅を揃えず(fillMaxWidthを適用せず)元のサイズのまま表示することにした",
+   "alternatives": "奇数の場合も幅を他のカードと揃える、中央に大きく1枚だけ配置するなど見た目を揃える選択もあり得た",
+   "evidence": "+                        modifier = if (it.size == 1) Modifier else Modifier.fillMaxWidth(),",
+   "file": "app/src/main/java/org/nekomanga/presentation/components/sheets/ExternalLinksSheet.kt",
+   "stage": 2,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  }
+ ],
+ "note": "人間が書いたテキスト(Issue/依頼/レビュー)が提供されていないため、全ての human_trace は PR本文(エージェント記述)のみに基づく agent_only または none としている。",
+ "sid": "A041",
+ "truncated": false,
+ "n_human_text": 0
+}

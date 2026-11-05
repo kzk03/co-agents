@@ -1,0 +1,74 @@
+{
+ "decisions": [
+  {
+   "kind": "dependency",
+   "what": "numpyを必須依存から任意依存に変更し、存在しない場合は純粋Pythonによるフォールバック実装を使う方針にした",
+   "alternatives": "numpyを引き続き必須依存とする / numpyが無い場合は明示的にエラーにして処理を止める",
+   "evidence": "+except ModuleNotFoundError:  # pragma: no cover - lightweight fallback",
+   "file": "alpha_factory_v1/backend/alpha_model.py",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "agent_only",
+   "trace_quote": "gracefully handle missing numpy dependency"
+  },
+  {
+   "kind": "scope",
+   "what": "追加するテクニカル指標としてEMA・RSI・ボリンジャーバンドの3つを具体的に選定した",
+   "alternatives": "MACD、ATR、ストキャスティクスなど他の指標を追加する/既存2指標のみ改善する",
+   "evidence": "+    \"bollinger_bands\",",
+   "file": "alpha_factory_v1/backend/alpha_model.py",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": "expand `backend.alpha_model` with EMA, RSI and Bollinger Bands"
+  },
+  {
+   "kind": "error_policy",
+   "what": "lookback/period/span/window等のパラメータが非正(0以下)の場合、従来は無害な値(0.0など)を黒く返していたのに対し、ValueErrorを発生させる仕様に変更した",
+   "alternatives": "従来通り黒低・無意味な入力でも例外を出さずに0.0などのデフォルト値を返す/警告ログのみ出す",
+   "evidence": "+        raise ValueError(\"lookback must be positive\")",
+   "file": "alpha_factory_v1/backend/alpha_model.py",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "api_contract",
+   "what": "sma_crossoverでfastがslow以上の場合に例外を発生させる制約を新たに追加した(従来は制約なしで計算していた)",
+   "alternatives": "制約を設けず計算結果が常に0になるなど黒い挙動を許容する/警告のみでそのまま処理する",
+   "evidence": "+    if fast >= slow:\n+        raise ValueError(\"fast period must be shorter than slow period\")",
+   "file": "alpha_factory_v1/backend/alpha_model.py",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "data_schema",
+   "what": "ボリンジャーバンドの標準偏差計算に不偏標本標準偏差(ddof=1)を採用し、利用者に返す数値の定義を決定した",
+   "alternatives": "母標準偏差(ddof=0)を使う一般的な金融指標実装もある",
+   "evidence": "+        std = float(arr.std(ddof=1))",
+   "file": "alpha_factory_v1/backend/alpha_model.py",
+   "stage": 2,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "other",
+   "what": "RSI計算で平均損失が0の場合、RSIを100として返す規約を採用した",
+   "alternatives": "NaNを返す/例外を投げる/50(中立値)を返すなど別の規約もある",
+   "evidence": "+        return 100.0",
+   "file": "alpha_factory_v1/backend/alpha_model.py",
+   "stage": 2,
+   "confidence": "low",
+   "human_trace": "none",
+   "trace_quote": ""
+  }
+ ],
+ "note": "人間が書いたテキストが存在しないため、human_traceはPR本文からの言及があるもののみagent_only、それ以外はすべてnoneとした。",
+ "sid": "A055",
+ "truncated": false,
+ "n_human_text": 0
+}

@@ -1,0 +1,19 @@
+{
+ "decisions": [
+  {
+   "kind": "dependency",
+   "what": "テストモジュール読み込み時に orjson が未インストールな環境向けに用意されていたフォールバック(ModuleNotFoundError を捕捉して sys.modules にスタブを注入する処理)を削除し、orjson が実際にインストールされていることをテスト実行の前提とする決定をした。",
+   "alternatives": "フォールバック(スタブ注入)を維持し、orjson 未インストール環境でもテストが動くようにしておく。",
+   "evidence": "-try:\n-    import orjson  # noqa: F401\n-except ModuleNotFoundError:  # pragma: no cover - optional dependency\n-    sys.modules[\"orjson\"] = object()",
+   "file": ".tests/test_openai_responses_manifold.py",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": "drop unused orjson import"
+  }
+ ],
+ "note": "人間が書いたテキストが存在しないため(Issue/レビューなし)、すべての判断はエージェントの PR 本文にのみ記載されている。DummyChatModel を dataclass 化し chat を必須化した変更はテストファイル内に閉じたローカルなリファクタリングと判断し対象外とした。",
+ "sid": "A056",
+ "truncated": false,
+ "n_human_text": 0
+}

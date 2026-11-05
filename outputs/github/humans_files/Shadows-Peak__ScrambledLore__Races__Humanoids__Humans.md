@@ -1,1 +1,0 @@
-The evolution of [[Proto-Humans]]. They are responsible for many of the actions taken against [[Dragons]] as their prowess over technology and a unique mix between it and [[Magic]] has led to their fast development as a species.

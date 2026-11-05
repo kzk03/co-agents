@@ -1,0 +1,58 @@
+diff --git a/.changeset/strange-lions-end.md b/.changeset/strange-lions-end.md
+new file mode 100644
+index 00000000000..e18f959b742
+--- /dev/null
++++ b/.changeset/strange-lions-end.md
+@@ -0,0 +1,5 @@
++---
++"@primer/react": patch
++---
++
++UnderlineNav.Item accepts className prop without overriding existing styling
+diff --git a/packages/react/src/UnderlineNav/UnderlineNav.test.tsx b/packages/react/src/UnderlineNav/UnderlineNav.test.tsx
+index f4f99970aab..e205e043c99 100644
+--- a/packages/react/src/UnderlineNav/UnderlineNav.test.tsx
++++ b/packages/react/src/UnderlineNav/UnderlineNav.test.tsx
+@@ -197,6 +197,17 @@ describe('UnderlineNav', () => {
+     expect(screen.getByLabelText('Page two icon')).toBeInTheDocument()
+     expect(screen.getByLabelText('Page three icon')).toBeInTheDocument()
+   })
++
++  it('adds className prop to item classes', () => {
++    render(
++      <UnderlineNav aria-label="Repository">
++        <UnderlineNav.Item className="custom-class">Item 1</UnderlineNav.Item>
++      </UnderlineNav>,
++    )
++    const item = screen.getByRole('link', {name: 'Item 1'})
++    expect(item).toHaveClass('custom-class')
++    expect(item.className).toContain('UnderlineItem')
++  })
+ })
+ 
+ describe('Keyboard Navigation', () => {
+diff --git a/packages/react/src/internal/components/UnderlineTabbedInterface.tsx b/packages/react/src/internal/components/UnderlineTabbedInterface.tsx
+index d6809186412..3ad480b97df 100644
+--- a/packages/react/src/internal/components/UnderlineTabbedInterface.tsx
++++ b/packages/react/src/internal/components/UnderlineTabbedInterface.tsx
+@@ -101,12 +101,19 @@ export const UnderlineItem = forwardRef(
+       iconsVisible,
+       loadingCounters,
+       sx: sxProp = defaultSxProp,
++      className,
+       ...rest
+     }: PropsWithChildren<UnderlineItemProps>,
+     forwardedRef,
+   ) => {
+     return (
+-      <BoxWithFallback ref={forwardedRef} as={as} sx={sxProp} className={classes.UnderlineItem} {...rest}>
++      <BoxWithFallback
++        ref={forwardedRef}
++        as={as}
++        sx={sxProp}
++        className={clsx(classes.UnderlineItem, className)}
++        {...rest}
++      >
+         {iconsVisible && Icon && <span data-component="icon">{isElement(Icon) ? Icon : <Icon />}</span>}
+         {children && (
+           <span data-component="text" data-content={children}>

@@ -1,0 +1,19 @@
+{
+ "decisions": [
+  {
+   "kind": "api_contract",
+   "what": "SciMLBaseのisinplaceトレイトをBasis型に実装し、その真偽値をCTRLS(制御変数の有無)に関係なくIMPL型パラメータのみで決定するという仕様にした。",
+   "alternatives": "CTRLSの値も組み合わせて判定する、対応していない組み合わせ(例:IMPL=trueかつ特定のCTRLS)にはエラーを出す、あるいは呼び出し時の引数nに応じて動的に判定する、といった実装も可能だった。",
+   "evidence": "+DiffEqBase.isinplace(::Basis{IMPL, CTRLS}, n) where {IMPL, CTRLS} = IMPL",
+   "file": "src/basis/type.jl",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": "This ensures `isinplace` correctly returns `false` for `Basis{false, CTRLS}` and `true` for `Basis{true, CTRLS}`, based solely on whether the basis has implicit variables."
+  }
+ ],
+ "note": "Issue/レビューなど人間が書いたテキストが提供されていないため、全ての人間の跡はagent_only(PR本文はエージェント記述)に基づく。",
+ "sid": "A001",
+ "truncated": false,
+ "n_human_text": 0
+}

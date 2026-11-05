@@ -1,0 +1,19 @@
+{
+ "decisions": [
+  {
+   "kind": "dependency",
+   "what": "CIの依存インストール手順にpydanticの最小バージョン制約(>=2.10,<3)を追加で強制し、openaiとの互換性問題を回避する方針を選んだ",
+   "alternatives": "pyproject.toml側でpydanticのバージョン制約を修正する/openai側のバージョンを固定する/uv.lockを再生成する/別のロック解決手段を使う",
+   "evidence": "+          uv pip install 'pydantic>=2.10,<3'",
+   "file": ".github/workflows/pytest.yml",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  }
+ ],
+ "note": "人間が書いたテキストが存在しないため、全ての human_trace は agent_only。CI側でパッチ的にバージョンを強制する選択は、依存解決の根本原因(pyproject.toml/uv.lock)を直さない運用判断であり、メンテナの承認を要する余地がある。",
+ "sid": "A058",
+ "truncated": false,
+ "n_human_text": 0
+}

@@ -1,0 +1,121 @@
+diff --git a/Cargo.lock b/Cargo.lock
+index 1d866d8941e..f63e56b276a 100644
+--- a/Cargo.lock
++++ b/Cargo.lock
+@@ -438,6 +438,7 @@ dependencies = [
+  "azure_storage_blob_test",
+  "futures",
+  "serde",
++ "serde_json",
+  "tokio",
+  "tracing",
+  "typespec_client_core",
+diff --git a/sdk/storage/azure_storage_blob/Cargo.toml b/sdk/storage/azure_storage_blob/Cargo.toml
+index 9927c8d34ed..4f15f1a6ea4 100644
+--- a/sdk/storage/azure_storage_blob/Cargo.toml
++++ b/sdk/storage/azure_storage_blob/Cargo.toml
+@@ -33,5 +33,6 @@ azure_core_test = { workspace = true, features = [
+ azure_identity.workspace = true
+ azure_storage_blob_test.path = "../azure_storage_blob_test"
+ futures.workspace = true
++serde_json.workspace = true
+ tokio = { workspace = true, features = ["macros"] }
+ tracing.workspace = true
+diff --git a/sdk/storage/azure_storage_blob/src/lib.rs b/sdk/storage/azure_storage_blob/src/lib.rs
+index 49ae35a0f39..2d0fb3bfc24 100644
+--- a/sdk/storage/azure_storage_blob/src/lib.rs
++++ b/sdk/storage/azure_storage_blob/src/lib.rs
+@@ -14,3 +14,93 @@ mod pipeline;
+ pub use clients::*;
+ pub use parsers::*;
+ pub mod models;
++
++#[cfg(test)]
++mod tests {
++    use crate::generated::models::BlobPropertiesInternal; // Uses generated code (which still has the bug)
++    use serde_json;
++
++    #[test]
++    fn test_etag_deserialization_issue_with_lowercase_etag() {
++        // Test JSON with "Etag" field (correct according to REST API docs, but currently doesn't work)
++        // This test demonstrates the existing bug where the correct API field name doesn't populate etag
++        let json_with_etag = r#"{"Etag": "\"0x8CB171113DEADBEEF\""}"#;
++        
++        let result = serde_json::from_str::<BlobPropertiesInternal>(json_with_etag);
++        match result {
++            Ok(props) => {
++                println!("Deserialized with 'Etag' field. ETag value: {:?}", props.etag);
++                // This demonstrates the bug - etag will be None even though the JSON has the correct field name
++                assert!(props.etag.is_none(), "BUG: ETag is None even when 'Etag' field is present (needs TypeSpec fix)");
++            },
++            Err(e) => {
++                panic!("Should have successfully deserialized even if etag field is ignored: {}", e);
++            }
++        }
++    }
++
++    #[test]
++    fn test_etag_deserialization_with_capital_etag() {
++        // Test JSON with "ETag" field (incorrect according to API docs, but currently expected by generated code)
++        let json_with_capital_etag = r#"{"ETag": "\"0x8CB171113DEADBEEF\""}"#;
++        
++        let result = serde_json::from_str::<BlobPropertiesInternal>(json_with_capital_etag);
++        match result {
++            Ok(props) => {
++                println!("Deserialized with 'ETag' field. ETag value: {:?}", props.etag);
++                // The generated code currently expects "ETag" so this works
++                assert!(props.etag.is_some(), "ETag should be populated when using 'ETag' field (current generated code behavior)");
++                assert_eq!(props.etag.unwrap(), "\"0x8CB171113DEADBEEF\"");
++            },
++            Err(e) => {
++                panic!("Should have successfully deserialized with 'ETag' field: {}", e);
++            }
++        }
++    }
++
++    #[test]
++    fn test_full_blob_properties_deserialization_demonstrates_bug() {
++        // This test demonstrates the existing bug where the actual API field name "Etag" doesn't work
++        let json_with_correct_field = r#"{
++            "Etag": "\"0x8CB171113DEADBEEF\"",
++            "BlobType": "BlockBlob",
++            "Content-Length": 1024,
++            "Content-Type": "text/plain",
++            "Last-Modified": "Wed, 09 Sep 2009 09:20:02 GMT"
++        }"#;
++        
++        let result = serde_json::from_str::<BlobPropertiesInternal>(json_with_correct_field);
++        match result {
++            Ok(props) => {
++                // BUG: etag will be None even though the JSON has the correct field name
++                assert!(props.etag.is_none(), "BUG: ETag is None when using correct API field name 'Etag'");
++                assert_eq!(props.content_length, Some(1024));
++                assert_eq!(props.content_type, Some("text/plain".to_string()));
++            },
++            Err(e) => {
++                panic!("Should have successfully deserialized blob properties: {}", e);
++            }
++        }
++        
++        // But if we use "ETag" (incorrect according to API docs), it works
++        let json_with_incorrect_field = r#"{
++            "ETag": "\"0x8CB171113DEADBEEF\"",
++            "BlobType": "BlockBlob",
++            "Content-Length": 1024,
++            "Content-Type": "text/plain",
++            "Last-Modified": "Wed, 09 Sep 2009 09:20:02 GMT"
++        }"#;
++        
++        let result2 = serde_json::from_str::<BlobPropertiesInternal>(json_with_incorrect_field);
++        match result2 {
++            Ok(props) => {
++                // This works because the generated code currently expects "ETag"
++                assert!(props.etag.is_some(), "ETag is populated when using incorrect field name 'ETag'");
++                assert_eq!(props.etag.unwrap(), "\"0x8CB171113DEADBEEF\"");
++            },
++            Err(e) => {
++                panic!("Should have successfully deserialized blob properties: {}", e);
++            }
++        }
++    }
++}

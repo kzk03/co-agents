@@ -1,0 +1,107 @@
+{
+ "decisions": [
+  {
+   "kind": "scope",
+   "what": "デプロイ追跡機能の依頼に対して、PR本文に記載のない「Leaderboard(ランキング)」機能をコントラクトダッシュボードに追加した",
+   "alternatives": "単純なユーザー別/全体デプロイ一覧の表示に留める、ランキング表示は別PRに分離する",
+   "evidence": "+                  Contracts Leaderboard",
+   "file": "components/contracts-dashboard.tsx",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "scope",
+   "what": "PR本文に記載のない「Rewards(報酬)」タブを追加し、チェーンごとに将来の報酬付与(TBA)を予告するゲーミフィケーション機能を実装した",
+   "alternatives": "報酬機能は実装せずデプロイ記録のみ提供する、または将来の報酬を約束する表現を避ける",
+   "evidence": "+      label: \"Rewards\",",
+   "file": "components/contracts-dashboard.tsx",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "architecture",
+   "what": "アプリ全体のレイアウトを単一カラムから常設サイドバー(PermanentSidebar)構成に変更した",
+   "alternatives": "既存の単一カラムレイアウトを維持し、/contracts ページだけ独立したページとして追加する",
+   "evidence": "+                <PermanentSidebar user={session?.user}>",
+   "file": "app/layout.tsx",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "dependency",
+   "what": "既存の自社アイコンセット(@/components/ui/icons)を拡張する代わりに、新規依存として lucide-react を追加した",
+   "alternatives": "既存のIconコンポーネント群に必要なアイコンを追加する、他の軽量アイコンライブラリを選ぶ",
+   "evidence": "+        \"lucide-react\": \"^0.523.0\",",
+   "file": "bun.lock",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "user_facing",
+   "what": "デフォルトのテーマを「system(OS設定に追従)」から常に「dark」に変更した",
+   "alternatives": "systemのまま維持する、ユーザーに選択させるオンボーディングを用意する",
+   "evidence": "+          defaultTheme=\"dark\"",
+   "file": "app/layout.tsx",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "user_facing",
+   "what": "ダークモードの配色(背景・文字色・ボーダーなど)の具体的な値を変更し、ブランドの見た目を変えた",
+   "alternatives": "既存の配色を維持する、デザイナー確認を経て変更する",
+   "evidence": "+    --background: 0 0% 12%;",
+   "file": "app/globals.css",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "security_policy",
+   "what": "APIキーのID・残量・ownerIdや無効キーのリクエスト/レスポンスをログ出力していたconsole.logを削除した",
+   "alternatives": "機密情報をマスクした上でログは残す、別途監視用のログ基盤に送る",
+   "evidence": "-      console.log(\"keyId\", keyId)",
+   "file": "app/api/v1/completions/route.ts",
+   "stage": 2,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "architecture",
+   "what": "assistants/threads/messagesルートの明示的な `export const runtime = \"nodejs\"` 指定を削除し、ランタイム挙動をデフォルトに委ねた",
+   "alternatives": "明示的にnodejsランタイムを指定し続ける、edgeランタイムへの移行を明示的に検討する",
+   "evidence": "-export const runtime = \"nodejs\"",
+   "file": "app/api/assistants/threads/messages/route.ts",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "scope",
+   "what": "新規の/contractsダッシュボードを未ログインユーザーには公開せず、サインインページへリダイレクトする仕様にした",
+   "alternatives": "全体のコントラクト一覧は未ログインでも閲覧可能にし、自分のデプロイのみログイン必須にする",
+   "evidence": "+    redirect(\"/sign-in?next=/contracts\")",
+   "file": "app/contracts/page.tsx",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  }
+ ],
+ "note": "PR本文は『DeploymentRecord型の定義・デプロイ記録の保存・getUserDeployments追加』のみを述べているが、実際のdiffにはサイドバー化・ダークテーマ変更・Leaderboard/Rewardsといったゲーミフィケーション機能・ロゴ/OG画像変更・デバッグログ削除・ランタイム指定削除など、依頼内容から大きく外れた広範な変更が含まれており、人間のテキストも提供されていないため全決定のhuman_traceは'none'とした。",
+ "sid": "A054",
+ "truncated": true,
+ "n_human_text": 0
+}

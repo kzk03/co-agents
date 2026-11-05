@@ -1,0 +1,123 @@
+diff --git a/environments/vf_acereason_math/vf_acereason_math.py b/environments/vf_acereason_math/vf_acereason_math.py
+index 666e4255efb..f4462fc2880 100644
+--- a/environments/vf_acereason_math/vf_acereason_math.py
++++ b/environments/vf_acereason_math/vf_acereason_math.py
+@@ -18,7 +18,6 @@ def load_environment(
+         }
+     )
+     train_dataset = train_dataset.remove_columns(["problem", "answer"])
+-    train_dataset = train_dataset.shuffle(seed=42)
+ 
+     def correct_answer_reward_func(completion, info, **kwargs) -> float:
+         completion_text = completion[-1]["content"]
+diff --git a/environments/vf_ascii_tree/vf_ascii_tree.py b/environments/vf_ascii_tree/vf_ascii_tree.py
+index 11304c399e3..e4d7d6d746a 100644
+--- a/environments/vf_ascii_tree/vf_ascii_tree.py
++++ b/environments/vf_ascii_tree/vf_ascii_tree.py
+@@ -17,7 +17,6 @@ def process_dataset(example):
+         return example
+ 
+     dataset = dataset.map(process_dataset)
+-    dataset = dataset.shuffle(seed=42)
+ 
+     parser = vf.XMLParser(["think", "ascii_formatted"], answer_field="ascii_formatted")
+ 
+diff --git a/environments/vf_deepscaler_math/vf_deepscaler_math.py b/environments/vf_deepscaler_math/vf_deepscaler_math.py
+index 2a024181c41..7aa77dc75d1 100644
+--- a/environments/vf_deepscaler_math/vf_deepscaler_math.py
++++ b/environments/vf_deepscaler_math/vf_deepscaler_math.py
+@@ -18,7 +18,6 @@ def load_environment(
+         }
+     )
+     train_dataset = train_dataset.remove_columns(["problem", "solution", "answer"])
+-    train_dataset = train_dataset.shuffle(seed=42)
+ 
+     def correct_answer_reward_func(completion, info, **kwargs) -> float:
+         completion_text = completion[-1]["content"]
+diff --git a/environments/vf_hendrycks_math/vf_hendrycks_math.py b/environments/vf_hendrycks_math/vf_hendrycks_math.py
+index 4b2fea78167..8507d21aba4 100644
+--- a/environments/vf_hendrycks_math/vf_hendrycks_math.py
++++ b/environments/vf_hendrycks_math/vf_hendrycks_math.py
+@@ -17,7 +17,6 @@ def load_environment(**kwargs) -> vf.Environment:
+         }
+     )
+     train_dataset = train_dataset.remove_columns(["prompt", "verification_info"])
+-    train_dataset = train_dataset.shuffle(seed=42)
+ 
+     parser = vf.ThinkParser(extract_fn=extract_boxed_answer)
+ 
+diff --git a/environments/vf_intellect_math/vf_intellect_math.py b/environments/vf_intellect_math/vf_intellect_math.py
+index a44c6cbedec..c5a1c36f1d5 100644
+--- a/environments/vf_intellect_math/vf_intellect_math.py
++++ b/environments/vf_intellect_math/vf_intellect_math.py
+@@ -25,7 +25,6 @@ def load_environment(
+         if max_solve_rate is not None:
+             train_dataset = train_dataset.filter(lambda x: x[solve_rate_field] <= max_solve_rate)
+     train_dataset = train_dataset.remove_columns(["prompt", "verification_info"])
+-    train_dataset = train_dataset.shuffle(seed=42)
+ 
+     def correct_answer_reward_func(completion, info, **kwargs) -> float:
+         completion_text = completion[-1]["content"]
+diff --git a/environments/vf_pydantic_adherence/vf_pydantic_adherence.py b/environments/vf_pydantic_adherence/vf_pydantic_adherence.py
+index f96293facee..972e02dc128 100644
+--- a/environments/vf_pydantic_adherence/vf_pydantic_adherence.py
++++ b/environments/vf_pydantic_adherence/vf_pydantic_adherence.py
+@@ -146,7 +146,6 @@ def format_reward_func(completion: Messages, **kwargs) -> float:
+     )
+ 
+     dataset = dataset.remove_columns(["prompt", "verification_info"])
+-    dataset = dataset.shuffle(seed=42)
+ 
+     parser = PydanticParser(extract_fn=extract_last_json)
+ 
+diff --git a/environments/vf_reverse_text/vf_reverse_text.py b/environments/vf_reverse_text/vf_reverse_text.py
+index 56409d89a69..e07bf4552bf 100644
+--- a/environments/vf_reverse_text/vf_reverse_text.py
++++ b/environments/vf_reverse_text/vf_reverse_text.py
+@@ -13,8 +13,7 @@ def load_environment() -> vf.Environment:
+             "task": x["task_type"],
+         }
+     )
+-    train_dataset = train_dataset.remove_columns(["prompt", "verification_info", "task_type"])
+-    train_dataset = train_dataset.shuffle(seed=42)
++    train_dataset = train_dataset.remove_columns(["prompt", "verification_info", "task_type"]) 
+ 
+     parser = vf.XMLParser(["answer"], answer_field="answer")
+ 
+diff --git a/environments/vf_skywork_math/vf_skywork_math.py b/environments/vf_skywork_math/vf_skywork_math.py
+index d56a1f9c91e..4c867fc2fb6 100644
+--- a/environments/vf_skywork_math/vf_skywork_math.py
++++ b/environments/vf_skywork_math/vf_skywork_math.py
+@@ -25,7 +25,6 @@ def load_environment(
+         if max_solve_rate is not None:
+             train_dataset = train_dataset.filter(lambda x: x[solve_rate_field] <= max_solve_rate)
+     train_dataset = train_dataset.remove_columns(["prompt", "verification_info"])
+-    train_dataset = train_dataset.shuffle(seed=42)
+ 
+     def correct_answer_reward_func(completion, info, **kwargs) -> float:
+         completion_text = completion[-1]["content"]
+diff --git a/environments/vf_unscramble/vf_unscramble.py b/environments/vf_unscramble/vf_unscramble.py
+index 7bd3eeb1458..9cd4cc29ecd 100644
+--- a/environments/vf_unscramble/vf_unscramble.py
++++ b/environments/vf_unscramble/vf_unscramble.py
+@@ -17,7 +17,6 @@ def process_dataset(example):
+         return example
+ 
+     dataset = dataset.map(process_dataset)
+-    dataset = dataset.shuffle(seed=42)
+ 
+     parser = vf.XMLParser(["think", "unscrambled_text"], answer_field="unscrambled_text")
+ 
+diff --git a/src/prime_rl/orchestrator/config.py b/src/prime_rl/orchestrator/config.py
+index 3990829b030..0397fb48f47 100644
+--- a/src/prime_rl/orchestrator/config.py
++++ b/src/prime_rl/orchestrator/config.py
+@@ -333,7 +333,7 @@ class OrchestratorConfig(BaseSettings):
+         ),
+     ] = False
+ 
+-    seed: Annotated[int | None, Field(description="Random seed for the orchestrator.")] = None
++    seed: Annotated[int | None, Field(description="Random seed for the orchestrator.")] = 42
+ 
+     @model_validator(mode="after")
+     def validate_batch_size(self):

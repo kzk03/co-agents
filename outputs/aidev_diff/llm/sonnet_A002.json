@@ -1,0 +1,52 @@
+{
+ "decisions": [
+  {
+   "kind": "scope",
+   "what": "新規ユーザーのオンボーディングで auto-earn モジュールの有効化呼び出し(activateSavings)をスキップし、モジュール未有効化のまま手動での預入/引出を許可する決定",
+   "alternatives": "モジュール有効化を必須のまま維持する/有効化をユーザーが任意選択できるオプトインUIにする",
+   "evidence": "-      await activateSavings(safeAddress);",
+   "file": "packages/web/src/hooks/use-primary-account-setup.ts",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "agent_only",
+   "trace_quote": "Makes the auto-earn module optional for new users during onboarding. Users can now manually deposit/withdraw funds without needing to activate the auto-earn module first."
+  },
+  {
+   "kind": "user_facing",
+   "what": "オンボーディング進捗表示から「savings」ステップ(自動貯蓄有効化中の説明)を完全に削除し、ユーザーへの進捗説明を変更した",
+   "alternatives": "ステップは残しつつラベルを「スキップされました」等に変更する",
+   "evidence": "-    label: 'Activating your savings automation',",
+   "file": "packages/web/src/hooks/use-primary-account-setup.ts",
+   "stage": 2,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  },
+  {
+   "kind": "scope",
+   "what": "savings ページの「Activate Savings Account」ゲーティングUI(8% APY訴求・デモ有効化アニメーション含む)を撤廃し、モジュール未有効化でも常に完全な預入/引出インターフェースを表示するようにした",
+   "alternatives": "ゲーティングUIや訴求文言を残したまま別経路で手動操作を可能にする/有効化を任意選択として見せる",
+   "evidence": "-                Start earning up to 8% APY on your business funds.",
+   "file": "packages/web/src/app/(authenticated)/dashboard/savings/page-wrapper.tsx",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "agent_only",
+   "trace_quote": "Removed activation UI that was blocking users from accessing manual deposit/withdraw"
+  },
+  {
+   "kind": "architecture",
+   "what": "activateSavings 関数とその呼び出しコードを削除せず、将来の FluidKey 連携のためにコメントアウトのまま残すという保守方針を選んだ",
+   "alternatives": "使われなくなった関数・呼び出しコードを完全に削除する",
+   "evidence": "+      // await activateSavings(safeAddress);",
+   "file": "packages/web/src/hooks/use-primary-account-setup.ts",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": "Infrastructure preserved for re-enabling auto-earn via FluidKey later"
+  }
+ ],
+ "note": "人間が書いたテキストが提供されていない('なし')ため、全ての human_trace は PR 本文(エージェント記述)のみに基づく agent_only。この変更は収益機会となりうる auto-earn 訴求導線の撤廃を含む製品方針の変更であり、本来は人間の承認が望ましい領域だが、承認の跡は見当たらない。",
+ "sid": "A002",
+ "truncated": false,
+ "n_human_text": 0
+}

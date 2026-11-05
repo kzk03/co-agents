@@ -1,0 +1,268 @@
+diff --git a/bsmain/__init__.py b/bsmain/__init__.py
+index aadfb104..5d473fe6 100644
+--- a/bsmain/__init__.py
++++ b/bsmain/__init__.py
+@@ -1,3 +1,4 @@
++import os
+ import urllib.parse
+ 
+ from django.core.checks import Warning, register
+@@ -58,3 +59,20 @@ def check_base_url_is_url(app_configs, **kwargs):
+         )]
+ 
+     return []
++
++
++@register("bsmain")
++def check_proxy_env_vars_consistency(app_configs, **kwargs):
++    # in this check we straight-up check the os.environ: we can't rely on settings.BEHIND_HTTPS_PROXY to have been set
++    # since it's Docker-only.
++
++    if (
++        os.getenv("BEHIND_HTTPS_PROXY", "False").lower() in ("true", "1", "yes") and
++        os.getenv("BEHIND_PLAIN_HTTP_PROXY", "False").lower() in ("true", "1", "yes")
++            ):
++        return [Warning(
++            "BEHIND_HTTPS_PROXY and BEHIND_PLAIN_HTTP_PROXY are mutually exclusive.",
++            id="bsmain.W004",
++        )]
++
++    return []
+diff --git a/bugsink/conf_templates/docker.py.template b/bugsink/conf_templates/docker.py.template
+index f134ee71..c7c47603 100644
+--- a/bugsink/conf_templates/docker.py.template
++++ b/bugsink/conf_templates/docker.py.template
+@@ -20,14 +20,17 @@ DEBUG_CSRF = "USE_DEBUG" if os.getenv("DEBUG_CSRF") == "USE_DEBUG" else os.geten
+ SECRET_KEY = os.getenv("SECRET_KEY")
+ 
+ 
+-if os.getenv("BEHIND_HTTPS_PROXY", "False").lower() in ("true", "1", "yes"):
+-    # We hard-tie the ideas of "behind a proxy" and "use https" together: there is no reason to go through the trouble
+-    # of setting up a proxy if you're not using https. We also hard-code some choices of proxy headers; which means you
+-    # have to match those on the proxy side (but that's easy enough).
++BEHIND_HTTPS_PROXY = os.getenv("BEHIND_HTTPS_PROXY", "False").lower() in ("true", "1", "yes")
++BEHIND_PLAIN_HTTP_PROXY = os.getenv("BEHIND_PLAIN_HTTP_PROXY", "False").lower() in ("true", "1", "yes")
++
++if BEHIND_HTTPS_PROXY or BEHIND_PLAIN_HTTP_PROXY:
++    # We hard-code the choice of proxy headers; which means you have to match those on the proxy side (easy enough).
+     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # Note: slightly redundant, Gunicorn also does this.
++    USE_X_REAL_IP = True
++
++if BEHIND_HTTPS_PROXY:
+     SESSION_COOKIE_SECURE = True
+     CSRF_COOKIE_SECURE = True
+-    USE_X_REAL_IP = True
+ else:
+     # We don't warn about SESSION_COOKIE_SECURE and CSRF_COOKIE_SECURE; we can't set them to True because some browsers
+     # interpret that as "use https for cookies, even on localhost", and there is no https (BEHIND_HTTPS_PROXY is False).
+@@ -38,6 +41,7 @@ else:
+     ]
+ 
+ 
++
+ # The time-zone here is the default for display purposes (when no project/user configuration is used).
+ # https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-TIME_ZONE
+ TIME_ZONE = os.getenv("TIME_ZONE", "UTC")
+diff --git a/bugsink/middleware.py b/bugsink/middleware.py
+index 2d5674e1..3578fd37 100644
+--- a/bugsink/middleware.py
++++ b/bugsink/middleware.py
+@@ -89,6 +89,11 @@ def __init__(self, get_response):
+ 
+     @staticmethod
+     def parse_x_forwarded_for(header_value):
++        # NOTE: our method parsing _does not_ remove port numbers from the X-Forwarded-For header; such setups are rare
++        # (but legal according to the spec) but [1] we don't recommend them and [2] we recommend X-Real-IP over
++        # X-Forwarded-For anyway.
++        # https://serverfault.com/questions/753682/iis-server-farm-with-arr-why-does-http-x-forwarded-for-have-a-port-nu
++
+         if header_value in [None, ""]:
+             # The most typical misconfiguration is to forget to set the header at all, or to have it be empty. In that
+             # case, we'll just set the IP to None, which will mean some data will be missing from your events (but
+@@ -116,6 +121,7 @@ def parse_x_forwarded_for(header_value):
+ 
+     def __call__(self, request):
+         if settings.USE_X_REAL_IP:
++            # NOTE: X-Real-IP never contains a port number AFAICT by searching online so the below is IP-only:
+             request.META["REMOTE_ADDR"] = request.META.get("HTTP_X_REAL_IP", None)
+ 
+         elif settings.USE_X_FORWARDED_FOR:  # elif: X-Real-IP / X-Forwarded-For are mutually exclusive
+diff --git a/bugsink/settings/development.py b/bugsink/settings/development.py
+index 1daf5ea5..a9c2c26d 100644
+--- a/bugsink/settings/development.py
++++ b/bugsink/settings/development.py
+@@ -1,10 +1,9 @@
+ from .default import *  # noqa
+-from .default import BASE_DIR, INSTALLED_APPS, MIDDLEWARE, LOGGING, DATABASES, I_AM_RUNNING
++from .default import BASE_DIR, LOGGING, DATABASES, I_AM_RUNNING
+ 
+ import os
+ 
+ from sentry_sdk_extensions.transport import MoreLoudlyFailingTransport
+-from debug_toolbar.middleware import show_toolbar
+ 
+ from bugsink.utils import deduce_allowed_hosts, eat_your_own_dogfood
+ 
+@@ -13,33 +12,6 @@
+ DEBUG = True
+ 
+ 
+-# > The Debug Toolbar is shown only if your IP address is listed in Django’s INTERNAL_IPS setting. This means that for
+-# > local development, you must add "127.0.0.1" to INTERNAL_IPS.
+-INTERNAL_IPS = [
+-    "127.0.0.1",
+-]
+-
+-if not I_AM_RUNNING == "TEST":
+-    INSTALLED_APPS += [
+-        "debug_toolbar",
+-    ]
+-
+-MIDDLEWARE = [
+-    "debug_toolbar.middleware.DebugToolbarMiddleware",
+-] + MIDDLEWARE
+-
+-
+-def show_toolbar_for_queryparam(request):
+-    if "__debug__" not in request.path and not request.GET.get("debug", ""):
+-        return False
+-    return show_toolbar(request)
+-
+-
+-DEBUG_TOOLBAR_CONFIG = {
+-    "SHOW_TOOLBAR_CALLBACK": show_toolbar_for_queryparam,
+-}
+-
+-
+ # this way of configuring (DB, DB_USER, DB_PASSWORD) is specific to the development environment
+ if os.getenv("DB", "sqlite") == "mysql":
+     DATABASES['default'] = {
+diff --git a/bugsink/transaction.py b/bugsink/transaction.py
+index 0be1a883..5129e58c 100644
+--- a/bugsink/transaction.py
++++ b/bugsink/transaction.py
+@@ -7,6 +7,7 @@
+ 
+ from django.db import transaction as django_db_transaction
+ from django.db import DEFAULT_DB_ALIAS
++from django.conf import settings
+ 
+ from snappea.settings import get_settings as get_snappea_settings
+ 
+@@ -218,6 +219,17 @@ def immediate_atomic(using=None, savepoint=True, durable=True):
+         # case.
+         with immediate_atomic:
+             yield
++
++    elif "sqlite" not in settings.DATABASES[using]["ENGINE"]:
++        # The SemaphoreContext was added specifically to address the WAL growth issue in sqlite; better not to use it
++        # for other database backends; in particular, if such databases have longer default timeouts, then the error
++        # message may be confusing (semaphore timeout after 10s throws an error... while the thread that hogs the DB
++        # is _not_ (yet) timed out)
++        #
++        # in-string matching matches both our 'timed' backend and the django default.
++        with immediate_atomic:
++            yield
++
+     else:
+         # https://stackoverflow.com/a/45681273/339144 provides some context on nesting context managers; and how to
+         # proceed if you want to do this with an arbitrary number of context managers.
+diff --git a/bugsink/urls.py b/bugsink/urls.py
+index 3fa95dc7..560272bd 100644
+--- a/bugsink/urls.py
++++ b/bugsink/urls.py
+@@ -89,14 +89,6 @@
+         path('trigger-error/', trigger_error),
+     ]
+ 
+-    try:
+-        import debug_toolbar  # noqa
+-        urlpatterns = [
+-            path('__debug__/', include('debug_toolbar.urls')),
+-        ] + urlpatterns
+-    except ImportError:
+-        pass
+-
+ 
+ handler400 = "bugsink.views.bad_request"
+ handler403 = "bugsink.views.permission_denied"
+diff --git a/events/migrations/0023_event_remote_addr.py b/events/migrations/0023_event_remote_addr.py
+new file mode 100644
+index 00000000..397ceef8
+--- /dev/null
++++ b/events/migrations/0023_event_remote_addr.py
+@@ -0,0 +1,18 @@
++# Generated by Django 4.2.23 on 2025-07-25 15:23
++
++from django.db import migrations, models
++
++
++class Migration(migrations.Migration):
++
++    dependencies = [
++        ('events', '0022_alter_event_project'),
++    ]
++
++    operations = [
++        migrations.AddField(
++            model_name='event',
++            name='remote_addr',
++            field=models.GenericIPAddressField(blank=True, default=None, null=True),
++        ),
++    ]
+diff --git a/events/models.py b/events/models.py
+index 011971d9..cc49198e 100644
+--- a/events/models.py
++++ b/events/models.py
+@@ -124,6 +124,8 @@ class Event(models.Model):
+     last_frame_module = models.CharField(max_length=255, blank=True, null=False, default="")
+     last_frame_function = models.CharField(max_length=255, blank=True, null=False, default="")
+ 
++    remote_addr = models.GenericIPAddressField(blank=True, null=True, default=None)
++
+     # 1-based, because this is for human consumption only, and using 0-based internally when we don't actually do
+     # anything with this value other than showing it to humans is super-confusing. Sorry Dijkstra!
+     digest_order = models.PositiveIntegerField(blank=False, null=False)
+@@ -180,7 +182,7 @@ def get_parsed_data(self):
+             return json.load(f)
+ 
+     def get_absolute_url(self):
+-        return f"/issues/issue/{ self.issue_id }/event/{ self.id }/"
++        return f"/issues/issue/{self.issue_id}/event/{self.id}/"
+ 
+     def get_raw_link(self):
+         # for the admin
+@@ -236,6 +238,7 @@ def from_ingested(cls, event_metadata, digested_at, digest_order, stored_event_c
+                 sdk_version=maybe_empty(parsed_data.get("", {}).get("version", ""))[:255],
+ 
+                 debug_info=event_metadata["debug_info"][:255],
++                remote_addr=event_metadata.get("remote_addr"),
+ 
+                 digest_order=digest_order,
+                 irrelevance_for_retention=irrelevance_for_retention,
+diff --git a/ingest/views.py b/ingest/views.py
+index c8d0562b..7b4ce48d 100644
+--- a/ingest/views.py
++++ b/ingest/views.py
+@@ -171,11 +171,13 @@ def get_event_meta(cls, event_id, ingested_at, request, project):
+         # Meta means: not part of the event data. Basically: information that is available at the time of ingestion, and
+         # that must be passed to digest() in a serializable form.
+         debug_info = request.META.get("HTTP_X_BUGSINK_DEBUGINFO", "")
++        remote_addr = request.META.get("REMOTE_ADDR")
+         return {
+             "event_id": event_id,
+             "project_id": project.id,
+             "ingested_at": format_timestamp(ingested_at),
+             "debug_info": debug_info,
++            "remote_addr": remote_addr,
+         }
+ 
+     @classmethod
+diff --git a/requirements.development.txt b/requirements.development.txt
+index c3fb503a..de895d24 100644
+--- a/requirements.development.txt
++++ b/requirements.development.txt
+@@ -1,3 +1,2 @@
+ # testing/development only:
+-django-debug-toolbar
+ coverage

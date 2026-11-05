@@ -1,0 +1,52 @@
+{
+ "decisions": [
+  {
+   "kind": "security_policy",
+   "what": "ビジネス概要とCRM活用方針のテキストを、サーバー側のAPI連携ではなくブラウザのリンク経由でOpenAIのchat.openai.comへURLパラメータとして送信する設計を選んだ。",
+   "alternatives": "APIキーを使ったサーバーサイド統合、送信前の確認ダイアログ、データを送らずにプロンプトをコピーするだけの機能、自前LLMや別ベンダーの採用など。",
+   "evidence": "+    link_to(t(:ai_prompt_link), \"https://chat.openai.com/?model=gpt-4o&prompt=#{URI.encode_uri_component(full_prompt)}\",",
+   "file": "app/helpers/application_helper.rb",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  },
+  {
+   "kind": "scope",
+   "what": "以前コメントアウトされて無効化されていた管理画面の「Settings」タブをナビゲーションに復活(再有効化)させた。",
+   "alternatives": "既存のタブ構成は変えず、別の経路(直接URL)でのみ設定ページにアクセスできるようにする、または新規タブとして追加する。",
+   "evidence": "+  :text: :admin_tab_settings",
+   "file": "config/settings.default.yml",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  },
+  {
+   "kind": "user_facing",
+   "what": "タグ生成用AIプロンプトの文言を、レビュアーが提案した通りの文章(特定業種への特化を明示する内容)に決定した。",
+   "alternatives": "元のエージェント案のままにする、別の汎用的な文言にする、業種特化の言及を省く。",
+   "evidence": "+  ai_prompt_tags: Generate tags for potential leads, accounts, or campaigns, focused on the industry areas of specialisation",
+   "file": "config/locales/fat_free_crm.en-US.yml",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "discussed",
+   "trace_quote": "```suggestion\n  ai_prompt_tags: Generate tags for potential leads, accounts, or campaigns, focused on the industry areas of specialisation\n```"
+  },
+  {
+   "kind": "data_schema",
+   "what": "事業内容・CRM活用計画という機密性のあるビジネス情報を、ユーザー単位や暗号化ではなく、システム全体で共有される平文のSettingストアに保存する形にした。",
+   "alternatives": "ユーザーごとの設定として保存する、暗号化して保存する、永続化せずセッション内だけで保持する。",
+   "evidence": "+  :about_my_business: \"\"",
+   "file": "config/settings.default.yml",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  }
+ ],
+ "note": "提供された人間テキストはレビューコメント1件のみで、Issue本文や他の議論は確認できないため、多くの決定はhuman_trace=agent_onlyとした。",
+ "sid": "A047",
+ "truncated": false,
+ "n_human_text": 1
+}

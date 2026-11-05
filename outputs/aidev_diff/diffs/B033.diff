@@ -1,0 +1,235 @@
+diff --git a/packages/fullstack/README.md b/packages/fullstack/README.md
+index d68001fe2..8dd7012c1 100644
+--- a/packages/fullstack/README.md
++++ b/packages/fullstack/README.md
+@@ -91,6 +91,49 @@ export function renderHtml() {
+ }
+ ```
+ 
++## `virtual:fullstack/no-split-css` Virtual Module (Experimental)
++
++For simplified use cases where code-splitting by route is not important, you can enable the experimental `virtual:fullstack/no-split-css` module to collect all CSS in the server module graph:
++
++```js
++// vite.config.ts
++import fullstack from "@hiogawa/vite-plugin-fullstack";
++
++export default {
++  plugins: [
++    fullstack({
++      experimental: {
++        noSplitCss: true, // Enable the feature
++      },
++    }),
++  ],
++};
++```
++
++```js
++// server.js - Simplified approach for collecting all CSS
++import noSplitCss from "virtual:fullstack/no-split-css";
++
++export function renderHtml() {
++  // noSplitCss contains all CSS files loaded in the server module graph
++  const cssLinks = noSplitCss
++    .map(css => `<link rel="stylesheet" href="${css.href}" />`)
++    .join('\n');
++  // ...
++}
++```
++
++**Note:** The `virtual:fullstack/no-split-css` module:
++- **Experimental**: Must be enabled via `experimental.noSplitCss` option
++- Works in both dev and build modes
++- Returns empty array in client environment
++- Collects all CSS files from the entire server module graph
++- Does not split CSS by route/entry point
++- In dev mode: Includes `data-vite-dev-id` attributes for HMR
++- In build mode: Reads from the generated assets manifest
++- Type: `CssLinkAttributes[]` where `CssLinkAttributes = { href: string; "data-vite-dev-id"?: string }`
++
++
+ ## Configuration
+ 
+ The API is enabled by adding the plugin and minimal build configuration:
+diff --git a/packages/fullstack/src/plugin.ts b/packages/fullstack/src/plugin.ts
+index 7e338a811..405f12cac 100644
+--- a/packages/fullstack/src/plugin.ts
++++ b/packages/fullstack/src/plugin.ts
+@@ -51,6 +51,12 @@ type FullstackPluginOptions = {
+      * @default true
+      */
+     devEagerTransform?: boolean;
++    /**
++     * Enable simplified API for collecting all CSS without code-splitting by route.
++     * This provides `virtual:fullstack/no-split-css` module.
++     * @default false
++     */
++    noSplitCss?: boolean;
+   };
+ };
+ 
+@@ -108,6 +114,7 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
+     [environment: string]: { [id: string]: ImportAssetsMeta };
+   } = {};
+   const bundleMap: { [environment: string]: Rollup.OutputBundle } = {};
++  const noSplitCssEnvironments = new Set<string>();
+ 
+   async function processAssetsImport(
+     ctx: Rollup.PluginContext,
+@@ -278,10 +285,86 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
+             assert.equal(this.environment.mode, "build");
+             return { id: source, external: true };
+           }
++          if (
++            pluginOpts?.experimental?.noSplitCss &&
++            source === "virtual:fullstack/no-split-css"
++          ) {
++            return "\0" + source;
++          }
+         },
+       },
+       load: {
+         async handler(id) {
++          if (
++            pluginOpts?.experimental?.noSplitCss &&
++            id === "\0virtual:fullstack/no-split-css"
++          ) {
++            if (this.environment.name === "client") {
++              return `export default [];`;
++            }
++
++            if (this.environment.mode === "dev") {
++              // Dev mode: collect all CSS from the entire server module graph
++              const cssIds = new Set<string>();
++              const visited = new Set<string>();
++
++              function collectCssFromModule(mod: EnvironmentModuleNode) {
++                if (!mod.id || visited.has(mod.id)) return;
++                visited.add(mod.id);
++
++                // Check if the module itself is CSS
++                if (isCSSRequest(mod.id)) {
++                  if (!hasSpecialCssQuery(mod.id)) {
++                    cssIds.add(mod.id);
++                  }
++                  return;
++                }
++
++                // Skip virtual assets modules to avoid circular dependencies
++                if (
++                  parseAssetsVirtual(mod.id) ||
++                  "assets" in parseIdQuery(mod.id).query
++                ) {
++                  return;
++                }
++
++                // Recursively collect from imported modules
++                for (const next of mod.importedModules ?? []) {
++                  collectCssFromModule(next);
++                }
++              }
++
++              // Start from all modules in the server module graph
++              const environment = server.environments[this.environment.name];
++              assert(environment);
++              for (const mod of environment.moduleGraph.idToModuleMap.values()) {
++                collectCssFromModule(mod);
++              }
++
++              const hrefs = [...cssIds].map((id) =>
++                normalizeViteImportAnalysisUrl(environment, id),
++              );
++
++              const result = hrefs.map((href, i) => ({
++                href,
++                "data-vite-dev-id": [...cssIds][i],
++              }));
++
++              return `export default ${JSON.stringify(result)};`;
++            } else {
++              // Build mode: track that this environment uses no-split-css
++              noSplitCssEnvironments.add(this.environment.name);
++
++              // Import from the manifest
++              const s = new MagicString("");
++              s.append(
++                `import __assets_manifest from "virtual:fullstack/assets-manifest";\n` +
++                  `export default __assets_manifest["__no_split_css__"]["${this.environment.name}"] || [];\n`,
++              );
++              return s.toString();
++            }
++          }
++
+           const parsed = parseAssetsVirtual(id);
+           if (!parsed) return;
+           assert.notEqual(this.environment.name, "client");
+@@ -381,12 +464,51 @@ export function assetsPlugin(pluginOpts?: FullstackPluginOptions): Plugin[] {
+             }
+           }
+ 
++          // Add no-split-css entries to manifest
++          if (pluginOpts?.experimental?.noSplitCss) {
++            const noSplitCssManifest: {
++              [environment: string]: { href: string }[];
++            } = {};
++
++            for (const environmentName of noSplitCssEnvironments) {
++              const bundle = bundleMap[environmentName];
++              if (!bundle) continue;
++
++              // Collect all CSS from all chunks in this environment
++              const allCss = new Set<string>();
++              for (const chunk of Object.values(bundle)) {
++                if (chunk.type === "chunk") {
++                  const deps = collectAssetDepsInner(chunk.fileName, bundle);
++                  for (const cssFile of deps.css) {
++                    allCss.add(cssFile);
++                  }
++                }
++              }
++
++              noSplitCssManifest[environmentName] = [...allCss].map(
++                (fileName) => ({
++                  href: `/${fileName}`,
++                }),
++              );
++            }
++
++            if (Object.keys(noSplitCssManifest).length > 0) {
++              manifest["__no_split_css__"] = noSplitCssManifest as any;
++            }
++          }
++
+           // write manifest to importer environments
+           const importerEnvironments = new Set(
+             Object.values(importAssetsMetaMap)
+               .flatMap((metas) => Object.values(metas))
+               .flatMap((meta) => meta.importerEnvironment),
+           );
++
++          // Also add environments that use no-split-css
++          for (const env of noSplitCssEnvironments) {
++            importerEnvironments.add(env);
++          }
++
+           for (const environmentName of importerEnvironments) {
+             const outDir =
+               builder.environments[environmentName]!.config.build.outDir;
+diff --git a/packages/fullstack/types/index.d.ts b/packages/fullstack/types/index.d.ts
+index 59102a594..91f94faab 100644
+--- a/packages/fullstack/types/index.d.ts
++++ b/packages/fullstack/types/index.d.ts
+@@ -10,3 +10,12 @@ declare global {
+     };
+   }
+ }
++
++declare module "virtual:fullstack/no-split-css" {
++  type CssLinkAttributes = {
++    href: string;
++    "data-vite-dev-id"?: string;
++  };
++  const css: CssLinkAttributes[];
++  export default css;
++}

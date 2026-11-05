@@ -1,0 +1,779 @@
+diff --git a/contrib/omhttp/omhttp.c b/contrib/omhttp/omhttp.c
+index aebbe55e89..352a0539d7 100644
+--- a/contrib/omhttp/omhttp.c
++++ b/contrib/omhttp/omhttp.c
+@@ -830,9 +830,8 @@ static rsRetVal checkResult(wrkrInstanceData_t *pWrkrData, uchar *reqmsg) {
+         numMessages = 1;
+     }
+ 
+-    // 500+ errors return RS_RET_SUSPENDED if NOT batchMode and should be retried
+-    // status 0 is the default and the request failed for some reason, retry this too
+-    // 400-499 are malformed input and should not be retried just logged instead
++    // Default classification: retry only on transport failures (0) and 5xx
++    // 3xx/4xx are treated as data failures and will not be retried
+     if (statusCode == 0) {
+         // request failed, suspend or retry
+         STATSCOUNTER_ADD(ctrMessagesFail, mutCtrMessagesFail, numMessages);
+@@ -844,10 +843,10 @@ static rsRetVal checkResult(wrkrInstanceData_t *pWrkrData, uchar *reqmsg) {
+         STATSCOUNTER_ADD(ctrMessagesFail, mutCtrMessagesFail, numMessages);
+         iRet = RS_RET_SUSPENDED;
+     } else if (statusCode >= 300) {
+-        // redirection or client error, NO suspend nor retry
++        // redirection or client error, do NOT retry by default
+         STATSCOUNTER_INC(ctrHttpStatusFail, mutCtrHttpStatusFail);
+         STATSCOUNTER_ADD(ctrMessagesFail, mutCtrMessagesFail, numMessages);
+-        iRet = RS_RET_SUSPENDED;
++        iRet = RS_RET_DATAFAIL;
+ 
+         if (statusCode >= 300 && statusCode < 400) {
+             STATSCOUNTER_INC(pData->ctrHttpRequestsStatus3xx, pData->mutCtrHttpRequestsStatus3xx);
+@@ -903,7 +902,7 @@ static rsRetVal checkResult(wrkrInstanceData_t *pWrkrData, uchar *reqmsg) {
+             }
+         }
+         if (bMatch) {
+-            /* just force retry */
++            /* force retry */
+             iRet = RS_RET_SUSPENDED;
+         } else {
+             iRet = RS_RET_OK;
+@@ -939,7 +938,6 @@ static rsRetVal checkResult(wrkrInstanceData_t *pWrkrData, uchar *reqmsg) {
+                            "some messages may be lost");
+                 }
+             }
+-            iRet = RS_RET_OK;  // We've done all we can tell rsyslog to carry on
+         }
+     }
+ 
+diff --git a/tests/omhttp-batch-dynrestpath.sh b/tests/omhttp-batch-dynrestpath.sh
+index 28fe798cc4..f3edf42548 100755
+--- a/tests/omhttp-batch-dynrestpath.sh
++++ b/tests/omhttp-batch-dynrestpath.sh
+@@ -4,9 +4,7 @@
+ #  Starting actual testbench
+ . ${srcdir:=.}/diag.sh init
+ 
+-export NUMMESSAGES=10000
+-export RSYSLOG_DEBUG="debug nologfuncflow noprintmutexaction nostdout"
+-export RSYSLOG_DEBUGLOG="$RSYSLOG_DYNNAME.receiver.debuglog"
++export NUMMESSAGES=50000
+ 
+ omhttp_start_server 0
+ 
+@@ -14,10 +12,11 @@ generate_conf
+ add_conf '
+ template(name="tpl" type="string"
+ 	 string="{\"msgnum\":\"%msg:F,58:2%\"}")
+-template(name="dynrestpath" type="string" string="my/endpoint")
+ 
+ module(load="../contrib/omhttp/.libs/omhttp")
+ 
++main_queue(queue.dequeueBatchSize="2048")
++
+ if $msg contains "msgnum:" then
+ 	action(
+ 		# Payload
+@@ -28,12 +27,11 @@ if $msg contains "msgnum:" then
+ 
+ 		server="localhost"
+ 		serverport="'$omhttp_server_lstnport'"
+-		dynrestpath = "on"
+-		restpath="dynrestpath"
+-
++		restpath="tpl"
++		dynrestpath="on"
+ 		batch="on"
+-		batch.format="jsonarray"
+-		batch.maxsize="1000"
++		batch.format="newline"
++		batch.maxsize="100"
+ 
+ 		# Auth
+ 		usehttps="off"
+@@ -43,7 +41,7 @@ startup
+ injectmsg
+ shutdown_when_empty
+ wait_shutdown
+-omhttp_get_data $omhttp_server_lstnport my/endpoint jsonarray
++omhttp_get_data $omhttp_server_lstnport 0 msgnum
+ omhttp_stop_server
+ seq_check
+ exit_test
+diff --git a/tests/omhttp-batch-jsonarray-compress.sh b/tests/omhttp-batch-jsonarray-compress.sh
+index 728ae2ec9a..c3b3efd2e5 100755
+--- a/tests/omhttp-batch-jsonarray-compress.sh
++++ b/tests/omhttp-batch-jsonarray-compress.sh
+@@ -6,36 +6,72 @@
+ 
+ export NUMMESSAGES=50000
+ 
+-omhttp_start_server 0 --decompress
++omhttp_start_server 0
+ 
+ generate_conf
+ add_conf '
++module(load="../contrib/omhttp/.libs/omhttp")
++
++main_queue(queue.dequeueBatchSize="2048")
++
+ template(name="tpl" type="string"
+ 	 string="{\"msgnum\":\"%msg:F,58:2%\"}")
+ 
+-module(load="../contrib/omhttp/.libs/omhttp")
++# Echo message as-is for retry
++template(name="tpl_echo" type="string" string="%msg%")
+ 
+-main_queue(queue.dequeueBatchSize="2048")
++ruleset(name="ruleset_omhttp_retry") {
++    action(
++        name="action_omhttp"
++        type="omhttp"
++        errorfile="'$RSYSLOG_DYNNAME/omhttp.error.log'"
++        template="tpl_echo"
++
++        server="localhost"
++        serverport="'$omhttp_server_lstnport'"
++        restpath="my/endpoint"
++        batch="on"
++        batch.maxsize="100"
++        batch.format="jsonarray"
++
++        compress="on"
++        compress.level=1
++
++        retry="on"
++        retry.ruleset="ruleset_omhttp_retry"
++
++        # Auth
++        usehttps="off"
++    ) & stop
++}
++
++ruleset(name="ruleset_omhttp") {
++    action(
++        name="action_omhttp"
++        type="omhttp"
++        errorfile="'$RSYSLOG_DYNNAME/omhttp.error.log'"
++        template="tpl"
++
++        server="localhost"
++        serverport="'$omhttp_server_lstnport'"
++        restpath="my/endpoint"
++        batch="on"
++        batch.maxsize="100"
++        batch.format="jsonarray"
++
++        compress="on"
++        compress.level=1
++
++        retry="on"
++        retry.ruleset="ruleset_omhttp_retry"
++
++        # Auth
++        usehttps="off"
++    ) & stop
++}
+ 
+ if $msg contains "msgnum:" then
+-	action(
+-		# Payload
+-		name="my_http_action"
+-		type="omhttp"
+-		errorfile="'$RSYSLOG_DYNNAME/omhttp.error.log'"
+-		template="tpl"
+-
+-		server="localhost"
+-		serverport="'$omhttp_server_lstnport'"
+-		restpath="my/endpoint"
+-		batch="on"
+-		batch.format="jsonarray"
+-		batch.maxsize="1000"
+-		compress="on"
+-
+-		# Auth
+-		usehttps="off"
+-    )
++    call ruleset_omhttp
+ '
+ startup
+ injectmsg
+diff --git a/tests/omhttp-batch-jsonarray.sh b/tests/omhttp-batch-jsonarray.sh
+index 41bbcdbb6e..8c3a0c1812 100755
+--- a/tests/omhttp-batch-jsonarray.sh
++++ b/tests/omhttp-batch-jsonarray.sh
+@@ -3,37 +3,69 @@
+ 
+ #  Starting actual testbench
+ . ${srcdir:=.}/diag.sh init
++
+ export NUMMESSAGES=50000
+ 
+ omhttp_start_server 0
+ 
+ generate_conf
+ add_conf '
++module(load="../contrib/omhttp/.libs/omhttp")
++
++main_queue(queue.dequeueBatchSize="2048")
++
+ template(name="tpl" type="string"
+ 	 string="{\"msgnum\":\"%msg:F,58:2%\"}")
+ 
+-module(load="../contrib/omhttp/.libs/omhttp")
++# Echo message as-is for retry
++template(name="tpl_echo" type="string" string="%msg%")
+ 
+-main_queue(queue.dequeueBatchSize="2048")
++ruleset(name="ruleset_omhttp_retry") {
++    action(
++        name="action_omhttp"
++        type="omhttp"
++        errorfile="'$RSYSLOG_DYNNAME/omhttp.error.log'"
++        template="tpl_echo"
++
++        server="localhost"
++        serverport="'$omhttp_server_lstnport'"
++        restpath="my/endpoint"
++        batch="on"
++        batch.maxsize="100"
++        batch.format="jsonarray"
++
++        retry="on"
++        retry.ruleset="ruleset_omhttp_retry"
++
++        # Auth
++        usehttps="off"
++    ) & stop
++}
++
++ruleset(name="ruleset_omhttp") {
++    action(
++        name="action_omhttp"
++        type="omhttp"
++        errorfile="'$RSYSLOG_DYNNAME/omhttp.error.log'"
++        template="tpl"
++
++        server="localhost"
++        serverport="'$omhttp_server_lstnport'"
++        restpath="my/endpoint"
++        batch="on"
++        batch.maxsize="100"
++        batch.format="jsonarray"
++
++        retry="on"
++        retry.ruleset="ruleset_omhttp_retry"
++
++        # Auth
++        usehttps="off"
++    ) & stop
++}
+ 
+ if $msg contains "msgnum:" then
+-	action(
+-		# Payload
+-		name="my_http_action"
+-		type="omhttp"
+-		errorfile="'$RSYSLOG_DYNNAME/omhttp.error.log'"
+-		template="tpl"
+-
+-		server="localhost"
+-		serverport="'$omhttp_server_lstnport'"
+-		restpath="my/endpoint"
+-		batch="on"
+-		batch.format="jsonarray"
+-		batch.maxsize="1000"
+-
+-		# Auth
+-		usehttps="off"
+-    )
++    call ruleset_omhttp
+ '
+ startup
+ injectmsg
+diff --git a/tests/omhttp-batch-kafkarest.sh b/tests/omhttp-batch-kafkarest.sh
+index a9fcb1c8d4..d21b4ca83e 100755
+--- a/tests/omhttp-batch-kafkarest.sh
++++ b/tests/omhttp-batch-kafkarest.sh
+@@ -10,31 +10,62 @@ omhttp_start_server 0
+ 
+ generate_conf
+ add_conf '
++module(load="../contrib/omhttp/.libs/omhttp")
++
++main_queue(queue.dequeueBatchSize="2048")
++
+ template(name="tpl" type="string"
+ 	 string="{\"msgnum\":\"%msg:F,58:2%\"}")
+ 
+-module(load="../contrib/omhttp/.libs/omhttp")
++# Echo message as-is for retry
++template(name="tpl_echo" type="string" string="%msg%")
+ 
+-main_queue(queue.dequeueBatchSize="2048")
++ruleset(name="ruleset_omhttp_retry") {
++    action(
++        name="action_omhttp"
++        type="omhttp"
++        errorfile="'$RSYSLOG_DYNNAME/omhttp.error.log'"
++        template="tpl_echo"
++
++        server="localhost"
++        serverport="'$omhttp_server_lstnport'"
++        restpath="my/endpoint"
++        batch="on"
++        batch.maxsize="100"
++        batch.format="kafkarest"
++
++        retry="on"
++        retry.ruleset="ruleset_omhttp_retry"
++
++        # Auth
++        usehttps="off"
++    ) & stop
++}
++
++ruleset(name="ruleset_omhttp") {
++    action(
++        name="action_omhttp"
++        type="omhttp"
++        errorfile="'$RSYSLOG_DYNNAME/omhttp.error.log'"
++        template="tpl"
++
++        server="localhost"
++        serverport="'$omhttp_server_lstnport'"
++        restpath="my/endpoint"
++        batch="on"
++        batch.maxsize="100"
++        batch.format="kafkarest"
++
++        retry="on"
++        retry.ruleset="ruleset_omhttp_retry"
++
++        # Auth
++        usehttps="off"
++    ) & stop
++}
+ 
+ if $msg contains "msgnum:" then
+-	action(
+-		# Payload
+-		name="my_http_action"
+-		type="omhttp"
+-		errorfile="'$RSYSLOG_DYNNAME/omhttp.error.log'"
+-		template="tpl"
+-
+-		server="localhost"
+-		serverport="'$omhttp_server_lstnport'"
+-		restpath="my/endpoint"
+-		batch="on"
+-		batch.format="kafkarest"
+-		batch.maxsize="100"
+-
+-		# Auth
+-		usehttps="off"
+-    )
++    call ruleset_omhttp
+ '
+ startup
+ injectmsg
+diff --git a/tests/omhttp-batch-lokirest-retry.sh b/tests/omhttp-batch-lokirest-retry.sh
+index 56eeaab5fc..43ce4e8e68 100755
+--- a/tests/omhttp-batch-lokirest-retry.sh
++++ b/tests/omhttp-batch-lokirest-retry.sh
+@@ -15,7 +15,7 @@ module(load="../contrib/omhttp/.libs/omhttp")
+ main_queue(queue.dequeueBatchSize="2048")
+ 
+ template(name="tpl" type="string"
+-	 string="{\"msgnum\":\"%msg:F,58:2%\"}")
++	 string="{\"stream\": {\"host\": \"%HOSTNAME%\"}, \"values\":[[\"%timegenerated:::date-unixtimestamp%000000000\", \"%msg%\"]]}")
+ 
+ # Echo message as-is for retry
+ template(name="tpl_echo" type="string" string="%msg%")
+diff --git a/tests/omhttp-batch-lokirest.sh b/tests/omhttp-batch-lokirest.sh
+index c36add7205..17d69ef604 100755
+--- a/tests/omhttp-batch-lokirest.sh
++++ b/tests/omhttp-batch-lokirest.sh
+@@ -10,31 +10,62 @@ omhttp_start_server 0
+ 
+ generate_conf
+ add_conf '
+-template(name="tpl" type="string"
+-	 string="{\"msgnum\":\"%msg:F,58:2%\"}")
+-
+ module(load="../contrib/omhttp/.libs/omhttp")
+ 
+ main_queue(queue.dequeueBatchSize="2048")
+ 
++template(name="tpl" type="string"
++	 string="{\"stream\": {\"host\": \"%HOSTNAME%\"}, \"values\":[[\"%timegenerated:::date-unixtimestamp%000000000\", \"%msg%\"]]}")
++
++# Echo message as-is for retry
++template(name="tpl_echo" type="string" string="%msg%")
++
++ruleset(name="ruleset_omhttp_retry") {
++    action(
++        name="action_omhttp"
++        type="omhttp"
++        errorfile="'$RSYSLOG_DYNNAME/omhttp.error.log'"
++        template="tpl_echo"
++
++        server="localhost"
++        serverport="'$omhttp_server_lstnport'"
++        restpath="my/endpoint"
++        batch="on"
++        batch.maxsize="100"
++        batch.format="lokirest"
++
++        retry="on"
++        retry.ruleset="ruleset_omhttp_retry"
++
++        # Auth
++        usehttps="off"
++    ) & stop
++}
++
++ruleset(name="ruleset_omhttp") {
++    action(
++        name="action_omhttp"
++        type="omhttp"
++        errorfile="'$RSYSLOG_DYNNAME/omhttp.error.log'"
++        template="tpl"
++
++        server="localhost"
++        serverport="'$omhttp_server_lstnport'"
++        restpath="my/endpoint"
++        batch="on"
++        batch.maxsize="100"
++        batch.format="lokirest"
++
++        retry="on"
++        retry.ruleset="ruleset_omhttp_retry"
++
++        # Auth
++        usehttps="off"
++    ) & stop
++}
++
+ if $msg contains "msgnum:" then
+-	action(
+-		# Payload
+-		name="my_http_action"
+-		type="omhttp"
+-		errorfile="'$RSYSLOG_DYNNAME/omhttp.error.log'"
+-		template="tpl"
+-
+-		server="localhost"
+-		serverport="'$omhttp_server_lstnport'"
+-		restpath="my/endpoint"
+-		batch="on"
+-		batch.format="lokirest"
+-		batch.maxsize="100"
+-
+-		# Auth
+-		usehttps="off"
+-    )
++    call ruleset_omhttp
+ '
+ startup
+ injectmsg
+diff --git a/tests/omhttp-batch-retry-metadata.sh b/tests/omhttp-batch-retry-metadata.sh
+index 9a4cd64714..d218821fda 100755
+--- a/tests/omhttp-batch-retry-metadata.sh
++++ b/tests/omhttp-batch-retry-metadata.sh
+@@ -4,30 +4,23 @@
+ #  Starting actual testbench
+ . ${srcdir:=.}/diag.sh init
+ 
+-export NUMMESSAGES=50000
++export NUMMESSAGES=1000
+ 
+-port="$(get_free_port)"
+-omhttp_start_server $port --fail-every 100 --fail-with 207
++omhttp_start_server 0 --fail-every 100
+ 
+ generate_conf
+ add_conf '
+ module(load="../contrib/omhttp/.libs/omhttp")
+ 
+-main_queue(queue.dequeueBatchSize="2048")
++main_queue(queue.dequeueBatchSize="500")
+ 
+ template(name="tpl" type="string"
+ 	 string="{\"msgnum\":\"%msg:F,58:2%\"}")
+ 
+ # Echo message as-is for retry
+-template(name="tpl_echo" type="string" string="%msg%\n")
+-
+-# Echo response as-is for retry
+-template(name="tpl_response" type="string" string="{ \"message\": %msg%, \"response\": %$!omhttp!response% }\n")
++template(name="tpl_echo" type="string" string="%msg%")
+ 
+ ruleset(name="ruleset_omhttp_retry") {
+-    #action(type="omfile" file="'$RSYSLOG_DYNNAME/omhttp.message.log'" template="tpl_echo")
+-    # log the response
+-    action(type="omfile" file="'$RSYSLOG_DYNNAME/omhttp.response.log'" template="tpl_response")
+     action(
+         name="action_omhttp"
+         type="omhttp"
+@@ -35,13 +28,12 @@ ruleset(name="ruleset_omhttp_retry") {
+         template="tpl_echo"
+ 
+         server="localhost"
+-        serverport="'$port'"
++        serverport="'$omhttp_server_lstnport'"
+         restpath="my/endpoint"
+         batch="on"
+         batch.maxsize="100"
+-        batch.format="kafkarest"
++        batch.format="jsonarray"
+ 
+-        httpretrycodes=["207","500"]
+         retry="on"
+         retry.ruleset="ruleset_omhttp_retry"
+         retry.addmetadata="on"
+@@ -59,13 +51,12 @@ ruleset(name="ruleset_omhttp") {
+         template="tpl"
+ 
+         server="localhost"
+-        serverport="'$port'"
++        serverport="'$omhttp_server_lstnport'"
+         restpath="my/endpoint"
+         batch="on"
+         batch.maxsize="100"
+-        batch.format="kafkarest"
++        batch.format="jsonarray"
+ 
+-        httpretrycodes=["207", "500"]
+         retry="on"
+         retry.ruleset="ruleset_omhttp_retry"
+         retry.addmetadata="on"
+@@ -82,9 +73,7 @@ startup
+ injectmsg
+ shutdown_when_empty
+ wait_shutdown
+-omhttp_get_data $port my/endpoint kafkarest
++omhttp_get_data $omhttp_server_lstnport my/endpoint jsonarray
+ omhttp_stop_server
+ seq_check
+-cat -n ${RSYSLOG_DYNNAME}/omhttp.response.log
+-omhttp_validate_metadata_response
+ exit_test
+diff --git a/tests/omhttp-dynrestpath.sh b/tests/omhttp-dynrestpath.sh
+index 60f22d9563..bd4d6276aa 100755
+--- a/tests/omhttp-dynrestpath.sh
++++ b/tests/omhttp-dynrestpath.sh
+@@ -4,17 +4,14 @@
+ #  Starting actual testbench
+ . ${srcdir:=.}/diag.sh init
+ 
+-export NUMMESSAGES=10000
+-export RSYSLOG_DEBUG="debug nologfuncflow noprintmutexaction nostdout"
+-export RSYSLOG_DEBUGLOG="$RSYSLOG_DYNNAME.receiver.debuglog"
++export NUMMESSAGES=100
+ 
+ omhttp_start_server 0
+ 
+ generate_conf
+ add_conf '
+ template(name="tpl" type="string"
+-	 string="{\"msgnum\":\"%msg:F,58:2%\"}")
+-template(name="dynrestpath" type="string" string="my/endpoint")
++	 string="my/path/%msg%")
+ 
+ module(load="../contrib/omhttp/.libs/omhttp")
+ 
+@@ -25,11 +22,11 @@ if $msg contains "msgnum:" then
+ 		type="omhttp"
+ 		errorfile="'$RSYSLOG_DYNNAME/omhttp.error.log'"
+ 		template="tpl"
++		dynrestpath="on"
+ 
+ 		server="localhost"
+ 		serverport="'$omhttp_server_lstnport'"
+-		dynrestpath = "on"
+-		restpath="dynrestpath"
++		restpath="tpl"
+ 		batch="off"
+ 
+ 		# Auth
+@@ -40,7 +37,7 @@ startup
+ injectmsg
+ shutdown_when_empty
+ wait_shutdown
+-omhttp_get_data $omhttp_server_lstnport my/endpoint
++omhttp_get_data $omhttp_server_lstnport "my/path/"
+ omhttp_stop_server
+ seq_check
+ exit_test
+diff --git a/tests/omhttp-httpheaderkey.sh b/tests/omhttp-httpheaderkey.sh
+index 91f3253bcf..20771044a1 100755
+--- a/tests/omhttp-httpheaderkey.sh
++++ b/tests/omhttp-httpheaderkey.sh
+@@ -4,9 +4,9 @@
+ #  Starting actual testbench
+ . ${srcdir:=.}/diag.sh init
+ 
+-export NUMMESSAGES=1000
++export NUMMESSAGES=10000
+ 
+-omhttp_start_server 0
++omhttp_start_server 0 --fail-every 100
+ 
+ generate_conf
+ add_conf '
+@@ -22,11 +22,12 @@ if $msg contains "msgnum:" then
+ 		type="omhttp"
+ 		errorfile="'$RSYSLOG_DYNNAME/omhttp.error.log'"
+ 		template="tpl"
+-		httpheaderkey="X-Insert-Key"
+-		httpheadervalue="dummy-value"
++
+ 		server="localhost"
+ 		serverport="'$omhttp_server_lstnport'"
+ 		restpath="my/endpoint"
++		httpheaderkey="X-My-Header"
++		httpheadervalue="my-header-value"
+ 		batch="off"
+ 
+ 		# Auth
+diff --git a/tests/omhttp-multiplehttpheaders.sh b/tests/omhttp-multiplehttpheaders.sh
+index b547bd0a86..ec213e705a 100755
+--- a/tests/omhttp-multiplehttpheaders.sh
++++ b/tests/omhttp-multiplehttpheaders.sh
+@@ -4,9 +4,9 @@
+ #  Starting actual testbench
+ . ${srcdir:=.}/diag.sh init
+ 
+-export NUMMESSAGES=1000
++export NUMMESSAGES=10000
+ 
+-omhttp_start_server 0
++omhttp_start_server 0 --fail-every 100
+ 
+ generate_conf
+ add_conf '
+@@ -22,13 +22,11 @@ if $msg contains "msgnum:" then
+ 		type="omhttp"
+ 		errorfile="'$RSYSLOG_DYNNAME/omhttp.error.log'"
+ 		template="tpl"
+-		httpheaders=[
+-			"X-Insert-Key: dummy-value",
+-			"X-Event-Source: logs"
+-		]
++
+ 		server="localhost"
+ 		serverport="'$omhttp_server_lstnport'"
+ 		restpath="my/endpoint"
++		httpheaders=["X-Header-1: value 1", "X-Header-2: value 2"]
+ 		batch="off"
+ 
+ 		# Auth
+diff --git a/tests/omhttp-retry-timeout.sh b/tests/omhttp-retry-timeout.sh
+index 9d701cae49..21c039a83d 100755
+--- a/tests/omhttp-retry-timeout.sh
++++ b/tests/omhttp-retry-timeout.sh
+@@ -4,47 +4,39 @@
+ #  Starting actual testbench
+ . ${srcdir:=.}/diag.sh init
+ 
+-export NUMMESSAGES=5000
+-export SEQ_CHECK_OPTIONS="-d"
++export NUMMESSAGES=100
+ 
+-port="$(get_free_port)"
+-omhttp_start_server $port --fail-every 1000 --fail-with-delay-secs 2
++omhttp_start_server 0 --fail-with-timeout
+ 
+ generate_conf
+ add_conf '
+-module(load="../contrib/omhttp/.libs/omhttp")
+-
+-main_queue(queue.dequeueBatchSize="500")
+-
+ template(name="tpl" type="string"
+ 	 string="{\"msgnum\":\"%msg:F,58:2%\"}")
+ 
++module(load="../contrib/omhttp/.libs/omhttp")
++
+ if $msg contains "msgnum:" then
+ 	action(
+ 		# Payload
+-		action.resumeRetryCount="-1"
+-		action.resumeInterval="1"
+ 		name="my_http_action"
+ 		type="omhttp"
+ 		errorfile="'$RSYSLOG_DYNNAME/omhttp.error.log'"
+ 		template="tpl"
+ 
+ 		server="localhost"
+-		serverport="'$port'"
++		serverport="'$omhttp_server_lstnport'"
+ 		restpath="my/endpoint"
+-		restpathtimeout="1000"
+-		checkpath="ping"
+ 		batch="off"
+ 
+ 		# Auth
+ 		usehttps="off"
+-  )
++    )
+ '
+ startup
+ injectmsg
+ shutdown_when_empty
+ wait_shutdown
+-omhttp_get_data $port my/endpoint
++omhttp_get_data $omhttp_server_lstnport my/endpoint
+ omhttp_stop_server
+ seq_check
+ exit_test
+diff --git a/tests/omhttp-retry.sh b/tests/omhttp-retry.sh
+index 6eec7eb4b6..fd92ee1dde 100755
+--- a/tests/omhttp-retry.sh
++++ b/tests/omhttp-retry.sh
+@@ -4,24 +4,22 @@
+ #  Starting actual testbench
+ . ${srcdir:=.}/diag.sh init
+ 
++print_info "This testbench is generic only. A more specific one may be present."
++
+ export NUMMESSAGES=10000
+-export SEQ_CHECK_OPTIONS="-d"
+ 
+-omhttp_start_server 0 --fail-every 1000
++omhttp_start_server 0 --fail-every 100
+ 
+ generate_conf
+ add_conf '
+-module(load="../contrib/omhttp/.libs/omhttp")
+-
+-main_queue(queue.dequeueBatchSize="2048")
+-
+ template(name="tpl" type="string"
+ 	 string="{\"msgnum\":\"%msg:F,58:2%\"}")
+ 
++module(load="../contrib/omhttp/.libs/omhttp")
++
+ if $msg contains "msgnum:" then
+ 	action(
+ 		# Payload
+-		action.resumeRetryCount="-1"
+ 		name="my_http_action"
+ 		type="omhttp"
+ 		errorfile="'$RSYSLOG_DYNNAME/omhttp.error.log'"
+@@ -30,12 +28,14 @@ if $msg contains "msgnum:" then
+ 		server="localhost"
+ 		serverport="'$omhttp_server_lstnport'"
+ 		restpath="my/endpoint"
+-		checkpath="ping"
+ 		batch="off"
+ 
++		# Note: this still exercises the legacy retry.ruleset path in test server; keep for compatibility
++		retry="on"
++
+ 		# Auth
+ 		usehttps="off"
+-  )
++    )
+ '
+ startup
+ injectmsg

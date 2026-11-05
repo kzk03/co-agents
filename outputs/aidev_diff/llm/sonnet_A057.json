@@ -1,0 +1,41 @@
+{
+ "decisions": [
+  {
+   "kind": "user_facing",
+   "what": "リアクション数が同数の場合の並び順を、元の(バックエンド/設定由来の)順序を保つ安定ソートで決めた(アルファベット順やランダムではない)",
+   "alternatives": "アルファベット順、直近追加順、ランダム順など他の tie-break 方式もありえた",
+   "evidence": "+    return a.index - b.index",
+   "file": "frontend_nuxt/components/ReactionsGroup.vue",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "scope",
+   "what": "人気順ソートを、表示上位3件のバッジだけでなく、リアクション選択パネル全体(panelTypes)にも適用することにした",
+   "alternatives": "人気順ソートは表示バッジのみに留め、パネルの選択肢は従来通り固定の設定順(reactionTypes順)のままにする選択もありえた",
+   "evidence": "+const panelTypes = computed(() => sortedReactionTypes.value.filter((t) => t !== 'LIKE'))",
+   "file": "frontend_nuxt/components/ReactionsGroup.vue",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": "reuse the popularity-aware order for the reaction panel so popular reactions stay prominent"
+  },
+  {
+   "kind": "other",
+   "what": "reactionTypes設定が空の場合のフォールバックとして、実際に付いたリアクションの初出順を基準順序として採用することにした",
+   "alternatives": "固定のデフォルト順や空配列のまま処理する、アルファベット順にするなどの選択もありえた",
+   "evidence": "+  if (reactionTypes.value.length) return [...reactionTypes.value]",
+   "file": "frontend_nuxt/components/ReactionsGroup.vue",
+   "stage": 2,
+   "confidence": "low",
+   "human_trace": "none",
+   "trace_quote": ""
+  }
+ ],
+ "note": "人間が書いたテキストは無く、PR本文もタスク概要レベルの記述のみ。各決定はいずれも human_trace が none か agent_only(PR本文のみ)であり、具体的な tie-break 方式やパネル全体への適用範囲はエージェントの実装選択。",
+ "sid": "A057",
+ "truncated": false,
+ "n_human_text": 0
+}

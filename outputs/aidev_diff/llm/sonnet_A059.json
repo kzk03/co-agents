@@ -1,0 +1,7 @@
+{
+ "decisions": [],
+ "note": "この diff は既存フィールドへの Javadoc コメント追加のみで、挙動・デフォルト値・API シグネチャ・依存関係・スキーマ・エラーポリシー等の変更は一切ない。タスク依頼(『SimpleLoggerConfiguration の設定フィールドを明確化する』)の範囲内で一意に完了しており、メンテナの判断を要する決定点は見当たらない。",
+ "sid": "A059",
+ "truncated": false,
+ "n_human_text": 0
+}

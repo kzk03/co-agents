@@ -1,0 +1,63 @@
+{
+ "decisions": [
+  {
+   "kind": "api_contract",
+   "what": "バージョン指定の方法を、別入力フィールド(ExtensionVersions)ではなく、ExtensionsList内の `extensionId(version)` という括弧付きサフィックス記法で表現する設計に変更した。",
+   "alternatives": "ExtensionVersionsという別フィールドを追加し、ExtensionsListとカンマ区切りで対応させる(当初のPR本文の設計)",
+   "evidence": "+      \"helpMarkDown\": \"Site Extensions run on Microsoft Azure App Service. You can install set of tools as site extension and better manage your Azure App Service. The App Service will be restarted to make sure latest changes take effect. To specify a version, use the format 'extensionId(version)'. To always install the latest version (even if already installed), use 'extensionId(latest)'.\"",
+   "file": "Tasks/AzureAppServiceManageV0/task.json",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "requested",
+   "trace_quote": "Let's not add ExtensionVersions and extend ExtensionsList instead by supporting version suffix in brackets. Like this: ExtensionsList: 'Microsoft.AspNetCore.AzureAppServices.SiteExtension(latest),AspNetCoreRuntime.6.0.x64(6.0.5)'. Also make suffix optional and keep old logic to be executed in that case."
+  },
+  {
+   "kind": "architecture",
+   "what": "バージョン指定/latest更新という新動作全体を、名前付きフィーチャーフラグ `AzureAppServiceManageV0.ExtensionVersionSupport` の背後に隠し、既定では無効(フラグ未設定時は旧動作のまま)とする。",
+   "alternatives": "フラグを設けず新動作を常時有効化する、あるいは別の制御方法(入力パラメータのオン/オフ等)を使う",
+   "evidence": "+const extensionVersionSupportEnabled = tl.getBoolFeatureFlag('AzureAppServiceManageV0.ExtensionVersionSupport');",
+   "file": "Tasks/AzureAppServiceManageV0/operations/KuduServiceUtils.ts",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "requested",
+   "trace_quote": "Cover all changes with feature flag named \"AzureAppServiceManageV0.ExtensionVersionSupport\""
+  },
+  {
+   "kind": "error_policy",
+   "what": "Kudu APIがバージョン指定のインストールに失敗した場合、タスクを失敗させず、警告ログとテレメトリを出すだけでバージョン無指定の再インストールに静かにフォールバックする。",
+   "alternatives": "バージョン指定インストールの失敗をそのままタスク失敗として伝播させる(フォールバックしない)",
+   "evidence": "+                        tl.warning(`Failed to install extension ${extensionID} with version ${version}. Error: ${error.message || JSON.stringify(error)}`);",
+   "file": "Tasks/AzureAppServiceManageV0/operations/KuduServiceUtils.ts",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  },
+  {
+   "kind": "error_policy",
+   "what": "`latest`指定時は「既にインストール済みか」のチェック分岐を`!forceUpdate`で丸ごとバイパスし、常に新規インストール側の経路(anyExtensionInstalled=trueによるApp Service再起動を伴う)を通す実装にした。実際の最新バージョンと比較して不要な再起動を避ける仕組みは入れていない。",
+   "alternatives": "Kuduから実際の最新バージョン情報を取得し、既に最新であれば再インストール・再起動をスキップする",
+   "evidence": "+            if(!forceUpdate && (siteExtensionMap[extensionID] || (extensionID.startsWith('python') && siteExtensionMap[pythonExtensionPrefix + extensionID]))) {",
+   "file": "Tasks/AzureAppServiceManageV0/operations/KuduServiceUtils.ts",
+   "stage": 2,
+   "confidence": "medium",
+   "human_trace": "discussed",
+   "trace_quote": "MyExtension(latest) → always update to the latest version"
+  },
+  {
+   "kind": "other",
+   "what": "バージョン指定インストールの成功/失敗時に、拡張機能IDとバージョンを含むテレメトリ(vso telemetry.publish)を送信する実装にした。",
+   "alternatives": "テレメトリを送らない、または送る情報の粒度(拡張機能IDを含めない等)を変える",
+   "evidence": "+                            JSON.stringify({ extensionVersionInstallFailed: true, extensionId: extensionID, version: version }));",
+   "file": "Tasks/AzureAppServiceManageV0/operations/KuduServiceUtils.ts",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "discussed",
+   "trace_quote": "Add telemetry log here in case of an error."
+  }
+ ],
+ "note": "元のPR本文(別フィールドExtensionVersionsを前提とした説明)は、人間のレビューで設計が括弧記法に全面変更された後も更新されておらず、最終diffの実装と一致していない。",
+ "sid": "B087",
+ "truncated": false,
+ "n_human_text": 6
+}

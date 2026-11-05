@@ -1,0 +1,52 @@
+{
+ "decisions": [
+  {
+   "kind": "security_policy",
+   "what": "タグ指定の GitOps コマンドでは、タグが指している commit の SHA とコメントされた commit の SHA が完全一致する場合のみ処理を続行し、不一致ならエラーで拒否する仕様にした。",
+   "alternatives": "タグが指す commit に限定せず、タグ名から解決できる任意の関連 commit やブランチ同様の「HEAD チェック」を適用する、あるいは不一致でも警告のみで処理を継続する、という選択もあり得た。",
+   "evidence": "+\t\tif tag.Commit.ID != processedEvent.SHA {",
+   "file": "pkg/provider/gitlab/parse_payload.go",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": "Validate that the commented commit matches the tag before processing the request"
+  },
+  {
+   "kind": "architecture",
+   "what": "タグ上での GitOps コマンド実行時、HeadBranch と BaseBranch の両方を `refs/tags/<tag>` に設定し、ブランチ時のロジック(HEAD of branch チェック等)を完全にスキップして早期 return する設計にした。",
+   "alternatives": "タグイベントでも既存のブランチ用フィールド構造を維持しつつ別フィールドでタグ情報を保持する、あるいはタグ判定後もブランチ同様の検証経路を通す、といった設計もあり得た。",
+   "evidence": "+\t\tprocessedEvent.HeadBranch = tagPath",
+   "file": "pkg/provider/gitlab/parse_payload.go",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  },
+  {
+   "kind": "user_facing",
+   "what": "ブランチ/タグキーワードのパースエラー文言を「ブランチの単語を含まない」から「ブランチまたはタグの単語を含まない」に変更した。",
+   "alternatives": "既存の文言を保持しつつタグ用の別エラーメッセージを新設する、という選択もあり得た。",
+   "evidence": "+\t\t\twantErrMsg:     \"does not contain a branch or tag word\",",
+   "file": "pkg/provider/gitlab/parse_payload_test.go",
+   "stage": 3,
+   "confidence": "low",
+   "human_trace": "none",
+   "trace_quote": ""
+  },
+  {
+   "kind": "user_facing",
+   "what": "ドキュメントのサポートマトリクスで GitLab のタグトリガー対応を false から true に更新した。",
+   "alternatives": "機能追加と別のタイミング・別PRでドキュメントを更新する、あるいはドキュメント更新を見送るという選択もあり得たが、レビュアーの指摘で修正された。",
+   "evidence": "+{{< support_matrix github_app=\"true\" github_webhook=\"true\" gitea=\"false\" gitlab=\"true\" bitbucket_cloud=\"false\" bitbucket_server=\"false\" >}}",
+   "file": "docs/content/docs/guide/gitops_commands.md",
+   "stage": 2,
+   "confidence": "high",
+   "human_trace": "discussed",
+   "trace_quote": "ah yeah just before the final approve, you forgot to update docs i think.."
+  }
+ ],
+ "note": "Jira チケット(SRVKP-8612)本文が与えられていないため、機能要求自体の詳細な human_trace は判定できず、PR 本文(エージェント記述)止まりの判断が多い。",
+ "sid": "A004",
+ "truncated": false,
+ "n_human_text": 1
+}

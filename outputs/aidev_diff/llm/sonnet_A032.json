@@ -1,0 +1,41 @@
+{
+ "decisions": [
+  {
+   "kind": "architecture",
+   "what": "非英語文字(日本語・中国語・韓国語・ロシア語など)の使用を、識別子・文字列リテラル・コメント・テンプレートリテラルすべてに対してモノレポ全体でビルドを失敗させる'error'として一律禁止する独自ESLintプラグインを導入した。",
+   "alternatives": "severityを'warn'にする、特定ディレクトリのみに適用する、pre-commitフックや別のCIチェックとして緩やかに運用する、など。",
+   "evidence": "+        'no-non-english/no-non-english-characters': 'error',",
+   "file": "frontend/internal-packages/configs/eslint/base.js",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "discussed",
+   "trace_quote": "[review APPROVED by junkisai] This is helpful because I often commit code with a mix of Japanese in it 🙏"
+  },
+  {
+   "kind": "scope",
+   "what": "日本語・中国語・韓国語に加えロシア語・アラビア語・ヘブライ語・タイ語・デーヴァナーガリーまで対象スクリプトを広げ、かつPR本文で説明されているallowComments/allowStringsオプションを実装せず(schemaは空)、例外を許す仕組みを設けないまま全ファイルに一律適用することにした。",
+   "alternatives": "対象スクリプトを日本語関連のみに絞る、allowComments/allowStringsオプションを実際に実装してファイル単位・用途単位で例外を許可する、mockやfixtureファイルをoverridesで除外する、など。",
+   "evidence": "+        const nonEnglishPattern = /[\\p{Script=Hiragana}\\p{Script=Katakana}\\p{Script=Han}\\p{Script=Hangul}\\p{Script=Cyrillic}\\p{Script=Arabic}\\p{Script=Hebrew}\\p{Script=Thai}\\p{Script=Devanagari}]/u",
+   "file": "frontend/internal-packages/configs/eslint/no-non-english-plugin.js",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  },
+  {
+   "kind": "test_policy",
+   "what": "新しいlintルールを通すために、既存のモックデータ(mock.ts)内の日本語のSQLコメント・レビュー指摘文・分析ドキュメントをすべて英語に書き換えた(ファイルをルール対象から除外する、あるいはeslint-disableで個別許可するのではなく、コンテンツ自体を翻訳する方針を選んだ)。",
+   "alternatives": "mock.tsをルールのoverridesで除外する、該当箇所にeslint-disableコメントを付けて元の日本語コンテンツ(日本語ユーザー向けデモとしての再現性)を保持する、など。",
+   "evidence": "-      '外部キー制約の変更は既存データに影響を与える可能性があります。運用環境では慎重にマイグレーションを実行してください。',",
+   "file": "frontend/apps/app/components/SessionDetailPage/mock.ts",
+   "stage": 2,
+   "confidence": "medium",
+   "human_trace": "none",
+   "trace_quote": ""
+  }
+ ],
+ "note": "人間のレビューは『プラグインを入れること自体』への賛同のみが確認できる(junkisaiの承認コメント)。対象スクリプトの広さ・オプション未実装・既存日本語モックの英訳という具体的な設計判断は、どこにも人間の言及が見当たらない。",
+ "sid": "A032",
+ "truncated": false,
+ "n_human_text": 1
+}

@@ -1,0 +1,104 @@
+diff --git a/anise/src/almanac/metaload/metaalmanac.rs b/anise/src/almanac/metaload/metaalmanac.rs
+index df679d74..bbc2fc86 100644
+--- a/anise/src/almanac/metaload/metaalmanac.rs
++++ b/anise/src/almanac/metaload/metaalmanac.rs
+@@ -30,7 +30,7 @@ use super::{Almanac, MetaAlmanacError, MetaFile};
+ /// The downloaded path will be stored in the "AppData" folder.
+ ///
+ /// :type maybe_path: str, optional
+-/// :rtype: MetaAlmanac
++/// :rtype: Self
+ #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+ #[cfg_attr(feature = "python", pyclass)]
+ #[cfg_attr(feature = "python", pyo3(module = "anise"))]
+diff --git a/anise/src/almanac/metaload/metafile.rs b/anise/src/almanac/metaload/metafile.rs
+index 2b25d4fc..630305d2 100644
+--- a/anise/src/almanac/metaload/metafile.rs
++++ b/anise/src/almanac/metaload/metafile.rs
+@@ -41,7 +41,7 @@ use super::MetaAlmanacError;
+ ///
+ /// :type uri: str
+ /// :type crc32: int, optional
+-/// :rtype: MetaFile
++/// :rtype: Self
+ #[cfg_attr(feature = "python", pyclass)]
+ #[cfg_attr(feature = "python", pyo3(module = "anise"))]
+ #[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq, StaticType)]
+diff --git a/anise/src/almanac/metaload/python.rs b/anise/src/almanac/metaload/python.rs
+index 14c7adfe..4e8a5f27 100644
+--- a/anise/src/almanac/metaload/python.rs
++++ b/anise/src/almanac/metaload/python.rs
+@@ -49,7 +49,7 @@ impl MetaAlmanac {
+     /// Set `autodelete` to true to delete lock file if a dead lock is detected after 10 seconds.
+     ///
+     /// :type autodelete: bool, optional
+-    /// :rtype: MetaAlmanac
++    /// :rtype: Almanac
+     #[classmethod]
+     #[pyo3(name = "latest")]
+     #[pyo3(signature=(autodelete=None))]
+diff --git a/anise/src/analysis/report.rs b/anise/src/analysis/report.rs
+index f45d70ee..7770e4b1 100644
+--- a/anise/src/analysis/report.rs
++++ b/anise/src/analysis/report.rs
+@@ -53,7 +53,7 @@ impl ReportScalars {
+ impl ReportScalars {
+     /// Convert the S-Expression to a report builder
+     /// :type expr: str
+-    /// :rtype: Event
++    /// :rtype: ReportScalars
+     #[classmethod]
+     #[pyo3(name = "from_s_expr")]
+     fn py_from_s_expr(_cls: Bound<'_, PyType>, expr: &str) -> Result<Self, PyErr> {
+diff --git a/anise/src/astro/aberration.rs b/anise/src/astro/aberration.rs
+index 98b99c27..33a41589 100644
+--- a/anise/src/astro/aberration.rs
++++ b/anise/src/astro/aberration.rs
+@@ -45,7 +45,7 @@ use crate::errors::PhysicsError;
+ /// More specifically, the 99th percentile of error is less than 5 meters, the 75th percentile is less than one meter, and the median error is less than 2 millimeters.
+ ///
+ /// :type name: str
+-/// :rtype: Aberration
++/// :rtype: Self
+ #[derive(Copy, Clone, Default, PartialEq, Eq)]
+ #[cfg_attr(feature = "analysis", derive(Deserialize, Serialize))]
+ #[cfg_attr(feature = "python", pyclass)]
+diff --git a/anise/src/astro/mod.rs b/anise/src/astro/mod.rs
+index 6b482c2d..ebfd2cc8 100644
+--- a/anise/src/astro/mod.rs
++++ b/anise/src/astro/mod.rs
+@@ -45,7 +45,7 @@ pub type PhysicsResult<T> = Result<T, PhysicsError>;
+ /// :type range_km: float
+ /// :type range_rate_km_s: float
+ /// :type obstructed_by: Frame, optional
+-/// :rtype: AzElRange
++/// :rtype: Self
+ #[derive(Copy, Clone, Debug, PartialEq)]
+ #[cfg_attr(feature = "python", pyclass)]
+ #[cfg_attr(feature = "python", pyo3(module = "anise.astro"))]
+diff --git a/anise/src/frames/frame.rs b/anise/src/frames/frame.rs
+index 725d0071..bc97d730 100644
+--- a/anise/src/frames/frame.rs
++++ b/anise/src/frames/frame.rs
+@@ -39,7 +39,7 @@ use pyo3::pyclass::CompareOp;
+ /// :type orientation_id: int
+ /// :type mu_km3_s2: float, optional
+ /// :type shape: Ellipsoid, optional
+-/// :rtype: Frame
++/// :rtype: Self
+ #[derive(Copy, Clone, Debug, Serialize, Deserialize, PartialEq)]
+ #[cfg_attr(feature = "metaload", derive(StaticType))]
+ #[cfg_attr(feature = "python", pyclass)]
+diff --git a/anise/src/structure/planetocentric/ellipsoid.rs b/anise/src/structure/planetocentric/ellipsoid.rs
+index ca2bb89b..d2547422 100644
+--- a/anise/src/structure/planetocentric/ellipsoid.rs
++++ b/anise/src/structure/planetocentric/ellipsoid.rs
+@@ -36,7 +36,7 @@ use pyo3::pyclass::CompareOp;
+ /// :type semi_major_equatorial_radius_km: float
+ /// :type polar_radius_km: float, optional
+ /// :type semi_minor_equatorial_radius_km: float, optional
+-/// :rtype: Ellipsoid
++/// :rtype: Self
+ #[derive(Copy, Clone, Debug, Serialize, Deserialize, PartialEq)]
+ #[cfg_attr(feature = "metaload", derive(StaticType))]
+ #[cfg_attr(feature = "python", pyclass)]

@@ -1,0 +1,96 @@
+{
+ "decisions": [
+  {
+   "kind": "data_schema",
+   "what": "テレメトリイベント名を「Microsoftタスク全般」ではなく「MSBuildタスク」に限定する意味を持つ build/tasks/msbuild-subclassed に改名した。",
+   "alternatives": "元のmicrosoft-tasks寄りの名称を維持する、あるいはより汎用的な名前にする",
+   "evidence": "+        private const string MSBuildTaskSubclassedEventName = \"build/tasks/msbuild-subclassed\";",
+   "file": "src/Build/BackEnd/Components/Logging/ProjectTelemetry.cs",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "requested",
+   "trace_quote": "@copilot rename this event - it's not about 'microsoft tasks' per se - it's about MSBuild tasks specifically."
+  },
+  {
+   "kind": "data_schema",
+   "what": "収集データの形を「Microsoftタスク名→サブクラス使用数」の集計ディクショナリとし、個々のユーザー定義型名などの詳細は送らない設計にした。",
+   "alternatives": "ユーザー定義クラス名や名前空間なども含めて送る、より粒度の細かいデータ構造にする",
+   "evidence": "+        private readonly Dictionary<string, int> _msbuildTaskSubclassUsage = new();",
+   "file": "src/Build/BackEnd/Components/Logging/ProjectTelemetry.cs",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "requested",
+   "trace_quote": "I want to track the usage of non-sealed Microsoft-owned Tasks specifically. So let's keep a dictionary of Microsoft Task Names to counts of their non-sealed usage."
+  },
+  {
+   "kind": "data_schema",
+   "what": "タスク自身がsealedかどうかに関わらず、Microsoft所有タスクのサブクラスであれば計測対象とする(sealed判定条件を持たせない)仕様にした。",
+   "alternatives": "非sealedのサブクラスのみを計測する、sealed/非sealedを別カウントで分けて収集する",
+   "evidence": "+        public void TrackTaskSubclassing(Type taskType, bool isMicrosoftOwned)",
+   "file": "src/Build/BackEnd/Components/Logging/ProjectTelemetry.cs",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "requested",
+   "trace_quote": "we don't care if the task itself is sealed - we care only if it derives from a Microsoft-owned Task of any kind - I think this condition should be removed so that we track the data we actually need."
+  },
+  {
+   "kind": "architecture",
+   "what": "直接の親クラスだけでなく継承階層全体を遡ってMicrosoft所有の基底タスクを探索する実装にした。",
+   "alternatives": "直接の親クラス(1階層)のみを調べる軽量な実装にする",
+   "evidence": "+            while (baseType != null)",
+   "file": "src/Build/BackEnd/Components/Logging/ProjectTelemetry.cs",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "requested",
+   "trace_quote": "@copilot you need to check the entire inheritance heirarchy, not just the first level"
+  },
+  {
+   "kind": "data_schema",
+   "what": "継承階層を遡る際、最初に見つかったMicrosoft所有の基底クラスでカウントを確定しそれ以降の祖先は見ない(break)仕様とした。",
+   "alternatives": "チェーン上の全てのMicrosoft所有祖先クラスをそれぞれカウントする、最も遠いルートのMicrosoft基底クラスを採用する",
+   "evidence": "+                    // Stop at the first Microsoft-owned base class we find",
+   "file": "src/Build/BackEnd/Components/Logging/ProjectTelemetry.cs",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  },
+  {
+   "kind": "scope",
+   "what": "「Microsoft所有の基底タスク」の判定を Microsoft.Build.Tasks. と Microsoft.Build.Utilities. の名前空間プレフィックスのみに限定し、Issueで要求されていたSDK提供タスク(例: Microsoft.NET.Build.Tasks名前空間)の基底クラスは計測対象から外れる実装にした。",
+   "alternatives": "AssemblyTaskFactory側のIsMicrosoftAuthoredTask()と同様にアセンブリ名・配置場所ベースの判定を基底クラスにも適用する、対象名前空間リストにSDK系を加える",
+   "evidence": "+                    (baseTypeName.StartsWith(\"Microsoft.Build.Tasks.\") || ",
+   "file": "src/Build/BackEnd/Components/Logging/ProjectTelemetry.cs",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "requested",
+   "trace_quote": "we want to collect data about MSBuild, SDK, and generally Microsoft-authored Task usage to drive this decision making."
+  },
+  {
+   "kind": "data_schema",
+   "what": "タスク自体がMicrosoft製かどうかを、アセンブリ名が\"Microsoft.\"で始まる/組み込みMSBuildロジックの格納場所/NuGetキャッシュ内のMicrosoftパッケージ、のいずれかに当たればMicrosoft製と判定するOR条件ロジックとして新設した。",
+   "alternatives": "より厳密な公式署名確認や既知パッケージIDのホワイトリスト方式にする、判定基準を1つに絞る",
+   "evidence": "+            if (!string.IsNullOrEmpty(assemblyName) && Framework.FileClassifier.IsMicrosoftAssembly(assemblyName))",
+   "file": "src/Build/Instance/TaskFactories/AssemblyTaskFactory.cs",
+   "stage": 3,
+   "confidence": "medium",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  },
+  {
+   "kind": "data_schema",
+   "what": "テレメトリのプロパティキー名は完全修飾クラス名の\".\"を\"_\"に置換した文字列とする命名規則を採用した。",
+   "alternatives": "別の区切り文字やキャメルケース、短縮名・ハッシュ化などの命名規則を使う",
+   "evidence": "+                string propertyName = kvp.Key.Replace(\".\", \"_\");",
+   "file": "src/Build/BackEnd/Components/Logging/ProjectTelemetry.cs",
+   "stage": 2,
+   "confidence": "low",
+   "human_trace": "agent_only",
+   "trace_quote": ""
+  }
+ ],
+ "note": "イベント名改名・データ形状(カウントのみの集計)・sealed条件の削除・階層全体の探索は、PRのレビューコメント(baronfel)で明示的に指示された決定。一方で「どのクラス/アセンブリをMicrosoft所有とみなすか」の具体的な境界線(名前空間プレフィックスの範囲、SDKタスクの扱い、アセンブリ分類のOR条件)はエージェント側の実装判断であり、収集データの網羅性・正確性(sealed化の意思決定の根拠データ)に影響する可能性がある。",
+ "sid": "B002",
+ "truncated": false,
+ "n_human_text": 3
+}

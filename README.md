@@ -10,6 +10,8 @@ co-agents/
 ├── data/raw_json/      # OpenStack Gerrit(232 repo)。読み取り専用(git 管理外)
 ├── data/pilot_raw_full/  # GitHub 39 repo(AIresearch パイロット、git 管理外)
 ├── data/aidev/        # AIDev v4 の AIDev-pop テーブル(HF hao-li/AIDev)
+├── docs/              # 叩き台のメモ(git 管理外)
+│   └── research_story.md  # 研究ストーリーの叩き台(主案と代替案)
 ├── scripts/
 │   ├── reproduce.py   # データ取得: github / gerrit_extract / gerrit_sample
 │   ├── aidev_feasibility.py  # AIDev: 人間の CHANGES_REQUESTED の抽出と件数

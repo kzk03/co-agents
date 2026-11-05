@@ -1,0 +1,30 @@
+{
+ "decisions": [
+  {
+   "kind": "architecture",
+   "what": "複数のFilterListViewUrlを使うのは「ミラー」と「同一リストの分割パート」の場合のみに限定し、同一リストの異なる「フレーバー」(バリアント/テンプレート)は必ず別個のFilterListエントリとして表現するという設計パターンをプロジェクト規約(copilot-instructions.md)として明文化した。",
+   "alternatives": "従来通り1つのFilterListに複数のViewUrlを紐付けてバリアントを表現する運用を続ける、または明文化せず暗黙のレビュー判断に任せる。",
+   "evidence": "+**Different \"flavors\" or variants of a list should get separate FilterList entries**:",
+   "file": ".github/copilot-instructions.md",
+   "stage": 3,
+   "confidence": "high",
+   "human_trace": "requested",
+   "trace_quote": "In this case, these are different \"flavors\" of the same list, so let's give each one their own entry in FilterList.json and all the related entities/.json files as well.\n\nCapture this design in copilot-instructions.md as well so you remember that in the future."
+  },
+  {
+   "kind": "scope",
+   "what": ".gitignore に dotnet-install.sh を追加し、このインストールスクリプトをリポジトリの追跡対象から除外することにした。",
+   "alternatives": "このファイルを無視せずコミット対象に含める、または別のビルド関連セクションにパターンを追加する。",
+   "evidence": "+dotnet-install.sh",
+   "file": ".gitignore",
+   "stage": 2,
+   "confidence": "low",
+   "human_trace": "none",
+   "trace_quote": ""
+  }
+ ],
+ "note": "提供されたdiffは非常に大きなEF Coreマイグレーションのdesignerファイル(生成物)の冒頭で打ち切られており、実際にGameIndustryの3エントリ(ID 1706/2740/2741)やFilterListViewUrl/Tagなどの具体的な追加行は含まれていなかった。そのため、どのIDを既存エントリに残すか・ライセンスやタグの割り当てなど個別データ判断についてはdiff上の直接証拠が確認できず、抽出対象外とした。エントリ分割自体の設計判断は人間のレビューコメントでほぼそのまま指示されている(requested)。",
+ "sid": "B024",
+ "truncated": true,
+ "n_human_text": 3
+}

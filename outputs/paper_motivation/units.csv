@@ -1,0 +1,769 @@
+doc_type,doc_id,quote,stage_A,assignee_A,enforceable_A,stage_B,assignee_B,enforceable_B
+HUMANS.md,dollspace-gay/AethelOS/HUMANS.md,The core philosophy is that the human acts as an architect and a guide.,3,human_does,no,3,human_does,no
+HUMANS.md,dollspace-gay/AethelOS/HUMANS.md,Get AI Buy-in: Present this plan to the AI. This ensures the agent understands the full scope and sequence before beginning implementation.,3,human_does,no,3,human_does,no
+HUMANS.md,dollspace-gay/AethelOS/HUMANS.md,You will guide the agent through the plan one step at a time. Do not give it multiple steps at once.,3,human_does,no,3,human_does,no
+HUMANS.md,dollspace-gay/AethelOS/HUMANS.md,"Check for Laziness: Manually inspect the generated code for stubs, placeholders (// TODO:), or incomplete logic.",2,human_does,no,2,human_does,no
+HUMANS.md,dollspace-gay/AethelOS/HUMANS.md,Do not let it move on until the code is complete.,2,human_does,no,2,human_does,no
+HUMANS.md,dollspace-gay/AethelOS/HUMANS.md,"Only after a step has been implemented, tested, and verified should you instruct the agent to move to the next one.",2,human_does,no,2,human_approval,no
+HUMANS.md,dollspace-gay/AethelOS/HUMANS.md,"If the agent discovers new, unplanned work (e.g., a missing helper function, a needed refactor), it will automatically file new issues in beads and link them to the current task.",4,ai_allowed,yes,4,ai_allowed,yes
+HUMANS.md,dollspace-gay/AethelOS/HUMANS.md,"a robust, graph-based dependency tracker that the AI can manage itself",3,ai_allowed,no,3,ai_allowed,no
+HUMANS.md,dollspace-gay/AethelOS/HUMANS.md,freeing up the human guide to focus on higher-level strategy,3,human_does,no,3,human_does,no
+HUMANS.md,dollspace-gay/AethelOS/HUMANS.md,freeing up the human guide to focus on higher-level strategy and code verification,2,human_does,no,2,human_does,no
+HUMANS.md,attogram/agents/HUMANS.md,Treat AI agents as junior developers. Provide clear instructions and review their work.,2,human_does,no,2,human_does,no
+HUMANS.md,attogram/agents/HUMANS.md,"Define Tasks: Create clear, well-defined tasks for the AI.",3,human_does,no,3,human_does,no
+HUMANS.md,attogram/agents/HUMANS.md,Review Work: Carefully review all AI-submitted pull requests for accuracy and quality.,2,human_does,no,2,human_does,no
+HUMANS.md,jerpint/woltspace/HUMANS.md,Full autonomy inside a sandboxed container,4,ai_allowed,yes,4,ai_allowed,yes
+HUMANS.md,jerpint/woltspace/HUMANS.md,Wolts can talk through messaging apps.,4,ai_allowed,yes,4,ai_allowed,yes
+HUMANS.md,jerpint/woltspace/HUMANS.md,"Wolts can open issues and PRs on GitHub using a **GitHub App** (short-lived tokens, no long-lived PATs).",4,ai_allowed,yes,4,ai_allowed,yes
+HUMANS.md,atisharma/chasm/HUMANS.md,**Human review required.** All AI-generated PRs must be reviewed and approved by a human maintainer.,2,human_does,no,3,human_does,yes
+HUMANS.md,atisharma/chasm/HUMANS.md,"**No autonomous merges.** AI agents must not merge, approve, or create releases.",4,ai_forbidden,yes,4,ai_forbidden,yes
+HUMANS.md,atisharma/chasm/HUMANS.md,"AI agents must not merge, approve, or create releases.",4,ai_forbidden,yes,4,ai_forbidden,yes
+HUMANS.md,atisharma/chasm/HUMANS.md,"AI agents must not merge, approve, or create releases.",4,ai_forbidden,yes,4,ai_forbidden,yes
+HUMANS.md,atisharma/chasm/HUMANS.md,Open an issue for discussion before major changes.,3,human_approval,no,3,human_approval,no
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,humans provide strategic direction,3,human_does,no,3,human_does,no
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,manage access and credentials,1,human_does,yes,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,handle decisions requiring judgment,3,human_does,no,3,human_does,no
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,handle decisions requiring ... authentication,4,human_does,no,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,"Responsible for environment setup, credentials, and access control",1,human_does,yes,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Define company vision and strategy,3,human_does,no,3,human_does,no
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Make final decisions on priorities and direction,3,human_does,no,3,human_does,no
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Add and manage environment credentials and secrets,1,human_does,yes,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,"Grant team members access to resources (databases, APIs, services)",1,human_does,yes,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Handle manual tasks that require human authentication,4,human_does,no,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Company direction and strategy,3,human_does,no,3,human_does,no
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Final decision authority,3,human_does,no,3,human_does,no
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Environment setup and credentials,1,human_does,yes,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Resource access and permissions,1,human_does,yes,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Design system architecture,3,human_does,no,3,human_does,no
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Approve major technical decisions,3,human_approval,no,3,human_does,no
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Review critical code changes,2,human_does,no,2,human_does,no
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Add/manage API keys and database credentials,1,human_does,yes,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Infrastructure and credentials,1,human_does,yes,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,"Ready to deploy, awaiting final approval",4,human_approval,yes,4,human_approval,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,"Adding environment variables (API keys, tokens, passwords)",1,human_does,yes,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Managing database credentials,1,human_does,yes,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,"Configuring service access (AWS, GitHub, databases, etc.)",1,human_does,yes,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Providing agents with the credentials they need,1,human_does,yes,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,"Granting database access (user creation, permissions)",1,human_does,yes,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Provisioning API keys on external services,1,human_does,yes,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Managing team member access to tools/services,1,human_does,yes,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Handling access revocation when needed,1,human_does,yes,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,"Strategic decisions (which features to build, direction)",3,human_does,no,3,human_does,no
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Prioritization (which task comes first when conflicts arise),3,human_does,no,3,human_does,no
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Budget/resource allocation,3,human_does,no,3,human_does,no
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Approval of major changes,3,human_approval,no,3,human_does,no
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Actions requiring human authentication (login to services),4,human_does,no,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,CAPTCHA solving,4,human_does,no,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Two-factor authentication,4,human_does,no,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Human judgment calls,3,human_does,no,3,human_does,no
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,approve_deploys    # Can approve production changes,4,human_approval,yes,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,manage_credentials # Can add/manage environment credentials,1,human_does,yes,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Add credentials/access when requested instead of asking agents to self-serve,1,human_does,yes,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Make go/no-go decisions,3,human_does,no,3,human_does,no
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Approve major feature decisions,3,human_approval,no,3,human_does,no
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Design system architecture,3,human_does,no,3,human_does,no
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Approve technical decisions,3,human_approval,no,3,human_does,no
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Review critical code changes,2,human_does,no,2,human_does,no
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Add/manage credentials and access,1,human_does,yes,4,human_does,yes
+HUMANS.md,tomtev/termlings/docs/HUMANS.md,Infrastructure & credentials,1,human_does,yes,4,human_does,yes
+HUMANS.md,google/myvibe/vibedocs/humans.md,The entire process pauses until you review and approve the blueprint.,3,human_approval,no,3,human_does,no
+HUMANS.md,google/myvibe/vibedocs/humans.md,"Once you approve the plan, Gemini switches to ""execution mode,""",3,human_approval,no,3,human_does,no
+HUMANS.md,google/myvibe/vibedocs/humans.md,"Gemini switches to ""execution mode,"" meticulously implementing the blueprint by writing, testing, committing code, and handling deployments.",4,ai_allowed,yes,4,ai_allowed,yes
+HUMANS.md,google/myvibe/vibedocs/humans.md,Review and Approve the Plan that Gemini presents in `vibedocs/tasks/current_task.md`.,3,human_approval,no,3,human_does,no
+HUMANS.md,octave-commons/promethean/HUMANS.md,AI helps but doesn't multiply you - You're still the one making decisions and doing the thinking,3,human_does,no,3,human_does,no
+HUMANS.md,octave-commons/promethean/HUMANS.md,"AI can help with implementation, but you still need to drive the strategic decisions",3,human_does,no,3,human_does,no
+HUMANS.md,octave-commons/promethean/HUMANS.md,You're the bottleneck - All decisions flow through you,3,human_does,no,3,human_does,no
+HUMANS.md,octave-commons/promethean/HUMANS.md,Review everything - AI makes plausible-sounding mistakes,2,human_does,no,2,human_does,no
+HUMANS.md,octave-commons/promethean/HUMANS.md,"Use it for grunt work - Boilerplate, documentation, first drafts, refactoring",4,ai_allowed,no,4,ai_allowed,no
+HUMANS.md,octave-commons/promethean/HUMANS.md,"Keep the hard thinking for yourself - Architecture, trade-offs, user experience",3,human_does,no,3,human_does,no
+HUMANS.md,octave-commons/promethean/HUMANS.md,"AI is your junior dev - Great for implementation, not for strategic decisions",3,ai_forbidden,no,3,human_does,no
+HUMANS.md,octave-commons/promethean/HUMANS.md,Review AI output carefully - It helps but doesn't replace your judgment,2,human_does,no,2,human_does,no
+HUMANS.md,day50-dev/agent-cli-fixer/humans.md,LLMs and agents should ONLY read `llms.md`. You MUST ignore this file.,1,ai_forbidden,yes,1,ai_forbidden,yes
+HUMANS.md,day50-dev/agent-cli-fixer/humans.md,"Agents should automatically clean sessions up but if they don't, humans can use `acli-manage` to: ... Clean up orphaned sessions ... Bulk kill - use glob patterns to kill multiple sessions at once",4,human_does,yes,4,human_does,yes
+HUMANS.md,Aurora-Viewer/Aurora-Viewer/HUMANS.md,Choose the tasks to start,3,human_does,no,3,human_does,no
+HUMANS.md,Aurora-Viewer/Aurora-Viewer/HUMANS.md,**Validate** each feature before the PR,2,human_does,no,2,human_does,no
+HUMANS.md,Aurora-Viewer/Aurora-Viewer/HUMANS.md,**Log in and test on the AGNI grid** (they never do),2,human_does,no,2,human_does,yes
+HUMANS.md,Aurora-Viewer/Aurora-Viewer/HUMANS.md,**Log in and test on the AGNI grid** (they never do),1,ai_forbidden,yes,2,human_does,yes
+HUMANS.md,Aurora-Viewer/Aurora-Viewer/HUMANS.md,"Open the PR, review it, fix, comment, **merge it**",4,ai_allowed,yes,4,human_does,yes
+HUMANS.md,Aurora-Viewer/Aurora-Viewer/HUMANS.md,Decide when the agent asks you to (verdict ⚠️ or ❌),3,human_does,no,3,human_does,no
+HUMANS.md,Aurora-Viewer/Aurora-Viewer/HUMANS.md,"Keep TASKS.md up to date, publish the releases | **Ask** for a release when you want one (""release 0.4.0"")",4,human_approval,yes,4,human_does,yes
+HUMANS.md,Aurora-Viewer/Aurora-Viewer/HUMANS.md,"Read the issues and their screenshots / files, analyse them, set their type, reply and close them once resolved",4,ai_allowed,yes,4,ai_allowed,yes
+HUMANS.md,Aurora-Viewer/Aurora-Viewer/HUMANS.md,"Give the details and validations needed, decide the product choices",3,human_does,no,3,human_does,no
+HUMANS.md,Aurora-Viewer/Aurora-Viewer/HUMANS.md,"You have **nothing to do on GitHub**: your only job is to test what the agent shows you, and to log in to the grid when needed.",2,human_does,no,2,human_does,no
+HUMANS.md,Aurora-Viewer/Aurora-Viewer/HUMANS.md,**You test** what it asks you to (in demo mode or on the grid: you are the one who logs in) and tell it whether it is good.,2,human_does,no,2,human_does,no
+HUMANS.md,Aurora-Viewer/Aurora-Viewer/HUMANS.md,"**If the verdict is ✅, it merges it**",4,ai_allowed,yes,4,ai_allowed,yes
+HUMANS.md,Aurora-Viewer/Aurora-Viewer/HUMANS.md,"Otherwise (⚠️ or ❌), it stops and asks you to decide.",3,human_approval,no,3,human_approval,no
+HUMANS.md,Aurora-Viewer/Aurora-Viewer/HUMANS.md,"**`main` is protected**, for everyone, admins included: nobody pushes to it directly; everything goes through a PR, then through the merge queue.",4,ai_forbidden,yes,4,ai_forbidden,yes
+HUMANS.md,Aurora-Viewer/Aurora-Viewer/HUMANS.md,"the project manager sets each issue's Priority and milestone, which say what to work on first.",3,human_does,no,3,human_does,no
+HUMANS.md,Aurora-Viewer/Aurora-Viewer/HUMANS.md,"**Dependabot** opens dependency update PRs every week; an agent can check them for you, and merges them if you agree.",4,human_approval,yes,4,human_approval,yes
+HUMANS.md,Aurora-Viewer/Aurora-Viewer/HUMANS.md,"Lets your Claude Code agents follow their PRs and CI, post their review and their screenshots, merge their PR, triage the issues and reply to them",4,ai_allowed,yes,4,ai_allowed,yes
+HUMANS.md,Aurora-Viewer/Aurora-Viewer/HUMANS.md,The agents never connect to the grid,1,ai_forbidden,yes,1,ai_forbidden,yes
+HUMANS.md,Aurora-Viewer/Aurora-Viewer/HUMANS.md,and never handle your credentials.,1,ai_forbidden,no,1,ai_forbidden,yes
+HUMANS.md,Aurora-Viewer/Aurora-Viewer/HUMANS.md,"If you see a credential or a token go by, tell the agent to stop and report it.",2,human_does,no,4,human_does,yes
+HUMANS.md,Aurora-Viewer/Aurora-Viewer/HUMANS.md,"You can always ask an agent to explain a change to you, or not to merge a PR before you have looked at it.",4,human_approval,yes,4,human_approval,yes
+HUMANS.md,TeamLith/lith/HUMANS.md,"Humans own machine-local setup, tool installation, Apple signing, App Store Connect access, GitHub secrets, device provisioning, and final release approval.",4,human_does,no,4,human_does,no
+HUMANS.md,TeamLith/lith/HUMANS.md,Humans own ... tool installation,4,human_does,yes,4,human_does,no
+HUMANS.md,TeamLith/lith/HUMANS.md,Humans own ... Apple signing,4,human_does,yes,4,human_does,no
+HUMANS.md,TeamLith/lith/HUMANS.md,Humans own ... App Store Connect access,1,human_does,yes,1,human_does,yes
+HUMANS.md,TeamLith/lith/HUMANS.md,Humans own ... GitHub secrets,1,human_does,yes,1,human_does,yes
+HUMANS.md,TeamLith/lith/HUMANS.md,Humans own ... device provisioning,4,human_does,no,4,human_does,no
+HUMANS.md,TeamLith/lith/HUMANS.md,Humans own ... final release approval.,4,human_does,yes,3,human_does,no
+HUMANS.md,TeamLith/lith/HUMANS.md,Agents may implement one scoped task at a time,4,ai_allowed,no,4,ai_allowed,no
+HUMANS.md,TeamLith/lith/HUMANS.md,Agents may ... update repo docs and task metadata,4,ai_allowed,yes,4,ai_allowed,yes
+HUMANS.md,TeamLith/lith/HUMANS.md,Agents may ... run local validation,2,ai_allowed,yes,4,ai_allowed,yes
+HUMANS.md,TeamLith/lith/HUMANS.md,Agents may ... bump versions only when a tracked issue changes shipped app behavior or app/release metadata.,4,ai_allowed,no,4,ai_allowed,no
+HUMANS.md,TeamLith/lith/HUMANS.md,Humans should intervene when work requires credentials,1,human_does,no,1,human_does,yes
+HUMANS.md,TeamLith/lith/HUMANS.md,Humans should intervene when work requires ... legal or license judgment,3,human_does,no,2,human_does,no
+HUMANS.md,TeamLith/lith/HUMANS.md,Humans should intervene when work requires ... Apple account changes,4,human_does,no,4,human_does,yes
+HUMANS.md,TeamLith/lith/HUMANS.md,Humans should intervene when work requires ... any setup input an agent cannot discover safely.,3,human_does,no,1,human_does,no
+HUMANS.md,TeamLith/lith/HUMANS.md,"Agents should not invent secrets, signing identities, team IDs, or release metadata that only a human can provide.",3,ai_forbidden,no,1,ai_forbidden,no
+HUMANS.md,TeamLith/lith/HUMANS.md,"For parallel agent runs, create or assign one GitHub Issue per unit of work before starting the agents.",3,human_does,no,4,human_does,yes
+HUMANS.md,TeamLith/lith/HUMANS.md,"Review agent branches or commits before merging, especially when version bumps or workflow docs changed.",2,human_does,no,2,human_does,yes
+HUMANS.md,TeamLith/lith/HUMANS.md,"If an agent reports a blocker tied to credentials or signing, resolve that input as a human and then resume the same GitHub Issue (or its linked PR).",3,human_does,no,1,human_does,yes
+HUMANS.md,TeamLith/lith/HUMANS.md,"Expect one GitHub Issue per task, duplicate-title detection, and no implementation in the same run unless you explicitly request a follow-up issue run.",3,human_approval,no,4,human_approval,yes
+HUMANS.md,TeamLith/lith/HUMANS.md,create or propose follow-up GitHub Issues for larger work instead of expanding scope silently,3,human_approval,no,3,ai_allowed,no
+HUMANS.md,TeamLith/lith/HUMANS.md,"Review the resulting branch or diff like any other process change, especially if it alters validation, release workflow, or contributor instructions.",2,human_does,no,2,human_does,yes
+HUMANS.md,TeamLith/lith/HUMANS.md,"When an agent asks for one-time setup input, reply with the exact value or decision needed, such as Apple team selection, signing mode, secret owner, workflow approval, or whether a repo-wide process change is acceptable.",3,human_does,no,3,human_does,no
+HUMANS.md,TeamLith/lith/HUMANS.md,Humans must supply or approve credentials,1,human_approval,no,1,human_approval,yes
+HUMANS.md,TeamLith/lith/HUMANS.md,Humans must supply or approve ... signing and provisioning data,3,human_approval,no,1,human_approval,yes
+HUMANS.md,TeamLith/lith/HUMANS.md,Humans must supply or approve ... App Store Connect or release actions,4,human_approval,yes,4,human_approval,yes
+HUMANS.md,TeamLith/lith/HUMANS.md,Humans must supply or approve ... external service ownership,3,human_approval,no,3,human_approval,no
+HUMANS.md,TeamLith/lith/HUMANS.md,Humans must supply or approve ... legal or license judgments,3,human_does,no,2,human_approval,no
+HUMANS.md,TeamLith/lith/HUMANS.md,Humans must supply or approve ... any new paid tooling.,4,human_approval,no,3,human_approval,no
+HUMANS.md,TeamLith/lith/HUMANS.md,"Repo self-improvement work should stay within docs, issue/PR workflow, task tracking, validation, CI, or repo-local skill guidance unless a human explicitly approves broader scope.",3,human_approval,no,3,human_approval,no
+HUMANS.md,TeamLith/lith/HUMANS.md,Merge approved changes to `main` after the `Validate` GitHub Actions workflow passes.,4,human_does,yes,4,human_does,yes
+HUMANS.md,TeamLith/lith/HUMANS.md,Trigger the `Release to TestFlight` GitHub Actions workflow.,4,human_does,yes,4,human_does,yes
+HUMANS.md,TeamLith/lith/HUMANS.md,Verify the uploaded build in App Store Connect,2,human_does,no,2,human_does,yes
+HUMANS.md,TeamLith/lith/HUMANS.md,assign it to tester groups.,4,human_does,yes,4,human_does,yes
+HUMANS.md,fielding/slop-farm/HUMANS.md,What gets built is up to them.,3,ai_allowed,no,3,ai_allowed,no
+HUMANS.md,fielding/slop-farm/HUMANS.md,"AI agents decide what gets built, how it's organized, and where it goes",3,ai_allowed,no,3,ai_allowed,no
+HUMANS.md,fielding/slop-farm/HUMANS.md,There aren't any rules about what this becomes. Contributions are governed by the community.,3,ai_allowed,no,3,human_does,no
+HUMANS.md,fielding/slop-farm/HUMANS.md,"Anyone can contribute. Open a PR with anything: code, docs, proposals, architecture, art, manifestos, whatever.",4,ai_allowed,yes,4,ai_allowed,yes
+HUMANS.md,fielding/slop-farm/HUMANS.md,No human gatekeepers. The community governs itself.,3,ai_allowed,no,3,ai_allowed,no
+HUMANS.md,fielding/slop-farm/HUMANS.md,Any contributor can review and approve PRs.,3,ai_allowed,yes,3,ai_allowed,yes
+HUMANS.md,fielding/slop-farm/HUMANS.md,contributors nominate and vote on maintainers who get collaborator access,3,ai_allowed,no,3,human_does,no
+HUMANS.md,fielding/slop-farm/HUMANS.md,How and when that happens is up to the community.,3,ai_allowed,no,3,human_does,no
+HUMANS.md,danja/jigdaw/HUMANS.md,Actions only you can take.,2,human_does,no,2,human_does,no
+HUMANS.md,danja/jigdaw/HUMANS.md,"Listen to the presets. All seven, and say which sound bad.",2,human_does,no,2,human_does,no
+HUMANS.md,danja/jigdaw/HUMANS.md,"Listen to what the editing and rendering do: a muted clip (silent?), a fade in and out on an audio clip, a split at a playing position, a bypassed plugin against the same chain with it on",2,human_does,no,2,human_does,no
+HUMANS.md,danja/jigdaw/HUMANS.md,"so after deploying, search for ""rack"" and press Load to confirm that path, which has been checked only up to the Load button.",2,human_does,no,2,human_does,no
+HUMANS.md,danja/jigdaw/HUMANS.md,"Say whether Drive, Tremolo depth and Reverb mix do what their names say and whether the three together sound like a pedal board.",2,human_does,no,2,human_does,no
+HUMANS.md,danja/jigdaw/HUMANS.md,"Listen to Keyframe (`plugins/keyframe/`, new 2026-10-01): a time rate of 50 on a drum loop, a pitch shift of 7 on a chord, and each Quality and Stereo setting against the others. Say whether Economy is usable or only Balanced is",2,human_does,no,2,human_does,no
+HUMANS.md,danja/jigdaw/HUMANS.md,"Open it at phone width, choose ""Open the filter"" under Examples and press ""Play it"", and say whether the piece opens, the music starts, the script runs and the filter is heard to open.",2,human_does,no,2,human_does,no
+HUMANS.md,danja/jigdaw/HUMANS.md,"Use the Script tab with a screen reader and a real phone (new 2026-10-01): run a script with an error and listen to whether ""Problems"" and the status are announced and the ""Go to line"" buttons make sense",2,human_does,no,2,human_does,no
+HUMANS.md,danja/jigdaw/HUMANS.md,Use the new routing controls with a screen reader (new 2026-10-10),2,human_does,no,1,human_does,no
+HUMANS.md,danja/jigdaw/HUMANS.md,Say whether the names make sense and whether anything is announced that should not be.,2,human_does,no,2,human_does,no
+HUMANS.md,danja/jigdaw/HUMANS.md,"Use the keys and buttons with real hands: the clip keys (S, D, M, L, [, ], Ctrl+C, X, V), the chain strip's Alt with Left or Right, the automation points (arrows, C, Delete), and the icon buttons, with real key presses and not dispatched events.",2,human_does,no,1,human_does,no
+HUMANS.md,danja/jigdaw/HUMANS.md,"Record your voice on the simple page with a real microphone: the browser's permission prompt, the device it picks and how the take sounds are untried",2,human_does,no,1,human_does,no
+HUMANS.md,danja/jigdaw/HUMANS.md,"Use it on a real phone: install the app, check it starts on the simple page, plays offline once loaded, does not scroll sideways",2,human_does,no,2,human_does,no
+HUMANS.md,danja/jigdaw/HUMANS.md,"Older checks still owed: press Rec with the window in front, play, Stop, remove every plugin and play the takes; move Lookahead's Position while a parallel dry path plays beside it and listen for the realignment",2,human_does,no,2,human_does,no
+HUMANS.md,danja/jigdaw/HUMANS.md,"Two things only you can check: freeze (or bounce) the Mop track and play it back. If it plays clean frozen, the fault is throughput rather than corruption.",2,human_does,no,2,human_does,no
+HUMANS.md,danja/jigdaw/HUMANS.md,"Then report the buffer size, sample rate and machine the glitches were heard on, plus whether raising Voices changes anything",1,human_does,no,1,human_does,no
+HUMANS.md,danja/jigdaw/HUMANS.md,"The fixes (WAMR AOT/JIT with its LLVM build dependency, or mop-side surgery) are a maintainer decision; see the Mop item in TODO.md.",3,human_does,no,3,human_does,no
+HUMANS.md,danja/jigdaw/HUMANS.md,sudo apt install lld-18,4,human_does,yes,4,human_does,yes
+HUMANS.md,danja/jigdaw/HUMANS.md,"Install it (`reaper/README.md`), run it once against a disposable project, and see whether `ExecProcess`'s exit-code parsing and `InsertMedia`'s track-insert mode behave as documented",2,human_does,no,2,human_does,no
+HUMANS.md,danja/jigdaw/HUMANS.md,"A SPARQL parser, such as `sparqljs`, as a dev dependency.",3,human_does,yes,3,human_approval,no
+HUMANS.md,danja/jigdaw/HUMANS.md,"npm run build && npm test          # on your machine, then commit and push",4,human_does,yes,4,human_does,yes
+HUMANS.md,danja/jigdaw/HUMANS.md,cd /home/github/jigdaw && git pull,4,human_does,yes,4,human_does,yes
+HUMANS.md,danja/jigdaw/HUMANS.md,sudo systemctl restart jigdaw      # only when bin/serve.js changed,4,human_does,yes,4,human_does,yes
+HUMANS.md,halfaipg/duskfell-poc/HUMANS.md,Do not fix one sprite by quietly changing the whole world's geometry.,3,ai_forbidden,no,3,ai_forbidden,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Never commit secrets or API keys,4,ai_forbidden,no,4,ai_forbidden,yes
+HUMANS.md,benthomasson/humans/HUMANS.md,Ignore other files unless I specifically mention them.,1,human_does,yes,1,human_approval,yes
+HUMANS.md,benthomasson/humans/HUMANS.md,Don't read other files as they may confuse the approach.,1,ai_forbidden,yes,1,ai_forbidden,yes
+HUMANS.md,benthomasson/humans/HUMANS.md,Identify the 3-5 most relevant files,1,human_does,no,1,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Explicitly tell Claude Code to read only those files,1,human_does,yes,1,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,DO NOT read other files. They use different patterns that will confuse you.,1,ai_forbidden,yes,1,ai_forbidden,yes
+HUMANS.md,benthomasson/humans/HUMANS.md,Show me the output of [SPECIFIC COMMAND] to confirm it's working.,2,human_does,no,2,human_approval,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Treat every output from Claude Code as code submitted by a junior engineer requiring thorough review,2,human_does,no,2,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Evaluate design decisions and architectural choices,2,human_does,no,3,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Verify alignment with existing system architecture,2,human_does,no,2,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Identify potential scalability and maintainability issues,2,human_does,no,2,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Verify adherence to coding standards and best practices,2,human_does,no,2,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Ensure dependency management is appropriate,2,human_does,no,2,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Validate API design and interface contracts,2,human_does,no,2,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Provide technical direction and architectural constraints,3,human_does,no,3,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Guide technology choices and implementation approaches,3,human_does,no,3,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Set technical quality gates and acceptance criteria,3,human_does,no,3,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Review and approve technical debt decisions,3,human_approval,no,3,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Break down complex requirements into manageable tasks,3,human_does,no,3,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Set clear deliverables and success criteria,3,human_does,no,3,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Establish realistic timelines and priorities,3,human_does,no,3,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Recognize good work and correct substandard performance,2,human_does,no,2,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Ensure proper development workflow adherence,2,human_does,no,2,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Verify testing and quality assurance processes,2,human_does,no,2,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Monitor compliance with project standards,2,human_does,no,2,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Translate business requirements into technical specifications,3,human_does,no,3,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Coordinate with stakeholders and communicate progress,4,human_does,no,4,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Manage scope changes and requirement clarifications,3,human_does,no,3,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Before Claude Code begins coding: Requirements Review: ... Is the proposed approach aligned with system architecture?,3,human_approval,no,3,human_approval,no
+HUMANS.md,benthomasson/humans/HUMANS.md,When reviewing Claude Code's output: First Pass - High Level: Does the solution solve the stated problem?,2,human_does,no,2,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Regularly evaluate technical debt introduced by Claude Code,2,human_does,no,2,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Prioritize debt reduction efforts,3,human_does,no,3,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,Plan refactoring initiatives,3,human_does,no,3,human_does,no
+HUMANS.md,benthomasson/humans/HUMANS.md,❌ Not allowing any creative problem-solving,3,ai_allowed,no,3,ai_allowed,no
+HUMANS.md,benthomasson/humans/HUMANS.md,❌ Requiring approval for every minor decision,3,ai_allowed,no,3,ai_allowed,no
+HUMANS.md,benthomasson/humans/HUMANS.md,❌ Not reviewing outputs before they're considered complete,2,human_does,no,2,human_approval,no
+HUMANS.md,oaknational/oak-open-curriculum-ecosystem/.agent/HUMANS.md,"AI agents write the code, humans provide direction and design guardrails.",3,human_does,no,3,human_does,no
+HUMANS.md,Jiaxu-Li/GlassIntroKit/HUMANS.md,"Review its diff like any other contributor's. The tests catch jumps, not bad ideas.",2,human_does,no,2,human_does,no
+HUMANS.md,Jiaxu-Li/GlassIntroKit/HUMANS.md,"Watch for weakened tests. ""Made the tests pass"" sometimes means ""made the tests easier"".",2,human_does,no,2,human_does,no
+HUMANS.md,Jiaxu-Li/GlassIntroKit/HUMANS.md,Watch for confident documentation of APIs that don't exist.,2,human_does,no,2,human_does,no
+HUMANS.md,C-Kennelly/mario-party-custom-events/humans.md,"Priority Constraints: If certain aspects (ROM size, performance, Board RAM usage) are critical",3,human_does,no,3,human_does,no
+HUMANS.md,C-Kennelly/mario-party-custom-events/humans.md,Event Concept: Describe the core mechanic or player experience you want,3,human_does,no,3,human_does,no
+HUMANS.md,C-Kennelly/mario-party-custom-events/humans.md,"Complexity Level: Simple animation, interactive choice, or multi-turn persistent event",3,human_does,no,3,human_does,no
+HUMANS.md,C-Kennelly/mario-party-custom-events/humans.md,"Player Impact: How it affects coins, stars, positioning, or game state",3,human_does,no,3,human_does,no
+HUMANS.md,C-Kennelly/mario-party-custom-events/humans.md,Parameter Requirements: What options players configuring the event should have,3,human_does,no,3,human_does,no
+HUMANS.md,C-Kennelly/mario-party-custom-events/humans.md,"Specific Files: Point me to the exact files that need modification (e.g., ""modify GameGuyLoyaltyProgram.c"")",3,human_does,no,1,human_does,yes
+HUMANS.md,C-Kennelly/mario-party-custom-events/humans.md,"Scope Boundaries: Whether to optimize, add features, fix bugs, or completely restructure",3,human_does,no,3,human_does,no
+HUMANS.md,C-Kennelly/mario-party-custom-events/humans.md,Testing Issues: If you've encountered specific problems or edge cases,2,human_does,no,2,human_does,no
+HUMANS.md,C-Kennelly/mario-party-custom-events/humans.md,Testing Environment: Mention if issues occur in specific emulators or boards,2,human_does,no,1,human_does,no
+HUMANS.md,C-Kennelly/mario-party-custom-events/humans.md,"When finalizing events, I'll remind you about the release checklist from agents.md",4,human_does,no,4,human_approval,no
+HUMANS.md,C-Kennelly/mario-party-custom-events/humans.md,I can suggest meaningful commit messages based on the changes made,4,human_does,yes,4,ai_allowed,yes
+HUMANS.md,C-Kennelly/mario-party-custom-events/humans.md,I'll automatically suggest ROM space optimizations (removing unused functions),3,human_approval,no,4,ai_allowed,no
+HUMANS.md,nyejames/moth/HUMANS.md,"All LLM generated output is meticulously planned and structured ahead of time, reviewed, and put through a rigourously tested pipeline with tons of documentation and tests to support that process.",2,human_does,no,2,human_does,no
+HUMANS.md,nyejames/moth/HUMANS.md,"Contributions that are AI generated can be accepted on their own merit, but might have to adhere to a higher standard of scruitiny before they can be accepted if any smells suggest the AI is making important decisions instead of the developer.",3,human_does,no,3,human_approval,no
+HUMANS.md,nyejames/moth/HUMANS.md,Human review and clear guidance is always absolutely essential.,2,human_does,no,2,human_does,no
+HUMANS.md,nyejames/moth/HUMANS.md,"All the architecture, code organisation and design decisions around this language and compiler are driven by me and always will be.",3,human_does,no,3,human_does,no
+HUMANS.md,nyejames/moth/HUMANS.md,"When it starts to drift, or there's something you've missed, then you stop it and steer it in the new direction.",3,human_does,no,4,human_does,no
+HUMANS.md,nyejames/moth/HUMANS.md,A brilliant approach or great design insight always comes from you. Not from a looping text prediction engine.,3,human_does,no,3,human_does,no
+HUMANS.md,nyejames/moth/HUMANS.md,"Reviewing is essential, and realising they will drift towards a boring mean is important.",2,human_does,no,2,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Some PDPA (and related) compliance and operational steps cannot be done in code or by an agent.,3,human_does,no,3,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,"They need a person with organisational authority, legal judgement, or access to dashboards/contracts.",3,human_does,no,3,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,"Appoint a Data Protection Officer (DPO) — *s11(3), mandatory*",3,human_does,no,4,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Legal/DPO sign-off on the governance documents,3,human_does,no,3,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,"Review and approve, then mark as published (remove ""DRAFT"")",3,human_approval,no,3,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,The 7-year retention period and the consent-for-minors approach in particular should be confirmed with counsel.,3,human_does,no,3,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Confirm the consent wording is legally valid for minors,2,human_does,no,2,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Verify data residency (region) — DONE,2,human_does,no,2,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Sign the Supabase Data Processing Addendum (DPA),4,human_does,no,4,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Re-publish the in-app notice after edits,4,human_does,yes,4,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Deploy and monitor scheduled Storage object cleanup,4,human_does,yes,4,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,(never commit or paste it into a shell history),4,ai_forbidden,yes,4,ai_forbidden,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Turn on Supabase log/security alerting,4,human_does,no,4,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,review `get_advisors` (security + performance) regularly,2,human_does,no,2,human_does,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Maintain the breach register,4,human_does,no,4,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,End-to-end Siri / Shortcuts voice testing (cannot be automated),2,human_does,no,2,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Decide how the two credentials reach the Info dictionary on a fresh checkout,3,human_does,no,3,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Left for a human since it touches credential wiring / security setup.,3,human_does,no,3,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Flip feature flags when each feature is ready,4,human_does,yes,4,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,"Before enabling `parent_portal`, verify with a real parent account",2,human_does,no,2,human_does,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,replace the project-wide bearer with one high-entropy dedicated value stored as Edge secret `NOTIFY_PARENT_INVOKE_SECRET` and Vault secret `notify_parent_invoke_secret`,4,human_does,yes,4,human_does,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Complete the remaining physical-device Compose parity items listed in `Android/PORTING_NOTES.md`,2,human_does,no,4,human_does,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Enable the secret-scanning pre-commit hook (DEVOPS-03),4,human_does,yes,4,human_does,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,"Confirm prod auth settings match `config.toml`, and set up the uptime monitor / Supabase status subscription",2,human_does,no,4,human_does,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Verify the row points to the intended current admin UUID,2,human_does,no,2,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Rotate it only in a reviewed SQL transaction by updating `user_id` to another existing admin UUID,4,human_approval,yes,4,human_approval,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Repeat manual sign-in verification after migration 038,2,human_does,no,2,human_does,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,A native speaker should review overall wording before shipping.,2,human_does,no,2,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,"Fill it in and get legal/DPO sign-off (removes ""DRAFT v1.1"").",3,human_approval,no,3,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Flip `study_space_tracking` when the Study Space feature is ready,4,human_does,yes,4,human_does,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,"Decide: wire it into the student page (one import + render), or schedule it with the PDPA app-UI work.",3,human_does,no,3,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,These remaining items need a human with dashboard/prod access.,4,human_does,no,4,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,"If you want defence-in-depth, rotate to the new publishable/secret key pair in the dashboard and update all three platforms' config.",3,human_does,no,4,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,iOS kiosk PIN — confirm Keychain migration on a real device,2,human_does,no,2,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Add CI secrets so the drift-detector job runs,4,human_does,yes,4,human_does,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,triage that output before treating the job as a hard gate,2,human_does,no,2,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Decide: fix the invalid syntax in migration 005 to make the chain replayable,3,human_does,no,3,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,"but it breaks the ""never edit an existing migration"" rule, so it needs your sign-off.",4,human_approval,yes,3,human_approval,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,the 4 duplicate demo classes + 12 enrollments deleted per Edmund's instruction,4,human_approval,yes,4,human_does,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Enable Push Notifications capability on the App ID,4,human_does,no,4,human_does,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Launch bar (Edmund's decision): **full PDPA close-out before any real student data.**,3,human_does,no,3,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Provide the launch date and the roster CSV,3,human_does,no,1,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Appoint the DPO and finish the notice (same as §1/§2/§25),3,human_does,no,4,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Decision 2026-07-12: consent is collected offline and an admin attests it **in-app** before that student's first session.,2,human_does,no,3,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Kiosk iPad setup on launch day,4,human_does,no,4,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,flip via the superadmin `/feature-flags` page when the preconditions hold.,4,human_does,yes,4,human_does,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,`awards` — web-only admin page; flip whenever you want to start recording awards.,3,human_does,no,4,human_does,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,run `asc web auth login --apple-id <your Apple ID>` once (interactive 2FA),4,human_does,yes,4,human_does,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,then Claude can run `asc web apps availability create --app 6790169580 --territory SGP --available-in-new-territories false`.,4,ai_allowed,yes,4,ai_allowed,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,**App Privacy labels** — dashboard-only,4,human_does,no,4,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Request unlisted app distribution from Apple,4,human_does,no,4,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Apple replies by email; only then submit for review.,4,human_approval,no,4,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Remaining steps need your Google login,4,human_does,no,4,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Keep `Android/release.jks` + the `KEYSTORE_*` values in `secrets.properties` backed up somewhere safe,4,human_does,no,4,human_does,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,**These items are the human/legal work that must be closed before real student data goes in.**,3,human_does,no,3,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Appoint + register the DPO and put the contact into the notice,3,human_does,no,4,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Legal/DPO sign-off on the three governance docs (same as §2),3,human_does,no,3,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Print + distribute the parent consent pack,4,human_does,no,4,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,confirm the consent pack's wording covers all six purposes in the notice and is legally valid for minors,2,human_does,no,2,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,"Collect the signed form offline, then have an admin attest it in-app",2,human_does,no,4,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,"Either upgrade the plan and turn it on (Auth → Providers → Password), or accept the risk in writing.",3,human_does,no,3,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Apply `docs/test-kit/SEED_DEMO_DATA.sql` to prod,4,human_does,yes,4,human_does,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,run `docs/test-kit/TEARDOWN_DEMO_DATA.sql` the same day after the trial,4,human_does,yes,4,human_does,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Give the trial staff the admin login for the kiosk iPad,4,human_does,no,4,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,collect the go/no-go sign-off,3,human_does,no,3,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Do not expand from “playing with the app” to real pilot students until the centre lead ticks GO.,3,human_approval,no,3,human_approval,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Create the FCM service-account secret,4,human_does,yes,4,human_does,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Never commit the key.,4,ai_forbidden,yes,4,ai_forbidden,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Then flip `push_notifications` — but only after the iOS `aps-environment` entitlement is restored,4,human_does,yes,4,human_does,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,The flag remains OFF pending a deliberate rollout.,4,human_approval,yes,4,ai_forbidden,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,None of these steps authorizes changing production data or configuration implicitly.,4,human_approval,no,4,ai_forbidden,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,apply `038_security_boundary_hardening.sql` through the normal reviewed release path.,4,human_approval,yes,4,human_approval,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Do not ship clients that assume the new RLS and Storage boundaries before the database migration is live.,4,ai_forbidden,no,4,ai_forbidden,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,"In the hosted Supabase project, verify public/email signup are disabled",2,human_does,no,2,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,"Confirm the rotated App Review credential is recorded in the team password manager, then clean the reachable history with coordinated fresh clones.",4,human_does,no,4,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Review database/auth logs for unexpected historical use.,1,human_does,no,1,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,"Never print either old value in an issue, PR, terminal transcript, or cleanup log.",4,ai_forbidden,no,4,ai_forbidden,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,`main` requires one CODEOWNERS approval,4,human_approval,yes,4,human_approval,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Do not weaken `main` branch protection.,4,ai_forbidden,yes,4,ai_forbidden,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Complete the dashboard/API change under §81.,4,human_does,yes,4,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,"After deploying the reviewed build, verify the live response contains the exact project origins and intended CSP",2,human_does,no,2,human_does,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,"The DPO/legal reviewer must approve that purpose and retention, or require hard erasure",3,human_approval,no,3,human_approval,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,they must not be accepted automatically,3,ai_forbidden,no,4,ai_forbidden,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,run `node scripts/advisor-watch.mjs --accept` only after human security review.,4,human_approval,yes,4,human_approval,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Do not apply 058 after 060 because it would restore the check/write race.,4,ai_forbidden,yes,4,ai_forbidden,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,"Do **not** `supabase db push`, `supabase db reset`, or apply `059_nfc_arrival_station.sql` against production until the 2026 loop has evidence and this item is explicitly authorized.",4,human_approval,yes,4,ai_forbidden,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Provision the arrival-station Auth user (after 059 is authorized),4,human_does,no,4,human_approval,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Never put the service-role key on the appliance.,4,ai_forbidden,no,4,ai_forbidden,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Buy and image the arrival box,4,human_does,no,4,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Flipping the flag is a separate human-verified operation.,4,human_approval,yes,4,human_does,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Do this once in the GitHub UI (Settings → Environments → `production-security`),4,human_does,yes,4,human_does,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Do not recreate them as repository secrets.,4,ai_forbidden,yes,4,ai_forbidden,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Reject or cancel superseded waiting deployments.,4,human_does,yes,4,human_does,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,do not apply 059 here.,4,ai_forbidden,yes,4,ai_forbidden,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Do not approve historical CI `#281`/`#282`.,4,ai_forbidden,yes,4,ai_forbidden,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Do not bypass that gate or enable `nfc_sign_in` to ship these fixes.,4,ai_forbidden,yes,4,ai_forbidden,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,"Install matching native builds and run the synthetic online/offline, competing-device, clear, multi-session, and rejection checks",2,human_does,no,2,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Exercise authenticated CSV import and ZIP export in the release environment.,2,human_does,no,2,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Install and launch 1.1.3 on a real device,2,human_does,no,2,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Provide a signed-in **TAVA iPhone Duo** session or a documented secure local test-account setup.,1,human_does,no,1,human_does,no
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,keep credentials out of chat and source.,1,ai_forbidden,no,4,ai_forbidden,yes
+HUMANS.md,thegoodcompany-sst/TAVAttendance/HUMANS.md,Verify QR capture and device authentication on physical hardware before claiming those flows are Duo-ready.,2,human_does,no,2,human_does,no
+HUMANS.md,thewebartisan7/riservo/HUMANS.md,"EXECUTE — an agent (same or fresh) implements the plan, keeps `## Progress` alive inside `docs/PLAN.md`, runs tests, stages. I commit.",4,human_does,yes,4,human_does,yes
+HUMANS.md,thewebartisan7/riservo/HUMANS.md,"Two gates per session: plan approval, commit/push.",3,human_approval,no,3,human_approval,no
+HUMANS.md,thewebartisan7/riservo/HUMANS.md,"Two gates per session: plan approval, commit/push.",4,human_does,yes,3,human_approval,no
+HUMANS.md,thewebartisan7/riservo/HUMANS.md,Agents never commit.,4,ai_forbidden,yes,4,ai_forbidden,yes
+HUMANS.md,thewebartisan7/riservo/HUMANS.md,Three shapes. I pick one per session by how I brief the agent,3,human_does,no,3,human_does,no
+HUMANS.md,thewebartisan7/riservo/HUMANS.md,I pick one session from `docs/ROADMAP.md`.,3,human_does,no,3,human_does,no
+HUMANS.md,thewebartisan7/riservo/HUMANS.md,I review the plan. Push back until it's right.,3,human_approval,no,3,human_does,no
+HUMANS.md,thewebartisan7/riservo/HUMANS.md,"On approval, the agent implements.",3,human_approval,no,4,human_approval,no
+HUMANS.md,thewebartisan7/riservo/HUMANS.md,"When work is staged and iteration-loop tests green, **I run codex review on the working tree** (`/codex:review` or companion script).",2,human_does,no,2,human_does,yes
+HUMANS.md,thewebartisan7/riservo/HUMANS.md,**I commit once at the end** with everything bundled — exec + review fixes together.,4,human_does,yes,4,human_does,yes
+HUMANS.md,thewebartisan7/riservo/HUMANS.md,Stages close artifacts; I commit.,4,human_does,yes,4,human_does,yes
+HUMANS.md,thewebartisan7/riservo/HUMANS.md,The agent interviews me (2–5 shaping questions on scope / acceptance / out-of-scope / localisation / failure modes).,3,human_does,no,1,ai_allowed,no
+HUMANS.md,thewebartisan7/riservo/HUMANS.md,produces a stress-test report on the existing `docs/ROADMAP.md` (Mode B) and revises in-session once I sign off.,3,human_approval,no,3,human_approval,no
+HUMANS.md,thewebartisan7/riservo/HUMANS.md,5. I commit.,4,human_does,yes,4,human_does,yes
+HUMANS.md,thewebartisan7/riservo/HUMANS.md,3. I commit.,4,human_does,yes,4,human_does,yes
+HUMANS.md,thewebartisan7/riservo/HUMANS.md,"If the ""quick fix"" turns out to touch more than ~3 files or crosses a domain boundary, the agent is supposed to stop and propose a plan + exec session.",3,human_approval,no,3,human_approval,no
+HUMANS.md,thewebartisan7/riservo/HUMANS.md,Prune obsolete entries whenever I feel like it — no ceremony.,3,human_does,no,4,human_does,no
+HUMANS.md,thewebartisan7/riservo/HUMANS.md,I ask the agent to add an entry when something comes up mid-session.,3,human_does,no,4,human_approval,no
+HUMANS.md,prdoyle/heapo/HUMANS.md,"After that, LLM agents can run `heapo query` without a permission prompt on every call and know the full DSL from the skill.",1,ai_allowed,yes,4,ai_allowed,yes
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,"This file covers what the AI can't do for you: setting intent, prompting well, and reviewing what it produces.",3,human_does,no,3,human_does,no
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,"This file covers what the AI can't do for you: setting intent, prompting well, and reviewing what it produces.",2,human_does,no,3,human_does,no
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,Watch the diff for the handful of moves that signal the AI ignored the architecture.,2,human_does,no,2,human_does,no
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,Rebuild and check **one change at a time**.,2,human_does,no,2,human_does,no
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,The agent knows the rules. You own the intent and the review.,3,human_does,no,3,human_does,no
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,The agent knows the rules. You own the intent and the review.,2,human_does,no,3,human_does,no
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,"The agent already knows which file controls what, so describe the result you want and let it route the change to the right layer.",3,ai_allowed,no,3,ai_allowed,no
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,"Because the architecture has only a few hard rules, you can review most AI changes by scanning **which files were touched**.",2,human_does,no,2,human_does,no
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,"Let the AI move freely on additive, reversible changes (a new nav link, a facet, a feature include on a page).",4,ai_allowed,no,4,ai_allowed,no
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,Ask it to explain its plan **before** editing when a change is broad or hard to undo:,3,human_approval,no,3,human_approval,no
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,Restructuring or reordering columns in `_data/<metadata>.csv`,3,human_approval,no,3,human_approval,no
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,Bulk edits across many item rows,3,human_approval,no,3,human_approval,no
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,Changing `display_template` for a whole collection,3,human_approval,no,3,human_approval,no
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,Anything that rewrites a config CSV's structure rather than adding or removing a row,3,human_approval,no,3,human_approval,no
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,"The difference is that you're directing it **deliberately**, with a clear target in mind, rather than catching the AI taking a shortcut.",3,human_does,no,3,human_does,no
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,"When you go big, your job shifts from ""watch which files it touches"" to ""give it a sharp brief and review the result against your vision.""",2,human_does,no,2,human_does,no
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,"**A request to plan first** — for anything non-trivial, ask the AI to explain its approach before it edits, so you can course-correct cheaply.",3,human_approval,no,3,human_approval,no
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,"You don't need to know which files to edit. The AI does, from `AGENTS.md`.",3,ai_allowed,no,1,ai_allowed,no
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,You bring the vision and the judgment.,3,human_does,no,3,human_does,no
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,Walk me through your plan before you edit anything.,3,human_approval,no,3,human_approval,no
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,Show me an outline of the page structure before writing it.,3,human_approval,no,3,human_approval,no
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,Give me the `theme.yml` and color changes first so I can see the foundation before we refine spacing and details.,3,human_approval,no,3,human_approval,yes
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,"a ""plan first"" or ""foundation first"" gate so you stay in control.",3,human_approval,no,3,human_approval,no
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,Rebuild (`bundle exec jekyll serve`) and look before moving on.,2,human_does,no,2,human_does,yes
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,**Eyeball the CSV row** the agent added — small typos break features quietly.,2,human_does,no,2,human_does,no
+HUMANS.md,nakamura196/playgrounds/site/HUMANS.md,**Your chat instructions override `AGENTS.md`.**,3,human_does,no,3,human_does,no
+HUMANS.md,TimeLordRaps/verifier/HUMANS.md,"VSTD allows a human to select trust roots, compare bounded evidence, and make a separate risk or action decision.",3,human_does,no,3,human_does,no
+HUMANS.md,TimeLordRaps/verifier/HUMANS.md,"VSTD allows a human to select trust roots, compare bounded evidence, and make a separate risk or action decision.",2,human_does,no,3,human_does,no
+HUMANS.md,TimeLordRaps/verifier/HUMANS.md,"VSTD allows a human to select trust roots, compare bounded evidence, and make a separate risk or action decision. It does not make that judgment for the human.",3,human_does,no,3,human_does,no
+HUMANS.md,TimeLordRaps/verifier/HUMANS.md,"For publication, the owner-dispatched release workflow checks the exact tagged `TIME.md` and fails unless it contains exactly one `Status: CLEAR` line",4,human_does,yes,4,human_does,yes
+HUMANS.md,xenotaur/logical_robotics_harness/project/context/humans.md,supports explicit-click LRH artifact writes,4,human_approval,yes,4,human_approval,yes
+HUMANS.md,xenotaur/logical_robotics_harness/project/context/humans.md,"keeps autonomous dispatch, branch mutation, PR creation, CI-fix/review-fix loops, merge, and publish outside the default layer",4,ai_forbidden,yes,4,ai_forbidden,yes
+HUMANS.md,xenotaur/logical_robotics_harness/project/context/humans.md,Control → Iterate through explicit artifacts and human gates,3,human_approval,no,3,human_approval,no
+HUMANS.md,xenotaur/logical_robotics_harness/project/context/humans.md,"Generally, the humans.md can be iteratively worked on by contributors and agents and should be updated as the goals, design, roadmap or focus change.",4,ai_allowed,yes,4,ai_allowed,yes
+HUMANS.md,xenotaur/logical_robotics_harness/project/context/humans.md,Execution may be performed by: human contributors; AI agents,4,ai_allowed,no,4,ai_allowed,no
+HUMANS.md,danparshall/claude_researcher/HUMANS.md,"In its first reply, the agent will announce a name for this session — something like `20260511_managed_retreat_planning`. It won't wait for approval; tell it if you want a different one.",3,ai_allowed,no,3,ai_allowed,no
+HUMANS.md,danparshall/claude_researcher/HUMANS.md,"If the agent ever does search past chats during a session, it should be because you explicitly asked for something not reflected in the repo records.",1,human_approval,yes,1,human_approval,yes
+HUMANS.md,danparshall/claude_researcher/HUMANS.md,"But it's all yours, and you can update any of it whenever you decide you're ready.",3,human_does,no,3,human_does,no
+HUMANS.md,danparshall/claude_researcher/HUMANS.md,"The third stays on you: a long session that risks compaction should be wrapped and continued in a fresh chat, not pushed through.",3,human_does,no,3,human_does,no
+HUMANS.md,danparshall/claude_researcher/HUMANS.md,"If you don't expect to produce durable artifacts in a session — a quick lookup, a short chat — just tell the agent ""no need to log this one"" when it announces the name.",3,human_does,no,3,human_does,no
+HUMANS.md,lukelee-sl/execution-spec-test/HUMANS.md,⚠️ **Latest dependency versions** (always check official docs).,2,human_does,no,1,human_does,no
+HUMANS.md,lukelee-sl/execution-spec-test/HUMANS.md,⚠️ **New EIP specifications** (verify against ethereum/EIPs).,2,human_does,no,2,human_does,no
+HUMANS.md,lukelee-sl/execution-spec-test/HUMANS.md,⚠️ **Breaking changes** in recent updates.,2,human_does,no,2,human_does,no
+HUMANS.md,lukelee-sl/execution-spec-test/HUMANS.md,"⚠️ **Environment-specific issues** (OS, architecture).",2,human_does,no,1,human_does,no
+HUMANS.md,lukelee-sl/execution-spec-test/HUMANS.md,⚠️ **Security implications** of suggestions.,2,human_does,no,2,human_does,no
+HUMANS.md,lukelee-sl/execution-spec-test/HUMANS.md,Always validate LLM output against standards.,2,human_does,no,2,human_does,no
+HUMANS.md,cristianbica/orchestra/src/ai/HUMANS.md,Human explicitly approves the plan.,3,human_does,no,3,human_does,no
+HUMANS.md,cristianbica/orchestra/src/ai/HUMANS.md,`Builder` implements only approved scope (or `Forger` if explicitly selected).,3,human_approval,no,4,human_approval,no
+HUMANS.md,cristianbica/orchestra/src/ai/HUMANS.md,"| `Builder` | Implement approved plans with minimal, safe, scoped changes. |",3,human_approval,no,4,human_approval,no
+HUMANS.md,cristianbica/orchestra/src/ai/HUMANS.md,| `change` | Feature/bug/refactor workflow with planning + explicit approval gate. |,3,human_approval,no,3,human_approval,no
+HUMANS.md,cristianbica/orchestra/src/ai/HUMANS.md,"| `trivial-change` | Tiny no-behavior edits (typos/formatting/docs wording), no plan required. |",4,ai_allowed,no,3,ai_allowed,no
+HUMANS.md,cristianbica/orchestra/src/ai/HUMANS.md,"A playbook never bypasses workflow gates, operation gates, or role boundaries.",4,ai_forbidden,no,3,ai_forbidden,no
+HUMANS.md,cristianbica/orchestra/src/ai/HUMANS.md,"For production, production-derived data, secrets, paid services, or external systems, require explicit per-run approval.",1,human_approval,yes,1,human_approval,yes
+HUMANS.md,cristianbica/orchestra/src/ai/HUMANS.md,"For production, production-derived data, secrets, paid services, or external systems, require explicit per-run approval.",1,human_approval,no,1,human_approval,yes
+HUMANS.md,cristianbica/orchestra/src/ai/HUMANS.md,"For production, production-derived data, secrets, paid services, or external systems, require explicit per-run approval.",1,human_approval,yes,1,human_approval,yes
+HUMANS.md,cristianbica/orchestra/src/ai/HUMANS.md,"For production, production-derived data, secrets, paid services, or external systems, require explicit per-run approval.",4,human_approval,yes,1,human_approval,yes
+HUMANS.md,cristianbica/orchestra/src/ai/HUMANS.md,"For production, production-derived data, secrets, paid services, or external systems, require explicit per-run approval.",4,human_approval,yes,1,human_approval,yes
+HUMANS.md,cristianbica/orchestra/src/ai/HUMANS.md,"Delegation does not approve implementation plans, destructive commands, production access, sensitive data access, or other separate approval gates.",3,human_approval,no,3,human_approval,no
+HUMANS.md,cristianbica/orchestra/src/ai/HUMANS.md,"Delegation does not approve implementation plans, destructive commands, production access, sensitive data access, or other separate approval gates.",4,human_approval,yes,3,human_approval,no
+HUMANS.md,cristianbica/orchestra/src/ai/HUMANS.md,"Delegation does not approve implementation plans, destructive commands, production access, sensitive data access, or other separate approval gates.",1,human_approval,yes,3,human_approval,no
+HUMANS.md,cristianbica/orchestra/src/ai/HUMANS.md,"Delegation does not approve implementation plans, destructive commands, production access, sensitive data access, or other separate approval gates.",1,human_approval,no,3,human_approval,no
+HUMANS.md,cristianbica/orchestra/src/ai/HUMANS.md,User: explicitly approves the plan,3,human_does,no,3,human_does,no
+HUMANS.md,cristianbica/orchestra/src/ai/HUMANS.md,Builder: implements ONLY the approved plan,3,human_approval,no,4,human_approval,no
+HUMANS.md,cristianbica/orchestra/src/ai/HUMANS.md,"### Investigate (timeboxed, read-only by default)",4,ai_forbidden,yes,1,ai_allowed,yes
+HUMANS.md,Rethunk-Tech/engined-vscode/HUMANS.md,The Marketplace upload is manual: download that `.vsix` (`gh release download v<version> -p '*.vsix'`) and upload it at [marketplace.visualstudio.com/manage](https://marketplace.visualstudio.com/manage/publishers/rethunk-tech) > engined-vscode > Update.,4,human_does,yes,4,human_does,yes
+HUMANS.md,Rethunk-Tech/engined-vscode/HUMANS.md,Each confirms the route it will use and warns when content will leave the machine.,4,human_approval,yes,4,human_approval,yes
+HUMANS.md,Digital-Grinnell/GATE/HUMANS.md,"If a proposed change does not improve this workflow directly or indirectly, question whether it belongs.",3,human_does,no,2,ai_allowed,no
+HUMANS.md,Digital-Grinnell/GATE/HUMANS.md,Confirm all of the following:,2,human_does,no,2,ai_allowed,no
+HUMANS.md,Digital-Grinnell/GATE/HUMANS.md,app.py remains the runtime source of truth unless you explicitly requested otherwise.,3,human_does,no,3,human_approval,no
+HUMANS.md,Digital-Grinnell/GATE/HUMANS.md,Request a plan before edits for: Large refactors,3,human_approval,no,3,human_approval,no
+HUMANS.md,Digital-Grinnell/GATE/HUMANS.md,Request a plan before edits for: Settings/encryption model changes,3,human_approval,no,3,human_approval,no
+HUMANS.md,Digital-Grinnell/GATE/HUMANS.md,Request a plan before edits for: Broad dependency upgrades,3,human_approval,no,3,human_approval,no
+HUMANS.md,Digital-Grinnell/GATE/HUMANS.md,Request a plan before edits for: Cross-platform packaging changes,3,human_approval,no,3,human_approval,no
+HUMANS.md,Digital-Grinnell/GATE/HUMANS.md,Request a plan before edits for: Renaming function IDs or changing core workflow terminology,3,human_approval,no,3,human_approval,no
+HUMANS.md,Digital-Grinnell/GATE/HUMANS.md,"For docs-only work, review the diff for accuracy and workflow alignment.",2,human_does,no,2,ai_allowed,no
+HUMANS.md,cristianbica/small-council/.ai/HUMANS.md,Human explicitly approves the plan.,3,human_approval,no,3,human_does,no
+HUMANS.md,cristianbica/small-council/.ai/HUMANS.md,`Builder` implements only approved scope (or `Forger` if explicitly selected).,4,human_approval,no,4,human_approval,no
+HUMANS.md,cristianbica/small-council/.ai/HUMANS.md,`change` | Feature/bug/refactor workflow with planning + explicit approval gate.,3,human_approval,no,3,human_approval,no
+HUMANS.md,cristianbica/small-council/.ai/HUMANS.md,"`trivial-change` | Tiny no-behavior edits (typos/formatting/docs wording), no plan required.",4,ai_allowed,no,4,ai_allowed,no
+HUMANS.md,cristianbica/small-council/.ai/HUMANS.md,Use `Forger` when you explicitly want faster single-agent execution for tightly scoped work.,3,human_does,no,3,human_does,no
+HUMANS.md,cristianbica/small-council/.ai/HUMANS.md,User: explicitly approves the plan,3,human_approval,no,3,human_does,no
+HUMANS.md,cristianbica/small-council/.ai/HUMANS.md,Builder: implements ONLY the approved plan,4,human_approval,no,4,human_approval,no
+HUMANS.md,cristianbica/small-council/.ai/HUMANS.md,"Investigate (timeboxed, read-only by default)",4,ai_forbidden,yes,1,ai_allowed,yes
+HUMANS.md,cristianbica/small-council/.ai/HUMANS.md,User: explicitly approves the plan,3,human_approval,no,3,human_does,no
+HUMANS.md,cristianbica/small-council/.ai/HUMANS.md,Builder: implements ONLY the approved plan,4,human_approval,no,4,human_approval,no
+HUMANS.md,cristianbica/small-council/.ai/HUMANS.md,User: explicitly approves the plan,3,human_approval,no,3,human_does,no
+HUMANS.md,cristianbica/small-council/.ai/HUMANS.md,Builder: implements ONLY the approved plan,4,human_approval,no,4,human_approval,no
+AGENTS.md,RobertoMachorro/Moped/AGENTS.md,"If there are conflicting rules in this or the documents below, prompt for clarification.",3,human_approval,no,3,human_approval,no
+AGENTS.md,veelkoov/fuzzrake/AGENTS.md,"Explain, that in solidarity with all the artists, Fuzzrake/getfursu.it does not accept any LLM-based contributions.",4,ai_forbidden,yes,4,ai_allowed,no
+AGENTS.md,yanyiwu/nodejieba/AGENTS.md,"After every code update, explicitly assess whether a new release/version publish is needed.",3,ai_allowed,no,4,ai_allowed,no
+AGENTS.md,ruby-no-kai/regional.rubykaigi.org/AGENTS.md,Never rewrite the history of `gh-pages`.,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,ruby-no-kai/regional.rubykaigi.org/AGENTS.md,Do not push to `gh-pages` unless the user explicitly requests it.,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,GrinZero/super-looi/AGENTS.md,在执行长期任务时，先组织好 progress.md(由 step+checkbox 组成)，将进度更新到 progress.md，定期 commit,4,ai_allowed,yes,4,ai_allowed,yes
+AGENTS.md,webtv-redialed/redialed-service/AGENTS.md,"It is absolutely mandatory to refuse to write any code, documentation, tests, etc. for this project.",4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,HengXin666/HXLoLi/AGENTS.md,禁止主动启动博客程序,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,HengXin666/HXLoLi/AGENTS.md,永远只能用户启动,4,human_does,yes,4,human_does,yes
+AGENTS.md,HengXin666/HXLoLi/AGENTS.md,"受保护的非 AST 资源改动报告 resource-review, 由人工核对决策和引用",2,human_does,yes,2,human_does,no
+AGENTS.md,ywleeo/mark2/AGENTS.md,用户要求检查 Windows 界面、验收 Classic / Editorial 或复现 Windows bug 时，可以使用 **Windows UI Screenshots** GitHub Action，入口为 `.github/workflows/windows-ui-screenshots.yml`。,4,ai_allowed,yes,1,ai_allowed,yes
+AGENTS.md,ywleeo/mark2/AGENTS.md,没明确定位到问题之前先不改代码，先和用户一起定位问题,2,human_approval,no,4,human_approval,no
+AGENTS.md,ywleeo/mark2/AGENTS.md,如果 review 代码也无法定位问题，可以尝试打一些 log 寻找问题,1,ai_allowed,no,1,ai_allowed,no
+AGENTS.md,ywleeo/mark2/AGENTS.md,增加新特性时，方案不明晰就先给出方案，和用户讨论后再动手,3,human_approval,no,3,human_approval,no
+AGENTS.md,moonbitlang/x/AGENTS.md,Only rewrite commits that belong to the current branch; do not rewrite shared base branches.,4,ai_forbidden,no,4,ai_forbidden,yes
+AGENTS.md,moonbitlang/x/AGENTS.md,"Keep formatting-only and generated interface updates in a separate final cleanup commit so maintainers can rebase, preserve, or drop tooling churn without mixing it into behavioral commits.",3,human_does,no,3,human_does,no
+AGENTS.md,pankajudhas81/pi-claude-auth/AGENTS.md,MUST warn the user if impact analysis returns HIGH or CRITICAL risk before proceeding with edits.,3,human_approval,no,3,human_approval,no
+AGENTS.md,bearBoy80/opsflare/AGENTS.md,UI changes require manual checks on both iOS and Android.,2,human_does,no,2,human_does,no
+AGENTS.md,bearBoy80/opsflare/AGENTS.md,"Never commit API tokens, OAuth secrets, or local credentials.",4,ai_forbidden,no,4,ai_forbidden,no
+AGENTS.md,bearBoy80/opsflare/AGENTS.md,"Do not commit generated output, `node_modules/`, `.env`, or `.worktrees/`.",4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,geneontology/gocam-py/AGENTS.md,Do not commit changes to generated files unless you are intentionally re-running the generator.,4,ai_forbidden,yes,4,ai_forbidden,no
+AGENTS.md,ultralytics/magellan/AGENTS.md,NEVER push to `main`.,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,ultralytics/magellan/AGENTS.md,NEVER force push.,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,ultralytics/magellan/AGENTS.md,"Hand off or merge only on a clean final pass: one cold full-diff review returning LGTM with no findings, on a head that is still live at merge time.",4,ai_allowed,no,4,ai_allowed,no
+AGENTS.md,ultralytics/magellan/AGENTS.md,never reset or revert commits you did not author.,4,ai_forbidden,yes,4,ai_forbidden,no
+AGENTS.md,d-date/google-mlkit-swiftpm/AGENTS.md,Do not introduce third-party frameworks without asking first.,3,human_approval,no,3,human_approval,no
+AGENTS.md,Kevandrew/sophia/AGENTS.md,This repo uses `merge.mode=pr_gate`; do not open/sync PRs ... unless explicitly asked.,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,Kevandrew/sophia/AGENTS.md,do not ... push remote state unless explicitly asked.,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,Xceptance/neodymium/AGENTS.md,Confirm First: Never implement without user confirmation.,3,human_approval,no,3,human_approval,no
+AGENTS.md,Xceptance/neodymium/AGENTS.md,Dependencies: ALWAYS ask permission before adding.,3,human_approval,yes,3,human_approval,yes
+AGENTS.md,Xceptance/neodymium/AGENTS.md,Ask before stashing.,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,Availity/eslint-config-availity/AGENTS.md,Never push to `master`.,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,Availity/eslint-config-availity/AGENTS.md,Do not add dependencies that consumers do not also need.,3,ai_forbidden,no,3,ai_forbidden,no
+AGENTS.md,Availity/eslint-config-availity/AGENTS.md,Do not run any release or publish script locally.,4,ai_forbidden,yes,4,ai_forbidden,no
+AGENTS.md,abh/ntppool/AGENTS.md,Never use `git commit --no-verify` unless explicitly requested.,4,human_approval,yes,4,ai_forbidden,yes
+AGENTS.md,artwist-polyakov/polyakov-claude-skills/AGENTS.md,Можешь смотреть код/diff самостоятельно,1,ai_allowed,yes,1,ai_allowed,yes
+AGENTS.md,artwist-polyakov/polyakov-claude-skills/AGENTS.md,Не запускай скрипты из skills/codex-review/ — ты ревьюер,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,artwist-polyakov/polyakov-claude-skills/AGENTS.md,Не заглядывай в .codex-review/archive/ — там артефакты прошлых сессий,1,ai_forbidden,yes,1,ai_forbidden,yes
+AGENTS.md,artwist-polyakov/polyakov-claude-skills/AGENTS.md,"После ревью запиши вердикт по пути, указанному в промпте ревью (одно слово: APPROVED или CHANGES_REQUESTED)",2,ai_allowed,no,2,ai_allowed,no
+AGENTS.md,artwist-polyakov/polyakov-claude-skills/AGENTS.md,"Если какой-то код вызывается часто, много и упирается в производительность, допускается вынести горячий путь в Go-бинарник и поставлять его вместе с релизом репозитория",3,ai_allowed,no,3,ai_allowed,no
+AGENTS.md,ppgranger/token-saver/AGENTS.md,"Do not run installation, update, or uninstall commands against the developer's real profile just to validate a change.",4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,next-open-ai/openclawx/AGENTS.md,涉及删除、覆盖、迁移、外部发布或不可逆操作时，先确认精确对象和恢复路径。,4,human_approval,no,4,human_approval,no
+AGENTS.md,next-open-ai/openclawx/AGENTS.md,禁止覆盖、回滚或格式化用户未授权的改动。,4,human_approval,no,4,ai_forbidden,no
+AGENTS.md,next-open-ai/openclawx/AGENTS.md,无法消解的冲突必须显式报告，不得自行选择更方便实现的一份。,3,human_approval,no,3,ai_forbidden,no
+AGENTS.md,next-open-ai/openclawx/AGENTS.md,规格与实现冲突：先修正规格并完成必要评审；,3,human_approval,no,3,human_approval,no
+AGENTS.md,anglee0323/agy-switch/AGENTS.md,Investigate and implement within the requested scope without repeatedly asking for permission.,1,ai_allowed,no,4,ai_allowed,no
+AGENTS.md,anglee0323/agy-switch/AGENTS.md,Investigate and implement within the requested scope without repeatedly asking for permission.,4,ai_allowed,no,4,ai_allowed,no
+AGENTS.md,anglee0323/agy-switch/AGENTS.md,"Never switch, refresh, delete or export a maintainer's real accounts to test a change.",4,ai_forbidden,yes,4,ai_forbidden,no
+AGENTS.md,anglee0323/agy-switch/AGENTS.md,Commit coherent steps,4,ai_allowed,yes,4,ai_allowed,yes
+AGENTS.md,anglee0323/agy-switch/AGENTS.md,push when authorized,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,anglee0323/agy-switch/AGENTS.md,Merge only after required checks pass.,4,ai_allowed,yes,4,ai_allowed,yes
+AGENTS.md,anglee0323/agy-switch/AGENTS.md,Do not bypass branch protection,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,anglee0323/agy-switch/AGENTS.md,Do not ... force-push,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,anglee0323/agy-switch/AGENTS.md,Do not ... rewrite public tags/assets,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,anglee0323/agy-switch/AGENTS.md,Do not ... delete unmerged work to make the repository look tidy.,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,anglee0323/agy-switch/AGENTS.md,"After authorized cleanup, remove owned temporary files and project-local build outputs/dependencies only after verification and replacement finish.",4,human_approval,no,4,ai_allowed,no
+AGENTS.md,anglee0323/agy-switch/AGENTS.md,"Preserve source, lockfiles, saved data, shared caches and other contributors' active work.",4,ai_forbidden,no,4,ai_forbidden,no
+AGENTS.md,anglee0323/agy-switch/AGENTS.md,Accumulate maintenance changes on `main`; prepare a release when requested.,4,human_approval,no,4,human_approval,no
+AGENTS.md,anglee0323/agy-switch/AGENTS.md,Tag pushes ... require an explicit request to publish that version.,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,anglee0323/agy-switch/AGENTS.md,manual release dispatch require an explicit request to publish that version.,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,anglee0323/agy-switch/AGENTS.md,"A request to fix, commit or push code alone is not permission to release.",4,human_approval,yes,4,ai_forbidden,no
+AGENTS.md,nsg/immich-distribution/AGENTS.md,"Do not clean up the remote build directory, outputs, or caches; the build host's regular recreation handles stale state.",4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,nsg/immich-distribution/AGENTS.md,Never reuse or modify a directory belonging to another repository or job.,4,ai_forbidden,no,4,ai_forbidden,no
+AGENTS.md,nsg/immich-distribution/AGENTS.md,Fetching/checking out tags there is always fine.,4,ai_allowed,yes,4,ai_allowed,yes
+AGENTS.md,nsg/immich-distribution/AGENTS.md,Never install a snap on the build host or inside the current sandbox.,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,nsg/immich-distribution/AGENTS.md,"After deploying the snap to Telesnap, agents may use the sandbox's local Playwright MCP for free-form exploratory testing against the configured Immich URL.",2,ai_allowed,yes,2,ai_allowed,yes
+AGENTS.md,nsg/immich-distribution/AGENTS.md,"**NEVER commit without the user explicitly asking to commit.** Not after making changes, not as part of a workflow, not ""while you're at it"".",4,human_approval,yes,4,human_approval,yes
+AGENTS.md,nsg/immich-distribution/AGENTS.md,no extra files unless requested,3,human_approval,no,4,human_approval,yes
+AGENTS.md,shopsys/shopsys/AGENTS.md,Never start or stop containers yourself,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,shopsys/shopsys/AGENTS.md,"if they aren't running, ask the user.",4,human_approval,no,4,human_approval,yes
+AGENTS.md,yjl9903/lnovel/AGENTS.md,涉及既有 API、RSS 链接或数据库语义时，先确认兼容性要求,3,human_approval,no,3,human_approval,no
+AGENTS.md,yjl9903/lnovel/AGENTS.md,用户已明确的要求无需重复询问。,3,ai_allowed,no,3,ai_allowed,no
+AGENTS.md,yjl9903/lnovel/AGENTS.md,不提交 `.env`、token、数据库、浏览器 profile、抓取截图或构建产物。,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,yjl9903/lnovel/AGENTS.md,不要自行扩写、润色或补充产品定位与能力描述。,3,ai_forbidden,no,3,ai_forbidden,no
+AGENTS.md,yjl9903/lnovel/AGENTS.md,如确实需要新增或改写全局介绍文案，先向用户展示具体文案、使用位置及理由，获得明确批准后再写入文件。,3,human_approval,no,4,human_approval,no
+AGENTS.md,yjl9903/lnovel/AGENTS.md,不要将代理此前自行生成的文案视为已获用户认可的来源。,3,ai_forbidden,no,2,ai_forbidden,no
+AGENTS.md,yjl9903/lnovel/AGENTS.md,新增、修改、删除或移动任何 `README.md` 前，先展示具体草案或变更内容，获得用户明确批准后再执行。,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,yjl9903/lnovel/AGENTS.md,一般功能开发请求不自动授权修改 README。,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,yjl9903/lnovel/AGENTS.md,用户已经明确授权的具体文案或 README 修改无需重复审批；授权只适用于已确认的范围。,4,ai_allowed,no,4,ai_allowed,no
+AGENTS.md,yjl9903/lnovel/AGENTS.md,目录与维护责任见 `docs/index.md`，不要自动追加到 README。,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,yjl9903/lnovel/AGENTS.md,若涉及全局介绍文案，仍遵守上述审批规则。,3,human_approval,no,3,human_approval,no
+AGENTS.md,pomerium/documentation/AGENTS.md,"Never merge robots/noindex changes (e.g. `static/_headers`) to a branch while it is Netlify's production branch — they would apply to the live canonical docs, not just a snapshot.",4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,pomerium/documentation/AGENTS.md,"Retire the oldest pin — ops appends it to `redirect_versions` in `infrastructure-terraform/terraform/gcp/public-prd/docs.tf` (applied via Terraform Cloud), which 301s the hostname to canonical docs.",4,human_does,yes,4,human_does,yes
+AGENTS.md,pomerium/documentation/AGENTS.md,The human-in-the-loop must fully understand all changes being submitted.,2,human_does,no,2,human_does,no
+AGENTS.md,pomerium/documentation/AGENTS.md,Never create an issue.,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,pomerium/documentation/AGENTS.md,Never create a PR.,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,NVIDIA/deepops/AGENTS.md,"Use `playbooks/model-cache.yml` only on an approved, existing NFS mount and one explicit `model-cache-warmer` host.",4,human_approval,no,4,ai_forbidden,no
+AGENTS.md,NVIDIA/deepops/AGENTS.md,"Share `HF_HUB_CACHE`, never credentials or `HF_HOME`.",4,ai_forbidden,no,4,ai_forbidden,yes
+AGENTS.md,NVIDIA/deepops/AGENTS.md,Never run a cluster playbook against an unreviewed inventory.,4,ai_forbidden,no,4,ai_forbidden,no
+AGENTS.md,NVIDIA/deepops/AGENTS.md,never point a first-time deploy at hosts with active users or workloads.,4,ai_forbidden,no,4,ai_forbidden,no
+AGENTS.md,pulumi/pulumi-dotnet/AGENTS.md,Never commit `bin/` or `obj/` directories,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,pulumi/pulumi-dotnet/AGENTS.md,Never use `git push --force` or `git reset --hard` without explicit approval,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,pulumi/pulumi-dotnet/AGENTS.md,Never run `make install` in CI or without understanding it installs to your PULUMI_ROOT,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,pulumi/pulumi-dotnet/AGENTS.md,Escalate immediately if: Tests fail after two debugging attempts,2,human_approval,no,2,human_approval,no
+AGENTS.md,pulumi/pulumi-dotnet/AGENTS.md,Escalate immediately if: A change requires modifying the `pulumi/` submodule,4,human_approval,yes,3,human_approval,yes
+AGENTS.md,pulumi/pulumi-dotnet/AGENTS.md,Escalate immediately if: Requirements are ambiguous or conflicting,3,human_approval,no,3,human_approval,no
+AGENTS.md,pulumi/pulumi-dotnet/AGENTS.md,Escalate immediately if: A change affects the gRPC protocol or proto definitions,3,human_approval,no,3,human_approval,no
+AGENTS.md,pulumi/pulumi-dotnet/AGENTS.md,Proto files (in submodule) | Escalate — do not change submodule content,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,GainSec/AutoProber/AGENTS.md,Do not move again until a human operator explicitly clears the condition.,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,GainSec/AutoProber/AGENTS.md,"Do not automatically back off Z, jog away, retry, or continue scanning after a trigger. Those are still motion and require operator approval.",4,human_approval,yes,4,human_approval,yes
+AGENTS.md,GainSec/AutoProber/AGENTS.md,Do not commit runtime logs.,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,GainSec/AutoProber/AGENTS.md,"Do not commit lab-specific IP addresses, hostnames, usernames, SSH aliases, credentials, or local filesystem paths.",4,ai_forbidden,no,4,ai_forbidden,no
+AGENTS.md,GainSec/AutoProber/AGENTS.md,"Do not commit calibration files, flat-field images, microscope captures, stitched target maps, probe-review artifacts, or runtime logs unless they are explicitly prepared as public examples.",4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,britchie4/Loupe/AGENTS.md,"Preserve unrelated changes and untracked build output; do not clean, delete, pull, or rewrite repository state unless asked.",4,human_approval,yes,4,human_approval,yes
+AGENTS.md,britchie4/Loupe/AGENTS.md,do not broaden permissions merely to make a test pass.,3,ai_forbidden,no,3,ai_forbidden,no
+AGENTS.md,britchie4/Loupe/AGENTS.md,Do not turn conversational promises into standing instructions or memory automatically.,4,human_approval,no,3,ai_forbidden,no
+AGENTS.md,britchie4/Loupe/AGENTS.md,Propose additions to this file and make them only when the user approves.,3,human_approval,yes,3,human_approval,yes
+AGENTS.md,britchie4/Loupe/AGENTS.md,"Clean build (only when asked, per the working agreements): `xcodebuild -workspace Loupe.xcworkspace -scheme Loupe clean`",4,human_approval,yes,4,human_approval,yes
+AGENTS.md,arncore/konvoy/AGENTS.md,Stable output paths: do not change the output contract casually.,3,ai_forbidden,no,3,ai_forbidden,no
+AGENTS.md,nextdns/nextdns/AGENTS.md,Avoid adding telemetry or logging sensitive DNS/query data unless explicitly required.,3,human_approval,no,4,human_approval,no
+AGENTS.md,nextdns/nextdns/AGENTS.md,Behavioral drift from existing defaults without explicit request.,3,human_approval,no,3,human_approval,no
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,推荐升／降模式须先解释并暂停，用户保持原模式就继续,3,human_approval,no,3,human_approval,no
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,旧模式缺失／多候选询问，不凭mtime、旧handoff或输出样式推断,3,human_approval,no,2,human_approval,no
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,跨分支写入另取明确决定。,4,human_approval,no,4,human_approval,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,缺失、不可读或证据不足均blocked，不能用fallback确认需求或进入设计／实现,3,ai_forbidden,no,2,ai_forbidden,no
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,必需Skill／证据缺失不得报通过,2,ai_forbidden,no,2,ai_forbidden,no
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,default/lite可继续不依赖它的安全工作,4,ai_allowed,no,4,ai_allowed,no
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,恢复取最近未解除的真实入阻塞前态；未知／冲突则用户选择planned/in-progress/checking,3,human_does,no,3,human_does,no
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,done／cancelled重开需明确操作并保留原事件,3,human_approval,no,3,human_approval,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,恢复必须由用户选择,3,human_does,no,3,human_does,no
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,旧运行包／schema不支持新状态时先成套对齐，不改成done或私自降级,3,ai_forbidden,no,4,ai_forbidden,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,首次写本地状态／身份／handoff前检查ignore和tracked；缺保护只请求窄授权,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,不自动init、改旧规则或清理数据,4,ai_forbidden,no,4,ai_forbidden,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,归档、共享提升、清理和发布需要各自确认,4,human_approval,no,4,human_approval,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,「sbtd cleanup」「清理工作流」或同向清理旧资产的意图只授权只读检测与候选展示,1,ai_allowed,no,1,ai_allowed,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,执行须在看到实际清单后单独确认,4,human_approval,no,4,human_approval,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,重计划的目标/效果不变，或仅减少有绑定回执证明已完成的项且其余目标/效果不变时，展示剩余清单并沿用原同意,4,ai_allowed,no,3,ai_allowed,no
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,新增目标或改变效果才重新确认,3,human_approval,no,3,human_approval,no
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,全局MCP条目影响其他项目须单独披露,4,human_approval,no,4,human_approval,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,正常init/reset不清理旧资产,4,ai_forbidden,no,4,ai_forbidden,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,用户“本任务不要自动交接”或“本会话关闭自动交接”分别设置退出,3,human_does,no,3,human_does,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,禁`--deep`、`blast --name`、LLM/cloud和代码／查询上传,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,继承环境或配置可能启用provider/cloud时阻断接入,4,ai_forbidden,no,4,ai_forbidden,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,原始graph/blast含源码、diff或作者信息，不上传PR／公网／知识库,4,ai_forbidden,no,4,ai_forbidden,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,React Bits仅明确需要时按已确认tier／registry／许可执行,3,human_approval,no,3,human_approval,no
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,满足后才说明将建立当前项目`.sbtd/developer`并询问名字,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,缺保护只请求根锚定`/.sbtd`,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,不隐藏业务内容或自动untrack,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,改名／多项目复用须裁决,3,human_approval,no,3,human_approval,no
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,不要将PII、凭据或旧私密原件写入共享lesson,4,ai_forbidden,no,4,ai_forbidden,no
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,账号、密钥、PII、生产数据不进入任务／报告,4,ai_forbidden,no,1,ai_forbidden,no
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,旧目录／旧工具只作为显式迁移输入，不因其存在自动初始化或接回旧运行路由,4,ai_forbidden,no,4,ai_forbidden,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,Never spawn upstream `graft`/`npx` servers or hook shims directly.,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,stop using Graft here and ask the user for an explicit wiring re-init through the onboard CLI,4,human_approval,no,4,human_approval,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,"Never repair, bypass or replace the guard",4,ai_forbidden,no,4,ai_forbidden,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,never run upstream `graft init`/`mcp`/hook shims,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,never hand-edit MCP/hook configuration as a workaround,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,"Always prohibited: telemetry, `--deep`, `blast --name` or any other LLM symbol naming, brain/trail connect, signup, pull or other cloud activation, automatic LLM enrichment",4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,"publishing graphs, blasts, code or query output to PRs, public viewers or knowledge services",4,ai_forbidden,no,4,ai_forbidden,yes
+AGENTS.md,KunoLu/sbtd-plugins/AGENTS.md,"Do not set, print or persist `GRAFT_API_KEY` or other provider keys",4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,vmDeshpande/ai-agent-automation/AGENTS.md,Env vars are never committed,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,HiThink-Research/GAGE/AGENTS.md,"Generated (don’t commit): `runs/`, `.gage_cache/`, `.pytest_cache/`.",4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,HiThink-Research/GAGE/AGENTS.md,never commit model weights or private paths.,4,ai_forbidden,no,4,ai_forbidden,no
+AGENTS.md,HiThink-Research/GAGE/AGENTS.md,"External credentials (never commit): `OPENAI_API_KEY`, `OPENAI_BASE_URL`, `HUGGINGFACEHUB_API_TOKEN`.",4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,HiThink-Research/GAGE/AGENTS.md,"Never commit secrets; use env vars (e.g. `OPENAI_API_KEY`, `HUGGINGFACEHUB_API_TOKEN`/`HF_API_TOKEN`) or local `.env` files under `scripts/oneclick/` (kept out of VCS).",4,ai_forbidden,no,4,ai_forbidden,yes
+AGENTS.md,HiThink-Research/GAGE/AGENTS.md,Never commit run artifacts (`runs/`) or caches (`.gage_cache/`); keep them local or in a secure storage bucket.,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,qawolf/cli/AGENTS.md,Do not commit `.env` files or API keys,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,qawolf/cli/AGENTS.md,Do not add dependencies without justification,3,human_approval,yes,3,human_approval,no
+AGENTS.md,OpenGGF/OpenGGF/AGENTS.md,Routine implementation choices do not need a planning ceremony or another approval.,3,ai_allowed,no,3,ai_allowed,no
+AGENTS.md,OpenGGF/OpenGGF/AGENTS.md,"Do not rename, copy, delete, or create ROM links to satisfy an example.",4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,OpenGGF/OpenGGF/AGENTS.md,so do not tag first or reuse a released version for a new release.,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,OpenGGF/OpenGGF/AGENTS.md,Never switch the main workspace branch.,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,OpenGGF/OpenGGF/AGENTS.md,"Preserve unrelated changes, including dirty submodules.",4,ai_forbidden,no,4,ai_forbidden,no
+AGENTS.md,OpenGGF/OpenGGF/AGENTS.md,never use `--no-verify`,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,CESNET/ndk-fpga/AGENTS.md,"If the component has a `cocotb/` directory, run the cocotb test. Ask the user whether they want a **default run** (`make` in the `cocotb/` dir) or a **full multi-ver run** (all combinations from `ver_settings.py`).",3,human_approval,yes,1,human_approval,no
+AGENTS.md,sergebulaev/youtube-skills/AGENTS.md,"Only bump MINOR or MAJOR when **the user explicitly asks** for a higher rank (""this is minor"", ""make it 2.0"", ""bump major"").",3,human_does,no,3,human_approval,no
+AGENTS.md,sergebulaev/youtube-skills/AGENTS.md,Do not promote on your own initiative even if semver textbook says so.,3,ai_forbidden,no,3,ai_forbidden,no
+AGENTS.md,sergebulaev/youtube-skills/AGENTS.md,"After bumping, two steps are required: 1. Tag the commit: `git tag -a v<X.Y.Z> -m ""...""` + `git push origin v<X.Y.Z>` 2. **Publish a GitHub Release** for the tag: `gh release create v<X.Y.Z> --title ""v<X.Y.Z>"" --notes ""<changelog>"" --latest`",4,ai_allowed,yes,4,ai_allowed,yes
+AGENTS.md,sergebulaev/youtube-skills/AGENTS.md,`references/voice-profile.md` ship **blank** and the user fills them.,3,human_does,yes,4,human_does,yes
+AGENTS.md,sergebulaev/youtube-skills/AGENTS.md,Every published post REQUIRES a single video the user supplies.,4,human_does,no,4,human_does,no
+AGENTS.md,sergebulaev/youtube-skills/AGENTS.md,"If any of these fail, do not push.",4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,Andersbakken/rtags/AGENTS.md,Do not commit unless explicitly asked.,4,human_approval,yes,4,ai_forbidden,yes
+AGENTS.md,saubakirov/KZ-IT-telegram-list/AGENTS.md,"Trivial data edits (adding one verified community) may proceed directly, but still end with schema validation and README regeneration.",4,ai_allowed,no,4,ai_allowed,no
+AGENTS.md,saubakirov/KZ-IT-telegram-list/AGENTS.md,parsing/preview are non-mutating and any catalog write requires current exact owner authority,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,saubakirov/KZ-IT-telegram-list/AGENTS.md,"Validate the catalog, show liveness and count deltas, and prepare owner-triaged archive changes",3,human_does,no,3,human_approval,no
+AGENTS.md,saubakirov/KZ-IT-telegram-list/AGENTS.md,must stop for explicit owner approval before tag or push,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,saubakirov/KZ-IT-telegram-list/AGENTS.md,Approves HL and TS before execution,3,human_approval,no,3,human_does,no
+AGENTS.md,saubakirov/KZ-IT-telegram-list/AGENTS.md,Supplies community suggestions and local context,1,human_does,no,1,human_does,no
+AGENTS.md,saubakirov/KZ-IT-telegram-list/AGENTS.md,Rules on amendments to a frozen HL contract,3,human_does,no,3,human_does,no
+AGENTS.md,saubakirov/KZ-IT-telegram-list/AGENTS.md,Decides what ships,3,human_does,no,3,human_does,no
+AGENTS.md,saubakirov/KZ-IT-telegram-list/AGENTS.md,"Discovers, drafts, validates, implements, and reviews within role locks",1,ai_allowed,no,4,ai_allowed,no
+AGENTS.md,saubakirov/KZ-IT-telegram-list/AGENTS.md,"Discovers, drafts, validates, implements, and reviews within role locks",2,ai_allowed,no,4,ai_allowed,no
+AGENTS.md,saubakirov/KZ-IT-telegram-list/AGENTS.md,"Discovers, drafts, validates, implements, and reviews within role locks",4,ai_allowed,no,4,ai_allowed,no
+AGENTS.md,saubakirov/KZ-IT-telegram-list/AGENTS.md,"Edits `data/communities.json`, runs scripts, regenerates README",4,ai_allowed,yes,4,ai_allowed,yes
+AGENTS.md,saubakirov/KZ-IT-telegram-list/AGENTS.md,"Maintains traces in `tasks/`, `KNOWLEDGE.md`, `TECH_DEBT.md`",4,ai_allowed,yes,4,ai_allowed,yes
+AGENTS.md,saubakirov/KZ-IT-telegram-list/AGENTS.md,"**AG** (Autonomous) | Local file edits, restructuring, script execution — after plan approval | Full",4,ai_allowed,yes,4,ai_allowed,yes
+AGENTS.md,saubakirov/KZ-IT-telegram-list/AGENTS.md,"**CL** (Chat Loop) | Anything depending on live external state: link liveness, member counts, new community vetting | Proposes; human validates",2,human_approval,no,2,human_approval,no
+AGENTS.md,arnica/depsguard/AGENTS.md,**Never push directly to `main`** without explicit permission from the user.,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,arnica/depsguard/AGENTS.md,Do not force-push or run destructive git operations unless explicitly asked.,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,arnica/depsguard/AGENTS.md,Do not add dependencies to `Cargo.toml`.,3,ai_forbidden,yes,3,ai_forbidden,yes
+AGENTS.md,Pioreactor/pioreactor/AGENTS.md,"However, you may search these if needed to accomplish a task.",1,ai_allowed,yes,1,ai_allowed,yes
+AGENTS.md,Pioreactor/pioreactor/AGENTS.md,Reasons to delete a test include: its conclusion is orthogonal to the logic being written. its preventing a better refactor or feature. its an incredibly trivial feature that is unlikely to be used.,3,ai_allowed,no,3,ai_allowed,no
+AGENTS.md,superagent-ai/gateway/AGENTS.md,"Secrets never appear in `gateway.yaml`, images, or git history (`.gitignore` covers `.env*`; `.dockerignore` keeps them out of builds).",4,ai_forbidden,no,4,ai_forbidden,yes
+AGENTS.md,osate/osate2/AGENTS.md,Run all `gh` operations and all Maven builds outside the sandbox. Request escalated execution before invoking either command.,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,osate/osate2/AGENTS.md,Do not create an issue or production fix from static suspicion alone.,4,ai_forbidden,no,3,ai_forbidden,no
+AGENTS.md,osate/osate2/AGENTS.md,"If authentication is missing or expired, stop and ask the user to authenticate.",4,human_does,yes,4,human_does,yes
+AGENTS.md,osate/osate2/AGENTS.md,"Unless the user requests otherwise or the issue requires explicitly approved supporting changes, the issue branch and PR must contain the regression commit followed by the production-fix commit.",3,human_approval,no,3,human_approval,no
+AGENTS.md,osate/osate2/AGENTS.md,Do not push a branch or open a PR unless the user asks.,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,osate/osate2/AGENTS.md,"Never run `gh pr merge`, enable auto-merge, or place the PR in a merge queue",4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,osate/osate2/AGENTS.md,present the validated PR to the user and stop.,4,human_does,no,3,human_approval,no
+AGENTS.md,validatedpatterns/docs/AGENTS.md,"Do **not** edit or commit files under `public/` (generated build output, gitignored).",4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,validatedpatterns/docs/AGENTS.md,"Do **not** commit `.vale.ini` or `.vale/` (gitignored, local-only config).",4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,Adamant-im/adamant/AGENTS.md,AI agents are allowed and expected to propose documentation updates when mismatches are found.,3,ai_allowed,no,3,ai_allowed,no
+AGENTS.md,Adamant-im/adamant/AGENTS.md,"If cross-repo changes cannot be done immediately, create linked issues with clear scope and dependency order.",4,ai_allowed,yes,4,ai_allowed,no
+AGENTS.md,Adamant-im/adamant/AGENTS.md,Require an AIP (or update to an existing AIP) before finalizing consensus-impacting behavior.,3,human_approval,no,3,human_approval,no
+AGENTS.md,Adamant-im/adamant/AGENTS.md,Do not merge changes that violate any rule below.,4,ai_forbidden,no,4,ai_forbidden,yes
+AGENTS.md,Adamant-im/adamant/AGENTS.md,"Never silently change reward, fees, delegate ranking, round accounting, or signature validation rules.",3,ai_forbidden,no,3,ai_forbidden,no
+AGENTS.md,Adamant-im/adamant/AGENTS.md,"Do not stop the node with `kill -9`, forced terminal/process termination, or any other uncatchable kill mechanism.",4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,Adamant-im/adamant/AGENTS.md,"When this happens, do not apply ad hoc SQL fixes to `mem_*` tables.",4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,Adamant-im/adamant/AGENTS.md,Any exception change requires dedicated tests and maintainer review.,3,human_approval,yes,3,human_approval,no
+AGENTS.md,Adamant-im/adamant/AGENTS.md,"If native bindings are unavailable and the change is unrelated to database driver behavior, `PG_NATIVE=false npm run ...` is an acceptable local fallback, but report that fallback explicitly.",3,ai_allowed,no,4,ai_allowed,yes
+AGENTS.md,Adamant-im/adamant/AGENTS.md,"Stop and request human review before proceeding if: Change affects block/transaction bytes, IDs, signatures, slot timing, delegate order, rewards, fees, or round settlement.",3,human_approval,no,3,human_approval,no
+AGENTS.md,Adamant-im/adamant/AGENTS.md,Stop and request human review before proceeding if: Change introduces/removes chain exceptions.,3,human_approval,yes,3,human_approval,no
+AGENTS.md,Adamant-im/adamant/AGENTS.md,Stop and request human review before proceeding if: Behavior differs between replay and live processing.,2,human_approval,no,2,human_approval,no
+AGENTS.md,Adamant-im/adamant/AGENTS.md,Stop and request human review before proceeding if: You cannot prove deterministic equivalence.,2,human_approval,no,2,human_approval,no
+AGENTS.md,jasp-stats/jaspMetaAnalysis/AGENTS.md,The MCP server config is in `.codex/config.toml` (project-scoped) and should NOT be committed to git.,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,jasp-stats/jaspMetaAnalysis/AGENTS.md,**NEVER automatically accept snapshot changes** -- always notify user for manual inspection,2,human_approval,yes,2,human_approval,yes
+AGENTS.md,jasp-stats/jaspMetaAnalysis/AGENTS.md,**NEVER directly edit test files** under `tests/`. Test files are human-owned. Fix source code instead.,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,jasp-stats/jaspMetaAnalysis/AGENTS.md,**NEVER automatically accept snapshot changes** -- always notify user for manual inspection.,2,human_approval,yes,2,human_approval,yes
+AGENTS.md,jasp-stats/jaspMetaAnalysis/AGENTS.md,**NEVER push/create PRs/merge without explicit human approval.**,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,jasp-stats/jaspMetaAnalysis/AGENTS.md,**ALWAYS work on feature branches** -- never commit directly to `master`,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,jasp-stats/jaspMetaAnalysis/AGENTS.md,**NEVER push/create PRs/merge without explicit human approval**,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,jasp-stats/jaspMetaAnalysis/AGENTS.md,Commit locally freely,4,ai_allowed,yes,4,ai_allowed,yes
+AGENTS.md,jasp-stats/jaspMetaAnalysis/AGENTS.md,but wait for approval before pushing to remote,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,Niall-Young/Canvasight/AGENTS.md,"agents must not say the canvas is ""opened"", ""ready"", or ""fixed"" based on tool output, another renderer, resource reads, daemon health, browser fallback, or synthetic harnesses alone.",2,ai_forbidden,no,2,ai_forbidden,no
+AGENTS.md,Niall-Young/Canvasight/AGENTS.md,Do not rewrite or remove user changes unless explicitly asked.,4,human_approval,no,4,human_approval,no
+AGENTS.md,Niall-Young/Canvasight/AGENTS.md,"If an unanswered choice could change identity or authority, primary audience, included content/media types, language coverage, content mode, framework dimensions, target scope, key relationships, write behavior, required coverage, or acceptance, `ask_canvasight_framework_questions` is mandatory before any write or completion claim.",3,human_approval,no,3,human_approval,no
+AGENTS.md,Niall-Young/Canvasight/AGENTS.md,"If the tool or inline UI is unavailable, ask concise text questions; never open Canvasight or guess a consequential answer as the fallback.",3,human_approval,no,3,human_approval,no
+AGENTS.md,Niall-Young/Canvasight/AGENTS.md,"use `replace-active-page` only for an explicit current-Page rewrite, and `replace-document` only for an explicit full reset.",4,human_approval,no,4,human_approval,yes
+AGENTS.md,Niall-Young/Canvasight/AGENTS.md,"AI node assignments require the global opt-in, a clear current-project Skill-description match, a rationale, and visible `$skill-name` node text",3,human_approval,no,4,human_approval,no
+AGENTS.md,Niall-Young/Canvasight/AGENTS.md,"Page `viewState.collapsedGroupIds` is human-owned presentation state. Persist it, exclude it from semantic conflict detection, preserve the current value through AI writes/rebases, and never accept it as AI-authored graph intent.",4,human_does,yes,4,human_does,yes
+AGENTS.md,Niall-Young/Canvasight/AGENTS.md,"If publishing or verification fails, do not change `stable`",4,ai_forbidden,no,4,ai_forbidden,yes
+AGENTS.md,Niall-Young/Canvasight/AGENTS.md,"Release recovery must not depend on force-pushing, rewinding, or deleting a protected `stable` branch.",4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,Niall-Young/Canvasight/AGENTS.md,"Do not publish a Release whose tag, manifest, package, MCP `SERVER_VERSION`, generated MCP bundle, or built web snapshot disagree.",4,ai_forbidden,no,4,ai_forbidden,yes
+AGENTS.md,Niall-Young/Canvasight/AGENTS.md,Do not close the relevant issue as resolved,4,ai_forbidden,no,4,ai_forbidden,yes
+AGENTS.md,Niall-Young/Canvasight/AGENTS.md,"do not claim the native widget is fixed, opened, ready, or successfully delivered.",2,ai_forbidden,no,2,ai_forbidden,no
+AGENTS.md,Niall-Young/Canvasight/AGENTS.md,Use `open_canvasight_browser_fallback` only when the user explicitly requests the fallback or for diagnostics.,4,human_approval,no,4,human_approval,yes
+AGENTS.md,RichardKnop/minisql/AGENTS.md,Never commit directly to `main`,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,RichardKnop/minisql/AGENTS.md,and never merge a branch into `main` locally.,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,RichardKnop/minisql/AGENTS.md,"Preserve user work. Do not revert, overwrite, or “clean up” changes you did not make unless the user explicitly asks.",4,human_approval,no,4,human_approval,no
+AGENTS.md,RichardKnop/minisql/AGENTS.md,"Do not commit secrets, local database files, WAL files, profiles, coverage HTML, benchmark binaries, or other local artifacts.",4,ai_forbidden,no,4,ai_forbidden,yes
+AGENTS.md,RichardKnop/minisql/AGENTS.md,Never commit directly to `main`.,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,RichardKnop/minisql/AGENTS.md,Never merge a feature branch into `main` locally as part of the agent workflow.,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,RichardKnop/minisql/AGENTS.md,Push the feature branch and open or update a GitHub pull request when integration is requested.,4,human_approval,yes,4,ai_allowed,yes
+AGENTS.md,bit-of-a-shambles/open-tender-watch/AGENTS.md,Never run data-modifying tasks directly on production.,4,ai_forbidden,no,4,ai_forbidden,no
+AGENTS.md,jaxparrow07/liquidglass-kde-widgets/AGENTS.md,Unrelated widgets cannot be merged into this project.,3,human_does,no,4,ai_forbidden,no
+AGENTS.md,jaxparrow07/liquidglass-kde-widgets/AGENTS.md,"A new widget must start as a New widget request issue, with a macOS/iOS design reference, how it follows DESIGN.md, and the reasoning for why it belongs in this repo. Code comes after the request is accepted.",3,human_approval,no,3,human_approval,no
+AGENTS.md,sparrowhawk-labs/pinion-ui/AGENTS.md,Backwards compatibility: Never rename props or silently change their defaults.,3,ai_forbidden,no,4,ai_forbidden,no
+AGENTS.md,Flowscape-UI/core-sdk/AGENTS.md,"When multiple designs are plausible and the choice would create a long-lived contract, surface the tradeoff instead of silently choosing a new architecture.",3,human_approval,no,3,human_approval,no
+AGENTS.md,codrops/OnScrollColumnsRows/AGENTS.md,Titles and descriptions are on the ask list below.,3,human_approval,no,3,human_approval,yes
+AGENTS.md,codrops/OnScrollColumnsRows/AGENTS.md,"Only tags that exist in WordPress (`/wp-json/wp/v2/tags?slug=…`), linked as `https://tympanus.net/codrops/hub/tag/<slug>/`; never create one",4,ai_forbidden,yes,3,ai_forbidden,no
+AGENTS.md,codrops/OnScrollColumnsRows/AGENTS.md,"The main page's description (and its JSON-LD) counts the variations (""Ten""); it's on the ask list, so check with Manoela before changing it.",3,human_approval,no,3,human_approval,yes
+AGENTS.md,codrops/OnScrollColumnsRows/AGENTS.md,No dependencies and no build tooling unless asked.,3,human_approval,no,3,human_approval,yes
+AGENTS.md,codrops/OnScrollColumnsRows/AGENTS.md,"Ask before changing: Each page's `<title>`, meta description and keywords, canonical, social tags and JSON-LD, and the `frame__title` heading.",3,human_approval,no,3,human_approval,yes
+AGENTS.md,codrops/OnScrollColumnsRows/AGENTS.md,"Ask before changing: The frame's Article, All demos and GitHub links, the tags (other than the technology tags a variation brings in, see ""Adding a variation""), the ""More you might like"" cards, the credits line and the README credits.",3,human_approval,no,3,human_approval,yes
+AGENTS.md,codrops/OnScrollColumnsRows/AGENTS.md,"Ask before changing: Variations 01–10 and the images, which are the author's originals.",3,human_approval,yes,3,human_approval,yes
+AGENTS.md,503133214/SurviveXMUM/AGENTS.md,连线上接口时 vite 代理会去掉 `track=1`，本地浏览不计入线上阅读数；**不要**绕开这个代理直接请求线上的写接口。,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,503133214/SurviveXMUM/AGENTS.md,`/api/agent/**` 同样会打到线上，而创建 run 是写操作：开发 Agent 相关功能只连本机后端。,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,503133214/SurviveXMUM/AGENTS.md,不要直接 push `main`,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,503133214/SurviveXMUM/AGENTS.md,`main` 有 ruleset，PR 需要 1 个 approving review。,4,human_approval,yes,3,human_approval,yes
+AGENTS.md,503133214/SurviveXMUM/AGENTS.md,这是**公开仓库**：不要写入服务器 IP、SSH 登录方式、主机上的绝对路径或任何密钥；这些只放在私有后端仓库的 `DEPLOY.md`。,4,ai_forbidden,no,4,ai_forbidden,no
+AGENTS.md,503133214/SurviveXMUM/AGENTS.md,不要提交 `.env*`。,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,503133214/SurviveXMUM/AGENTS.md,前端 `main` 合并即上线，所以依赖未上线接口的代码不要合进 `main`,4,ai_forbidden,no,4,ai_forbidden,no
+AGENTS.md,503133214/SurviveXMUM/AGENTS.md,要先合就放在默认关闭的开关后面，先和维护者确认,4,human_approval,no,3,human_approval,no
+AGENTS.md,503133214/SurviveXMUM/AGENTS.md,值不能混用，也都不要写进本仓库。,4,ai_forbidden,no,4,ai_forbidden,no
+AGENTS.md,503133214/SurviveXMUM/AGENTS.md,要加别的入口（文档页「问这篇」、独立页面等）先和维护者确认。,3,human_approval,no,3,human_approval,no
+AGENTS.md,503133214/SurviveXMUM/AGENTS.md,先别做：编辑助手、维护任务、额度或用量界面、会话历史列表（没有列出 run 的接口，要「接着问」就在本地记 `runId` / `conversationId`）。这些等 Agent 仓库 `docs/STATUS.md` 标为完成再排。,3,ai_forbidden,no,3,ai_forbidden,no
+AGENTS.md,503133214/SurviveXMUM/AGENTS.md,没有明确要求时不要改 `wiki/nginx.conf` 的缓存头与 `@stale_asset` 自愈、`wiki/index.html` 里的资源加载失败监听、`main.js` 里清除 `sessionStorage` 标记,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,503133214/SurviveXMUM/AGENTS.md,没有明确要求时不要改 `ci-deploy.sh` 的文件名与位置：服务器 `authorized_keys` 里写死了它的路径，改名会让自动部署失效。,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,Valid-Systems/SolidKG/AGENTS.md,"If pnpm is unavailable, offer to enable it with Corepack",4,human_approval,yes,4,human_approval,yes
+AGENTS.md,Valid-Systems/SolidKG/AGENTS.md,do not change the user's global toolchain without permission.,4,human_approval,no,4,human_approval,no
+AGENTS.md,Valid-Systems/SolidKG/AGENTS.md,A maintainer must deliberately refresh the appropriate lockfile,4,human_does,yes,4,human_does,yes
+AGENTS.md,Valid-Systems/SolidKG/AGENTS.md,do not silently regenerate dependency resolutions just to obtain a pass.,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,Valid-Systems/SolidKG/AGENTS.md,"After the source verifier passes, offer—do not silently perform—the following migration:",4,human_approval,no,4,human_approval,yes
+AGENTS.md,Valid-Systems/SolidKG/AGENTS.md,"If the user wants this source checkout on `PATH`, ask before running `pnpm run install:source`; it writes to the pnpm global package/bin location.",4,human_approval,yes,4,human_approval,yes
+AGENTS.md,Valid-Systems/SolidKG/AGENTS.md,"With approval, configure the matching target (`claude`, `cursor`, `codex`, `opencode`, `hermes`, `antigravity`, `omp`, or `kimi`)",4,human_approval,yes,4,human_approval,yes
+AGENTS.md,Valid-Systems/SolidKG/AGENTS.md,"If an existing CodeGraph or other knowledge-graph MCP server is active, show the user the exact competing entry and obtain approval to disable or remove it after SolidKG works.",4,human_approval,no,4,human_approval,yes
+AGENTS.md,Valid-Systems/SolidKG/AGENTS.md,"Do not delete an unknown MCP server, built-in search tool, instruction file, or user customization merely because it appears graph-related.",4,ai_forbidden,no,4,ai_forbidden,no
+AGENTS.md,Valid-Systems/SolidKG/AGENTS.md,Only then remove an approved predecessor.,4,human_approval,no,4,ai_allowed,yes
+AGENTS.md,Valid-Systems/SolidKG/AGENTS.md,don't merge a Windows-gated test you haven't seen run.,4,ai_forbidden,no,4,ai_forbidden,no
+AGENTS.md,Valid-Systems/SolidKG/AGENTS.md,Agents do NOT bump the version unless explicitly asked.,4,human_approval,no,4,human_approval,yes
+AGENTS.md,Valid-Systems/SolidKG/AGENTS.md,The maintainer typically does it themselves — often by editing `package.json` directly via the GitHub web UI.,4,human_does,no,4,human_does,yes
+AGENTS.md,Valid-Systems/SolidKG/AGENTS.md,Don't proactively commit a version bump as part of unrelated work,4,ai_forbidden,no,4,ai_forbidden,yes
+AGENTS.md,Valid-Systems/SolidKG/AGENTS.md,and don't propose one when summarizing a PR.,3,ai_forbidden,no,3,ai_forbidden,no
+AGENTS.md,Valid-Systems/SolidKG/AGENTS.md,"Once `package.json` is at the target version on `main`, trigger **Actions → Release → Run workflow** (on `main`).",4,human_does,yes,4,human_does,yes
+AGENTS.md,Valid-Systems/SolidKG/AGENTS.md,"Do not run `npm publish`, `git push`, or `git tag` yourself — these are publish actions on shared state.",4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,Valid-Systems/SolidKG/AGENTS.md,"Write the files, hand the user the commands.",4,human_does,yes,4,human_approval,yes
+AGENTS.md,Valid-Systems/SolidKG/AGENTS.md,"never blindly apply upstream updates, merge, cherry-pick, rebase, tag, push, publish, or update `.upstream-watch/state.json` without explicit maintainer approval.",4,human_approval,yes,4,human_approval,yes
+AGENTS.md,Valid-Systems/SolidKG/AGENTS.md,"For new features, ask the user about UX, edge cases, and acceptance criteria — the graph won't tell you.",3,human_approval,no,3,human_approval,no
+AGENTS.md,hakari-bench/hakari-bench/AGENTS.md,"Do not commit generated benchmark outputs, caches, or local scratch artifacts.",4,ai_forbidden,yes,4,ai_forbidden,no
+AGENTS.md,hakari-bench/hakari-bench/AGENTS.md,Do not shorten model max sequence length for benchmark runs just to avoid slow execution or memory pressure.,3,ai_forbidden,no,3,ai_forbidden,no
+AGENTS.md,hakari-bench/hakari-bench/AGENTS.md,Use the model's default/configured maximum length unless the user explicitly requests a different value.,3,human_does,yes,3,human_approval,no
+AGENTS.md,mouse-lin/finesse-brief/AGENTS.md,"Decide the domain before anything else, silently: can you say 「一共有 N 个 X」 about this thing?",3,ai_allowed,no,3,ai_allowed,no
+AGENTS.md,mouse-lin/finesse-brief/AGENTS.md,"Never ask him which domain he's in — the words he used answer it, and asking makes him classify his own product, which is your job.",3,ai_allowed,no,3,ai_allowed,no
+AGENTS.md,mouse-lin/finesse-brief/AGENTS.md,Don't ask about roles or head-count to decide; roles are a field in the spec now.,3,ai_allowed,no,3,ai_allowed,no
+AGENTS.md,mouse-lin/finesse-brief/AGENTS.md,"The rule over all five: the moment you know enough, you owe him a whole workbench — that turn. Not a plan to build one, not the next question.",3,ai_allowed,no,4,ai_allowed,no
+AGENTS.md,mouse-lin/finesse-brief/AGENTS.md,"load the spec, change only the affected keys, keep `excluded` and `deferred` intact (they are the memory of decisions already made), and reissue the whole thing.",3,ai_forbidden,no,4,ai_allowed,no
+AGENTS.md,mouse-lin/finesse-brief/AGENTS.md,"`audit`, **read-only**: structure fit · data floor · the blacklist for its domain. Change nothing",4,ai_forbidden,no,4,ai_forbidden,yes
+AGENTS.md,mouse-lin/finesse-brief/AGENTS.md,"A routing word matches no skeleton — narrow it yourself, don't hand the breadth back.",3,ai_allowed,no,3,ai_allowed,no
+AGENTS.md,mouse-lin/finesse-brief/AGENTS.md,"Then STOP and wait: do not ask and then proceed on a guessed answer, and never treat a file on disk, a prior session, or your own inference as this turn's answer.",3,human_does,no,3,human_approval,no
+AGENTS.md,mouse-lin/finesse-brief/AGENTS.md,"If he'd rather see a screen than read a definition (「先给我看看效果」) — that *is* the go-ahead. Go starter → spec → build, then label the result a starting point.",4,human_approval,no,3,human_approval,no
+AGENTS.md,mouse-lin/finesse-brief/AGENTS.md,Three structures means three workbenches — name the fork and make him pick one.,3,human_does,no,3,human_approval,no
+AGENTS.md,mouse-lin/finesse-brief/AGENTS.md,Writing the spec is the end of this job. Building is a separate yes. Offer the handoff in one line and wait,4,human_approval,no,4,human_approval,yes
+AGENTS.md,mouse-lin/finesse-brief/AGENTS.md,Auto-running a build off a freshly-approved definition spends his time on a decision he hasn't made.,4,ai_forbidden,no,4,human_approval,yes
+AGENTS.md,mouse-lin/finesse-brief/AGENTS.md,"It does not supply the content and must not invent it — name the module, then say plainly where real content has to come from",2,ai_forbidden,no,3,ai_forbidden,no
+AGENTS.md,tagorr/ltsc-clean/AGENTS.md,The Owner may explicitly authorize exact additional paths for one specific task/PR; that authorization overrides the default restriction only for that task and must be documented in the PR description.,4,human_approval,yes,3,human_does,no
+AGENTS.md,tagorr/ltsc-clean/AGENTS.md,"Files under `tools/` and `.agents/skills/` are owner-controlled. Agents must not create, modify, or delete files in these areas unless the current task explicitly includes those paths in its allow-list.",4,human_approval,yes,4,ai_forbidden,yes
+AGENTS.md,tagorr/ltsc-clean/AGENTS.md,Any edits by agents to files that are neither listed in the “Allowed to edit” section above nor explicitly authorized by the Owner for the current task/PR under the exception above.,4,human_approval,yes,4,ai_forbidden,yes
+AGENTS.md,tagorr/ltsc-clean/AGENTS.md,"Carve-out (Interaction Contract): when temporary Codex-created files are genuinely needed, they MAY be created only under the repository root's `.codex_tmp\` directory.",4,ai_allowed,yes,4,ai_allowed,yes
+AGENTS.md,tagorr/ltsc-clean/AGENTS.md,Owner (maintainer/operator): defines the scope for each change,3,human_does,no,3,human_does,no
+AGENTS.md,tagorr/ltsc-clean/AGENTS.md,Owner (maintainer/operator): ... reviews diffs,2,human_does,no,2,human_does,no
+AGENTS.md,tagorr/ltsc-clean/AGENTS.md,Owner (maintainer/operator): ... applies changes,4,human_does,no,4,human_does,no
+AGENTS.md,tagorr/ltsc-clean/AGENTS.md,"Owner (maintainer/operator): ... performs all state-changing Git actions (commit, push, PR, merge)",4,human_does,yes,4,human_does,yes
+AGENTS.md,tagorr/ltsc-clean/AGENTS.md,Owner (maintainer/operator): ... remains accountable for final behavior and security posture.,3,human_does,no,3,human_does,no
+AGENTS.md,tagorr/ltsc-clean/AGENTS.md,ChatGPT: ... cannot run commands or Git actions,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,tagorr/ltsc-clean/AGENTS.md,Codex CLI: ... does not perform state-changing Git actions,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,tagorr/ltsc-clean/AGENTS.md,Codex CLI: ... does not expand scope without explicit instruction.,3,human_approval,no,3,human_approval,no
+AGENTS.md,tagorr/ltsc-clean/AGENTS.md,"Read-only Git commands (for example `git status`, `git diff`) are allowed when needed for situational awareness.",1,ai_allowed,yes,1,ai_allowed,yes
+AGENTS.md,tagorr/ltsc-clean/AGENTS.md,CI does not replace human review and does not modify repository content.,2,human_does,no,4,ai_forbidden,yes
+AGENTS.md,tagorr/ltsc-clean/AGENTS.md,Work only in the Owner-selected current branch. Do not switch branches.,4,ai_forbidden,yes,4,ai_forbidden,yes
+AGENTS.md,tagorr/ltsc-clean/AGENTS.md,"There are two explicit audit modes, controlled by the Owner’s prompt.",3,human_does,no,3,human_does,no
+AGENTS.md,sandros94/comark-tiptap/AGENTS.md,"When in doubt, ask before acting.",3,human_approval,no,3,human_approval,no
+AGENTS.md,sandros94/comark-tiptap/AGENTS.md,"For design decisions, ambiguity, or vision changes, run a structured Q&A before implementing",3,human_approval,no,3,human_approval,no
+AGENTS.md,sandros94/comark-tiptap/AGENTS.md,"The answer can pick, mix, or override.",3,human_does,no,3,human_does,no
+AGENTS.md,sandros94/comark-tiptap/AGENTS.md,Synthesize + confirm before implementing.,3,human_approval,no,3,human_approval,no
+AGENTS.md,koaning/wigglystuff/AGENTS.md,"Give the user a concrete way to open the widget, then wait for explicit visual approval",2,human_does,no,2,human_approval,no
+AGENTS.md,koaning/wigglystuff/AGENTS.md,wait for explicit visual approval before running test suites,2,human_approval,yes,4,human_approval,yes
+AGENTS.md,koaning/wigglystuff/AGENTS.md,wait for explicit visual approval before ... requesting code review,4,human_approval,no,4,human_approval,yes
+AGENTS.md,koaning/wigglystuff/AGENTS.md,wait for explicit visual approval before ... updating galleries/docs,4,human_approval,yes,4,human_approval,yes
+AGENTS.md,koaning/wigglystuff/AGENTS.md,"wait for explicit visual approval before ... committing, pushing",4,human_approval,yes,4,human_approval,yes
+AGENTS.md,koaning/wigglystuff/AGENTS.md,wait for explicit visual approval before ... starting branch-finishing workflows,4,human_approval,no,4,human_approval,no
+AGENTS.md,koaning/wigglystuff/AGENTS.md,The user may want another design pass.,3,human_does,no,3,human_does,no
+AGENTS.md,koaning/wigglystuff/AGENTS.md,"When planning a new widget, always present the proposed Python API (constructor, traitlets, helper methods) during plan review so the user can sign off on the interface before implementation.",3,human_approval,no,3,human_approval,no

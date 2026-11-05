@@ -1,0 +1,24 @@
+diff --git a/navix/_version.py b/navix/_version.py
+index e0f5248e..19bb6605 100644
+--- a/navix/_version.py
++++ b/navix/_version.py
+@@ -18,5 +18,5 @@
+ # under the License.
+ 
+ 
+-__version__ = "0.7.3"
++__version__ = "0.7.4"
+ __version_info__ = tuple(int(i) for i in __version__.split(".") if i.isdigit())
+diff --git a/requirements.txt b/requirements.txt
+index e4998203..192af601 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -9,7 +9,7 @@ setuptools_scm
+ pytest
+ # compute libraries
+ pillow
+-jax<0.7 # 0.7 breaks distrax
++jax
+ flax
+ rlax
+ # experiments

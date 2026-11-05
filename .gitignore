@@ -19,3 +19,12 @@ outputs/gerrit_blind/gerrit_neg_votes_all.json
 work/baseline/ghhuman_blocks.jsonl
 work/baseline/within/blocks_agent.jsonl
 work/analystB/b2_prs.jsonl
+outputs/aidev_diff/diffs/A006.diff
+outputs/aidev_diff/diffs/B024.diff
+
+# 叩き台のメモ(Obsidian のノートの写し)
+docs/
+
+# md はコミットしない(README のみ可)
+*.md
+!README.md
