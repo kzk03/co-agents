@@ -4,25 +4,14 @@ __pycache__/
 *.pyc
 .DS_Store
 
-# 生データ(大容量。data/README.md 参照)
-data/*
-!data/README.md
+# 生データ(大容量。取り直せる)
+data/
 
-# API キャッシュ・中間キャッシュ(再取得可能)
+# API キャッシュ・中間キャッシュ(取り直せる)
 **/cache/
-**/cache_gh/
 *.pkl
 
-# 大容量の中間出力(1MB超、スクリプトで再生成可能)
-outputs/gerrit/gerrit_neg_votes_all.json
-outputs/gerrit_blind/gerrit_neg_votes_all.json
-work/baseline/ghhuman_blocks.jsonl
-work/baseline/within/blocks_agent.jsonl
-work/analystB/b2_prs.jsonl
-outputs/aidev_diff/diffs/A006.diff
-outputs/aidev_diff/diffs/B024.diff
-
-# 叩き台のメモ(Obsidian のノートの写し)
+# メモ(git 管理外)
 docs/
 
 # md はコミットしない(README のみ可)
