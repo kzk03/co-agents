@@ -1,346 +1,0 @@
-### H001 home-assistant/core author=human | Add quality scale to Tesla Fleet integration
-  BODY: Let's put the things we agree on fixing in the comments inside of the YAML file and get it merged, and we can fix the things in follow up PRs!
-  [quality_scale.yaml] please use the shorthand notation when it's done :)
-  [quality_scale.yaml] We don't need `CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)` right?
-  [quality_scale.yaml] I'd remove the last part as I now got confused that you do use custom entity actions, which you don't
-  [quality_scale.yaml] It would be nice if we can patch the objects where we use them ```py     with patch(         f"tesla_fleet_api.tesla.VehicleFleet.{func}",         return_value=COMMAND_OK,     ) as command: ```
-  [quality_scale.yaml] nit: `test_climate_offline` can use a hard assert instead of snapshot test
-  [quality_scale.yaml] `# Put the vehicle alseep` typo
-### H002 getsentry/sentry author=human | feat(symbolicator): Make renewal interval of debug files, artifact bundles & release files
-  BODY: nan
-  [artifact_bundles.py] I don't think that works and you can grab it from the options at a global scope.
-### H003 apache/airflow author=human | New google dataflow operator to fetch job metrics
-  BODY: I do support having such an operator, which will be an equivalent for existing sensor & trigger. However, the current implementation gives it too much responsibilities. Please refactor so it would have only one (fetching from Dataflow, without PubSub or BQ).  Also, please note that there are signals of using AI, which you did not declare in the PR. If you used AI to generate parts or the entire PR, please declare so in the PR with the required details according to the AI policy usage.
-  [dataflow.py] I'm a bit concerned of mixing up fetching metrics **and** inserting them to PubSub or BQ altogether - it's a lot of actions for a single operator, that could be utilized by other existing operators. Please refactor so after fetching metrics - it just returns them into an XCom (and later they could be routed to PubSub/BQ using the appropriate operat
-  [dataflow.py] ```suggestion class DataflowJobMetricsOperator(GoogleCloudBaseOperator): ```  Rename to be consistent with existing sensor & trigger
-### H004 home-assistant/core author=human | Refresh the calendar entity when the current event ends
-  BODY: Thanks for the PR! This change touches our entity model, which needs approval in a discussion on the architecture repository before we can review it. Since that discussion typically takes time, we're closing this PR for now. Please reopen it once the proposal has been accepted.  - [Architecture discussions](https://github.com/home-assistant/architecture/discussions) - [Changing the entity model](https://developers.home-assistant.io/docs/core/entity#changing-the-entity-model)
-### H005 cilium/cilium author=human | pkg/maps: migrate to slog
-  BODY: Oof, I'm not a fan of adding a `Logger` to bpf.Map and ebpf.Map. As far as I can see, they're only used to log the map removal warnings in OpenOrCreate, which is behaviour we want/need to get rid of anyway.  Can we keep using the default logger for those? Passing a logger to all functions returning a map really causes a ton of churn.
-### H006 ray-project/ray author=human | [RLlib] Merge tuned examples into examples
-  BODY: Great!  I left few minor requests for edits.
-### H007 backstage/backstage author=human | fix(auth): improve SignInResolverFactory Zod schema usage
-  BODY: @Teo-ShaoWei I've ended up exploring this area myself the last few days, and the direction we want to head in is likely to move towards https://standardschema.dev/. Initial move towards that and example for the frontend system in https://github.com/backstage/backstage/pull/33836.  Is this something you'd want to explore for this case as well? That means moving to standard schema rather than zod v4, which should achieve the original goal.
-### H008 SigNoz/signoz author=human | chore: enrich clickhouse log_comment
-  BODY: nan
-  [comment.go] need to update the code comment as well 
-### H009 ray-project/ray author=human | [docs][serve] Fix Serve LLM examples sidebar doc links 404
-  BODY: This looks like a monkey patch rather than a fix.  Can we please root cause this instead of shipping a bandaid?
-### H010 espressif/arduino-esp32 author=human | fix(logging): Add wrapper when using wifi without esp_diagnostics
-  BODY: @lucasssvaz - I think that it would be good to add `DIAG_USE_EXTERNAL_LOG_WRAP` to the KConfig file (https://github.com/espressif/arduino-esp32/blob/master/Kconfig.projbuild).  Not sure which would be the best default value for it. Please evalutate it.  In case its default value is `y`, you may just remove it from `sdkconfig.defaults` file
-### H011 gradle/gradle author=human | Document that @InputFiles is order-insensitive
-  BODY: Thank you for your proposed contribution!  This PR has a valid DCO and is documentation only.  ***  Before it can be merged, please address the review comments below.
-  [InputFiles.java] ❌ The reference to `Classpath` should be moved to a `@see` instead, as it indeed provides order dependence but does more. And `InputDirectory` can also be moved to `@see`  💅 Please put each sentence on a newline as shown in [our guide](https://github.com/gradle/gradle/blob/master/contributing/JavadocStyleGuide.md).
-### H012 espressif/arduino-esp32 author=human | feat(update): add optional SHA512 checksum and sidecar URLs
-  BODY: SHA-512 API, precedence, sidecar parsing, and tests look good and correctly mirror the SHA-256 path.  Please address the FLASH always-link before merge like SHA-256.
-  [Updater.cpp] This path (and `_sha512FreeContext()` from `_reset`/`begin`) lives in `Updater.cpp`, so `--gc-sections` cannot drop SHA-512.  That pulls `mbedtls_sha512_*` / `psa_hash_*` into every sketch that uses `Update`, including ones that never call `setSHA512()`. CI matches this: `SD_Update` (no TLS) grows about +5K FLASH on ESP32/C3/C6, +7K on C5/P4, and
-  [README.md] The heap context is on-demand, but FLASH is not. `_writeBuffer` / `_reset` always reference the SHA-512 helpers, so mbedtls/PSA SHA-512 is linked into every `Update` binary.  Please lazy-link SHA-512.
-### H013 getsentry/sentry author=human | fix(taskbroker): Override Topic and Namespace in Task Sender Locally
-  BODY: this can't work -- we need to have route overrides in options for inc response, just not set them globally from this one command.
-### H014 backstage/backstage author=human | fix(scaffolder): explicitly define github:repo:create inputs
-  BODY: nan
-  [report.api.md] These were largely in alphabetical order. What's the goal with this new order?
-  [githubRepoCreate.ts] This increases the maintenance burden on developers to call out each property manually. Then they have to change the number in the test above. As it stands, when you add an input property, it is always passed in. With this change, when you add a property, you have to locate where it is used and add it to the map (read: error prone).  I left a short
-  [githubRepoCreate.test.ts] Why don't you know this exactly? Why isn't this just `toDeepEqual(....)`?
-### H015 grafana/grafana author=human | Dashboards: Fix datasource replacement during v2 dashboard import
-  BODY: Good work! I've left a few comments to address before merging. The core issue is fixed, but let's make this less code added to the codebase, please.
-  [importDatasourceReplacer.ts] This is a core interface we use, please use the one exported from `@grafana/schema`
-  [importDatasourceReplacer.ts] Function name is self documenting here, no need for comment.
-  [importDatasourceReplacer.ts] Nit - name this funtion to be self-documenting and not require comment.
-  [importDatasourceReplacer.test.ts] Why this annotation? We are working with v2 schema which is well typed, so there should be no need for a global nocheck. Let's get rid of it before merging.
-  [importDatasourceReplacer.test.ts] Great that we have this test file, however it's add massive amount of code to maintain, also makes it quite hard to navigate and read.   Some things to refactor: 1. Each test has full dashboard spec defined and a lot of copy-pasted code - extract repeated code to some builder functions you can repear. 2. Replace this "guard" with a common util, it'
-  [importDatasourceReplacer.ts] This would actually use some comment with explanation :)
-### H016 open-telemetry/opentelemetry-collector-contrib author=human | [processor/transform/internal/logparsingfuncs] Add ParseELF function for W3C Extended Log 
-  BODY: nan
-  [func_parse_elf.go] The directive switch below is case-insensitive (`strings.ToLower(key)`), but this guard isn't, so a malformed lowercase `#fields` (no colon) slips past the hard error and falls through to `continue`. The next data lines then parse against the stale field set, the silent corruption this guard seems intended to stop. I'd lowercase the comparison to m
-### H017 ceph/ceph author=human | mgr/dashboard : Cephfs Mirroring Listing
-  BODY: nan
-  [cephfs-mirroring-list.component.scss] Please do not mark things as resolved if they were not actually addressed.   Also this is not looking right currently, things are missaligned.  <img width="1914" height="978" alt="Image" src="https://github.com/user-attachments/assets/5aeb662c-460a-492a-a57c-3e4a35dae710" />  Quick example I put up to show it is possible. Please be careful co
-### H018 envoyproxy/envoy author=human | drain: add new onDrain support to connection callbacks
-  BODY: This LGTM overall, but I'd like to adjust the names of all the functions to be clear that they don't cause draining to happen, they just pass notifications around  /wait
-  [connection.h] I think this should be named so that it's clear that it doesn't actually cause draining. Maybe it should also be `onDrain()`.
-  [connection_handler.h] similar naming comment
-### H019 pytorch/pytorch author=human | [pytree] make `torch.utils.pytree` as public API
-  BODY: Thanks for the change! Seems there is some CI failure now, but outside of that it looks good to me.    cc @anijain2305  as well to have a look as this is a new public API we probably need a second set of eyes
-### H020 ceph/ceph author=human | mgr/dashboard: Tiering form -  Placement Target in Advanced Section
-  BODY: nan
-  [rgw-storage-class-form.component.html] Also @dnyanee1997 can we always have default placement only selected. Lets not provide an option to de-select if only one, then choose one only.  Currently it makes no sense because anyways backend will add default placement even if we pass no placement group. (you can cross verify that and let know if thats not the case.)
-### H021 SigNoz/signoz author=human | fix: removing duplicate creation of user if user does not exist already
-  BODY: nan
-  [a_get_connection_params.py] better to assert the values of fields here than just the presence of fields ? As they would be present in an empty go struct as well if `omitEmpty` is omitted. 
-### H022 apache/airflow author=human | Add option to override Celery worker images
-  BODY: Overall, this is a nice change that aligns with the Workers Sets feature. Let's wait a bit and revisit it in the next round after some discussions on the Helm Chart releases (the images section and design of it are one of the action items) are finished.
-  [_helpers.yaml] Most of this function copies logic from `airflow_image`. Maybe there is some nice way to not duplicate code here?
-  [values.yaml] ```suggestion ``` Not sure if needed. Every section can be overwritten by sets and direct message for one field could lead to `this has this information and other field do not, so I can overwrite this one but this one not?` understanding.
-  [test_worker_image.py] This added test complexity, which can lead to not-so-straightforward debugging in case of failure. Maybe we could simplify the test cases a little?
-  [test_worker_image.py] Not sure where the `images` section tests are stored, but I think we should move them there to have all `images` test in one place.
-  [test_worker_image.py] All of the tests regarding `celery` overwrite `workers` are in the general worker test file. Could we move those tests there?
-  [test_worker_image.py] All of the tests for `sets` overwrite of `celery`, and the `workers` section is in the workers sets dedicated test file. Could we move these tests there?
-### H023 prestodb/presto author=human | feat(native): TVF implementation
-  BODY: nan
-  [table-functions.rst] Please fix the formatting of this table. It is not being compiled. See screenshot of a local doc build.   <img width="691" height="345" alt="Screenshot 2026-08-13 at 10 34 16 AM" src="https://github.com/user-attachments/assets/32184e5f-737b-4e7a-b03e-5e612424ea54" /> 
-### H024 pytorch/pytorch author=human | [torchgen] Refactor and simplify `gen_pyi.py` to use Generic TypeAlias (PEP 585) and Union
-  BODY: Unfortunately PEP604 is python 3.10+ and we have to support python 3.9 - so we can't convert to it yet.
-### H025 prestodb/presto author=human | feat(plugin-iceberg): Add support for iceberg.target-max-file-size
-  BODY: Thanks for adding the changes.  Let's add it as a session property as well, along with respective documentation
-  [IcebergConfig.java] use static import
-  [IcebergConfig.java] Lets add some `@Min` validation for this?
-  [TestIcebergTargetMaxFileSize.java] We can also add tests for default behavior - Verify that with default 1GB target size and TASK_WRITER_COUNT=1, then we can check the absolute count of files created for unpartitioned and partitioned table
-  [TestIcebergTargetMaxFileSize.java] Nit: We can use `randomTableSuffix()` like existing tests for table unique names
-  [TestIcebergTargetMaxFileSize.java] Could we also spin up a query runner with just 1 worker as well for writing tests with some absolutely predictable file count assertions?
-### H026 llvm/llvm-project author=human | [Clang][Sema] Clarify structured binding diagnostic when initializer is missing
-  BODY: nan
-  [DiagnosticSemaKinds.td] The text in the error message isn't the issue - we don't need a change to this.
-  [decomp-decl-init-diagnostic.cpp] Given the point of the original report this should have a diagnostic pointer test. I know you can do these with FileCheck but do we have something better at this point? (@AaronBallman )
-### H027 gradle/gradle author=human | Fix file collections and file trees with relative files under CC
-  BODY: nan
-  [DefaultFilePropertyFactory.java] ❌ This looks incorrect. Wouldn't the base dir actually be `createResolver().getBaseDir()`?  In any case I wonder if it wouldn't be better to have the codec operate in terms of concrete types rather than on the (augmented) abstract interface...
-  [PathToFileResolverCodec.kt] 💭 Rather than augmenting the `PathToFileResolver` protocol to expose the `baseDir` information, have you considered type casing the concrete implementations like we for file collections, for example?
-### H028 open-telemetry/opentelemetry-collector-contrib author=human | [processor/schema] Add cache_ttl configuration option for in-memory schema cache
-  BODY: I am going to say that having a ttl cache is overkill here considering that schemas are immutable, and invalidating the cache here is going to cause either another disk read, or http request would can be costly when multiplied by several thousand deployed instances.
-### H029 NVIDIA/Megatron-LM author=human | Enable context parallelism for RL training
-  BODY: Hey! Thanks for the PR, I left some comments mostly re code layout/readability.
-  [rl_utils.py] I would use HAVE_TEX to be consistent with import of FA3/FA4.
-  [rl_utils.py] Can we use raw torch get_rank() or we need to use the core's parallel_state for that?
-  [rl_utils.py] Would be useful to explain why this is the case.
-  [rl_utils.py] Why are you doing this?
-  [train_rl.py] PackedSeqParams does not have seq_idx field.
-  [rl_utils.py] This needs the docstring.
-### H030 NVIDIA/Megatron-LM author=human | Support selective MXFP8 inference precision
-  BODY: nan
-  [unit-tests.yaml] can we move this into unit test fixtures that set/unset around the tests?
-### H031 grafana/grafana author=human | Provisioning: Always show branch workflow selector and disable configured branch when unav
-  BODY: minor comments see above ☝️
-### H032 ydb-platform/ydb author=human | Add CI check for error_tags
-  BODY: nan
-  [error_tags_check.yml] `error_tags_check.yml` не перезапускается при добавлении `ok-to-test`, в отличие от `pr_check.yml`.  В `pr_check` явно указано:  ```yaml types:   - opened   - synchronize   - reopened   - labeled ```  В `error_tags_check` — только дефолтные события (`opened`, `synchronize`, `reopened`), без `labeled`.  **Что ломается:** для внешнего контрибьютора w
-### H033 cilium/cilium author=human | ci: draft renovate PRs until ciliumbot auto-approval
-  BODY: nan
-  [auto-approve.yaml] We still need this because when the base images are changed there are reviews requested to people and we need to remove them as reviewers because ciliumbot approved it.
-### H034 ydb-platform/ydb author=human | Remove obsolete roadmap
-  BODY: Я предлагаю не удалять Roadmap. Скорее поправить. Видимо, я поправлю
-### H035 llvm/llvm-project author=human | [clang-tidy] Teach `modernize-type-traits` about more type traits
-  BODY: Thank you for the patch! Could you please add tests with new traits from C++20, 23, 26 standards to make sure we get warning for newer standards than C++17. You will need to change `-std=c++17` to `-std=c++17-or-later` in tests.
-  [TypeTraitsCheck.cpp] There are no tests that will handle recursive traits (AFAIK there weren't any recursive trait in the list before your changes).  Could you add tests for `tuple_element` to check if it will work correctly.
-### H036 istio/istio author=human | feat: represent revision tags using services
-  BODY: What is the backwards compatibility story here? If we have new code depending on the new service, and a user creates a tag, the old Istio's will not understand it, no?
-### H037 envoyproxy/envoy author=human | adaptive concurrency: add min concurrency limit knob
-  BODY: Please update the adaptive concurrency documentation: https://github.com/tonya11en/envoy/blob/master/docs/root/configuration/http/http_filters/adaptive_concurrency_filter.rst  Otherwise, LGTM
-### H038 reactos/reactos author=human | [KMTESTS:CM] ZwNotifyChangeKey tests
-  BODY: Same comments as your other PR, threading / corrupting the stack (but bringing down the system here)
-### H039 godotengine/godot author=human | Fix infinite layout loop caused by `desired_size` circular dependency
-  BODY: The changes to `get_bound_desired_size()` and most of `Label` are mostly okay; however, the removal of the checks for `!is_expanded_by_desired_size()` causes `Label` outside of a `Container` to no longer expand up to its maximum size.  I don't think removing these checks is necessary based on your PR description, so why did you remove them?   dev4:  https://github.com/user-attachments/assets/12f28272-41e9-4173-905f-eeaaa41094fb  PR:  https://github.com/user-attachments/assets/7f789c1c-7cbc-4fad-
-  [label.cpp] Also, this should just replace the `combined_max` declaration above. 
-  [label.cpp] This is incorrect; please revert. The `maximum_width` variable also accounts for the stylebox's size, which reduces the effective maximum area for the text of the `Label`.
-### H040 dotnet/docs author=human | Revise AI section
-  BODY: nan
-  [how-to.md] ```suggestion You can use AI tools, such as GitHub Copilot, to generate code that serializes objects to JSON using `System.Text.Json`. For example, you can prompt Copilot to generate code that handles nested and polymorphic types, which is useful for creating examples or test data for hierarchical object structures. ```
-  [how-to.md] These should all end in periods.
-  [how-to.md] Now that the focus of the example has changed, seems like this belongs more in https://github.com/dotnet/docs/blob/main/docs/standard/serialization/system-text-json/polymorphism.md.
-### H041 PaddlePaddle/Paddle author=human | [WIP] [CI] test Windows inference with CUDA 13.3
-  BODY: 已复查最新提交。此前 CUDA 13.3 skip 过滤逻辑的问题仍由原行级线程覆盖；本轮新增的诊断逻辑还会改变 Step4 的 `errexit` 状态，可能破坏 Windows UT 的失败收集和重试流程，细节已放在新的行级评论中。  <div align="right">    <sup>Powered by Nyanpasu with gpt-5.5 xhigh, please check the suggestions carefully.</sup> </div>
-  [run_unittests.sh] ![P1](https://img.shields.io/badge/P1-high-orange) **优先级：P1**  这个诊断函数是在 Step4 已经 `set +e` 之后由 `run_unittest_gpu` 调用的；Step4 依赖关闭 `errexit`，让每个 `ctest | tee` 失败后继续执行，最后再通过 `collect_failed_tests`/retry 汇总失败。这里返回前改成 `set -e` 后，后续第一个失败的 `wait` 就会直接终止脚本，导致剩余分组、失败收集和重试逻辑都不再运行。请保持 Step4 的失败收集模式，或保存/恢复调用方原来的 `errexit` 状态。  ```suggestion     set +e ``` 
-### H042 juspay/hyperswitch author=human | ci(cypress): verify mandate id to be `null` if payment id not `succeeded`
-  BODY: nan
-  [Facilitapay.js] Why this connector added in this PR?
-### H043 PaddlePaddle/Paddle author=human | [PHI][Build] isolate oneDNN headers from CUDA translation units
-  BODY: 本轮锁定并完整复审了 head `78988643872a08c365b3b8f991053897d48efe39`。目前需要修改：新增测试导致两个 required Windows 构建在链接 `data_layout_transform_test.exe` 时失败，属于本 PR 引入的阻塞问题。  最新提交正确导出了 oneDNN 的 `TypeInfoTraits` 实例，但测试还会在 phi DLL 外构造未导出的 `NPUStorageProperties` 实例，因此 Windows-GPU 与 Windows-Inference 均报同一个 `LNK2019`。请修复该测试/导出边界并确认两个 Windows 构建能够通过。  除该 Windows 链接问题外，完整累计 diff 中未发现其他新增阻塞问题；此前 descriptor 生命周期相关意见仍已正确修复。
-  [data_layout_transform_test.cc] ![P1](https://img.shields.io/badge/P1-high-orange)  这里在独立测试可执行文件中构造了 `NPUStorageProperties`，但其 `TypeInfoTraits<StorageProperties, NPUStorageProperties>` 显式实例化没有 `PADDLE_API` 导出。当前 head 只为 oneDNN specialization 增加了导出，因此 [Windows-GPU](https://github.com/PaddlePaddle/Paddle/actions/runs/32010932993/job/95419293493) 和 [Windows-Inference](https://github
-### H044 juspay/hyperswitch author=human | feat(business-profile): add payment_method_blocking configuration
-  BODY: nan
-  [openapi_spec_v2.json] Is it required for V2s ?
-  [admin.rs] is this required for v2 ?
-### H045 DefinitelyTyped/DefinitelyTyped author=human | [luxon]: Add changes from v 3.6.0
-  BODY: nan
-  [datetime.d.ts] Currently TS is happy with: ```ts fromFormat("", "") ``` which is invalid.  Let's define an opaque type for the `TokenParser`: ```ts declare const tokenParserBrand: unique symbol; export interface TokenParser {   [tokenParserBrand]: void; } ``` That will make the connection between this parameter and the return type of the builder type
-### H046 cockroachdb/cockroach author=human | fix pulling full vectors from the primary key when column families are in use
-  BODY: > Reviewed 2 of 18 files at r13, 1 of 32 files at r19, 6 of 6 files at r20, 23 of 26 files at r21, 17 of 17 files at r22, all commit messages. > *[Reviewable](https://reviewable.io/reviews/cockroachdb/cockroach/147307)* status: <span>:shipit:</span> complete! 0 of 0 LGTMs obtained (and 1 stale) (waiting on @andy-kimball, @DrewKimball, and @mw5h)  ___ *[`pkg/sql/logictest/testdata/logic_test/vector_index` line 1069 at r22](https://reviewable.io/reviews/cockroachdb/cockroach/147307#-OTDJN1U2SddN1r
-### H047 tgstation/tgstation author=human | The Torment Nexus: The future of Security brigging and prisoner rehabilitation! FEAT. Bato
-  BODY: nan
-  [loot_crate.dm] Let me get this straight:  1. Security now has a way to infinity farm frag grenades and laser guns for themselves, at no cost or interaction with cargo, in their down time  and  2. Initially this started as an alternative to brigging with no incentive, meaning it was ultimately up to the security officer (and the prisoner, to a lesser degree)
-### H048 dotnet/runtime author=human | Make sure to remove operand of TernaryLogic node
-  BODY: Believe a tweak is required after thinking it through some more.
-### H049 goauthentik/authentik author=human | website/docs: add password lockout 2026.11 release notes
-  BODY: nan
-  [v2026.11.md] ```suggestion - **User status**: The user list in the Admin interface shows a single consolidated status for each user, indicating whether the account is active, deactivated, or password locked. ```
-  [v2026.11.md] ```suggestion The [Password stage](../../add-secure-apps/flows-stages/stages/password/index.md#password-lockout) can now lock a user's password after a set number of consecutive failed attempts, using the new **Failed attempts before lockout** option. This is disabled by default. ```
-  [v2026.11.md] ```suggestion When a user account is password locked, authentication is denied even if the correct password is entered. This prevents further guessing attempts and blocks use of a compromised password until an administrator unlocks it. The attempt count is tracked per user, retained across sessions and authentication flows, and cleared after a succ
-  [v2026.11.md] ```suggestion The login prompt returns the same error as it does for an incorrect password, preventing it from disclosing whether an account exists or is password locked. Password lock and unlock actions are logged as `password_locked` and `password_unlocked` events. ```
-  [v2026.11.md] ```suggestion Administrators can unlock a user's account from that user's page in the Admin interface. Changing the password also clears the lock, so a password reset is always a way to regain access. ```
-### H050 python/cpython author=human | gh-149816: Fix race between `setattr` and `object.__dict__` update
-  BODY: Sorry for the late response here (I was on vacation) and thanks for taking the time to dig into this! After reading through the [original report](https://gist.github.com/mpage/2ed6b002a76edd0ede6ca43c97c33079), I think we can probably come up with a simpler fix by ensuring that we always use a strong reference to the managed dict after releasing the per-object lock.
-### H051 ghostty-org/ghostty author=human | fix(tmux): viewer correctness for end-to-end control mode
-  BODY: Need to review dependent first, so just putting a block merge on it.
-### H052 ghostty-org/ghostty author=human | fix: use flush instead of end on stdout in code generators for Windows compatibility
-  BODY: AI disclosure, please. The issue makes sense and the fix is *okay* but we do require human-written interactions incl. proper disclosure and handwritten PR metadata (title/description)
-### H053 nextcloud/server author=human | feat(sharing): allow email-based labels for lookup results
-  BODY: nan
-  [LookupPlugin.php] ```suggestion 				if ($showEmailInLabel && $email !== '') { 					$id = $email; 				} else { 					$id = $lookup['federationId']; 				} 				$label = $name === '' ? $id : $name . ' (' . $id . ')'; ```
-  [LookupPluginTest.php] Please collapse the tests into a single one and use a data provider to change the flag value and the expected outcome.
-### H054 DefinitelyTyped/DefinitelyTyped author=human | toastify-js, add the ESM module
-  BODY: Please also include the new file in the `files` option in `tsconfig.json`.
-### H055 dotnet/runtime author=human | [Wasm RyuJit] fix issue in RewriteLocalStackStore
-  BODY: One question about the `TypeIs` check immediately after `ChangeType`
-### H056 cockroachdb/cockroach author=human | fix pulling full vectors from the primary key when column families are in use
-  BODY: > *[Reviewable](https://reviewable.io/reviews/cockroachdb/cockroach/147307)* status: <span>:shipit:</span> complete! 0 of 0 LGTMs obtained (and 1 stale) (waiting on @andy-kimball, @DrewKimball, and @mw5h)  ___ *[`pkg/sql/schemachanger/scbuild/internal/scbuildstmt/alter_table_alter_primary_key.go` line 683 at r22](https://reviewable.io/reviews/cockroachdb/cockroach/147307#-OTDIXok5ZHAEvqrZ8w-:-OTDJt3n1AS2qmya0_Va:bin04ri) ([raw file](https://github.com/cockroachdb/cockroach/blob/f479f90f44836d97a
-### H057 goauthentik/authentik author=human | website/docs: document password lockout
-  BODY: nan
-  [index.md] ```suggestion A password locked user is restored in one of two ways: ```
-  [index.md] ```suggestion - An administrator unlocks the user in **Directory** > **Users** and selects **Unlock password**. ```
-  [index.md] ```suggestion Both clear the failure count, and unlocking created a `password_unlocked` event in the event log. ```
-  [index.md] ```suggestion - **Failed attempts before cancel**: how many failed password submissions are allowed before the flow is canceled. This only ends the flow; the user can restart the flow immediately. ```
-  [index.md] ```suggestion - **Failed attempts before lockout**: how many consecutive failed submissions password lock the user's account. Set to `0` to never password lock. Requires an enterprise license. See [Password lockout](#password-lockout). ```  We need to be careful to always say "password lock" rather than just "lock" because a user can still login vi
-  [index.md] ```suggestion Password locking is deliberately invisible to the person at the login prompt: the flow reports the same "Invalid password" error it reports for a wrong password, so the response cannot be used to discover whether an account exists or has been locked. The lock itself is recorded as a `password_locked` event in the [event log](../../../
-### H058 python/cpython author=human | gh-135953: Add Gecko reporter to sampling profiler
-  BODY: nan
-  [stack_collector.py] Check out https://github.com/python/cpython/pull/138875   We need to aggregate somehow as we go our this will run out of memory super quickly
-### H059 istio/istio author=human | pilot agent: unify the timeout and make it configurable
-  BODY: We used to have this configuration and removed it. let me investigate
-### H060 dotnet/docs author=human | Revise AI section
-  BODY: This is looking much better. Here are some suggestions to push this through to the finish line. Thanks!
-  [how-to.md] We really only need a small disclaimer at the end of these Copilot suggestions.  ```suggestion *Copilot is powered by AI, so surprises and mistakes are possible. For more information, see [Copilot general use FAQs](https://aka.ms/copilot-general-use-faqs).* ```
-  [how-to.md] Considering this isn't specific to VSCode, it should be generic: ```suggestion Here's an example prompt you can use in Copilot to generate serialization code: ```
-  [how-to.md] This looks great! Here's a small wording change to alter what it's doing.  The file stream isn't named output.json, the backing file of a stream would be named that. The stream is like a road to a house, where the house is the destination and the road is the pathway. The stream would be a path to get to the file output. I wouldn't focus on a specif
-  [how-to.md] These don't make sense for the article. It should point to how to deserialize and maybe more complex serialization:  ```suggestion - [How to read JSON as .NET objects (deserialize)](deserialization.md) - [How to customize property names and values with System.Text.Json](customize-properties.md) ```
-### H061 tgstation/tgstation author=human | Refactors render_target/source (ft. sins against humanity)
-  BODY: nan
-  [filters.dm] Shouldn't be changed, ``/image`` is also valid but ``/datum`` is not so we don't have a shared parent to type this off, and you use it yourself with mutables later in cracked.dm
-  [filters.dm] same here
-  [filters.dm] same here
-  [cracked.dm] No need for the uuid logic anymore, just do ``var/current_cracks = length(applied_cracks)`` before the loop and ``current_cracks + i`` for the filter name
-  [datum.dm] ```suggestion /datum/filter_data/Destroy(force) ```
-### H062 home-assistant/core author=human | Fix Homevolt exception translation placeholders
-  BODY: nan
-  [strings.json] Adding a translation placeholder to an existing string will cause issues for existing translations. May be it is better to use a new translation key?
-  [strings.json] Same here
-### H063 ray-project/ray author=human | [tune] Expose progress reporter heartbeat cadence via RunConfig
-  BODY: Thanks for the PR, please make the following changes
-  [output.py] Remove this
-  [output.py] Default this to 30
-  [output.py] Remove as a class attribute and move to a standard attribute
-  [output.py]             heartbeat_freq: Minimum interval in seconds between status-table                 heartbeats. Defaults to 30 seconds.
-  [output.py] self._heartbeat_freq = heartbeat_freq
-  [test_progress_reporter.py] Fix
-### H064 getsentry/sentry author=human | feat(spans-buffer): add Redis slowlog logger for debugging
-  BODY: I am not sure I understand what you would use the SLOWLOG response for.  SLOWLOG tells you the  list of commands that took the longest in the previous period of time.  If you want to use this to validate that the flusher is the cause of the CPU spikes, why not record the cumulative time  spent and amount of data extracted by each queue like we do for the cumulative time spent per trace ?
-  [buffer.py] They would not. SLOWLOG is per Redis host (which means per shard). Actually I don't think calling it from the client will serve any purpose as the host you hit from the client may not be the one that serves the request. redis node can forward requests to other nodes if they do not own the shard that executes the command.   So you would have to conn
-  [buffer_logger.py] I don't think this will do what you want. SLOWLOG is per node on the cluster, not per cluster. It would give different results depending which node you run it onto. 
-### H065 backstage/backstage author=human | fix(ui): Hide browser-specific password field controls in PasswordField
-  BODY: Keeping browser specific password manager controls intact seems like a useful feature, to allow users to use these tools for creating and managing the passwords.
-### H066 pytorch/pytorch author=human | [Dynamo] Add types to LazyVariableTracker logging
-  BODY: nan
-  [test_error_messages.py] This doesn't look correct `realized:<class 'method'>`. Can we change the output according to https://github.com/pytorch/pytorch/issues/162860#issuecomment-3367705429 ?
-  [test_error_messages.py] Can we explicitly check for logging output of at least one unrealized lazy VT and a realized one? This check shouldn't be python-version specific.  e.g. look for a log `LazyVariableTracker(realized: UserFunctionVariable)` and a log `LazyVariableTracker(unrealized: <class 'function'>)` present somewhere in the logs
-### H067 open-telemetry/opentelemetry-collector-contrib author=human | [processor/transform/internal/logparsingfuncs] Add ParseELF function for W3C Extended Log 
-  BODY: nan
-  [feat-parse-elf-log-function.yaml] ```suggestion note: Add `ParseELF` function to parse W3C Extended Log Format (ELF) log blocks into structured maps. ```
-  [feat-parse-elf-log-function.yaml] ```suggestion   `ParseELF(target)` parses a complete ELF text block and returns a `pcommon.Map` with ```
-  [func_parse_elf_test.go] This is a no-op if the type isn't `string` or `[]any`. Can you add a default case that errors when receiving an unexpected type?
-  [func_parse_elf_test.go] Add test cases for: - unterminated quote - malformed #Fields directive errors - tab-separated data lines - multiple #Version directives - take the last value - dropped data when num values > num fields
-  [func_parse_elf.go] This inserts "-" for missing values, which matches the convention, but could be misleading.  If the source isn't sending proper ELF logs, that's different than the source knowingly omitting a value for a field. We should at least log a warning in this case.
-### H068 grafana/grafana author=human | Plugins: Load externalized Canvas plugin via config (backend)
-  BODY: Sorry but at the moment we don't accept new plugin aliases since it's not fully supported yet (see more context about this in this [thread](https://raintank-corp.slack.com/archives/C01C4K8DETW/p1784204910460199?thread_ts=1784202386.725059&cid=C01C4K8DETW)). You will need to keep using `canvas` as the plugin ID.
-### H069 ceph/ceph author=human | Add pre-upgrade validation for health/OSDs/PGs
-  BODY: We cannot merge upgrade-breaking regressions, even temporarily.
-  [upgrade.py] I appreciate the capabilities this PR adds, but as @JoshuaGabriel noted, requiring all OSDs be up+in is a mega-regression. (For one thing, if an osd is down due to a bug, you can’t upgrade to fix it!) I don’t believe we can merge this PR as it stands.
-### H070 apache/airflow author=human | Google: Fix false success in Cloud Composer DAG run sensor
-  BODY: This PR looks similar to this one https://github.com/apache/airflow/pull/61046 which was reverted because this code broke `CloudComposerDAGRunSensor`. Could you run the existing System Test for this operator and shared the screenshot for the latest run?
-### H071 llvm/llvm-project author=human | [libc][math] Implement sqrti
-  BODY: Question: This is not a refactoring PR, this introduces a new internal function and exported to shared folder.  And this internal function is not used anywhere internally or to implement any entrypoint.  There is also question about its accuracy + performance.  But  first, why are we adding this new internal function?
-### H072 SigNoz/signoz author=human | feat: handle conflicting attributes with data type and context-based resolution
-  BODY: Logic introduced to differentiate options based on keys has complications which could have been avoided. Since this has a huge blast radius we should not go ahead with this solution.
-  [utils.tsx] This is getting calculated for every columnName which is expensive and can be avoided.
-### H073 gradle/gradle author=human | Add new deprecation API using the problems API
-  BODY: The general shape of the API makes sense, though I have a lot of targeted questions
-  [GradleReportSource.java] ❌
-  [Problems.java] 💅 "Returns"
-  [Problems.java] 💅 "Returns"
-  [PluginDeprecationSpec.java] ❓ Should it be together with other specs in the `deprecation` package?
-  [GradleReportSource.java] ❓ What is the need for this type to be public?
-  [BaseDeprecationSpec.java] ❓ Why an extra layer of abstraction on top of `DeprecationSpec` ?
-### H074 python/cpython author=human | gh-146475: Block Apple LLVM 21 from passing JIT tool version check
-  BODY: Based on earlier convos, I think this is mergeable with the amendment to the blurb and the regex.   @ashutoshk314 Friendly reminder to sign the CLA when you get a chance as we can't merge without it.
-  [2026-03-26-23-40-21.gh-issue-146475.F9KMLP.rst] ```suggestion Block Apple Clang from being used to build the JIT as it ships without  required LLVM tools. ``` While the CFI directives are an issue, let's make this fix more about the underlying toolchain incompatibility (i.e. users have to install llvm-readobj still)
-### H075 dotnet/runtime author=human | Handle BadImageFormatException in OpenAssociatedSymbolFile
-  BODY: Why do we want to mask this error? It does not look right to me. Our general strategy in AOT compilers is to fail the compilation when the input is malformed. It is expected that the malformed input can and will cause the compiler to crash or fail  The error in the issue is either a race condition in the build where the build is overwriting the compiler inputs, or it is a memory corruption (e.g. GC hole) leading to intermittent crash.  We need to get a crash dump of the failure to tell. It i
-### H076 ghostty-org/ghostty author=human | fix(vt): forward UTF-8 bytes through DCS passthrough
-  BODY: I still approve this but going to put a block on merge until 1.3 is out the door, I don't want to risk something in the core parse table for 1.3.
-### H077 tgstation/tgstation author=human | The Torment Nexus: The future of Security brigging and prisoner rehabilitation! FEAT. Bato
-  BODY: Caution decals over walls Overlighting Needs a maint door (I can see those disposal networks go straight through the wall) You also completely deleted the MULEbot delivery - that needs to be moved somewhere  ![image](https://github.com/user-attachments/assets/ba7e0667-9eba-4778-bd13-c75f44f766a0)
-### H078 goauthentik/authentik author=human | stages/password: lock password login after failed attempts
-  BODY: Looks good. Needs E2Etests.
-### H079 cilium/cilium author=human | ipsec,route: Ignore ESRCH errors on delete operations
-  BODY: Overall LGTM but should we add a forbidigo rule to golangci.yaml that makes sure people don't keep using the functions that we now wrap with safenetlink?
-  [check-xfrmstate.sh] I think the purpose of this script, IIUC, is to discourage direct calls to certain `netlink.Xfrm*` functions in pkg/datapath that would circumvent the cache. The added wrappers in safenetlink violate this, so need exclusion.
-### H080 ydb-platform/ydb author=human | Enhance S3 sync process in CI: add error handling
-  BODY: Я кажется не готов к зеленым чекам без логов. Без рабочего s3 с моей точки мы не можем корректно выполнять проверки
-### H081 DefinitelyTyped/DefinitelyTyped author=human | toastify-js, add the ESM module
-  BODY: Requesting changes so the bot understands the current state.
-### H082 cockroachdb/cockroach author=human | changefeedccl: warn user when creating changefeed that is a duplicate
-  BODY: nan
-  [changefeed_stmt.go] pls update the commit msg to reflect the actual wording of the notice
-  [settings.go] pls rename the var and the setting name to be like the other ones, eg `changefeed.duplicate_check.enabled`
-  [changefeed_stmt.go] this comment should be on FindDuplicateChangefeedJob probably
-  [alter_changefeed_stmt.go] i'm not 100% sure of the semantics of p.InternalSQLTxn() -- will this be done transactionally with the above update in all cases?
-  [helpers_test.go] nit: change the name to make it more explicit that this is some super specific helper to do with dupe checking.
-  [registry.go] nit: "Get" implies a field accessor. can you make the name more clearly indicate it's a calculation?
-### H083 home-assistant/core author=human | MQTT Vacuum: Get Segments from separate MQTT Topic
-  BODY: As discussed available segements are reported via the state topic. As this is a state vacuum, we do not want different state topics.
-### H084 getsentry/sentry author=human | fix(replay): update profiling in replay recording consumer
-  BODY: nan
-  [sdk.py] These changes do not look correct to me
-### H085 backstage/backstage author=human | feat(catalog): allow clearing kind filter when allFilterEnabled is trued
-  BODY: Hi @NETIZEN-11, we are still coming to an agreement on a path forward: https://github.com/backstage/backstage/issues/33052
-### H086 pytorch/pytorch author=human | [aten][autograd] Add narrow_scatter operator with autograd and torch.compile support
-  BODY: narrow is compositeimplicitautograd, we only want view_scatter / view_copy operations for views that are not compositeimplicitautograd. Please let me know if you disagree with my assessment, if not, let's close this PR.
-### H087 ray-project/ray author=human | [data.llm] Add release test to capture memory leak
-  BODY: the customer face memory issues with using 4 nodes with each node has a single gpu, so we should use that in the compute config as the test
-### H088 grafana/grafana author=human | Frontend Logging: Remove unused trace handling from JS agent receiver
-  BODY: There is some dead code related to traces in this file. Currently, if you send traces to `/log-grafana-javascript-agent` they will not be logged in the server logs. So I suppose we could just remove it instead?  If you'd want traces you'd be better off sending it to Alloy, rather than having it fill up the server logs.
-### H089 SigNoz/signoz author=human | Feat/migrate signup page to signoz UI 10615
-  BODY: Few changes related to styling
-  [SignUp.tsx] Move to children, the message is being cut due to the title have the config of ellipsis
-  [SignUp.tsx] Move to children, the message is being cut due to the title have the config of ellipsis
-  [SignUp.tsx] Can be replaced to `Input.Password`.
-  [SignUp.tsx] You can remove the CSS of the inputs and keep it without any CSS since it will look better.
-### H090 apache/airflow author=human | Don't provide default values for PDBs in chart.
-  BODY: For me it seems more like a bug, so should we make sure that it works for previous versions where it was a bug? I would say, not necessarily, but I would ask for a second opinion - @jscheffl, @jedcunningham WDYT?  \+ @simi I think we should add newsfragment for it
-  [test_pdb_apiserver.py] According to the Helm Chart docs we support k8s >= 1.30, so I guess we can delete that test
-### H091 ceph/ceph author=human | mgr/dashboard: NVmeof  Add listeners in subsytem step one and subsystem resource page.
-  BODY: Hi @sagargopale2233, I find some inconsistency in the logic because of that i am seeing all the nodes in the listeners dropdown, even when 1 of the node is consumed.  https://github.com/user-attachments/assets/2d20e4d2-a98a-4be3-bb6b-f2251cd3b6c4
-  [nvmeof-listeners-list.component.html] is this needed now? the table already shows no data, so probably it would be better to use [empyMessage]="there are no listeners available in the NVMe subsystem"
-  [nvmeof-listeners-form.component.ts] why 2 similar subscribe blocks, do we not know from where we would be getting the data?
-  [nvmeof.service.ts] This requires exact order match for label arrays. If placement has ['nvmeof', 'storage'] but host has ['storage', 'nvmeof'], it won't match. we should sort before comparing or use set logic.
-  [nvmeof-listeners-form.component.html] IMO this should just be a model instead of using a tearsheet component! we usually do that and as I see we are using tearsheet component for multiple step wizard, but not necessary here! @afreen23 wdyt?
-### H092 gradle/gradle author=human | Add new deprecation API using the problems API
-  BODY: nan
-  [Problems.java] @return The deprecation reporter.
-  [DefaultProblems.java] :question: Can we have single, shared `InternalProblemReporter` field?
-  [DefaultDeprecationProblemGroup.java] :x: Probably dead code as the same thing is declared  in `GradleCoreProblemGroup`.
-  [DefaultDeprecationData.java] two unnecessary newlines.
-  [DefaultDeprecationReporter.java] :x: remove todo. Consider adding an `indirect()` method to  `DeprecateSpec`.
-  [DeprecationReporter.java] :x: I think the javadoc should be more elaborate on all methods. What's the expectation for consumers (reports, tapi clients, etc). Also, for `deprecateMethod`, the deprecation producer should know in what format the method should be passed. A concrete example would be very helpful.
-### H093 llvm/llvm-project author=human | [libc][math] Implement sqrti
-  BODY: Hello @0bVdnt  I need your PR to comply with these new changes https://github.com/llvm/llvm-project/commit/823e3e001724ca2e93ce410a675f3b538f8a74b3  Please rebase your code onto main and modify your code accordingly, there are breaking (signature) changes which I need you to reflect and replicate in your PR.  Thank you!
-### H094 open-telemetry/opentelemetry-collector-contrib author=human | [pkg/stanza] Fix writer error propagation and add helper tests
-  BODY: This change looks like AI slop to me.  The behavior of `ProcessBatch` mirrors the behavior of `Process`. The decision to only return the error from the last operator was made deliberately in https://github.com/open-telemetry/opentelemetry-collector-contrib/pull/34342.  If you think it's incorrect, please create an issue describing the failure scenario in detail, including a minimal reproduction configuration, expected and actual result.
-### H095 python/cpython author=human | gh-146475: Block Apple LLVM 21 from passing JIT tool version check
-  BODY: nan
-  [_llvm.py] On my mac I had to add LLVM and clang to match the string. Can you please check?  ```suggestion     _llvm_version_pattern = re.compile(rf"(?<!Apple )(LLVM|clang) version\s+{llvm_version}\.\d+\.\d+\S*\s+") ```
-  [_llvm.py] ``` $ /Library/Developer/CommandLineTools/usr/bin/llvm-objdump --version Apple LLVM version 21.0.0   Optimized build. ...  $ /Library/Developer/CommandLineTools/usr/bin/clang --version Apple clang version 21.0.0 (clang-2100.0.123.102) Target: arm64-apple-darwin25.4.0 ... ```
-### H096 tgstation/tgstation author=human | The Torment Nexus: The future of Security brigging and prisoner rehabilitation! FEAT. Bato
-  BODY: lots of programmer art that should probably be ironed away before this is fully merged, the most obvious ones that come to mind being the "plunger" and "scanner" icons, though I'm sure you were aware of all of that.
-### H097 dotnet/runtime author=human | [wasm] Generate the native-entry-point-to-interpreter thunk table
-  BODY: None of this should be needed.  I would like to understand why the system is not working as expected: https://github.com/dotnet/runtime/pull/132965#issuecomment-5495527493
-### H098 cilium/cilium author=human | ipsec,route: Ignore ESRCH errors on delete operations
-  BODY: I'd like to see a test case where these code paths returns `ESRCH` just to illustrate the the behavior does indeed happen.  Also, I feel that it would be better to add some helpers into the safenetlink package instead of adding a check for `ESRCH` in all these spots. Maybe something like this:  ```golang safenetlink.XfrmPolicyDel() safenetlink.XfrmStateDel() safenetlink.RouteDel() ```  These would just call the original netlink function and ignore ESRCH errors. cc @julianwiedmann  as w
-### H099 DefinitelyTyped/DefinitelyTyped author=human | [hotwired__turbo] Align types with the v8.0.23 implementation
-  BODY: can you break these changes up to make it easier to review? it feels like you've got a few different types of changes in this  fwiw I also purposely have been taking a "just-in-time" approach w/ filling out these types to make it easier to maintain and confirm what types should be based on the real world behaviours, and so far that seems to be going ok based on how few PRs and issues we've had - I'm not against attempting to backfill types like this, but I'm not sure how valuable it is to be goi
-### H100 cockroachdb/cockroach author=human | changefeedccl: warn user when creating changefeed that is a duplicate
-  BODY: nan
-  [registry.go] can you make this key a constant?
-  [registry.go] i think the correct field to use is TableSpecifications, and to include the family info therein in the hash
-  [registry.go] ultra nit: move the array decl out of the loop
-  [registry.go] i don't think you need a txn here, which means you also don't need to return an error. 
-  [registry.go] nit: there are job status constants you can use
-  [registry.go] ..for this one too

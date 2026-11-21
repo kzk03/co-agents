@@ -1,6 +1,0 @@
-('copilot-pull-request-reviewer', 'APPROVED') 36
-('copilot-pull-request-reviewer', 'COMMENTED') 55726
-('copilot-pull-request-reviewer', 'DISMISSED') 12
-('copilot-swe-agent', 'COMMENTED') 1430
-('gemini-code-assist', 'COMMENTED') 3212
-non-AI, non-*bot* accounts: {'COMMENTED': 149238, 'APPROVED': 45219, 'CHANGES_REQUESTED': 6596, 'DISMISSED': 3112}

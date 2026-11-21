@@ -1,5 +1,0 @@
-{"sid": "H093", "up": "U3", "dec": "Y", "req_quote": "refactor `sqrti` to be header-only, `constexpr`... compiles with Clang, GCC12.2, CMake and Bazel", "rev_quote": "I need your PR to comply with these new changes... breaking (signature) changes which I need you to reflect"}
-{"sid": "H095", "up": "U3", "dec": "N", "req_quote": "", "rev_quote": "On my mac I had to add LLVM and clang to match the string... regex needs (?<!Apple ) lookbehind fix"}
-{"sid": "H097", "up": "U4", "dec": "NA", "req_quote": "", "rev_quote": "None of this should be needed. I would like to understand why the system is not working as expected"}
-{"sid": "H099", "up": "U3", "dec": "Y", "req_quote": "Options I see: 1. Demote to types-only 2. Fix upstream first 3. Both: demote now, restore if upstream exports", "rev_quote": "can you break these changes up to make it easier to review? ... a few different types of changes"}
-{"sid": "H100", "up": "U3", "dec": "N", "req_quote": "issue a warning when changefeeds are created for the same tables and same URI", "rev_quote": "i think the correct field to use is TableSpecifications, and to include the family info therein in the hash"}
