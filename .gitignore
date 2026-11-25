@@ -17,3 +17,6 @@ docs/
 # md はコミットしない(README のみ可)
 *.md
 !README.md
+
+# 秘密情報
+.env

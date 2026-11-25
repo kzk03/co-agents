@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    image: co-agents:latest
+    user: "${UID:-1038}:${GID:-1038}"
+    working_dir: /work
+    volumes:
+      - .:/work
+    environment:
+      - HF_TOKEN
